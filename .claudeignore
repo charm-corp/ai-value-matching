@@ -1,0 +1,10 @@
+# Claude Code ignore patterns
+node_modules/
+uploads/
+*.log
+.git/
+dev-history/backups/
+.env
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

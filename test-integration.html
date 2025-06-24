@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHARM_INYEON API Integration Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: #f8f9fa;
+        }
+        .test-section {
+            background: white;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 0.5rem;
+            font-weight: 500;
+        }
+        button:hover {
+            background: #5a6fd8;
+        }
+        button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        .result {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            border-left: 4px solid #667eea;
+        }
+        .success {
+            border-left-color: #10b981;
+            background: #f0fdf4;
+        }
+        .error {
+            border-left-color: #ef4444;
+            background: #fef2f2;
+        }
+        .status {
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .log {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎯 CHARM_INYEON API Integration Test</h1>
+    <div class="status" id="status">Ready to test API integration</div>
+
+    <div class="test-section">
+        <h2>1. Server Health Check</h2>
+        <button onclick="testHealth()">Test Health Endpoint</button>
+        <div id="healthResult" class="result" style="display:none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. User Registration</h2>
+        <button onclick="testRegister()">Test Registration</button>
+        <div id="registerResult" class="result" style="display:none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. User Login</h2>
+        <button onclick="testLogin()">Test Login</button>
+        <div id="loginResult" class="result" style="display:none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. Values Assessment</h2>
+        <button onclick="testValuesQuestions()">Get Questions</button>
+        <button onclick="testValuesSubmission()">Submit Assessment</button>
+        <div id="valuesResult" class="result" style="display:none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>5. Matching System</h2>
+        <button onclick="testMatching()">Get Matches</button>
+        <button onclick="testMatchResponse()">Respond to Match</button>
+        <div id="matchingResult" class="result" style="display:none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>6. Full Integration Test</h2>
+        <button onclick="runFullTest()">Run Complete Flow</button>
+        <div id="fullTestResult" class="result" style="display:none;"></div>
+    </div>
+
+    <div class="log" id="log"></div>
+
+    <!-- Include API Client -->
+    <script src="api-client.js"></script>
+
+    <script>
+        let testResults = {};
+        
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${type.toUpperCase()}: ${message}`;
+            logDiv.innerHTML += logEntry + '\n';
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(logEntry);
+        }
+
+        function showResult(elementId, success, message, data = null) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.className = `result ${success ? 'success' : 'error'}`;
+            
+            let html = `<strong>${success ? '✅ Success' : '❌ Error'}:</strong> ${message}`;
+            if (data) {
+                html += `<br><br><strong>Response Data:</strong><br><pre style="white-space: pre-wrap; font-size: 0.8rem;">${JSON.stringify(data, null, 2)}</pre>`;
+            }
+            element.innerHTML = html;
+        }
+
+        async function testHealth() {
+            log('Testing server health...');
+            try {
+                const healthy = await apiClient.checkServerHealth();
+                if (healthy) {
+                    showResult('healthResult', true, 'Server is healthy and responding');
+                    testResults.health = true;
+                } else {
+                    showResult('healthResult', false, 'Server health check failed');
+                    testResults.health = false;
+                }
+            } catch (error) {
+                log(`Health check error: ${error.message}`, 'error');
+                showResult('healthResult', false, `Health check failed: ${error.message}`);
+                testResults.health = false;
+            }
+        }
+
+        async function testRegister() {
+            log('Testing user registration...');
+            try {
+                const userData = {
+                    email: `test_${Date.now()}@example.com`,
+                    password: 'Test123',
+                    name: '테스트 사용자',
+                    age: 45,
+                    agreeTerms: true,
+                    agreePrivacy: true,
+                    agreeMarketing: false
+                };
+
+                const response = await apiClient.register(userData);
+                log(`Registration response: ${JSON.stringify(response)}`, 'success');
+                showResult('registerResult', true, 'User registration successful', response.data);
+                testResults.register = true;
+            } catch (error) {
+                log(`Registration error: ${error.message}`, 'error');
+                showResult('registerResult', false, `Registration failed: ${error.message}`);
+                testResults.register = false;
+            }
+        }
+
+        async function testLogin() {
+            log('Testing user login...');
+            try {
+                const response = await apiClient.login('test@example.com', 'Test123', false);
+                log(`Login response: ${JSON.stringify(response)}`, 'success');
+                showResult('loginResult', true, 'User login successful', response.data);
+                testResults.login = true;
+            } catch (error) {
+                log(`Login error: ${error.message}`, 'error');
+                showResult('loginResult', false, `Login failed: ${error.message}`);
+                testResults.login = false;
+            }
+        }
+
+        async function testValuesQuestions() {
+            log('Testing values questions...');
+            try {
+                const response = await apiClient.getValuesQuestions();
+                log(`Values questions response: ${JSON.stringify(response)}`, 'success');
+                showResult('valuesResult', true, 'Values questions retrieved successfully', response.data);
+                testResults.valuesQuestions = true;
+            } catch (error) {
+                log(`Values questions error: ${error.message}`, 'error');
+                showResult('valuesResult', false, `Failed to get values questions: ${error.message}`);
+                testResults.valuesQuestions = false;
+            }
+        }
+
+        async function testValuesSubmission() {
+            log('Testing values assessment submission...');
+            try {
+                const answers = {
+                    "1": { value: "growth", text: "성장과 도전" },
+                    "2": { value: "active", text: "운동이나 야외활동" }
+                };
+
+                const response = await apiClient.submitValuesAssessment(answers);
+                log(`Values submission response: ${JSON.stringify(response)}`, 'success');
+                showResult('valuesResult', true, 'Values assessment submitted successfully', response.data);
+                testResults.valuesSubmission = true;
+            } catch (error) {
+                log(`Values submission error: ${error.message}`, 'error');
+                showResult('valuesResult', false, `Values submission failed: ${error.message}`);
+                testResults.valuesSubmission = false;
+            }
+        }
+
+        async function testMatching() {
+            log('Testing matching system...');
+            try {
+                const response = await apiClient.getMyMatches();
+                log(`Matching response: ${JSON.stringify(response)}`, 'success');
+                showResult('matchingResult', true, 'Matches retrieved successfully', response.data);
+                testResults.matching = true;
+            } catch (error) {
+                log(`Matching error: ${error.message}`, 'error');
+                showResult('matchingResult', false, `Matching failed: ${error.message}`);
+                testResults.matching = false;
+            }
+        }
+
+        async function testMatchResponse() {
+            log('Testing match response...');
+            try {
+                const response = await apiClient.respondToMatch('match-1', 'like', 'Interested!');
+                log(`Match response: ${JSON.stringify(response)}`, 'success');
+                showResult('matchingResult', true, 'Match response sent successfully', response.data);
+                testResults.matchResponse = true;
+            } catch (error) {
+                log(`Match response error: ${error.message}`, 'error');
+                showResult('matchingResult', false, `Match response failed: ${error.message}`);
+                testResults.matchResponse = false;
+            }
+        }
+
+        async function runFullTest() {
+            log('Starting full integration test...', 'info');
+            
+            const fullTestBtn = event.target;
+            fullTestBtn.disabled = true;
+            fullTestBtn.textContent = 'Running Tests...';
+
+            const tests = [
+                { name: 'Health Check', func: testHealth },
+                { name: 'Registration', func: testRegister },
+                { name: 'Login', func: testLogin },
+                { name: 'Values Questions', func: testValuesQuestions },
+                { name: 'Values Submission', func: testValuesSubmission },
+                { name: 'Matching', func: testMatching },
+                { name: 'Match Response', func: testMatchResponse }
+            ];
+
+            let passed = 0;
+            let failed = 0;
+
+            for (const test of tests) {
+                try {
+                    log(`Running ${test.name}...`);
+                    await test.func();
+                    await new Promise(resolve => setTimeout(resolve, 500)); // Small delay between tests
+                    
+                    if (testResults[test.name.toLowerCase().replace(' ', '')]) {
+                        passed++;
+                        log(`${test.name} - PASSED`, 'success');
+                    } else {
+                        failed++;
+                        log(`${test.name} - FAILED`, 'error');
+                    }
+                } catch (error) {
+                    failed++;
+                    log(`${test.name} - ERROR: ${error.message}`, 'error');
+                }
+            }
+
+            const totalTests = tests.length;
+            const successRate = Math.round((passed / totalTests) * 100);
+            
+            log(`\n=== TEST SUMMARY ===`, 'info');
+            log(`Total Tests: ${totalTests}`, 'info');
+            log(`Passed: ${passed}`, 'success');
+            log(`Failed: ${failed}`, 'error');
+            log(`Success Rate: ${successRate}%`, 'info');
+
+            const message = `Integration test completed! ${passed}/${totalTests} tests passed (${successRate}%)`;
+            const isSuccess = successRate >= 80;
+            
+            showResult('fullTestResult', isSuccess, message, {
+                totalTests,
+                passed,
+                failed,
+                successRate: `${successRate}%`,
+                details: testResults
+            });
+
+            fullTestBtn.disabled = false;
+            fullTestBtn.textContent = 'Run Complete Flow';
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            log('CHARM_INYEON API Integration Test initialized');
+            log('Backend URL: ' + apiClient.baseURL);
+            
+            // Update status
+            document.getElementById('status').textContent = 'Ready to test API integration - Backend running on ' + apiClient.baseURL;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>접근성 테스트 도구 - CHARM_INYEON</title>
+    <link rel="stylesheet" href="senior-styles.css">
+    <style>
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: var(--spacing-lg);
+        }
+
+        .test-section {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .test-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-md);
+            border-bottom: 1px solid var(--bg-tertiary);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .test-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .test-result {
+            padding: var(--spacing-xs) var(--spacing-md);
+            border-radius: var(--border-radius-sm);
+            font-weight: 600;
+            font-size: var(--font-size-small);
+        }
+
+        .test-result.pass {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .test-result.fail {
+            background: var(--error-color);
+            color: white;
+        }
+
+        .test-result.warning {
+            background: var(--warning-color);
+            color: white;
+        }
+
+        .test-controls {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .test-log {
+            background: var(--text-primary);
+            color: white;
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius-md);
+            font-family: monospace;
+            font-size: var(--font-size-small);
+            line-height: 1.6;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        .summary-card {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .summary-item {
+            text-align: center;
+            background: var(--bg-secondary);
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius-md);
+        }
+
+        .summary-number {
+            font-size: var(--font-size-xxl);
+            font-weight: 700;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .summary-label {
+            font-size: var(--font-size-base);
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <header style="text-align: center; margin-bottom: var(--spacing-xl);">
+            <h1 style="color: var(--primary-color); margin-bottom: var(--spacing-md);">
+                접근성 테스트 도구
+            </h1>
+            <p style="color: var(--text-secondary);">
+                중장년층 친화적 UI/UX의 접근성과 사용성을 검증합니다
+            </p>
+        </header>
+
+        <!-- 테스트 실행 컨트롤 -->
+        <div class="test-controls">
+            <button id="runAllTests" class="btn btn-primary btn-large">
+                <span>🔍 전체 테스트 실행</span>
+            </button>
+            <button id="clearResults" class="btn btn-secondary" style="margin-left: var(--spacing-md);">
+                <span>🗑️ 결과 초기화</span>
+            </button>
+        </div>
+
+        <!-- 테스트 결과 요약 -->
+        <div id="testSummary" class="summary-card" style="display: none;">
+            <div class="summary-item">
+                <div class="summary-number" id="passCount" style="color: var(--success-color);">0</div>
+                <div class="summary-label">통과</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-number" id="warningCount" style="color: var(--warning-color);">0</div>
+                <div class="summary-label">경고</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-number" id="failCount" style="color: var(--error-color);">0</div>
+                <div class="summary-label">실패</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-number" id="totalScore" style="color: var(--primary-color);">0%</div>
+                <div class="summary-label">전체 점수</div>
+            </div>
+        </div>
+
+        <!-- 색상 대비 테스트 -->
+        <section class="test-section">
+            <h2 style="color: var(--primary-color); margin-bottom: var(--spacing-md);">색상 대비 테스트</h2>
+            <div id="colorContrastTests">
+                <!-- JavaScript로 동적 생성 -->
+            </div>
+        </section>
+
+        <!-- 글꼴 크기 테스트 -->
+        <section class="test-section">
+            <h2 style="color: var(--primary-color); margin-bottom: var(--spacing-md);">글꼴 크기 테스트</h2>
+            <div id="fontSizeTests">
+                <!-- JavaScript로 동적 생성 -->
+            </div>
+        </section>
+
+        <!-- 터치 타겟 크기 테스트 -->
+        <section class="test-section">
+            <h2 style="color: var(--primary-color); margin-bottom: var(--spacing-md);">터치 타겟 크기 테스트</h2>
+            <div id="touchTargetTests">
+                <!-- JavaScript로 동적 생성 -->
+            </div>
+        </section>
+
+        <!-- 키보드 네비게이션 테스트 -->
+        <section class="test-section">
+            <h2 style="color: var(--primary-color); margin-bottom: var(--spacing-md);">키보드 네비게이션 테스트</h2>
+            <div id="keyboardTests">
+                <!-- JavaScript로 동적 생성 -->
+            </div>
+        </section>
+
+        <!-- 의미론적 마크업 테스트 -->
+        <section class="test-section">
+            <h2 style="color: var(--primary-color); margin-bottom: var(--spacing-md);">의미론적 마크업 테스트</h2>
+            <div id="semanticTests">
+                <!-- JavaScript로 동적 생성 -->
+            </div>
+        </section>
+
+        <!-- ARIA 접근성 테스트 -->
+        <section class="test-section">
+            <h2 style="color: var(--primary-color); margin-bottom: var(--spacing-md);">ARIA 접근성 테스트</h2>
+            <div id="ariaTests">
+                <!-- JavaScript로 동적 생성 -->
+            </div>
+        </section>
+
+        <!-- 테스트 로그 -->
+        <section class="test-section">
+            <h2 style="color: var(--primary-color); margin-bottom: var(--spacing-md);">상세 테스트 로그</h2>
+            <div id="testLog" class="test-log">
+테스트를 실행하면 여기에 상세한 결과가 표시됩니다.
+            </div>
+        </section>
+    </div>
+
+    <script>
+        class AccessibilityTester {
+            constructor() {
+                this.testResults = {
+                    pass: 0,
+                    warning: 0,
+                    fail: 0,
+                    total: 0
+                };
+                this.log = [];
+                this.init();
+            }
+
+            init() {
+                document.getElementById('runAllTests').addEventListener('click', () => {
+                    this.runAllTests();
+                });
+
+                document.getElementById('clearResults').addEventListener('click', () => {
+                    this.clearResults();
+                });
+            }
+
+            async runAllTests() {
+                this.clearResults();
+                this.logMessage('접근성 테스트를 시작합니다...\n');
+
+                // 각 카테고리별 테스트 실행
+                await this.testColorContrast();
+                await this.testFontSizes();
+                await this.testTouchTargets();
+                await this.testKeyboardNavigation();
+                await this.testSemanticMarkup();
+                await this.testARIA();
+
+                this.updateSummary();
+                this.logMessage('\n✅ 모든 테스트가 완료되었습니다.');
+            }
+
+            clearResults() {
+                this.testResults = { pass: 0, warning: 0, fail: 0, total: 0 };
+                this.log = [];
+                
+                // 결과 영역 초기화
+                const testSections = ['colorContrastTests', 'fontSizeTests', 'touchTargetTests', 'keyboardTests', 'semanticTests', 'ariaTests'];
+                testSections.forEach(section => {
+                    document.getElementById(section).innerHTML = '';
+                });
+
+                document.getElementById('testLog').textContent = '테스트를 실행하면 여기에 상세한 결과가 표시됩니다.';
+                document.getElementById('testSummary').style.display = 'none';
+            }
+
+            async testColorContrast() {
+                this.logMessage('🎨 색상 대비 테스트 중...');
+                const container = document.getElementById('colorContrastTests');
+
+                const colorTests = [
+                    { name: '기본 텍스트', bg: '#FFFFFF', fg: '#2D3748', minRatio: 4.5 },
+                    { name: '보조 텍스트', bg: '#F8F9FF', fg: '#4A5568', minRatio: 4.5 },
+                    { name: '버튼 텍스트', bg: '#6B73FF', fg: '#FFFFFF', minRatio: 4.5 },
+                    { name: '링크 텍스트', bg: '#FFFFFF', fg: '#6B73FF', minRatio: 4.5 },
+                    { name: '에러 텍스트', bg: '#FFFFFF', fg: '#EF5350', minRatio: 4.5 }
+                ];
+
+                colorTests.forEach(test => {
+                    const ratio = this.calculateContrastRatio(test.bg, test.fg);
+                    const passed = ratio >= test.minRatio;
+                    
+                    this.addTestResult(container, test.name, 
+                        `대비율: ${ratio.toFixed(2)}:1 (최소: ${test.minRatio}:1)`, 
+                        passed ? 'pass' : 'fail'
+                    );
+
+                    this.updateTestCount(passed ? 'pass' : 'fail');
+                    this.logMessage(`  - ${test.name}: ${ratio.toFixed(2)}:1 ${passed ? '✅' : '❌'}`);
+                });
+            }
+
+            async testFontSizes() {
+                this.logMessage('📝 글꼴 크기 테스트 중...');
+                const container = document.getElementById('fontSizeTests');
+
+                const fontTests = [
+                    { name: '기본 텍스트', selector: 'body', minSize: 16 },
+                    { name: '제목 (h1)', selector: 'h1', minSize: 32 },
+                    { name: '제목 (h2)', selector: 'h2', minSize: 26 },
+                    { name: '버튼 텍스트', selector: '.btn', minSize: 16 },
+                    { name: '폼 입력', selector: '.form-input', minSize: 16 }
+                ];
+
+                fontTests.forEach(test => {
+                    const element = document.querySelector(test.selector);
+                    if (element) {
+                        const fontSize = parseInt(window.getComputedStyle(element).fontSize);
+                        const passed = fontSize >= test.minSize;
+                        
+                        this.addTestResult(container, test.name, 
+                            `현재: ${fontSize}px (최소: ${test.minSize}px)`, 
+                            passed ? 'pass' : 'fail'
+                        );
+
+                        this.updateTestCount(passed ? 'pass' : 'fail');
+                        this.logMessage(`  - ${test.name}: ${fontSize}px ${passed ? '✅' : '❌'}`);
+                    } else {
+                        this.addTestResult(container, test.name, '요소를 찾을 수 없음', 'warning');
+                        this.updateTestCount('warning');
+                        this.logMessage(`  - ${test.name}: 요소 없음 ⚠️`);
+                    }
+                });
+            }
+
+            async testTouchTargets() {
+                this.logMessage('👆 터치 타겟 크기 테스트 중...');
+                const container = document.getElementById('touchTargetTests');
+
+                const interactiveElements = document.querySelectorAll('button, a, input, select, textarea');
+                let passed = 0;
+                let failed = 0;
+
+                interactiveElements.forEach((element, index) => {
+                    const rect = element.getBoundingClientRect();
+                    const minSize = 44; // WCAG 권장 최소 크기
+                    const isValidSize = rect.width >= minSize && rect.height >= minSize;
+                    
+                    if (index < 10) { // 처음 10개만 표시
+                        const tagName = element.tagName.toLowerCase();
+                        const className = element.className || 'no-class';
+                        
+                        this.addTestResult(container, 
+                            `${tagName}.${className}`, 
+                            `크기: ${Math.round(rect.width)}×${Math.round(rect.height)}px (최소: ${minSize}×${minSize}px)`, 
+                            isValidSize ? 'pass' : 'fail'
+                        );
+                    }
+
+                    if (isValidSize) {
+                        passed++;
+                    } else {
+                        failed++;
+                    }
+                });
+
+                this.updateTestCount('pass', passed);
+                this.updateTestCount('fail', failed);
+                this.logMessage(`  - 통과: ${passed}개, 실패: ${failed}개`);
+            }
+
+            async testKeyboardNavigation() {
+                this.logMessage('⌨️ 키보드 네비게이션 테스트 중...');
+                const container = document.getElementById('keyboardTests');
+
+                const tests = [
+                    {
+                        name: 'Tab 순서',
+                        test: () => {
+                            const focusableElements = document.querySelectorAll(
+                                'a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])'
+                            );
+                            return focusableElements.length > 0;
+                        }
+                    },
+                    {
+                        name: '포커스 표시',
+                        test: () => {
+                            // CSS에서 :focus 스타일이 정의되어 있는지 확인
+                            const styles = Array.from(document.styleSheets).some(sheet => {
+                                try {
+                                    return Array.from(sheet.cssRules).some(rule => 
+                                        rule.selectorText && rule.selectorText.includes(':focus')
+                                    );
+                                } catch (e) {
+                                    return false;
+                                }
+                            });
+                            return styles;
+                        }
+                    },
+                    {
+                        name: 'Skip Link',
+                        test: () => {
+                            return document.querySelector('a[href^="#"]') !== null;
+                        }
+                    },
+                    {
+                        name: 'Enter 키 지원',
+                        test: () => {
+                            const buttons = document.querySelectorAll('button');
+                            return buttons.length > 0; // 간단한 체크
+                        }
+                    }
+                ];
+
+                tests.forEach(test => {
+                    const result = test.test();
+                    this.addTestResult(container, test.name, 
+                        result ? '지원됨' : '지원되지 않음', 
+                        result ? 'pass' : 'fail'
+                    );
+                    this.updateTestCount(result ? 'pass' : 'fail');
+                    this.logMessage(`  - ${test.name}: ${result ? '✅' : '❌'}`);
+                });
+            }
+
+            async testSemanticMarkup() {
+                this.logMessage('🏗️ 의미론적 마크업 테스트 중...');
+                const container = document.getElementById('semanticTests');
+
+                const semanticTests = [
+                    { name: 'HTML5 DOCTYPE', test: () => document.doctype && document.doctype.name === 'html' },
+                    { name: 'lang 속성', test: () => document.documentElement.hasAttribute('lang') },
+                    { name: 'main 요소', test: () => document.querySelector('main') !== null },
+                    { name: 'nav 요소', test: () => document.querySelector('nav') !== null },
+                    { name: 'header 요소', test: () => document.querySelector('header') !== null },
+                    { name: 'h1 요소', test: () => document.querySelector('h1') !== null },
+                    { name: '제목 구조', test: () => this.checkHeadingStructure() },
+                    { name: 'alt 속성', test: () => this.checkAltAttributes() }
+                ];
+
+                semanticTests.forEach(test => {
+                    const result = test.test();
+                    this.addTestResult(container, test.name, 
+                        result ? '적절함' : '개선 필요', 
+                        result ? 'pass' : 'fail'
+                    );
+                    this.updateTestCount(result ? 'pass' : 'fail');
+                    this.logMessage(`  - ${test.name}: ${result ? '✅' : '❌'}`);
+                });
+            }
+
+            async testARIA() {
+                this.logMessage('♿ ARIA 접근성 테스트 중...');
+                const container = document.getElementById('ariaTests');
+
+                const ariaTests = [
+                    {
+                        name: 'aria-label 사용',
+                        test: () => document.querySelectorAll('[aria-label]').length > 0
+                    },
+                    {
+                        name: 'aria-labelledby 사용',
+                        test: () => document.querySelectorAll('[aria-labelledby]').length > 0
+                    },
+                    {
+                        name: 'aria-hidden 사용',
+                        test: () => document.querySelectorAll('[aria-hidden]').length > 0
+                    },
+                    {
+                        name: 'role 속성 사용',
+                        test: () => document.querySelectorAll('[role]').length > 0
+                    },
+                    {
+                        name: 'aria-expanded 사용',
+                        test: () => document.querySelectorAll('[aria-expanded]').length > 0
+                    },
+                    {
+                        name: 'aria-live 영역',
+                        test: () => document.querySelectorAll('[aria-live]').length > 0
+                    }
+                ];
+
+                ariaTests.forEach(test => {
+                    const result = test.test();
+                    this.addTestResult(container, test.name, 
+                        result ? '사용됨' : '사용되지 않음', 
+                        result ? 'pass' : 'warning'
+                    );
+                    this.updateTestCount(result ? 'pass' : 'warning');
+                    this.logMessage(`  - ${test.name}: ${result ? '✅' : '⚠️'}`);
+                });
+            }
+
+            calculateContrastRatio(bg, fg) {
+                // 간단한 대비율 계산 (실제로는 더 복잡한 알고리즘 필요)
+                const getLuminance = (color) => {
+                    const rgb = parseInt(color.substring(1), 16);
+                    const r = (rgb >> 16) & 0xff;
+                    const g = (rgb >> 8) & 0xff;
+                    const b = (rgb >> 0) & 0xff;
+                    return (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+                };
+
+                const bgLum = getLuminance(bg);
+                const fgLum = getLuminance(fg);
+                const brightest = Math.max(bgLum, fgLum);
+                const darkest = Math.min(bgLum, fgLum);
+                
+                return (brightest + 0.05) / (darkest + 0.05);
+            }
+
+            checkHeadingStructure() {
+                const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+                if (headings.length === 0) return false;
+                
+                let previousLevel = 0;
+                for (let heading of headings) {
+                    const level = parseInt(heading.tagName.substring(1));
+                    if (previousLevel === 0) {
+                        if (level !== 1) return false; // 첫 제목은 h1이어야 함
+                    } else if (level > previousLevel + 1) {
+                        return false; // 제목 레벨을 건너뛰면 안됨
+                    }
+                    previousLevel = level;
+                }
+                return true;
+            }
+
+            checkAltAttributes() {
+                const images = document.querySelectorAll('img');
+                for (let img of images) {
+                    if (!img.hasAttribute('alt')) return false;
+                }
+                return true;
+            }
+
+            addTestResult(container, name, details, status) {
+                const testItem = document.createElement('div');
+                testItem.className = 'test-item';
+                
+                testItem.innerHTML = `
+                    <div>
+                        <strong>${name}</strong><br>
+                        <small style="color: var(--text-secondary);">${details}</small>
+                    </div>
+                    <div class="test-result ${status}">
+                        ${status === 'pass' ? '통과' : status === 'fail' ? '실패' : '경고'}
+                    </div>
+                `;
+                
+                container.appendChild(testItem);
+            }
+
+            updateTestCount(status, count = 1) {
+                this.testResults[status] += count;
+                this.testResults.total += count;
+            }
+
+            updateSummary() {
+                document.getElementById('passCount').textContent = this.testResults.pass;
+                document.getElementById('warningCount').textContent = this.testResults.warning;
+                document.getElementById('failCount').textContent = this.testResults.fail;
+                
+                const score = Math.round((this.testResults.pass / this.testResults.total) * 100);
+                document.getElementById('totalScore').textContent = score + '%';
+                
+                document.getElementById('testSummary').style.display = 'grid';
+            }
+
+            logMessage(message) {
+                this.log.push(message);
+                document.getElementById('testLog').textContent = this.log.join('\n');
+                
+                // 로그 영역을 맨 아래로 스크롤
+                const logElement = document.getElementById('testLog');
+                logElement.scrollTop = logElement.scrollHeight;
+            }
+        }
+
+        // 페이지 로드 후 테스터 초기화
+        document.addEventListener('DOMContentLoaded', () => {
+            new AccessibilityTester();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# Git post-commit 훅 - 커밋 후 자동으로 변경사항 로깅
+
+PROJECT_ROOT="/mnt/d/AI Projects/AI_matching platform"
+SCRIPT_DIR="$PROJECT_ROOT/dev-history/scripts"
+
+# 마지막 커밋 정보 가져오기
+COMMIT_HASH=$(git rev-parse HEAD)
+COMMIT_MSG=$(git log -1 --pretty=format:"%s")
+CHANGED_FILES=$(git diff-tree --no-commit-id --name-only -r HEAD)
+
+echo "=== Git Post-Commit Hook 실행 ==="
+echo "커밋: $COMMIT_HASH"
+echo "메시지: $COMMIT_MSG"
+echo "변경된 파일들:"
+echo "$CHANGED_FILES"
+
+# 변경사항 로깅
+if [ -f "$SCRIPT_DIR/conversation-logger.js" ]; then
+    node "$SCRIPT_DIR/conversation-logger.js" log-code-change "$COMMIT_MSG" $CHANGED_FILES
+    echo "코드 변경사항이 dev-history에 기록되었습니다."
+else
+    echo "conversation-logger.js를 찾을 수 없습니다."
+fi
