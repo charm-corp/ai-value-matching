@@ -302,10 +302,10 @@ matchSchema.virtual('daysSinceMatch').get(function() {
 });
 
 matchSchema.virtual('compatibilityLevel').get(function() {
-  if (this.compatibilityScore >= 90) return 'excellent';
-  if (this.compatibilityScore >= 80) return 'very_good';
-  if (this.compatibilityScore >= 70) return 'good';
-  if (this.compatibilityScore >= 60) return 'fair';
+  if (this.compatibilityScore >= 90) {return 'excellent';}
+  if (this.compatibilityScore >= 80) {return 'very_good';}
+  if (this.compatibilityScore >= 70) {return 'good';}
+  if (this.compatibilityScore >= 60) {return 'fair';}
   return 'low';
 });
 
@@ -411,9 +411,9 @@ matchSchema.methods.calculateQualityScore = function() {
   
   // 관계 진전도 (10% 비중)
   let progressScore = 0;
-  if (this.conversationStarted) progressScore += 25;
-  if (this.meetingArranged) progressScore += 50;
-  if (this.relationship.status !== 'none') progressScore += 25;
+  if (this.conversationStarted) {progressScore += 25;}
+  if (this.meetingArranged) {progressScore += 50;}
+  if (this.relationship.status !== 'none') {progressScore += 25;}
   
   score += progressScore * 0.1;
   

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance Test - Modular CSS</title>
+    <!-- 모듈화된 CSS 파일들 로드 테스트 -->
+    <link rel="stylesheet" href="styles/base/variables.css">
+    <link rel="stylesheet" href="styles/base/reset.css">
+    <link rel="stylesheet" href="styles/base/typography.css">
+    <link rel="stylesheet" href="styles/base/layout.css">
+    <link rel="stylesheet" href="styles/components/buttons.css">
+    <link rel="stylesheet" href="styles/components/cards.css">
+    <link rel="stylesheet" href="styles/components/forms.css">
+    <link rel="stylesheet" href="styles/components/modals.css">
+    <link rel="stylesheet" href="styles/components/navigation.css">
+    <link rel="stylesheet" href="styles/themes/default.css">
+    <link rel="stylesheet" href="styles/pages/landing.css">
+    <script>
+        // 성능 측정 스크립트
+        const measurePerformance = () => {
+            const perfData = performance.getEntriesByType('navigation')[0];
+            const paintEntries = performance.getEntriesByType('paint');
+            
+            const metrics = {
+                // 로딩 시간 측정
+                domContentLoaded: perfData.domContentLoadedEventEnd - perfData.domContentLoadedEventStart,
+                loadComplete: perfData.loadEventEnd - perfData.loadEventStart,
+                
+                // 렌더링 측정
+                firstPaint: paintEntries.find(entry => entry.name === 'first-paint')?.startTime || 0,
+                firstContentfulPaint: paintEntries.find(entry => entry.name === 'first-contentful-paint')?.startTime || 0,
+                
+                // 리소스 로딩
+                totalResources: performance.getEntriesByType('resource').length,
+                cssResources: performance.getEntriesByType('resource').filter(r => r.name.includes('.css')).length,
+                
+                // 메모리 사용량 (가능한 경우)
+                memory: performance.memory ? {
+                    used: performance.memory.usedJSHeapSize,
+                    total: performance.memory.totalJSHeapSize,
+                    limit: performance.memory.jsHeapSizeLimit
+                } : null
+            };
+            
+            console.log('모듈화 CSS 파일 성능 측정:', metrics);
+            return metrics;
+        };
+        
+        window.addEventListener('load', () => {
+            setTimeout(measurePerformance, 100);
+        });
+    </script>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">
+                <span class="logo-text">CHARM_INYEON</span>
+            </div>
+        </nav>
+    </header>
+    
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <h1 class="hero-title">성능 테스트 페이지</h1>
+                <p class="hero-subtitle">모듈화 CSS 파일 로딩 성능 측정</p>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

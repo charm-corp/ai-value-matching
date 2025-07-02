@@ -434,9 +434,9 @@ conversationSchema.statics.findUserConversations = function(userId, status = 'ac
     participants: userId,
     status: status
   })
-  .populate('participants', 'name profileImage lastActive')
-  .populate('matchId')
-  .sort({ lastActivityAt: -1 });
+    .populate('participants', 'name profileImage lastActive')
+    .populate('matchId')
+    .sort({ lastActivityAt: -1 });
 };
 
 // 정적 메서드: 매치 대화 찾기

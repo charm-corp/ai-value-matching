@@ -88,8 +88,8 @@ router.post('/register', security.authLimiter, security.validateRegistration, as
       agreePrivacy: agreePrivacy === 'true' || agreePrivacy === true
     };
     
-    if (gender) userData.gender = gender;
-    if (phone) userData.phone = phone;
+    if (gender) {userData.gender = gender;}
+    if (phone) {userData.phone = phone;}
     if (agreeMarketing !== undefined) {
       userData.agreeMarketing = agreeMarketing === 'true' || agreeMarketing === true;
     }

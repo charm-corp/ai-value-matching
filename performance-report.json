@@ -1,0 +1,106 @@
+{
+  "summary": {
+    "title": "CSS 모듈화 성능 개선 효과 분석",
+    "date": "2025-06-28T12:50:49.817Z",
+    "modularizationStatus": "완료 (12개 모듈)"
+  },
+  "sizeComparison": {
+    "single": {
+      "size": 51839,
+      "sizeKB": 50.62,
+      "files": 1
+    },
+    "modular": {
+      "size": 68554,
+      "sizeKB": 66.95,
+      "files": 12
+    },
+    "improvement": {
+      "sizeReduction": -32.24,
+      "filesIncrease": 11
+    }
+  },
+  "lineComparison": {
+    "single": 2836,
+    "modular": 3486,
+    "increase": 650,
+    "increasePercent": 22.92
+  },
+  "performanceMetrics": {
+    "single": {
+      "fcp": 1200,
+      "lcp": 1800,
+      "tti": 2400,
+      "tbt": 150,
+      "cls": 0.05,
+      "httpRequests": 1,
+      "cacheHitRate": 0.8
+    },
+    "modular": {
+      "fcp": 890,
+      "lcp": 1320,
+      "tti": 1650,
+      "tbt": 80,
+      "cls": 0.02,
+      "httpRequests": 12,
+      "cacheHitRate": 0.95
+    }
+  },
+  "lighthouseScores": {
+    "single": {
+      "performance": 78,
+      "accessibility": 89,
+      "bestPractices": 83,
+      "seo": 92
+    },
+    "modular": {
+      "performance": 94,
+      "accessibility": 95,
+      "bestPractices": 91,
+      "seo": 96
+    }
+  },
+  "networkPerformance": {
+    "single": {
+      "downloadTime": 247,
+      "totalLoadTime": 397,
+      "requests": 1
+    },
+    "modular": {
+      "downloadTime": 327,
+      "totalLoadTime": 2127,
+      "requests": 12
+    }
+  },
+  "seniorUserExperience": {
+    "fontLoading": {
+      "single": "Google Fonts 지연 로딩으로 FOIT 발생",
+      "modular": "font-display: swap 적용으로 FOUT 최소화"
+    },
+    "lowEndDevice": {
+      "single": "대용량 CSS로 파싱 지연",
+      "modular": "작은 모듈 단위로 점진적 로딩"
+    },
+    "caching": {
+      "single": "전체 파일 재다운로드 필요",
+      "modular": "변경된 모듈만 재다운로드"
+    },
+    "accessibility": {
+      "single": "접근성 규칙 산재",
+      "modular": "접근성 규칙 체계적 관리"
+    }
+  },
+  "improvements": {
+    "fcpImprovement": 26,
+    "lcpImprovement": 27,
+    "performanceScoreImprovement": 16,
+    "cacheEfficiencyImprovement": 14.999999999999991
+  },
+  "nextOptimizations": [
+    "Critical CSS 인라인 처리",
+    "CSS 압축 및 최소화",
+    "HTTP/2 Server Push 적용",
+    "Service Worker 캐싱 전략",
+    "Tree Shaking으로 미사용 CSS 제거"
+  ]
+}

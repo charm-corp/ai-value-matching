@@ -180,7 +180,7 @@ class ChatService {
           const { conversationId, messageId } = data;
           const userId = this.userSockets.get(socket.id);
           
-          if (!userId) return;
+          if (!userId) {return;}
 
           if (messageId) {
             // 특정 메시지 읽음 처리

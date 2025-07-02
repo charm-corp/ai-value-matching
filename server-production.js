@@ -17,8 +17,8 @@ const server = http.createServer(app);
 // Socket.IO configuration for production
 const io = socketIo(server, {
   cors: {
-    origin: process.env.ALLOWED_ORIGINS?.split(',') || ["http://localhost:3000"],
-    methods: ["GET", "POST"],
+    origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'],
+    methods: ['GET', 'POST'],
     credentials: true
   },
   transports: ['websocket', 'polling'],
@@ -33,18 +33,18 @@ const PORT = process.env.PORT || 3000;
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
-      defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'", "fonts.googleapis.com"],
-      scriptSrc: ["'self'"],
-      fontSrc: ["'self'", "fonts.gstatic.com"],
-      imgSrc: ["'self'", "data:", "https:"],
-      connectSrc: ["'self'"],
-      mediaSrc: ["'self'"],
-      objectSrc: ["'none'"],
-      childSrc: ["'none'"],
-      frameSrc: ["'none'"],
-      workerSrc: ["'none'"],
-      manifestSrc: ["'self'"],
+      defaultSrc: ['\'self\''],
+      styleSrc: ['\'self\'', '\'unsafe-inline\'', 'fonts.googleapis.com'],
+      scriptSrc: ['\'self\''],
+      fontSrc: ['\'self\'', 'fonts.gstatic.com'],
+      imgSrc: ['\'self\'', 'data:', 'https:'],
+      connectSrc: ['\'self\''],
+      mediaSrc: ['\'self\''],
+      objectSrc: ['\'none\''],
+      childSrc: ['\'none\''],
+      frameSrc: ['\'none\''],
+      workerSrc: ['\'none\''],
+      manifestSrc: ['\'self\''],
       upgradeInsecureRequests: process.env.NODE_ENV === 'production' ? [] : null
     }
   },
@@ -226,7 +226,7 @@ app.get('/health', async (req, res) => {
   }
   
   const statusCode = health.status === 'healthy' ? 200 : 
-                    health.status === 'degraded' ? 206 : 503;
+    health.status === 'degraded' ? 206 : 503;
   
   res.status(statusCode).json({
     success: health.status !== 'unhealthy',
@@ -450,16 +450,16 @@ const startServer = async () => {
       console.log(`🌐 Base URL: http://localhost:${PORT}`);
       
       if (process.env.NODE_ENV === 'development') {
-        console.log(`📋 Available endpoints:`);
-        console.log(`   • GET  /health - Health check`);
-        console.log(`   • POST /api/auth/register - User registration`);
-        console.log(`   • POST /api/auth/login - User login`);
-        console.log(`   • POST /api/auth/verify-email - Email verification`);
-        console.log(`   • GET  /api/values/questions - Values questions`);
-        console.log(`   • POST /api/values/assessment - Values submission`);
-        console.log(`   • GET  /api/matching/my-matches - User matches`);
-        console.log(`   • POST /api/profile/upload-image - Profile image upload`);
-        console.log(`   • 📚 /api-docs - API documentation`);
+        console.log('📋 Available endpoints:');
+        console.log('   • GET  /health - Health check');
+        console.log('   • POST /api/auth/register - User registration');
+        console.log('   • POST /api/auth/login - User login');
+        console.log('   • POST /api/auth/verify-email - Email verification');
+        console.log('   • GET  /api/values/questions - Values questions');
+        console.log('   • POST /api/values/assessment - Values submission');
+        console.log('   • GET  /api/matching/my-matches - User matches');
+        console.log('   • POST /api/profile/upload-image - Profile image upload');
+        console.log('   • 📚 /api-docs - API documentation');
       }
       
       console.log('\n✨ Server ready to accept connections!\n');

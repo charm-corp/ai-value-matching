@@ -62,7 +62,7 @@ class AdvancedMatchingService {
       const assessment1 = await ValuesAssessment.findOne({ userId: user1._id });
       const assessment2 = await ValuesAssessment.findOne({ userId: user2._id });
 
-      if (!assessment1 || !assessment2) return 0.5;
+      if (!assessment1 || !assessment2) {return 0.5;}
 
       const values1 = assessment1.values;
       const values2 = assessment2.values;
@@ -156,7 +156,7 @@ class AdvancedMatchingService {
     const preferences1 = user1.preferences?.matching?.maritalStatusPreference || [];
     const preferences2 = user2.preferences?.matching?.maritalStatusPreference || [];
 
-    if (!status1 || !status2) return 0.5;
+    if (!status1 || !status2) {return 0.5;}
 
     let score = 0;
 
@@ -172,9 +172,9 @@ class AdvancedMatchingService {
       const pref1Match = preferences1.length === 0 || preferences1.includes(status2);
       const pref2Match = preferences2.length === 0 || preferences2.includes(status1);
       
-      if (pref1Match && pref2Match) score = 1.0;
-      else if (pref1Match || pref2Match) score = 0.7;
-      else score = 0.3;
+      if (pref1Match && pref2Match) {score = 1.0;}
+      else if (pref1Match || pref2Match) {score = 0.7;}
+      else {score = 0.3;}
     }
 
     return score;
@@ -191,24 +191,24 @@ class AdvancedMatchingService {
     let score = 0;
 
     if (pref1 === 'no_preference' && pref2 === 'no_preference') {
-      if (hasChildren1 === hasChildren2) return 1.0;
-      if (!hasChildren1 && hasChildren2) return 0.7;
-      if (hasChildren1 && !hasChildren2) return 0.7;
+      if (hasChildren1 === hasChildren2) {return 1.0;}
+      if (!hasChildren1 && hasChildren2) {return 0.7;}
+      if (hasChildren1 && !hasChildren2) {return 0.7;}
       return 0.8;
     }
 
     const checkPreference = (userHasChildren, userChildrenInfo, preference) => {
       switch (preference) {
-        case 'has_children':
-          return userHasChildren ? 1.0 : 0.2;
-        case 'no_children':
-          return !userHasChildren ? 1.0 : 0.2;
-        case 'grown_children':
-          if (!userHasChildren) return 0.6;
-          const hasGrownChildren = userChildrenInfo.ages?.some(age => age === 'adult');
-          return hasGrownChildren ? 1.0 : 0.4;
-        default:
-          return 0.8;
+      case 'has_children':
+        return userHasChildren ? 1.0 : 0.2;
+      case 'no_children':
+        return !userHasChildren ? 1.0 : 0.2;
+      case 'grown_children':
+        if (!userHasChildren) {return 0.6;}
+        const hasGrownChildren = userChildrenInfo.ages?.some(age => age === 'adult');
+        return hasGrownChildren ? 1.0 : 0.4;
+      default:
+        return 0.8;
       }
     };
 
@@ -237,7 +237,7 @@ class AdvancedMatchingService {
     const maxDistance1 = user1.preferences?.matching?.distance || 30;
     const maxDistance2 = user2.preferences?.matching?.distance || 30;
 
-    if (!coord1 || !coord2) return 0.3;
+    if (!coord1 || !coord2) {return 0.3;}
 
     const distance = this.calculateDistance(coord1[1], coord1[0], coord2[1], coord2[0]);
     const maxAllowedDistance = Math.min(maxDistance1, maxDistance2);
@@ -257,7 +257,7 @@ class AdvancedMatchingService {
     const importance2 = user2.preferences?.matching?.occupationImportance || 3;
     const avgImportance = (importance1 + importance2) / 2;
 
-    if (!occ1.industry || !occ2.industry) return 0.5;
+    if (!occ1.industry || !occ2.industry) {return 0.5;}
 
     let score = 0;
     let factors = 0;
@@ -303,8 +303,8 @@ class AdvancedMatchingService {
       'legal': ['finance', 'consulting', 'government']
     };
 
-    if (compatibleIndustries[industry1]?.includes(industry2)) return 0.7;
-    if (industry1 === 'retired' || industry2 === 'retired') return 0.6;
+    if (compatibleIndustries[industry1]?.includes(industry2)) {return 0.7;}
+    if (industry1 === 'retired' || industry2 === 'retired') {return 0.6;}
     return 0.4;
   }
 
@@ -313,7 +313,7 @@ class AdvancedMatchingService {
     const index1 = levels.indexOf(pos1);
     const index2 = levels.indexOf(pos2);
     
-    if (index1 === -1 || index2 === -1) return 0.5;
+    if (index1 === -1 || index2 === -1) {return 0.5;}
     
     const diff = Math.abs(index1 - index2);
     return Math.max(0.3, 1 - diff * 0.2);
@@ -333,7 +333,7 @@ class AdvancedMatchingService {
     const age1 = user1.age;
     const age2 = user2.age;
     
-    if (!age1 || !age2) return 0.5;
+    if (!age1 || !age2) {return 0.5;}
     
     return this.ageWeights[age1]?.[age2] || 0.5;
   }
@@ -357,7 +357,7 @@ class AdvancedMatchingService {
   async findPotentialMatches(userId, limit = 10) {
     try {
       const user = await User.findById(userId);
-      if (!user) throw new Error('User not found');
+      if (!user) {throw new Error('User not found');}
 
       const filters = this.buildMatchingFilters(user);
       
@@ -381,8 +381,8 @@ class AdvancedMatchingService {
       const potentialMatches = [];
       
       for (const candidate of candidates) {
-        if (candidate._id.toString() === userId.toString()) continue;
-        if (existingMatchIds.has(candidate._id.toString())) continue;
+        if (candidate._id.toString() === userId.toString()) {continue;}
+        if (existingMatchIds.has(candidate._id.toString())) {continue;}
 
         const compatibility = await this.calculateCompatibilityScore(user, candidate);
         
@@ -507,10 +507,10 @@ class AdvancedMatchingService {
   }
 
   calculateAIConfidence(score) {
-    if (score >= 90) return 'very_high';
-    if (score >= 80) return 'high';
-    if (score >= 70) return 'medium';
-    if (score >= 60) return 'low';
+    if (score >= 90) {return 'very_high';}
+    if (score >= 80) {return 'high';}
+    if (score >= 70) {return 'medium';}
+    if (score >= 60) {return 'low';}
     return 'very_low';
   }
 }

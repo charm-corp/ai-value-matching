@@ -2,7 +2,7 @@ const express = require('express');
 const { body, param, validationResult } = require('express-validator');
 const User = require('../models/User');
 const ValuesAssessment = require('../models/ValuesAssessment');
-const auth = require('../middleware/auth');
+const { authenticate } = require('../middleware/auth');
 const { 
   checkPrivacyConsent,
   logSensitiveDataAccess,
@@ -53,14 +53,12 @@ const router = express.Router();
  *         description: 인증 필요
  */
 router.post('/consent',
-  auth,
+  authenticate,
   sanitizeInput,
   logSensitiveDataAccess('privacy_consent'),
-  [
-    body('agreePrivacy').optional().isBoolean(),
-    body('agreeMarketing').optional().isBoolean(),
-    body('agreeTerms').optional().isBoolean()
-  ],
+  body('agreePrivacy').optional().isBoolean(),
+  body('agreeMarketing').optional().isBoolean(),
+  body('agreeTerms').optional().isBoolean(),
   async (req, res) => {
     try {
       const errors = validationResult(req);
@@ -76,9 +74,9 @@ router.post('/consent',
       const userId = req.user.id;
 
       const updateData = {};
-      if (agreePrivacy !== undefined) updateData.agreePrivacy = agreePrivacy;
-      if (agreeMarketing !== undefined) updateData.agreeMarketing = agreeMarketing;
-      if (agreeTerms !== undefined) updateData.agreeTerms = agreeTerms;
+      if (agreePrivacy !== undefined) {updateData.agreePrivacy = agreePrivacy;}
+      if (agreeMarketing !== undefined) {updateData.agreeMarketing = agreeMarketing;}
+      if (agreeTerms !== undefined) {updateData.agreeTerms = agreeTerms;}
 
       const user = await User.findByIdAndUpdate(
         userId,
@@ -129,7 +127,7 @@ router.post('/consent',
  *         description: 인증 필요
  */
 router.get('/data-export',
-  auth,
+  authenticate,
   checkPrivacyConsent(['privacy']),
   logSensitiveDataAccess('data_export'),
   specifyDataPurpose('data_portability'),
@@ -211,7 +209,7 @@ router.get('/data-export',
  *         description: 인증 필요
  */
 router.delete('/data-deletion',
-  auth,
+  authenticate,
   logSensitiveDataAccess('data_deletion'),
   specifyDataPurpose('data_erasure'),
   async (req, res) => {
@@ -266,7 +264,7 @@ router.delete('/data-deletion',
  *         description: 인증 필요
  */
 router.get('/data-access',
-  auth,
+  authenticate,
   checkPrivacyConsent(['privacy']),
   logSensitiveDataAccess('access_log_query'),
   maskPersonalData(['ip', 'userAgent']),
@@ -335,7 +333,7 @@ router.get('/data-access',
  *         description: 접근 권한 없음
  */
 router.get('/anonymized-profile/:userId',
-  auth,
+  authenticate,
   checkPrivacyConsent(['privacy']),
   logSensitiveDataAccess('anonymized_profile'),
   specifyDataPurpose('matching'),
@@ -431,7 +429,7 @@ router.get('/anonymized-profile/:userId',
  *         description: 암호화 상태 확인 완료
  */
 router.get('/encryption-status',
-  auth,
+  authenticate,
   async (req, res) => {
     try {
       const encryptionStatus = encryptionService.validateEncryption();

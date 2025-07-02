@@ -444,9 +444,9 @@ messageSchema.statics.findFlaggedMessages = function() {
     'moderation.flagged': true,
     'moderation.reviewed': false
   })
-  .populate('sender', 'name email')
-  .populate('moderation.flaggedBy', 'name email')
-  .sort({ 'moderation.flaggedAt': -1 });
+    .populate('sender', 'name email')
+    .populate('moderation.flaggedBy', 'name email')
+    .sort({ 'moderation.flaggedAt': -1 });
 };
 
 // 정적 메서드: 메시지 통계
@@ -455,20 +455,20 @@ messageSchema.statics.getMessageStats = function(timeframe = 'day') {
   let startDate;
   
   switch (timeframe) {
-    case 'hour':
-      startDate = new Date(now.getTime() - 60 * 60 * 1000);
-      break;
-    case 'day':
-      startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-      break;
-    case 'week':
-      startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-      break;
-    case 'month':
-      startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-      break;
-    default:
-      startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+  case 'hour':
+    startDate = new Date(now.getTime() - 60 * 60 * 1000);
+    break;
+  case 'day':
+    startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    break;
+  case 'week':
+    startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    break;
+  case 'month':
+    startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    break;
+  default:
+    startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
   }
   
   return this.aggregate([

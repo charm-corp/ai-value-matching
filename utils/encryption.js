@@ -36,7 +36,7 @@ class EncryptionService {
    */
   encrypt(data, keyType = 'personalInfo') {
     try {
-      if (!data) return null;
+      if (!data) {return null;}
       
       const text = typeof data === 'string' ? data : JSON.stringify(data);
       const key = Buffer.from(this.fieldKeys[keyType] || this.masterKey, 'hex').slice(0, 32);
@@ -63,7 +63,7 @@ class EncryptionService {
    */
   decrypt(encryptedData, keyType = 'personalInfo') {
     try {
-      if (!encryptedData) return null;
+      if (!encryptedData) {return null;}
       
       const parts = encryptedData.split(':');
       if (parts.length !== 3) {
@@ -135,7 +135,7 @@ class EncryptionService {
    * 데이터 해싱 (검색 가능한 암호화)
    */
   hashForSearch(data) {
-    if (!data) return null;
+    if (!data) {return null;}
     
     const normalizedData = data.toLowerCase().trim();
     return crypto.createHash('sha256')
@@ -161,7 +161,14 @@ class EncryptionService {
   encryptWithPublicKey(data, publicKeyPem) {
     try {
       const publicKey = forge.pki.publicKeyFromPem(publicKeyPem);
-      const encrypted = publicKey.encrypt(data, 'RSA-OAEP');
+      // UTF-8 문자열을 바이트로 변환 후 암호화
+      const dataBytes = forge.util.encodeUtf8(data);
+      const encrypted = publicKey.encrypt(dataBytes, 'RSA-OAEP', {
+        md: forge.md.sha256.create(),
+        mgf1: {
+          md: forge.md.sha256.create()
+        }
+      });
       return forge.util.encode64(encrypted);
     } catch (error) {
       console.error('RSA encryption error:', error);
@@ -176,7 +183,14 @@ class EncryptionService {
     try {
       const privateKey = forge.pki.privateKeyFromPem(privateKeyPem);
       const encrypted = forge.util.decode64(encryptedData);
-      return privateKey.decrypt(encrypted, 'RSA-OAEP');
+      const decryptedBytes = privateKey.decrypt(encrypted, 'RSA-OAEP', {
+        md: forge.md.sha256.create(),
+        mgf1: {
+          md: forge.md.sha256.create()
+        }
+      });
+      // 바이트를 UTF-8 문자열로 변환
+      return forge.util.decodeUtf8(decryptedBytes);
     } catch (error) {
       console.error('RSA decryption error:', error);
       throw new Error('RSA 복호화 실패');
@@ -187,25 +201,25 @@ class EncryptionService {
    * 데이터 마스킹 (부분 표시용)
    */
   maskData(data, type = 'default') {
-    if (!data) return '';
+    if (!data) {return '';}
     
     switch (type) {
-      case 'email':
-        const [username, domain] = data.split('@');
-        return username.substring(0, 2) + '*'.repeat(username.length - 2) + '@' + domain;
+    case 'email':
+      const [username, domain] = data.split('@');
+      return username.substring(0, 2) + '*'.repeat(username.length - 2) + '@' + domain;
         
-      case 'phone':
-        return data.substring(0, 3) + '-****-' + data.substring(data.length - 4);
+    case 'phone':
+      return data.substring(0, 3) + '-****-' + data.substring(data.length - 4);
         
-      case 'name':
-        return data.charAt(0) + '*'.repeat(data.length - 1);
+    case 'name':
+      return data.charAt(0) + '*'.repeat(data.length - 1);
         
-      case 'address':
-        const parts = data.split(' ');
-        return parts[0] + ' ' + '*'.repeat(10) + ' ' + (parts[parts.length - 1] || '');
+    case 'address':
+      const parts = data.split(' ');
+      return parts[0] + ' ' + '*'.repeat(10) + ' ' + (parts[parts.length - 1] || '');
         
-      default:
-        return '*'.repeat(Math.min(data.length, 8));
+    default:
+      return '*'.repeat(Math.min(data.length, 8));
     }
   }
 

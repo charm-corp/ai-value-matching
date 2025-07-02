@@ -207,7 +207,7 @@ router.get('/conversations/:id/messages', authenticate, validateObjectId('id'), 
     const { page = 1, limit = 50, before } = req.query;
     const conversationId = req.params.id;
     
-    let query = { 
+    const query = { 
       conversationId,
       isDeleted: { $ne: true }
     };
@@ -447,7 +447,7 @@ router.post('/conversations/start', authenticate, requireVerified, async (req, r
     }
     
     // 이미 대화가 존재하는지 확인
-    let existingConversation = await Conversation.findByMatch(matchId);
+    const existingConversation = await Conversation.findByMatch(matchId);
     
     if (existingConversation) {
       return res.json({

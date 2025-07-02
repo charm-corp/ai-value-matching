@@ -67,7 +67,7 @@ const valuesAssessmentSchema = new mongoose.Schema({
     },
     required: [true, '답변은 필수입니다'],
     get: function(value) {
-      if (!value) return value;
+      if (!value) {return value;}
       try {
         const decrypted = encryptionService.decryptAssessment(JSON.stringify(value));
         return JSON.parse(decrypted);
@@ -77,7 +77,7 @@ const valuesAssessmentSchema = new mongoose.Schema({
       }
     },
     set: function(value) {
-      if (!value) return value;
+      if (!value) {return value;}
       try {
         return encryptionService.encryptAssessment(JSON.stringify(value));
       } catch (error) {
@@ -366,14 +366,14 @@ const valuesAssessmentSchema = new mongoose.Schema({
 });
 
 // 인덱스
-valuesAssessmentSchema.index({ userId: 1 });
+// valuesAssessmentSchema.index({ userId: 1 }); // 제거됨 - userId에 unique:true로 인덱스 자동 생성
 valuesAssessmentSchema.index({ isCompleted: 1 });
 valuesAssessmentSchema.index({ completedAt: -1 });
 valuesAssessmentSchema.index({ version: 1 });
 
 // 가상 필드
 valuesAssessmentSchema.virtual('completionPercentage').get(function() {
-  if (this.totalQuestions === 0) return 0;
+  if (this.totalQuestions === 0) {return 0;}
   return Math.round((this.answeredQuestions / this.totalQuestions) * 100);
 });
 
@@ -424,7 +424,7 @@ valuesAssessmentSchema.methods.calculateCategoryScore = function(category) {
     }
   });
   
-  if (categoryAnswers.length === 0) return 50; // 기본값
+  if (categoryAnswers.length === 0) {return 50;} // 기본값
   
   // 카테고리별 점수 계산 로직
   let totalScore = 0;

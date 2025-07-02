@@ -1,0 +1,131 @@
+/* Critical CSS - Above the Fold 필수 스타일 (15KB 이하) */
+/* 중장년층 최적화 및 빠른 렌더링을 위한 핵심 스타일만 포함 */
+
+/* === CSS Variables (필수만) === */
+:root {
+  --primary-color: #667eea;
+  --secondary-color: #764ba2;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --text-white: #ffffff;
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --font-base: 1rem;
+  --font-lg: 1.125rem;
+  --font-2xl: 1.5rem;
+  --font-3xl: 1.875rem;
+  --font-5xl: 3rem;
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 2.5rem;
+  --spacing-4xl: 4rem;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --transition-normal: 0.3s ease;
+  --z-fixed: 1030;
+  --leading-tight: 1.2;
+  --leading-normal: 1.6;
+  --gradient-primary: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+}
+
+/* === Reset (필수만) === */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{line-height:1.15;scroll-behavior:smooth}
+body{font-family:'Noto Sans KR',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;line-height:var(--leading-normal);color:var(--text-primary);background-color:var(--bg-primary);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+ul,ol{list-style:none}
+button{cursor:pointer;background:none;border:none;font:inherit}
+img,svg{display:block;max-width:100%;height:auto}
+
+/* === 중장년층 접근성 최적화 === */
+*:focus{outline:3px solid var(--primary-color);outline-offset:3px}
+::selection{background-color:var(--primary-color);color:var(--text-white)}
+
+/* 큰 터치 영역 (최소 48px) */
+.touch-target{min-width:48px;min-height:48px;display:inline-flex;align-items:center;justify-content:center}
+
+/* 고대비 텍스트 */
+.high-contrast{color:var(--text-primary);font-weight:var(--font-medium)}
+
+/* === Typography (Above the Fold 필수) === */
+h1{font-size:var(--font-5xl);font-weight:var(--font-bold);line-height:var(--leading-tight);margin-bottom:var(--spacing-lg)}
+h2{font-size:var(--font-3xl);font-weight:var(--font-bold);line-height:var(--leading-tight);margin-bottom:var(--spacing-md)}
+h3{font-size:var(--font-2xl);font-weight:var(--font-semibold);margin-bottom:var(--spacing-md)}
+p{font-size:var(--font-lg);line-height:var(--leading-normal);margin-bottom:var(--spacing-md)}
+
+/* === Layout (컨테이너만) === */
+.container{width:100%;max-width:1200px;margin:0 auto;padding:0 var(--spacing-md)}
+
+/* === Header & Navigation === */
+.header{position:fixed;top:0;width:100%;background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.1);z-index:var(--z-fixed);transition:var(--transition-normal)}
+.nav{display:flex;justify-content:space-between;align-items:center;padding:var(--spacing-md) var(--spacing-xl);max-width:1200px;margin:0 auto;gap:var(--spacing-xl)}
+.logo-text{font-size:var(--font-3xl);font-weight:var(--font-bold);background:var(--gradient-primary);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-links{display:flex;gap:var(--spacing-xl);align-items:center}
+.nav-links a{font-weight:var(--font-medium);transition:var(--transition-normal);padding:var(--spacing-sm) var(--spacing-md);border-radius:var(--radius-md)}
+.nav-links a:hover{background-color:var(--bg-secondary)}
+
+/* === Hero Section === */
+.hero{min-height:100vh;display:flex;align-items:center;padding:var(--spacing-4xl) 0;background:linear-gradient(135deg,var(--bg-primary) 0%,var(--bg-secondary) 100%)}
+.hero-content{display:grid;grid-template-columns:1fr;gap:var(--spacing-4xl);align-items:center;width:100%}
+.hero-text{text-align:center}
+.hero-title{font-size:var(--font-5xl);font-weight:var(--font-bold);line-height:var(--leading-tight);margin-bottom:var(--spacing-lg);color:var(--text-primary)}
+.hero-subtitle{font-size:var(--font-lg);color:var(--text-secondary);margin-bottom:var(--spacing-2xl);line-height:var(--leading-normal)}
+.gradient-text{background:var(--gradient-primary);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* === Buttons (Primary만) === */
+.primary-button,.btn-primary{background:var(--gradient-primary);color:var(--text-white);padding:var(--spacing-md) var(--spacing-xl);border-radius:var(--radius-lg);font-weight:var(--font-semibold);transition:var(--transition-normal);box-shadow:var(--shadow-sm);min-height:48px;display:inline-flex;align-items:center;justify-content:center;gap:var(--spacing-sm)}
+.primary-button:hover,.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(102,126,234,0.3)}
+.secondary-button,.btn-secondary{background:transparent;color:var(--primary-color);border:2px solid var(--primary-color);padding:var(--spacing-md) var(--spacing-xl);border-radius:var(--radius-lg);font-weight:var(--font-semibold);transition:var(--transition-normal);min-height:48px;display:inline-flex;align-items:center;justify-content:center;gap:var(--spacing-sm)}
+
+/* === Hero Buttons === */
+.hero-buttons{display:flex;gap:var(--spacing-md);justify-content:center;flex-wrap:wrap;margin-top:var(--spacing-xl)}
+
+/* === Auth Buttons (Header) === */
+.auth-buttons{display:flex;gap:var(--spacing-sm);align-items:center}
+.login-btn,.signup-btn{padding:var(--spacing-sm) var(--spacing-md);border-radius:var(--radius-md);font-weight:var(--font-medium);transition:var(--transition-normal);min-height:44px;display:inline-flex;align-items:center;gap:var(--spacing-sm)}
+.login-btn{background:transparent;color:var(--text-primary)}
+.signup-btn{background:var(--primary-color);color:var(--text-white)}
+
+/* === 반응형 (모바일 우선) === */
+@media(max-width:767px){
+  .hero-title{font-size:var(--font-3xl)}
+  .hero-subtitle{font-size:var(--font-base)}
+  .nav{padding:var(--spacing-sm) var(--spacing-md);gap:var(--spacing-md)}
+  .nav-links{display:none}
+  .hero-buttons{flex-direction:column;align-items:center}
+  .container{padding:0 var(--spacing-sm)}
+}
+
+@media(min-width:768px){
+  .hero-content{grid-template-columns:1fr 1fr;text-align:left}
+  .hero-text{text-align:left}
+  .hero-buttons{justify-content:flex-start}
+  .container{padding:0 var(--spacing-lg)}
+}
+
+/* === 성능 최적화 === */
+.hero{contain:layout style paint}
+.header{will-change:transform}
+
+/* === 중장년층 특화 개선 === */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important}
+}
+
+/* 큰 폰트 지원 */
+@media(min-width:768px){
+  body{font-size:1.125rem}
+  .hero-title{font-size:4rem}
+}
+
+/* 고대비 모드 */
+@media(prefers-contrast:high){
+  :root{--text-primary:#000000;--text-secondary:#333333;--bg-primary:#ffffff;--primary-color:#0066cc}
+}

@@ -14,8 +14,8 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: process.env.ALLOWED_ORIGINS?.split(',') || ["http://localhost:3000"],
-    methods: ["GET", "POST"]
+    origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'],
+    methods: ['GET', 'POST']
   }
 });
 
@@ -232,7 +232,7 @@ const startServer = async () => {
     server.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
       console.log(`📚 API Documentation: http://localhost:${PORT}/api-docs`);
-      console.log(`💝 CHARM_INYEON Backend Ready!`);
+      console.log('💝 CHARM_INYEON Backend Ready!');
       console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
     });
   } catch (error) {

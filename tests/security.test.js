@@ -236,24 +236,24 @@ describe('성능 테스트', () => {
 describe('보안 취약점 테스트', () => {
   test('SQL 인젝션 패턴 감지', () => {
     const sqlInjectionAttempts = [
-      "'; DROP TABLE users; --",
-      "1' OR '1'='1",
-      "admin'--",
-      "' UNION SELECT * FROM users --"
+      '\'; DROP TABLE users; --',
+      '1\' OR \'1\'=\'1',
+      'admin\'--',
+      '\' UNION SELECT * FROM users --'
     ];
     
     sqlInjectionAttempts.forEach(attempt => {
       // 실제 애플리케이션에서는 이런 패턴들이 차단되어야 함
-      expect(attempt).toContain("'");
+      expect(attempt).toContain('\'');
     });
   });
 
   test('XSS 공격 패턴 감지', () => {
     const xssAttempts = [
-      "<script>alert('xss')</script>",
-      "<img src=x onerror=alert(1)>",
-      "javascript:alert('xss')",
-      "<svg onload=alert(1)>"
+      '<script>alert(\'xss\')</script>',
+      '<img src=x onerror=alert(1)>',
+      'javascript:alert(\'xss\')',
+      '<svg onload=alert(1)>'
     ];
     
     xssAttempts.forEach(attempt => {

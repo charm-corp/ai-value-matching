@@ -251,7 +251,21 @@ const userSchema = new mongoose.Schema({
     },
     income: {
       type: String,
-      enum: ['under_30', '30_50', '50_70', '70_100', '100_150', '150_plus'],
+      validate: {
+        validator: function(value) {
+          // 암호화된 값이면 복호화해서 검증
+          try {
+            const decrypted = value ? encryptionService.decryptSensitive(value) : value;
+            const validValues = ['under_30', '30_50', '50_70', '70_100', '100_150', '150_plus'];
+            return !decrypted || validValues.includes(decrypted);
+          } catch (error) {
+            // 복호화 실패하면 원본 값으로 검증
+            const validValues = ['under_30', '30_50', '50_70', '70_100', '100_150', '150_plus'];
+            return !value || validValues.includes(value);
+          }
+        },
+        message: '유효한 소득 범위를 선택해주세요'
+      },
       get: function(value) {
         return value ? encryptionService.decryptSensitive(value) : value;
       },
@@ -502,16 +516,14 @@ const userSchema = new mongoose.Schema({
   toObject: { virtuals: true }
 });
 
-// 인덱스 설정
-userSchema.index({ email: 1 });
+// 인덱스 설정 (중복 제거됨 - email은 unique:true로, coordinates는 index:'2dsphere'로 자동 생성)
 userSchema.index({ isActive: 1, isVerified: 1 });
 userSchema.index({ lastActive: -1 });
-userSchema.index({ 'location.coordinates': '2dsphere' });
 userSchema.index({ age: 1, gender: 1 });
 
 // 가상 필드
 userSchema.virtual('ageNumeric').get(function() {
-  if (!this.age) return null;
+  if (!this.age) {return null;}
   
   const ageMap = {
     '40-45': 42.5,
@@ -529,7 +541,7 @@ userSchema.virtual('ageNumeric').get(function() {
 // 미들웨어: 비밀번호 암호화
 userSchema.pre('save', async function(next) {
   // 비밀번호가 수정되지 않았으면 건너뛰기
-  if (!this.isModified('password')) return next();
+  if (!this.isModified('password')) {return next();}
   
   try {
     // 비밀번호 해싱
@@ -617,7 +629,7 @@ userSchema.methods.isInAgeRange = function(targetUser) {
   const myAge = this.ageNumeric;
   const targetAge = targetUser.ageNumeric;
   
-  if (!myAge || !targetAge) return false;
+  if (!myAge || !targetAge) {return false;}
   
   const { min, max } = this.preferences.matching.ageRange;
   return targetAge >= min && targetAge <= max;

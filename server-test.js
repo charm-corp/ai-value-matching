@@ -12,10 +12,10 @@ app.use(helmet({
   crossOriginEmbedderPolicy: false,
   contentSecurityPolicy: {
     directives: {
-      defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      scriptSrc: ["'self'", "'unsafe-inline'"],
-      imgSrc: ["'self'", "data:", "https:"],
+      defaultSrc: ['\'self\''],
+      styleSrc: ['\'self\'', '\'unsafe-inline\''],
+      scriptSrc: ['\'self\'', '\'unsafe-inline\''],
+      imgSrc: ['\'self\'', 'data:', 'https:'],
     },
   },
 }));
@@ -137,24 +137,24 @@ app.get('/api/values/questions', (req, res) => {
   const questions = [
     {
       id: 1,
-      text: "인생에서 가장 중요하게 생각하는 가치는 무엇인가요?",
-      category: "life_values",
+      text: '인생에서 가장 중요하게 생각하는 가치는 무엇인가요?',
+      category: 'life_values',
       options: [
-        { value: "family", text: "가족과의 시간" },
-        { value: "growth", text: "성장과 도전" },
-        { value: "stability", text: "안정과 평화" },
-        { value: "freedom", text: "자유와 독립" }
+        { value: 'family', text: '가족과의 시간' },
+        { value: 'growth', text: '성장과 도전' },
+        { value: 'stability', text: '안정과 평화' },
+        { value: 'freedom', text: '자유와 독립' }
       ]
     },
     {
       id: 2,
-      text: "여가 시간을 어떻게 보내는 것을 선호하시나요?",
-      category: "lifestyle",
+      text: '여가 시간을 어떻게 보내는 것을 선호하시나요?',
+      category: 'lifestyle',
       options: [
-        { value: "quiet", text: "조용한 곳에서 독서나 명상" },
-        { value: "social", text: "친구들과 함께 활동" },
-        { value: "active", text: "운동이나 야외활동" },
-        { value: "creative", text: "예술이나 창작활동" }
+        { value: 'quiet', text: '조용한 곳에서 독서나 명상' },
+        { value: 'social', text: '친구들과 함께 활동' },
+        { value: 'active', text: '운동이나 야외활동' },
+        { value: 'creative', text: '예술이나 창작활동' }
       ]
     }
   ];
@@ -198,9 +198,9 @@ app.post('/api/values/assessment', mockAuth, async (req, res) => {
           creativity: 3
         },
         aiAnalysis: {
-          primaryPersonality: "성장 지향적",
-          secondaryTraits: ["안정 추구", "가족 중심"],
-          recommendedMatchTypes: ["동반자형", "성장형"]
+          primaryPersonality: '성장 지향적',
+          secondaryTraits: ['안정 추구', '가족 중심'],
+          recommendedMatchTypes: ['동반자형', '성장형']
         },
         completed: true,
         completedAt: new Date().toISOString()
@@ -405,19 +405,19 @@ const server = app.listen(PORT, () => {
   console.log(`📍 Health check: http://localhost:${PORT}/health`);
   console.log(`🔧 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`⚡ Server started at: ${new Date().toISOString()}`);
-  console.log(`📋 Available endpoints:`);
-  console.log(`   • POST /api/auth/register - Mock user registration`);
-  console.log(`   • POST /api/auth/login - Mock user login`);
-  console.log(`   • GET  /api/auth/me - Mock user info`);
-  console.log(`   • POST /api/auth/refresh - Mock token refresh`);
-  console.log(`   • GET  /api/values/questions - Mock values questions`);
-  console.log(`   • POST /api/values/assessment - Mock values submission`);
-  console.log(`   • GET  /api/values/assessment - Mock values results`);
-  console.log(`   • POST /api/matching/generate - Mock match generation`);
-  console.log(`   • GET  /api/matching/my-matches - Mock user matches`);
-  console.log(`   • POST /api/matching/matches/:id/respond - Mock match response`);
-  console.log(`   • GET  /api/matching/mutual-matches - Mock mutual matches`);
-  console.log(`   • GET  /api/matching/stats - Mock matching stats`);
+  console.log('📋 Available endpoints:');
+  console.log('   • POST /api/auth/register - Mock user registration');
+  console.log('   • POST /api/auth/login - Mock user login');
+  console.log('   • GET  /api/auth/me - Mock user info');
+  console.log('   • POST /api/auth/refresh - Mock token refresh');
+  console.log('   • GET  /api/values/questions - Mock values questions');
+  console.log('   • POST /api/values/assessment - Mock values submission');
+  console.log('   • GET  /api/values/assessment - Mock values results');
+  console.log('   • POST /api/matching/generate - Mock match generation');
+  console.log('   • GET  /api/matching/my-matches - Mock user matches');
+  console.log('   • POST /api/matching/matches/:id/respond - Mock match response');
+  console.log('   • GET  /api/matching/mutual-matches - Mock mutual matches');
+  console.log('   • GET  /api/matching/stats - Mock matching stats');
 });
 
 // Graceful shutdown

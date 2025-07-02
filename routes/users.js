@@ -113,9 +113,9 @@ router.put('/profile', authenticate, validateProfileUpdate, async (req, res) => 
     
     const { name, bio, phone, location } = req.body;
     
-    if (name) user.name = name;
-    if (bio !== undefined) user.bio = bio;
-    if (phone !== undefined) user.phone = phone;
+    if (name) {user.name = name;}
+    if (bio !== undefined) {user.bio = bio;}
+    if (phone !== undefined) {user.phone = phone;}
     if (location) {
       user.location = { ...user.location, ...location };
     }

@@ -94,17 +94,17 @@ const sanitizeInput = (req, res, next) => {
 // 입력값 검증 유틸리티
 const validateInput = {
   email: (email) => {
-    if (!email || typeof email !== 'string') return false;
+    if (!email || typeof email !== 'string') {return false;}
     return validator.isEmail(email) && email.length <= 254;
   },
   
   password: (password) => {
-    if (!password || typeof password !== 'string') return false;
+    if (!password || typeof password !== 'string') {return false;}
     return password.length >= 8 && password.length <= 128;
   },
   
   name: (name) => {
-    if (!name || typeof name !== 'string') return false;
+    if (!name || typeof name !== 'string') {return false;}
     const trimmed = name.trim();
     return trimmed.length >= 1 && trimmed.length <= 50 && /^[가-힣a-zA-Z\s]+$/.test(trimmed);
   },
@@ -120,22 +120,22 @@ const validateInput = {
   },
   
   phone: (phone) => {
-    if (!phone) return true; // 선택사항
+    if (!phone) {return true;} // 선택사항
     return validator.isMobilePhone(phone, 'ko-KR');
   },
   
   bio: (bio) => {
-    if (!bio) return true; // 선택사항
+    if (!bio) {return true;} // 선택사항
     return typeof bio === 'string' && bio.trim().length <= 500;
   },
   
   verificationCode: (code) => {
-    if (!code || typeof code !== 'string') return false;
+    if (!code || typeof code !== 'string') {return false;}
     return /^\d{6}$/.test(code);
   },
   
   objectId: (id) => {
-    if (!id || typeof id !== 'string') return false;
+    if (!id || typeof id !== 'string') {return false;}
     return validator.isMongoId(id);
   }
 };

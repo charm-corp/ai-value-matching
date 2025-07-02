@@ -122,7 +122,7 @@ const maskPersonalData = (fields = []) => {
  * 민감한 필드 마스킹 함수
  */
 function maskSensitiveFields(obj, fields) {
-  if (!obj || typeof obj !== 'object') return obj;
+  if (!obj || typeof obj !== 'object') {return obj;}
   
   const masked = Array.isArray(obj) ? [] : {};
   
@@ -331,7 +331,7 @@ const anonymizeData = (fields = []) => {
  * 필드 익명화 함수
  */
 function anonymizeFields(obj, fields) {
-  if (!obj || typeof obj !== 'object') return obj;
+  if (!obj || typeof obj !== 'object') {return obj;}
   
   const anonymized = Array.isArray(obj) ? [] : {};
   

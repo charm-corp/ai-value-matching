@@ -379,7 +379,7 @@ function analyzeLocationDistribution(matches, userId) {
 }
 
 function analyzeCompatibilityBreakdown(matches) {
-  if (matches.length === 0) return {};
+  if (matches.length === 0) {return {};}
   
   const breakdown = {
     valuesAlignment: 0,
@@ -465,7 +465,7 @@ function generateRecommendations(matches, user) {
 function analyzeSuccessPatterns(successfulMatches, userId) {
   const patterns = {};
   
-  if (successfulMatches.length === 0) return patterns;
+  if (successfulMatches.length === 0) {return patterns;}
   
   // 연령대 패턴 분석
   const ages = successfulMatches.map(match => {
@@ -538,7 +538,7 @@ function generateGeneralOptimizationSuggestions(user) {
 }
 
 function arraysEqual(a, b) {
-  if (a.length !== b.length) return false;
+  if (a.length !== b.length) {return false;}
   return a.every((val, index) => val === b[index]);
 }
 

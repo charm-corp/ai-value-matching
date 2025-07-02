@@ -59,8 +59,8 @@ router.post('/generate', authenticate, requireVerified, async (req, res) => {
     const populatedMatches = await Match.find({
       _id: { $in: newMatches.map(m => m._id) }
     })
-    .populate('user1', 'name age profileImage location bio maritalStatus hasChildren occupation lifestyle')
-    .populate('user2', 'name age profileImage location bio maritalStatus hasChildren occupation lifestyle');
+      .populate('user1', 'name age profileImage location bio maritalStatus hasChildren occupation lifestyle')
+      .populate('user2', 'name age profileImage location bio maritalStatus hasChildren occupation lifestyle');
     
     res.json({
       success: true,

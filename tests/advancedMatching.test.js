@@ -7,8 +7,8 @@ const advancedMatchingService = require('../services/advancedMatchingService');
 const { generateTestToken } = require('./helpers/auth');
 
 describe('Advanced Matching System', () => {
-  let testUsers = [];
-  let authTokens = [];
+  const testUsers = [];
+  const authTokens = [];
 
   beforeAll(async () => {
     // 테스트용 사용자 데이터 생성
@@ -277,15 +277,25 @@ describe('Advanced Matching System', () => {
 
   afterAll(async () => {
     // 테스트 데이터 정리
-    await User.deleteMany({ email: { $in: testUsers.map(u => u.email) } });
-    await ValuesAssessment.deleteMany({ userId: { $in: testUsers.map(u => u._id) } });
-    await Match.deleteMany({
-      $or: [
-        { user1: { $in: testUsers.map(u => u._id) } },
-        { user2: { $in: testUsers.map(u => u._id) } }
-      ]
-    });
-  });
+    try {
+      await User.deleteMany({ email: { $in: testUsers.map(u => u.email) } });
+      await ValuesAssessment.deleteMany({ userId: { $in: testUsers.map(u => u._id) } });
+      await Match.deleteMany({
+        $or: [
+          { user1: { $in: testUsers.map(u => u._id) } },
+          { user2: { $in: testUsers.map(u => u._id) } }
+        ]
+      });
+      
+      // MongoDB 연결 정리
+      const mongoose = require('mongoose');
+      if (mongoose.connection.readyState === 1) {
+        await mongoose.connection.close();
+      }
+    } catch (error) {
+      console.error('Cleanup error:', error);
+    }
+  }, 10000); // 10초 타임아웃
 
   describe('고도화된 호환성 점수 계산', () => {
     test('중장년층 특화 호환성 점수가 올바르게 계산되어야 함', async () => {
