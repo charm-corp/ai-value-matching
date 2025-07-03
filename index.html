@@ -1,1160 +1,1575 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!doctype html>
+<html lang="ko" id="top">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CHARM_INYEON - AI 기반 가치관 매칭 플랫폼</title>
-    
+
     <!-- DNS 프리페치 최적화 -->
-    <link rel="dns-prefetch" href="//fonts.googleapis.com">
-    <link rel="dns-prefetch" href="//fonts.gstatic.com">
-    
+    <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="//fonts.gstatic.com" />
+
     <!-- 간단한 Critical CSS -->
     <style>
-        :root {
-            --primary-color: #667eea;
-            --secondary-color: #764ba2;
-            --text-primary: #333;
-            --text-secondary: #666;
-            --text-white: #fff;
-            --bg-primary: #fff;
-            --bg-secondary: #f8fafc;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
-            line-height: 1.6;
-            color: var(--text-primary);
-            background: var(--bg-primary);
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
-        
-        /* Header */
-        .header {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-        }
-        
-        .nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .logo-text {
-            font-size: 1.5rem;
-            font-weight: bold;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
+      :root {
+        --primary-color: #667eea;
+        --secondary-color: #764ba2;
+        --text-primary: #333;
+        --text-secondary: #666;
+        --text-white: #fff;
+        --bg-primary: #fff;
+        --bg-secondary: #f8fafc;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          "Noto Sans KR",
+          -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
+        line-height: 1.6;
+        color: var(--text-primary);
+        background: var(--bg-primary);
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+      }
+
+      /* Header */
+      .header {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+      }
+
+      .nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .logo-text {
+        font-size: 1.5rem;
+        font-weight: bold;
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 2rem;
+        list-style: none;
+      }
+
+      .nav-links a {
+        text-decoration: none;
+        color: var(--text-primary);
+        font-weight: 500;
+        transition: 0.3s ease;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+      }
+
+      .nav-links a:hover {
+        background: var(--bg-secondary);
+      }
+
+      .auth-buttons {
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      .login-btn,
+      .signup-btn {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .login-btn {
+        background: transparent;
+        color: var(--text-primary);
+      }
+
+      .signup-btn {
+        background: var(--primary-color);
+        color: var(--text-white);
+      }
+
+      /* Hero Section */
+      .hero {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        padding: 4rem 0;
+        background: linear-gradient(
+          135deg,
+          var(--bg-primary) 0%,
+          var(--bg-secondary) 100%
+        );
+      }
+
+      .hero-content {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 4rem;
+        align-items: center;
+        width: 100%;
+      }
+
+      .hero-text {
+        text-align: center;
+      }
+
+      .hero-title {
+        font-size: 3rem;
+        font-weight: bold;
+        line-height: 1.2;
+        margin-bottom: 1.5rem;
+      }
+
+      .hero-subtitle {
+        font-size: 1.125rem;
+        color: var(--text-secondary);
+        margin-bottom: 2rem;
+      }
+
+      .gradient-text {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .hero-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .primary-button,
+      .secondary-button {
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .primary-button {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        color: var(--text-white);
+      }
+
+      .secondary-button {
+        background: transparent;
+        color: var(--primary-color);
+        border: 2px solid var(--primary-color);
+      }
+
+      .primary-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+      }
+
+      @media (max-width: 768px) {
         .nav-links {
-            display: flex;
-            gap: 2rem;
-            list-style: none;
+          display: none;
         }
-        
-        .nav-links a {
-            text-decoration: none;
-            color: var(--text-primary);
-            font-weight: 500;
-            transition: 0.3s ease;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-        }
-        
-        .nav-links a:hover {
-            background: var(--bg-secondary);
-        }
-        
-        .auth-buttons {
-            display: flex;
-            gap: 0.5rem;
-        }
-        
-        .login-btn, .signup-btn {
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 8px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .login-btn {
-            background: transparent;
-            color: var(--text-primary);
-        }
-        
-        .signup-btn {
-            background: var(--primary-color);
-            color: var(--text-white);
-        }
-        
-        /* Hero Section */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            padding: 4rem 0;
-            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
-        }
-        
-        .hero-content {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 4rem;
-            align-items: center;
-            width: 100%;
-        }
-        
-        .hero-text {
-            text-align: center;
-        }
-        
+
         .hero-title {
-            font-size: 3rem;
-            font-weight: bold;
-            line-height: 1.2;
-            margin-bottom: 1.5rem;
+          font-size: 2rem;
         }
-        
-        .hero-subtitle {
-            font-size: 1.125rem;
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
-        }
-        
-        .gradient-text {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
+
         .hero-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
+          flex-direction: column;
+          align-items: center;
         }
-        
-        .primary-button, .secondary-button {
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+
+        .nav {
+          padding: 1rem;
         }
-        
-        .primary-button {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: var(--text-white);
+      }
+
+      @media (min-width: 768px) {
+        .hero-content {
+          grid-template-columns: 1fr 1fr;
         }
-        
-        .secondary-button {
-            background: transparent;
-            color: var(--primary-color);
-            border: 2px solid var(--primary-color);
+
+        .hero-text {
+          text-align: left;
         }
-        
-        .primary-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+
+        .hero-buttons {
+          justify-content: flex-start;
         }
-        
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-            
-            .hero-title {
-                font-size: 2rem;
-            }
-            
-            .hero-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .nav {
-                padding: 1rem;
-            }
-        }
-        
-        @media (min-width: 768px) {
-            .hero-content {
-                grid-template-columns: 1fr 1fr;
-            }
-            
-            .hero-text {
-                text-align: left;
-            }
-            
-            .hero-buttons {
-                justify-content: flex-start;
-            }
-        }
+      }
     </style>
-    
+
     <!-- 폰트 로딩 최적화 -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" as="style">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
-    
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap"
+      as="style"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap"
+      media="print"
+      onload="this.media='all'"
+    />
+
     <!-- 메인 스타일시트 -->
-    <link rel="stylesheet" href="styles/main.css">
-</head>
-<body id="top">
+    <link rel="stylesheet" href="styles/main.css" />
+  </head>
+  <body id="top">
     <header class="header">
-        <nav class="nav">
-            <div class="logo">
-                <a href="#top" class="logo-link">
-                    <span class="logo-text">CHARM_INYEON</span>
-                </a>
-            </div>
-            <ul class="nav-links">
-                <li><a href="#" class="home-link">
-                    <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 2L2 7V22H22V7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M9 22V12H15V22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    홈
-                </a></li>
-                <li><a href="#about">소개</a></li>
-                <li><a href="#features">특징</a></li>
-                <li><a href="#how-it-works">작동원리</a></li>
-                <li><a href="#contact">문의</a></li>
-            </ul>
-            <div class="auth-buttons">
-                <button class="login-btn">
-                    <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M15 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M10 17L15 12L10 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M15 12H3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    로그인
-                </button>
-                <button class="signup-btn">
-                    <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M16 21V19C16 17.9391 15.5786 16.9217 14.8284 16.1716C14.0783 15.4214 13.0609 15 12 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <circle cx="8.5" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <line x1="20" y1="8" x2="20" y2="14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <line x1="17" y1="11" x2="23" y2="11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    회원가입
-                </button>
-            </div>
-        </nav>
+      <nav class="nav">
+        <div class="logo">
+          <a href="#top" class="logo-link">
+            <span class="logo-text">CHARM_INYEON</span>
+          </a>
+        </div>
+        <ul class="nav-links">
+          <li>
+            <a href="#top" class="home-link">
+              <svg
+                class="nav-icon"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M12 2L2 7V22H22V7L12 2Z"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M9 22V12H15V22"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              홈
+            </a>
+          </li>
+          <li><a href="#about">소개</a></li>
+          <li><a href="#features">특징</a></li>
+          <li><a href="#how-it-works">작동원리</a></li>
+          <li><a href="#contact">문의</a></li>
+        </ul>
+        <div class="auth-buttons">
+          <button class="login-btn">
+            <svg
+              class="nav-icon"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M15 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H15"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M10 17L15 12L10 7"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M15 12H3"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            로그인
+          </button>
+          <button class="signup-btn">
+            <svg
+              class="nav-icon"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M16 21V19C16 17.9391 15.5786 16.9217 14.8284 16.1716C14.0783 15.4214 13.0609 15 12 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <circle
+                cx="8.5"
+                cy="7"
+                r="4"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <line
+                x1="20"
+                y1="8"
+                x2="20"
+                y2="14"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <line
+                x1="17"
+                y1="11"
+                x2="23"
+                y2="11"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            회원가입
+          </button>
+        </div>
+      </nav>
     </header>
 
     <main>
-        <!-- Hero Section -->
-        <section class="hero">
-            <div class="hero-content">
-                <div class="hero-text">
-                    <h1 class="hero-title">
-                        인생의 황금기,<br>
-                        <span class="gradient-text">진정한 연결</span>을 찾아보세요
-                    </h1>
-                    <p class="hero-subtitle">
-                        4060세대를 위한 AI 기반 가치관 매칭 플랫폼<br>
-                        깊이 있는 대화와 의미 있는 만남이 시작됩니다
-                    </p>
-                    <div class="hero-buttons">
-                        <button class="primary-button">무료로 시작하기</button>
-                        <button class="secondary-button">
-                            <span class="play-icon">▶</span>
-                            소개 영상 보기
-                        </button>
-                    </div>
-                </div>
-                <div class="hero-visual">
-                    <div class="floating-card card-1">
-                        <div class="card-header">가치관 분석</div>
-                        <div class="card-content">
-                            <div class="progress-bar">
-                                <div class="progress-fill"></div>
-                            </div>
-                            <span>85% 일치</span>
-                        </div>
-                    </div>
-                    <div class="floating-card card-2">
-                        <div class="card-header">AI 매칭</div>
-                        <div class="card-content">
-                            <div class="matching-dots">
-                                <div class="dot active"></div>
-                                <div class="dot active"></div>
-                                <div class="dot"></div>
-                            </div>
-                            <span>매칭 중...</span>
-                        </div>
-                    </div>
-                    <div class="floating-card card-3">
-                        <div class="card-header">새로운 연결</div>
-                        <div class="card-content">
-                            <div class="profile-pics">
-                                <div class="profile-pic pic-1"></div>
-                                <div class="profile-pic pic-2"></div>
-                            </div>
-                            <span>3명의 새로운 매치</span>
-                        </div>
-                    </div>
-                </div>
+      <!-- Hero Section -->
+      <section class="hero">
+        <div class="hero-content">
+          <div class="hero-text">
+            <h1 class="hero-title">
+              인생의 황금기,<br />
+              <span class="gradient-text">진정한 연결</span>을 찾아보세요
+            </h1>
+            <p class="hero-subtitle">
+              4060세대를 위한 AI 기반 가치관 매칭 플랫폼<br />
+              깊이 있는 대화와 의미 있는 만남이 시작됩니다
+            </p>
+            <div class="hero-buttons">
+              <button
+                class="primary-button"
+                id="signup-btn"
+              >
+                무료로 시작하기
+              </button>
+              <button class="secondary-button">
+                <span class="play-icon">▶</span>
+                소개 영상 보기
+              </button>
             </div>
-        </section>
+          </div>
+          <div class="hero-visual">
+            <div class="floating-card card-1">
+              <div class="card-header">가치관 분석</div>
+              <div class="card-content">
+                <div class="progress-bar">
+                  <div class="progress-fill"></div>
+                </div>
+                <span>85% 일치</span>
+              </div>
+            </div>
+            <div class="floating-card card-2">
+              <div class="card-header">AI 매칭</div>
+              <div class="card-content">
+                <div class="matching-dots">
+                  <div class="dot active"></div>
+                  <div class="dot active"></div>
+                  <div class="dot"></div>
+                </div>
+                <span>매칭 중...</span>
+              </div>
+            </div>
+            <div class="floating-card card-3">
+              <div class="card-header">새로운 연결</div>
+              <div class="card-content">
+                <div class="profile-pics">
+                  <div class="profile-pic pic-1"></div>
+                  <div class="profile-pic pic-2"></div>
+                </div>
+                <span>3명의 새로운 매치</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-        <!-- About Section -->
-        <section id="about" class="about">
-            <div class="container">
-                <div class="section-header">
-                    <h2>왜 <span class="brand-highlight">CHARM_INYEON</span>인가요?</h2>
-                    <p class="section-subtitle">단순한 외모나 나이가 아닌, 진정한 가치관의 일치를 통해<br>의미 있는 관계를 만들어갑니다</p>
+      <!-- About Section -->
+      <section id="about" class="about">
+        <div class="container">
+          <div class="section-header">
+            <h2>왜 <span class="brand-highlight">CHARM_INYEON</span>인가요?</h2>
+            <p class="section-subtitle">
+              단순한 외모나 나이가 아닌, 진정한 가치관의 일치를 통해<br />의미
+              있는 관계를 만들어갑니다
+            </p>
+          </div>
+          <div class="about-grid">
+            <div class="about-card">
+              <div class="about-icon-wrapper">
+                <div class="about-icon location-icon">
+                  <div class="icon-bg"></div>
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <circle
+                      cx="12"
+                      cy="9"
+                      r="3"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    />
+                  </svg>
                 </div>
-                <div class="about-grid">
-                    <div class="about-card">
-                        <div class="about-icon-wrapper">
-                            <div class="about-icon location-icon">
-                                <div class="icon-bg"></div>
-                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <circle cx="12" cy="9" r="3" stroke="currentColor" stroke-width="2"/>
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="card-content">
-                            <h3>AI 가치관 분석</h3>
-                            <p>심층적인 질문과 AI 분석을 통해 당신의 진정한 가치관을 파악합니다</p>
-                        </div>
-                        <div class="card-overlay"></div>
-                    </div>
-                    <div class="about-card">
-                        <div class="about-icon-wrapper">
-                            <div class="about-icon heart-icon">
-                                <div class="icon-bg"></div>
-                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="card-content">
-                            <h3>의미 있는 매칭</h3>
-                            <p>표면적인 조건이 아닌 내면의 가치관 일치도를 기반으로 한 정확한 매칭</p>
-                        </div>
-                        <div class="card-overlay"></div>
-                    </div>
-                    <div class="about-card">
-                        <div class="about-icon-wrapper">
-                            <div class="about-icon star-icon">
-                                <div class="icon-bg"></div>
-                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="card-content">
-                            <h3>4060 특화</h3>
-                            <p>인생 경험이 풍부한 4060세대의 특성을 이해한 맞춤형 플랫폼</p>
-                        </div>
-                        <div class="card-overlay"></div>
-                    </div>
-                </div>
+              </div>
+              <div class="card-content">
+                <h3>AI 가치관 분석</h3>
+                <p>
+                  심층적인 질문과 AI 분석을 통해 당신의 진정한 가치관을
+                  파악합니다
+                </p>
+              </div>
+              <div class="card-overlay"></div>
             </div>
-        </section>
+            <div class="about-card">
+              <div class="about-icon-wrapper">
+                <div class="about-icon heart-icon">
+                  <div class="icon-bg"></div>
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </div>
+              </div>
+              <div class="card-content">
+                <h3>의미 있는 매칭</h3>
+                <p>
+                  표면적인 조건이 아닌 내면의 가치관 일치도를 기반으로 한 정확한
+                  매칭
+                </p>
+              </div>
+              <div class="card-overlay"></div>
+            </div>
+            <div class="about-card">
+              <div class="about-icon-wrapper">
+                <div class="about-icon star-icon">
+                  <div class="icon-bg"></div>
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <polygon
+                      points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </div>
+              </div>
+              <div class="card-content">
+                <h3>4060 특화</h3>
+                <p>인생 경험이 풍부한 4060세대의 특성을 이해한 맞춤형 플랫폼</p>
+              </div>
+              <div class="card-overlay"></div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-        <!-- Features Section -->
-        <section id="features" class="features">
-            <div class="container">
-                <div class="section-header">
-                    <h2>특별한 기능들</h2>
-                    <p>깊이 있는 연결을 위한 혁신적인 기능들을 경험해보세요</p>
-                </div>
-                <div class="features-grid">
-                    <div class="feature-item">
-                        <div class="feature-visual">
-                            <div class="feature-icon">📊</div>
-                        </div>
-                        <h3>심층 가치관 분석</h3>
-                        <p>100여 개의 정교한 질문을 통해 당신의 가치관을 다차원적으로 분석합니다</p>
-                    </div>
-                    <div class="feature-item">
-                        <div class="feature-visual">
-                            <div class="feature-icon">🤖</div>
-                        </div>
-                        <h3>스마트 AI 매칭</h3>
-                        <p>머신러닝 알고리즘이 당신과 가장 잘 맞는 상대를 정확하게 찾아드립니다</p>
-                    </div>
-                    <div class="feature-item">
-                        <div class="feature-visual">
-                            <div class="feature-icon">💬</div>
-                        </div>
-                        <h3>대화 가이드</h3>
-                        <p>첫 만남이 어색하지 않도록 AI가 개인 맞춤형 대화 주제를 제안합니다</p>
-                    </div>
-                    <div class="feature-item">
-                        <div class="feature-visual">
-                            <div class="feature-icon">🔒</div>
-                        </div>
-                        <h3>안전한 환경</h3>
-                        <p>철저한 본인 인증과 프라이버시 보호로 안전하고 신뢰할 수 있는 만남을 보장합니다</p>
-                    </div>
-                </div>
+      <!-- Features Section -->
+      <section id="features" class="features">
+        <div class="container">
+          <div class="section-header">
+            <h2>특별한 기능들</h2>
+            <p>깊이 있는 연결을 위한 혁신적인 기능들을 경험해보세요</p>
+          </div>
+          <div class="features-grid">
+            <div class="feature-item">
+              <div class="feature-visual">
+                <div class="feature-icon">📊</div>
+              </div>
+              <h3>심층 가치관 분석</h3>
+              <p>
+                100여 개의 정교한 질문을 통해 당신의 가치관을 다차원적으로
+                분석합니다
+              </p>
             </div>
-        </section>
+            <div class="feature-item">
+              <div class="feature-visual">
+                <div class="feature-icon">🤖</div>
+              </div>
+              <h3>스마트 AI 매칭</h3>
+              <p>
+                머신러닝 알고리즘이 당신과 가장 잘 맞는 상대를 정확하게
+                찾아드립니다
+              </p>
+            </div>
+            <div class="feature-item">
+              <div class="feature-visual">
+                <div class="feature-icon">💬</div>
+              </div>
+              <h3>대화 가이드</h3>
+              <p>
+                첫 만남이 어색하지 않도록 AI가 개인 맞춤형 대화 주제를
+                제안합니다
+              </p>
+            </div>
+            <div class="feature-item">
+              <div class="feature-visual">
+                <div class="feature-icon">🔒</div>
+              </div>
+              <h3>안전한 환경</h3>
+              <p>
+                철저한 본인 인증과 프라이버시 보호로 안전하고 신뢰할 수 있는
+                만남을 보장합니다
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
 
-        <!-- How It Works Section -->
-        <section id="how-it-works" class="how-it-works">
-            <div class="container">
-                <div class="section-header">
-                    <h2>어떻게 작동하나요?</h2>
-                    <p>간단한 3단계로 시작하는 새로운 만남</p>
-                </div>
-                <div class="steps">
-                    <div class="step">
-                        <div class="step-number">1</div>
-                        <div class="step-content">
-                            <h3>가치관 진단</h3>
-                            <p>AI가 설계한 심층 질문에 답하며 당신만의 가치관 프로필을 완성합니다</p>
-                        </div>
-                    </div>
-                    <div class="step">
-                        <div class="step-number">2</div>
-                        <div class="step-content">
-                            <h3>스마트 매칭</h3>
-                            <p>AI가 수많은 회원 중에서 당신과 가치관이 일치하는 최적의 상대를 찾아드립니다</p>
-                        </div>
-                    </div>
-                    <div class="step">
-                        <div class="step-number">3</div>
-                        <div class="step-content">
-                            <h3>의미 있는 만남</h3>
-                            <p>AI 대화 가이드의 도움으로 자연스럽고 깊이 있는 대화를 시작합니다</p>
-                        </div>
-                    </div>
-                </div>
+      <!-- How It Works Section -->
+      <section id="how-it-works" class="how-it-works">
+        <div class="container">
+          <div class="section-header">
+            <h2>어떻게 작동하나요?</h2>
+            <p>간단한 3단계로 시작하는 새로운 만남</p>
+          </div>
+          <div class="steps">
+            <div class="step">
+              <div class="step-number">1</div>
+              <div class="step-content">
+                <h3>가치관 진단</h3>
+                <p>
+                  AI가 설계한 심층 질문에 답하며 당신만의 가치관 프로필을
+                  완성합니다
+                </p>
+              </div>
             </div>
-        </section>
+            <div class="step">
+              <div class="step-number">2</div>
+              <div class="step-content">
+                <h3>스마트 매칭</h3>
+                <p>
+                  AI가 수많은 회원 중에서 당신과 가치관이 일치하는 최적의 상대를
+                  찾아드립니다
+                </p>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-number">3</div>
+              <div class="step-content">
+                <h3>의미 있는 만남</h3>
+                <p>
+                  AI 대화 가이드의 도움으로 자연스럽고 깊이 있는 대화를
+                  시작합니다
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-        <!-- CTA Section -->
-        <section class="cta">
-            <div class="container">
-                <div class="cta-content">
-                    <h2>지금 시작해보세요</h2>
-                    <p>인생의 새로운 장을 여는 특별한 만남이 기다리고 있습니다</p>
-                    <button class="cta-large-button">무료로 가입하기</button>
-                    <p class="cta-note">가입비 무료 • 언제든 탈퇴 가능</p>
-                </div>
-            </div>
-        </section>
+      <!-- CTA Section -->
+      <section class="cta">
+        <div class="container">
+          <div class="cta-content">
+            <h2>지금 시작해보세요</h2>
+            <p>인생의 새로운 장을 여는 특별한 만남이 기다리고 있습니다</p>
+            <button
+              class="cta-large-button"
+              id="signup-btn-2"
+            >
+              무료로 가입하기
+            </button>
+            <p class="cta-note">가입비 무료 • 언제든 탈퇴 가능</p>
+          </div>
+        </div>
+      </section>
 
-        <!-- Contact Section -->
-        <section id="contact" class="contact">
-            <div class="container">
-                <div class="section-header">
-                    <h2>문의하기</h2>
-                    <p>궁금한 점이나 도움이 필요하시면 언제든 연락해주세요</p>
+      <!-- Contact Section -->
+      <section id="contact" class="contact">
+        <div class="container">
+          <div class="section-header">
+            <h2>문의하기</h2>
+            <p>궁금한 점이나 도움이 필요하시면 언제든 연락해주세요</p>
+          </div>
+          <div class="contact-content">
+            <div class="contact-info">
+              <div class="contact-item">
+                <div class="contact-icon">
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <polyline
+                      points="22,6 12,13 2,6"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
                 </div>
-                <div class="contact-content">
-                    <div class="contact-info">
-                        <div class="contact-item">
-                            <div class="contact-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <polyline points="22,6 12,13 2,6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </div>
-                            <div class="contact-details">
-                                <h3>이메일</h3>
-                                <p>hello@valuematch.co.kr</p>
-                                <small>24시간 이내 답변</small>
-                            </div>
-                        </div>
-                        
-                        <div class="contact-item">
-                            <div class="contact-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M22 16.92V19.92C22 20.52 21.52 21 20.92 21C10.94 21 3 13.06 3 3.08C3 2.48 3.48 2 4.08 2H7.08C7.68 2 8.16 2.48 8.16 3.08C8.16 4.27 8.35 5.42 8.72 6.49C8.86 6.9 8.74 7.35 8.41 7.68L6.63 9.46C8.08 12.36 10.64 14.92 13.54 16.37L15.32 14.59C15.65 14.26 16.1 14.14 16.51 14.28C17.58 14.65 18.73 14.84 19.92 14.84C20.52 14.84 21 15.32 21 15.92V18.92C21 19.52 20.52 20 19.92 20Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </div>
-                            <div class="contact-details">
-                                <h3>전화</h3>
-                                <p>1588-0000</p>
-                                <small>평일 9:00 - 18:00</small>
-                            </div>
-                        </div>
-                        
-                        <div class="contact-item">
-                            <div class="contact-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M21 10C21 17 12 23 12 23S3 17 3 10C3 5.03 7.03 1 12 1S21 5.03 21 10Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2"/>
-                                </svg>
-                            </div>
-                            <div class="contact-details">
-                                <h3>주소</h3>
-                                <p>서울시 강남구 테헤란로 123</p>
-                                <small>CHARM_INYEON 본사</small>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="contact-form-container">
-                        <form class="contact-form" id="contactForm">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="contactName">이름 *</label>
-                                    <input type="text" id="contactName" name="name" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="contactEmail">이메일 *</label>
-                                    <input type="email" id="contactEmail" name="email" required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="contactPhone">연락처</label>
-                                <input type="tel" id="contactPhone" name="phone">
-                            </div>
-                            <div class="form-group">
-                                <label for="contactSubject">문의 유형 *</label>
-                                <select id="contactSubject" name="subject" required>
-                                    <option value="">선택해주세요</option>
-                                    <option value="service">서비스 문의</option>
-                                    <option value="technical">기술적 문제</option>
-                                    <option value="account">계정 관련</option>
-                                    <option value="partnership">제휴 문의</option>
-                                    <option value="other">기타</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="contactMessage">메시지 *</label>
-                                <textarea id="contactMessage" name="message" rows="5" placeholder="문의하실 내용을 자세히 작성해주세요..." required></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label class="checkbox-label">
-                                    <input type="checkbox" id="contactAgreement" required>
-                                    <span class="checkmark"></span>
-                                    개인정보 수집 및 이용에 동의합니다
-                                </label>
-                            </div>
-                            <button type="submit" class="contact-submit-btn">문의 보내기</button>
-                        </form>
-                    </div>
+                <div class="contact-details">
+                  <h3>이메일</h3>
+                  <p>hello@valuematch.co.kr</p>
+                  <small>24시간 이내 답변</small>
                 </div>
+              </div>
+
+              <div class="contact-item">
+                <div class="contact-icon">
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M22 16.92V19.92C22 20.52 21.52 21 20.92 21C10.94 21 3 13.06 3 3.08C3 2.48 3.48 2 4.08 2H7.08C7.68 2 8.16 2.48 8.16 3.08C8.16 4.27 8.35 5.42 8.72 6.49C8.86 6.9 8.74 7.35 8.41 7.68L6.63 9.46C8.08 12.36 10.64 14.92 13.54 16.37L15.32 14.59C15.65 14.26 16.1 14.14 16.51 14.28C17.58 14.65 18.73 14.84 19.92 14.84C20.52 14.84 21 15.32 21 15.92V18.92C21 19.52 20.52 20 19.92 20Z"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </div>
+                <div class="contact-details">
+                  <h3>전화</h3>
+                  <p>1588-0000</p>
+                  <small>평일 9:00 - 18:00</small>
+                </div>
+              </div>
+
+              <div class="contact-item">
+                <div class="contact-icon">
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M21 10C21 17 12 23 12 23S3 17 3 10C3 5.03 7.03 1 12 1S21 5.03 21 10Z"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <circle
+                      cx="12"
+                      cy="10"
+                      r="3"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    />
+                  </svg>
+                </div>
+                <div class="contact-details">
+                  <h3>주소</h3>
+                  <p>서울시 강남구 테헤란로 123</p>
+                  <small>CHARM_INYEON 본사</small>
+                </div>
+              </div>
             </div>
-        </section>
+
+            <div class="contact-form-container">
+              <form class="contact-form" id="contactForm">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="contactName">이름 *</label>
+                    <input type="text" id="contactName" name="name" required />
+                  </div>
+                  <div class="form-group">
+                    <label for="contactEmail">이메일 *</label>
+                    <input
+                      type="email"
+                      id="contactEmail"
+                      name="email"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="contactPhone">연락처</label>
+                  <input type="tel" id="contactPhone" name="phone" />
+                </div>
+                <div class="form-group">
+                  <label for="contactSubject">문의 유형 *</label>
+                  <select id="contactSubject" name="subject" required>
+                    <option value="">선택해주세요</option>
+                    <option value="service">서비스 문의</option>
+                    <option value="technical">기술적 문제</option>
+                    <option value="account">계정 관련</option>
+                    <option value="partnership">제휴 문의</option>
+                    <option value="other">기타</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="contactMessage">메시지 *</label>
+                  <textarea
+                    id="contactMessage"
+                    name="message"
+                    rows="5"
+                    placeholder="문의하실 내용을 자세히 작성해주세요..."
+                    required
+                  ></textarea>
+                </div>
+                <div class="form-group">
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="contactAgreement" required />
+                    <span class="checkmark"></span>
+                    개인정보 수집 및 이용에 동의합니다
+                  </label>
+                </div>
+                <button type="submit" class="contact-submit-btn">
+                  문의 보내기
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
 
     <!-- Login Modal -->
     <div id="loginModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>로그인</h2>
-                <span class="close" data-modal="loginModal">&times;</span>
-            </div>
-            <form class="auth-form" id="loginForm">
-                <div class="form-group">
-                    <label for="loginEmail">이메일</label>
-                    <input type="email" id="loginEmail" name="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="loginPassword">비밀번호</label>
-                    <input type="password" id="loginPassword" name="password" required>
-                </div>
-                <div class="form-options">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="rememberMe">
-                        <span class="checkmark"></span>
-                        로그인 상태 유지
-                    </label>
-                    <a href="#" class="forgot-password">비밀번호 찾기</a>
-                </div>
-                <button type="submit" class="auth-submit-btn">로그인</button>
-                <div class="auth-divider">
-                    <span>또는</span>
-                </div>
-                <div class="social-login">
-                    <button type="button" class="social-btn google-btn">
-                        <svg width="20" height="20" viewBox="0 0 24 24">
-                            <path fill="#4285f4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                            <path fill="#34a853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                            <path fill="#fbbc05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                            <path fill="#ea4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                        </svg>
-                        Google로 로그인
-                    </button>
-                    <button type="button" class="social-btn kakao-btn">
-                        <svg width="20" height="20" viewBox="0 0 24 24">
-                            <path fill="#000000" d="M12 3c5.799 0 10.5 3.664 10.5 8.185 0 4.52-4.701 8.184-10.5 8.184a13.5 13.5 0 0 1-1.727-.11l-4.408 2.883c-.501.265-.678.236-.472-.413l.892-3.678c-2.88-1.46-4.785-3.99-4.785-6.866C1.5 6.665 6.201 3 12 3z"/>
-                        </svg>
-                        카카오로 로그인
-                    </button>
-                </div>
-                <p class="auth-switch">
-                    계정이 없으신가요? <a href="#" id="showSignup">회원가입</a>
-                </p>
-            </form>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>로그인</h2>
+          <span class="close" data-modal="loginModal">&times;</span>
         </div>
+        <form class="auth-form" id="loginForm">
+          <div class="form-group">
+            <label for="loginEmail">이메일</label>
+            <input type="email" id="loginEmail" name="email" required />
+          </div>
+          <div class="form-group">
+            <label for="loginPassword">비밀번호</label>
+            <input
+              type="password"
+              id="loginPassword"
+              name="password"
+              required
+            />
+          </div>
+          <div class="form-options">
+            <label class="checkbox-label">
+              <input type="checkbox" id="rememberMe" />
+              <span class="checkmark"></span>
+              로그인 상태 유지
+            </label>
+            <a href="#" class="forgot-password">비밀번호 찾기</a>
+          </div>
+          <button type="submit" class="auth-submit-btn">로그인</button>
+          <div class="auth-divider">
+            <span>또는</span>
+          </div>
+          <div class="social-login">
+            <button type="button" class="social-btn google-btn">
+              <svg width="20" height="20" viewBox="0 0 24 24">
+                <path
+                  fill="#4285f4"
+                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                />
+                <path
+                  fill="#34a853"
+                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                />
+                <path
+                  fill="#fbbc05"
+                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                />
+                <path
+                  fill="#ea4335"
+                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                />
+              </svg>
+              Google로 로그인
+            </button>
+            <button type="button" class="social-btn kakao-btn">
+              <svg width="20" height="20" viewBox="0 0 24 24">
+                <path
+                  fill="#000000"
+                  d="M12 3c5.799 0 10.5 3.664 10.5 8.185 0 4.52-4.701 8.184-10.5 8.184a13.5 13.5 0 0 1-1.727-.11l-4.408 2.883c-.501.265-.678.236-.472-.413l.892-3.678c-2.88-1.46-4.785-3.99-4.785-6.866C1.5 6.665 6.201 3 12 3z"
+                />
+              </svg>
+              카카오로 로그인
+            </button>
+          </div>
+          <p class="auth-switch">
+            계정이 없으신가요? <a href="#" id="showSignup">회원가입</a>
+          </p>
+        </form>
+      </div>
     </div>
 
     <!-- Signup Modal -->
     <div id="signupModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>회원가입</h2>
-                <span class="close" data-modal="signupModal">&times;</span>
-            </div>
-            <form class="auth-form" id="signupForm">
-                <div class="form-group">
-                    <label for="signupName">이름</label>
-                    <input type="text" id="signupName" name="name" required>
-                </div>
-                <div class="form-group">
-                    <label for="signupEmail">이메일</label>
-                    <input type="email" id="signupEmail" name="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="signupPassword">비밀번호</label>
-                    <input type="password" id="signupPassword" name="password" required>
-                    <div class="password-requirements">
-                        <span class="requirement" data-requirement="length">8자 이상</span>
-                        <span class="requirement" data-requirement="uppercase">대문자 포함</span>
-                        <span class="requirement" data-requirement="lowercase">소문자 포함</span>
-                        <span class="requirement" data-requirement="number">숫자 포함</span>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="confirmPassword">비밀번호 확인</label>
-                    <input type="password" id="confirmPassword" name="confirmPassword" required>
-                </div>
-                <div class="form-group">
-                    <label for="signupAge">연령대</label>
-                    <select id="signupAge" name="age" required>
-                        <option value="">선택해주세요</option>
-                        <option value="40-45">40-45세</option>
-                        <option value="46-50">46-50세</option>
-                        <option value="51-55">51-55세</option>
-                        <option value="56-60">56-60세</option>
-                        <option value="60+">60세 이상</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="agreeTerms" required>
-                        <span class="checkmark"></span>
-                        <a href="#" class="terms-link">이용약관</a> 및 <a href="#" class="privacy-link">개인정보처리방침</a>에 동의합니다
-                    </label>
-                </div>
-                <div class="form-group">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="agreeMarketing">
-                        <span class="checkmark"></span>
-                        마케팅 정보 수신에 동의합니다 (선택)
-                    </label>
-                </div>
-                <button type="submit" class="auth-submit-btn">회원가입</button>
-                <div class="auth-divider">
-                    <span>또는</span>
-                </div>
-                <div class="social-login">
-                    <button type="button" class="social-btn google-btn">
-                        <svg width="20" height="20" viewBox="0 0 24 24">
-                            <path fill="#4285f4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                            <path fill="#34a853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                            <path fill="#fbbc05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                            <path fill="#ea4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                        </svg>
-                        Google로 가입
-                    </button>
-                    <button type="button" class="social-btn kakao-btn">
-                        <svg width="20" height="20" viewBox="0 0 24 24">
-                            <path fill="#000000" d="M12 3c5.799 0 10.5 3.664 10.5 8.185 0 4.52-4.701 8.184-10.5 8.184a13.5 13.5 0 0 1-1.727-.11l-4.408 2.883c-.501.265-.678.236-.472-.413l.892-3.678c-2.88-1.46-4.785-3.99-4.785-6.866C1.5 6.665 6.201 3 12 3z"/>
-                        </svg>
-                        카카오로 가입
-                    </button>
-                </div>
-                <p class="auth-switch">
-                    이미 계정이 있으신가요? <a href="#" id="showLogin">로그인</a>
-                </p>
-            </form>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>회원가입</h2>
+          <span class="close" data-modal="signupModal">&times;</span>
         </div>
+        <form class="auth-form" id="signupForm">
+          <div class="form-group">
+            <label for="signupName">이름</label>
+            <input type="text" id="signupName" name="name" required />
+          </div>
+          <div class="form-group">
+            <label for="signupEmail">이메일</label>
+            <input type="email" id="signupEmail" name="email" required />
+          </div>
+          <div class="form-group">
+            <label for="signupPassword">비밀번호</label>
+            <input
+              type="password"
+              id="signupPassword"
+              name="password"
+              required
+            />
+            <div class="password-requirements">
+              <span class="requirement" data-requirement="length"
+                >8자 이상</span
+              >
+              <span class="requirement" data-requirement="uppercase"
+                >대문자 포함</span
+              >
+              <span class="requirement" data-requirement="lowercase"
+                >소문자 포함</span
+              >
+              <span class="requirement" data-requirement="number"
+                >숫자 포함</span
+              >
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="confirmPassword">비밀번호 확인</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="signupAge">연령대</label>
+            <select id="signupAge" name="age" required>
+              <option value="">선택해주세요</option>
+              <option value="40-45">40-45세</option>
+              <option value="46-50">46-50세</option>
+              <option value="51-55">51-55세</option>
+              <option value="56-60">56-60세</option>
+              <option value="60+">60세 이상</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="agreeTerms" required />
+              <span class="checkmark"></span>
+              <a href="#" class="terms-link">이용약관</a> 및
+              <a href="#" class="privacy-link">개인정보처리방침</a>에 동의합니다
+            </label>
+          </div>
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="agreeMarketing" />
+              <span class="checkmark"></span>
+              마케팅 정보 수신에 동의합니다 (선택)
+            </label>
+          </div>
+          <button type="submit" class="auth-submit-btn">회원가입</button>
+          <div class="auth-divider">
+            <span>또는</span>
+          </div>
+          <div class="social-login">
+            <button type="button" class="social-btn google-btn">
+              <svg width="20" height="20" viewBox="0 0 24 24">
+                <path
+                  fill="#4285f4"
+                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                />
+                <path
+                  fill="#34a853"
+                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                />
+                <path
+                  fill="#fbbc05"
+                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                />
+                <path
+                  fill="#ea4335"
+                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                />
+              </svg>
+              Google로 가입
+            </button>
+            <button type="button" class="social-btn kakao-btn">
+              <svg width="20" height="20" viewBox="0 0 24 24">
+                <path
+                  fill="#000000"
+                  d="M12 3c5.799 0 10.5 3.664 10.5 8.185 0 4.52-4.701 8.184-10.5 8.184a13.5 13.5 0 0 1-1.727-.11l-4.408 2.883c-.501.265-.678.236-.472-.413l.892-3.678c-2.88-1.46-4.785-3.99-4.785-6.866C1.5 6.665 6.201 3 12 3z"
+                />
+              </svg>
+              카카오로 가입
+            </button>
+          </div>
+          <p class="auth-switch">
+            이미 계정이 있으신가요? <a href="#" id="showLogin">로그인</a>
+          </p>
+        </form>
+      </div>
     </div>
 
-    <!-- Demo Video Modal -->
-    <div id="demoModal" class="modal demo-modal">
-        <div class="demo-modal-content">
-            <div class="demo-modal-header">
-                <h2>CHARM_INYEON 플랫폼 소개</h2>
-                <span class="close" data-modal="demoModal">&times;</span>
-            </div>
-            <div class="demo-container">
-                <div class="demo-screen">
-                    <div class="demo-step active" id="step1">
-                        <div class="phone-mockup">
-                            <div class="phone-screen">
-                                <div class="demo-header">
-                                    <div class="demo-logo">CHARM_INYEON</div>
-                                    <div class="demo-profile-icon">👤</div>
-                                </div>
-                                <div class="demo-content">
-                                    <h3>가치관 분석을 시작해보세요</h3>
-                                    <div class="demo-question-card">
-                                        <div class="question-text">인생에서 가장 중요하게 생각하는 가치는 무엇인가요?</div>
-                                        <div class="demo-options">
-                                            <div class="demo-option">가족과의 시간</div>
-                                            <div class="demo-option selected">성장과 도전</div>
-                                            <div class="demo-option">안정과 평화</div>
-                                        </div>
-                                    </div>
-                                    <div class="demo-progress">
-                                        <div class="progress-text">3/100</div>
-                                        <div class="progress-bar-demo">
-                                            <div class="progress-fill-demo"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="demo-description">
-                            <h4>1단계: 심층 가치관 분석</h4>
-                            <p>AI가 설계한 100여 개의 정교한 질문을 통해<br>당신만의 가치관 프로필을 완성합니다</p>
-                        </div>
-                    </div>
-
-                    <div class="demo-step" id="step2">
-                        <div class="phone-mockup">
-                            <div class="phone-screen">
-                                <div class="demo-header">
-                                    <div class="demo-logo">CHARM_INYEON</div>
-                                    <div class="demo-profile-icon">👤</div>
-                                </div>
-                                <div class="demo-content">
-                                    <h3>AI 매칭 결과</h3>
-                                    <div class="matching-animation">
-                                        <div class="matching-circle user-circle">
-                                            <div class="user-avatar">😊</div>
-                                            <div class="user-label">당신</div>
-                                        </div>
-                                        <div class="matching-waves">
-                                            <div class="wave wave1"></div>
-                                            <div class="wave wave2"></div>
-                                            <div class="wave wave3"></div>
-                                        </div>
-                                        <div class="matching-circle match-circle">
-                                            <div class="match-avatar">😌</div>
-                                            <div class="match-label">매치</div>
-                                        </div>
-                                    </div>
-                                    <div class="match-percentage">
-                                        <div class="percentage-text">92%</div>
-                                        <div class="percentage-label">가치관 일치도</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="demo-description">
-                            <h4>2단계: 스마트 AI 매칭</h4>
-                            <p>머신러닝 알고리즘이 수많은 회원 중에서<br>당신과 가장 잘 맞는 상대를 정확하게 찾아드립니다</p>
-                        </div>
-                    </div>
-
-                    <div class="demo-step" id="step3">
-                        <div class="phone-mockup">
-                            <div class="phone-screen">
-                                <div class="demo-header">
-                                    <div class="demo-logo">CHARM_INYEON</div>
-                                    <div class="demo-profile-icon">👤</div>
-                                </div>
-                                <div class="demo-content">
-                                    <h3>대화 시작하기</h3>
-                                    <div class="chat-demo">
-                                        <div class="ai-suggestion">
-                                            <div class="suggestion-header">💡 AI 대화 가이드</div>
-                                            <div class="suggestion-text">"여행을 통해 얻은 가장 소중한 경험이 무엇인지 궁금해요"</div>
-                                        </div>
-                                        <div class="chat-messages">
-                                            <div class="message sent">
-                                                <div class="message-bubble">안녕하세요! 프로필을 보니 여행을 좋아하시는군요</div>
-                                            </div>
-                                            <div class="message received">
-                                                <div class="message-bubble">네! 특히 혼자 떠나는 여행을 즐겨해요 😊</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="demo-description">
-                            <h4>3단계: 의미 있는 대화</h4>
-                            <p>AI 대화 가이드의 도움으로<br>자연스럽고 깊이 있는 대화를 시작합니다</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="demo-controls">
-                    <div class="demo-dots">
-                        <span class="dot active" data-step="1"></span>
-                        <span class="dot" data-step="2"></span>
-                        <span class="dot" data-step="3"></span>
-                    </div>
-                    <div class="demo-buttons">
-                        <button class="demo-btn prev-btn" disabled>이전</button>
-                        <button class="demo-btn next-btn">다음</button>
-                        <button class="demo-btn restart-btn hidden">다시보기</button>
-                    </div>
-                </div>
-            </div>
+    <!-- Enhanced Interactive Demo Modal -->
+    <div id="demoModal" class="modal enhanced-demo-modal">
+      <div class="enhanced-demo-content">
+        <div class="demo-header">
+          <h2>🎯 CHARM_INYEON 체험하기</h2>
+          <span class="close" data-modal="demoModal">&times;</span>
         </div>
+        
+        <div class="demo-progress-bar">
+          <div class="demo-progress-fill" id="demoProgressFill"></div>
+          <div class="demo-progress-text" id="demoProgressText">1 / 4</div>
+        </div>
+
+        <!-- Step 1: Interactive Survey -->
+        <div class="demo-step active" id="interactiveStep1">
+          <div class="step-container">
+            <div class="step-icon">📝</div>
+            <h3>실제 가치관 분석 체험</h3>
+            <p>몇 가지 질문에 답하며 실제 분석 과정을 경험해보세요</p>
+            
+            <div class="interactive-question" id="question1">
+              <div class="question-header">
+                <span class="question-number">Q1</span>
+                <h4>퇴근 후 가장 소중한 시간은 어떻게 보내시나요?</h4>
+              </div>
+              <div class="question-options">
+                <label class="option-card" data-value="family">
+                  <input type="radio" name="q1" value="family">
+                  <div class="option-content">
+                    <div class="option-icon">👨‍👩‍👧‍👦</div>
+                    <div class="option-text">가족과 함께하는 시간</div>
+                  </div>
+                </label>
+                <label class="option-card" data-value="hobby">
+                  <input type="radio" name="q1" value="hobby">
+                  <div class="option-content">
+                    <div class="option-icon">🎨</div>
+                    <div class="option-text">취미 활동이나 자기계발</div>
+                  </div>
+                </label>
+                <label class="option-card" data-value="rest">
+                  <input type="radio" name="q1" value="rest">
+                  <div class="option-content">
+                    <div class="option-icon">🛋️</div>
+                    <div class="option-text">편안한 휴식</div>
+                  </div>
+                </label>
+                <label class="option-card" data-value="social">
+                  <input type="radio" name="q1" value="social">
+                  <div class="option-content">
+                    <div class="option-icon">👥</div>
+                    <div class="option-text">친구들과의 만남</div>
+                  </div>
+                </label>
+              </div>
+            </div>
+            
+            <button class="next-question-btn" id="nextQ1" disabled>다음 질문</button>
+          </div>
+        </div>
+
+        <!-- Step 2: Second Question -->
+        <div class="demo-step" id="interactiveStep2">
+          <div class="step-container">
+            <div class="step-icon">💭</div>
+            <h3>가치관 심화 분석</h3>
+            
+            <div class="interactive-question" id="question2">
+              <div class="question-header">
+                <span class="question-number">Q2</span>
+                <h4>인생에서 가장 중요하게 생각하는 가치는?</h4>
+              </div>
+              <div class="question-options">
+                <label class="option-card" data-value="stability">
+                  <input type="radio" name="q2" value="stability">
+                  <div class="option-content">
+                    <div class="option-icon">🏡</div>
+                    <div class="option-text">안정과 평화</div>
+                  </div>
+                </label>
+                <label class="option-card" data-value="growth">
+                  <input type="radio" name="q2" value="growth">
+                  <div class="option-content">
+                    <div class="option-icon">🚀</div>
+                    <div class="option-text">성장과 도전</div>
+                  </div>
+                </label>
+                <label class="option-card" data-value="connection">
+                  <input type="radio" name="q2" value="connection">
+                  <div class="option-content">
+                    <div class="option-icon">❤️</div>
+                    <div class="option-text">인간관계와 사랑</div>
+                  </div>
+                </label>
+                <label class="option-card" data-value="freedom">
+                  <input type="radio" name="q2" value="freedom">
+                  <div class="option-content">
+                    <div class="option-icon">🦋</div>
+                    <div class="option-text">자유와 독립</div>
+                  </div>
+                </label>
+              </div>
+            </div>
+            
+            <button class="next-question-btn" id="nextQ2" disabled>분석 결과 보기</button>
+          </div>
+        </div>
+
+        <!-- Step 3: Real-time Analysis -->
+        <div class="demo-step" id="interactiveStep3">
+          <div class="step-container">
+            <div class="step-icon">🤖</div>
+            <h3>AI 분석 중...</h3>
+            
+            <div class="analysis-container">
+              <div class="analysis-visual">
+                <div class="brain-animation">
+                  <div class="brain-icon">🧠</div>
+                  <div class="analysis-waves">
+                    <div class="wave"></div>
+                    <div class="wave"></div>
+                    <div class="wave"></div>
+                  </div>
+                </div>
+                <div class="analysis-text" id="analysisText">
+                  답변을 분석하고 있습니다...
+                </div>
+              </div>
+              
+              <div class="analysis-progress">
+                <div class="analysis-bar">
+                  <div class="analysis-fill" id="analysisFill"></div>
+                </div>
+                <div class="analysis-percentage" id="analysisPercentage">0%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: Matching Simulation -->
+        <div class="demo-step" id="interactiveStep4">
+          <div class="step-container">
+            <div class="step-icon">✨</div>
+            <h3>매칭 결과</h3>
+            
+            <div class="matching-result">
+              <div class="user-profile">
+                <div class="profile-card your-profile">
+                  <div class="profile-avatar">👤</div>
+                  <div class="profile-info">
+                    <h4>당신의 프로필</h4>
+                    <div class="profile-tags" id="yourTags">
+                      <!-- 동적으로 생성 -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="matching-animation">
+                <div class="compatibility-circle">
+                  <div class="compatibility-number" id="compatibilityScore">0%</div>
+                  <div class="compatibility-label">가치관 일치도</div>
+                </div>
+                <div class="matching-particles">
+                  <div class="particle"></div>
+                  <div class="particle"></div>
+                  <div class="particle"></div>
+                  <div class="particle"></div>
+                  <div class="particle"></div>
+                </div>
+              </div>
+              
+              <div class="match-profiles">
+                <div class="profile-card match-profile">
+                  <div class="profile-avatar">👩</div>
+                  <div class="profile-info">
+                    <h4>이영희님</h4>
+                    <div class="profile-age">48세</div>
+                    <div class="profile-tags">
+                      <span class="tag">가족 중시</span>
+                      <span class="tag">안정 추구</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="profile-card match-profile">
+                  <div class="profile-avatar">👨</div>
+                  <div class="profile-info">
+                    <h4>김철수님</h4>
+                    <div class="profile-age">52세</div>
+                    <div class="profile-tags">
+                      <span class="tag">성장 지향</span>
+                      <span class="tag">도전적</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="demo-actions">
+              <button class="demo-action-btn primary" id="startChatDemo">대화 체험하기</button>
+              <button class="demo-action-btn secondary" id="restartDemo">다시 체험하기</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chat Demo (Hidden initially) -->
+        <div class="chat-demo-container" id="chatDemoContainer" style="display: none;">
+          <div class="chat-header">
+            <h3>💬 AI 대화 가이드 체험</h3>
+          </div>
+          <div class="chat-interface">
+            <div class="ai-suggestion active">
+              <div class="suggestion-icon">💡</div>
+              <div class="suggestion-text">"안녕하세요! 가치관이 비슷해서 흥미롭네요"</div>
+              <button class="use-suggestion-btn">이 문장 사용하기</button>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+              <!-- 메시지가 동적으로 추가됩니다 -->
+            </div>
+            <div class="chat-input-container">
+              <input type="text" id="chatInput" placeholder="메시지를 입력하세요..." disabled>
+              <button id="sendMessage" disabled>전송</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Values Analysis Modal -->
     <div id="valuesModal" class="modal values-modal">
-        <div class="values-modal-content">
-            <div class="values-modal-header">
-                <h2>가치관 분석</h2>
-                <span class="close" data-modal="valuesModal">&times;</span>
-            </div>
-            <div class="values-container">
-                <div class="values-progress-header">
-                    <div class="progress-info">
-                        <span class="current-question">1</span> / <span class="total-questions">20</span>
-                    </div>
-                    <div class="overall-progress">
-                        <div class="progress-bar-values">
-                            <div class="progress-fill-values"></div>
-                        </div>
-                        <span class="progress-percent">5%</span>
-                    </div>
-                </div>
-                
-                <div class="question-container">
-                    <div class="question-card active" data-question="1">
-                        <h3>인생에서 가장 중요하게 생각하는 가치는 무엇인가요?</h3>
-                        <div class="answer-options">
-                            <label class="answer-option">
-                                <input type="radio" name="q1" value="family">
-                                <span class="option-text">가족과의 시간</span>
-                            </label>
-                            <label class="answer-option">
-                                <input type="radio" name="q1" value="growth">
-                                <span class="option-text">성장과 도전</span>
-                            </label>
-                            <label class="answer-option">
-                                <input type="radio" name="q1" value="stability">
-                                <span class="option-text">안정과 평화</span>
-                            </label>
-                            <label class="answer-option">
-                                <input type="radio" name="q1" value="freedom">
-                                <span class="option-text">자유와 독립</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="question-card" data-question="2">
-                        <h3>여가 시간을 어떻게 보내는 것을 선호하시나요?</h3>
-                        <div class="answer-options">
-                            <label class="answer-option">
-                                <input type="radio" name="q2" value="quiet">
-                                <span class="option-text">조용한 곳에서 독서나 명상</span>
-                            </label>
-                            <label class="answer-option">
-                                <input type="radio" name="q2" value="social">
-                                <span class="option-text">친구들과 함께 활동</span>
-                            </label>
-                            <label class="answer-option">
-                                <input type="radio" name="q2" value="active">
-                                <span class="option-text">운동이나 야외활동</span>
-                            </label>
-                            <label class="answer-option">
-                                <input type="radio" name="q2" value="creative">
-                                <span class="option-text">예술이나 창작활동</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="question-card" data-question="3">
-                        <h3>어려운 결정을 내릴 때 주로 무엇을 고려하시나요?</h3>
-                        <div class="answer-options">
-                            <label class="answer-option">
-                                <input type="radio" name="q3" value="logic">
-                                <span class="option-text">논리적 분석</span>
-                            </label>
-                            <label class="answer-option">
-                                <input type="radio" name="q3" value="emotion">
-                                <span class="option-text">감정과 직감</span>
-                            </label>
-                            <label class="answer-option">
-                                <input type="radio" name="q3" value="others">
-                                <span class="option-text">주변 사람들의 의견</span>
-                            </label>
-                            <label class="answer-option">
-                                <input type="radio" name="q3" value="experience">
-                                <span class="option-text">과거 경험</span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="values-controls">
-                    <button class="values-btn prev-values-btn" disabled>이전</button>
-                    <button class="values-btn next-values-btn">다음</button>
-                    <button class="values-btn complete-values-btn hidden">분석 완료</button>
-                </div>
-            </div>
+      <div class="values-modal-content">
+        <div class="values-modal-header">
+          <h2>가치관 분석</h2>
+          <span class="close" data-modal="valuesModal">&times;</span>
         </div>
+        <div class="values-container">
+          <div class="values-progress-header">
+            <div class="progress-info">
+              <span class="current-question">1</span> /
+              <span class="total-questions">20</span>
+            </div>
+            <div class="overall-progress">
+              <div class="progress-bar-values">
+                <div class="progress-fill-values"></div>
+              </div>
+              <span class="progress-percent">5%</span>
+            </div>
+          </div>
+
+          <div class="question-container">
+            <div class="question-card active" data-question="1">
+              <h3>인생에서 가장 중요하게 생각하는 가치는 무엇인가요?</h3>
+              <div class="answer-options">
+                <label class="answer-option">
+                  <input type="radio" name="q1" value="family" />
+                  <span class="option-text">가족과의 시간</span>
+                </label>
+                <label class="answer-option">
+                  <input type="radio" name="q1" value="growth" />
+                  <span class="option-text">성장과 도전</span>
+                </label>
+                <label class="answer-option">
+                  <input type="radio" name="q1" value="stability" />
+                  <span class="option-text">안정과 평화</span>
+                </label>
+                <label class="answer-option">
+                  <input type="radio" name="q1" value="freedom" />
+                  <span class="option-text">자유와 독립</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="question-card" data-question="2">
+              <h3>여가 시간을 어떻게 보내는 것을 선호하시나요?</h3>
+              <div class="answer-options">
+                <label class="answer-option">
+                  <input type="radio" name="q2" value="quiet" />
+                  <span class="option-text">조용한 곳에서 독서나 명상</span>
+                </label>
+                <label class="answer-option">
+                  <input type="radio" name="q2" value="social" />
+                  <span class="option-text">친구들과 함께 활동</span>
+                </label>
+                <label class="answer-option">
+                  <input type="radio" name="q2" value="active" />
+                  <span class="option-text">운동이나 야외활동</span>
+                </label>
+                <label class="answer-option">
+                  <input type="radio" name="q2" value="creative" />
+                  <span class="option-text">예술이나 창작활동</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="question-card" data-question="3">
+              <h3>어려운 결정을 내릴 때 주로 무엇을 고려하시나요?</h3>
+              <div class="answer-options">
+                <label class="answer-option">
+                  <input type="radio" name="q3" value="logic" />
+                  <span class="option-text">논리적 분석</span>
+                </label>
+                <label class="answer-option">
+                  <input type="radio" name="q3" value="emotion" />
+                  <span class="option-text">감정과 직감</span>
+                </label>
+                <label class="answer-option">
+                  <input type="radio" name="q3" value="others" />
+                  <span class="option-text">주변 사람들의 의견</span>
+                </label>
+                <label class="answer-option">
+                  <input type="radio" name="q3" value="experience" />
+                  <span class="option-text">과거 경험</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="values-controls">
+            <button class="values-btn prev-values-btn" disabled>이전</button>
+            <button class="values-btn next-values-btn">다음</button>
+            <button class="values-btn complete-values-btn hidden">
+              분석 완료
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Matching Results Modal -->
     <div id="matchingModal" class="modal matching-modal">
-        <div class="matching-modal-content">
-            <div class="matching-modal-header">
-                <h2>AI 매칭 결과</h2>
-                <span class="close" data-modal="matchingModal">&times;</span>
-            </div>
-            <div class="matching-container">
-                <div class="matching-status">
-                    <div class="matching-animation-large">
-                        <div class="user-profile-large">
-                            <div class="profile-avatar">😊</div>
-                            <div class="profile-name">당신</div>
-                        </div>
-                        <div class="matching-waves-large">
-                            <div class="wave-large wave1-large"></div>
-                            <div class="wave-large wave2-large"></div>
-                            <div class="wave-large wave3-large"></div>
-                        </div>
-                        <div class="match-profile-large">
-                            <div class="profile-avatar">😌</div>
-                            <div class="profile-name">매치</div>
-                        </div>
-                    </div>
-                    <div class="matching-percentage-large">
-                        <div class="percentage-number">92%</div>
-                        <div class="percentage-text">가치관 일치도</div>
-                    </div>
-                </div>
-                
-                <div class="matches-list">
-                    <h3>추천 매치</h3>
-                    <div class="match-cards">
-                        <div class="match-card">
-                            <div class="match-avatar">👨‍💼</div>
-                            <div class="match-info">
-                                <div class="match-name">김철수</div>
-                                <div class="match-age">52세</div>
-                                <div class="match-percentage">92% 일치</div>
-                                <div class="match-tags">
-                                    <span class="tag">성장 지향</span>
-                                    <span class="tag">운동 좋아함</span>
-                                </div>
-                            </div>
-                            <button class="connect-btn">연결하기</button>
-                        </div>
-                        
-                        <div class="match-card">
-                            <div class="match-avatar">👩‍🎨</div>
-                            <div class="match-info">
-                                <div class="match-name">이영희</div>
-                                <div class="match-age">48세</div>
-                                <div class="match-percentage">87% 일치</div>
-                                <div class="match-tags">
-                                    <span class="tag">예술 애호가</span>
-                                    <span class="tag">가족 중시</span>
-                                </div>
-                            </div>
-                            <button class="connect-btn">연결하기</button>
-                        </div>
-                        
-                        <div class="match-card">
-                            <div class="match-avatar">👨‍🏫</div>
-                            <div class="match-info">
-                                <div class="match-name">박민수</div>
-                                <div class="match-age">55세</div>
-                                <div class="match-percentage">84% 일치</div>
-                                <div class="match-tags">
-                                    <span class="tag">독서 좋아함</span>
-                                    <span class="tag">안정 추구</span>
-                                </div>
-                            </div>
-                            <button class="connect-btn">연결하기</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+      <div class="matching-modal-content">
+        <div class="matching-modal-header">
+          <h2>AI 매칭 결과</h2>
+          <span class="close" data-modal="matchingModal">&times;</span>
         </div>
+        <div class="matching-container">
+          <div class="matching-status">
+            <div class="matching-animation-large">
+              <div class="user-profile-large">
+                <div class="profile-avatar">😊</div>
+                <div class="profile-name">당신</div>
+              </div>
+              <div class="matching-waves-large">
+                <div class="wave-large wave1-large"></div>
+                <div class="wave-large wave2-large"></div>
+                <div class="wave-large wave3-large"></div>
+              </div>
+              <div class="match-profile-large">
+                <div class="profile-avatar">😌</div>
+                <div class="profile-name">매치</div>
+              </div>
+            </div>
+            <div class="matching-percentage-large">
+              <div class="percentage-number">92%</div>
+              <div class="percentage-text">가치관 일치도</div>
+            </div>
+          </div>
+
+          <div class="matches-list">
+            <h3>추천 매치</h3>
+            <div class="match-cards">
+              <div class="match-card">
+                <div class="match-avatar">👨‍💼</div>
+                <div class="match-info">
+                  <div class="match-name">김철수</div>
+                  <div class="match-age">52세</div>
+                  <div class="match-percentage">92% 일치</div>
+                  <div class="match-tags">
+                    <span class="tag">성장 지향</span>
+                    <span class="tag">운동 좋아함</span>
+                  </div>
+                </div>
+                <button class="connect-btn">연결하기</button>
+              </div>
+
+              <div class="match-card">
+                <div class="match-avatar">👩‍🎨</div>
+                <div class="match-info">
+                  <div class="match-name">이영희</div>
+                  <div class="match-age">48세</div>
+                  <div class="match-percentage">87% 일치</div>
+                  <div class="match-tags">
+                    <span class="tag">예술 애호가</span>
+                    <span class="tag">가족 중시</span>
+                  </div>
+                </div>
+                <button class="connect-btn">연결하기</button>
+              </div>
+
+              <div class="match-card">
+                <div class="match-avatar">👨‍🏫</div>
+                <div class="match-info">
+                  <div class="match-name">박민수</div>
+                  <div class="match-age">55세</div>
+                  <div class="match-percentage">84% 일치</div>
+                  <div class="match-tags">
+                    <span class="tag">독서 좋아함</span>
+                    <span class="tag">안정 추구</span>
+                  </div>
+                </div>
+                <button class="connect-btn">연결하기</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Connections Modal -->
     <div id="connectionsModal" class="modal connections-modal">
-        <div class="connections-modal-content">
-            <div class="connections-modal-header">
-                <h2>새로운 연결</h2>
-                <span class="close" data-modal="connectionsModal">&times;</span>
-            </div>
-            <div class="connections-container">
-                <div class="connections-stats">
-                    <div class="stat-card">
-                        <div class="stat-number">3</div>
-                        <div class="stat-label">새로운 매치</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">7</div>
-                        <div class="stat-label">진행 중인 대화</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">15</div>
-                        <div class="stat-label">총 연결</div>
-                    </div>
-                </div>
-                
-                <div class="connections-tabs">
-                    <button class="tab-btn active" data-tab="new">새로운 매치</button>
-                    <button class="tab-btn" data-tab="active">진행 중인 대화</button>
-                    <button class="tab-btn" data-tab="all">모든 연결</button>
-                </div>
-                
-                <div class="connections-content">
-                    <div class="tab-content active" data-tab="new">
-                        <div class="connection-card">
-                            <div class="connection-avatar">👨‍💼</div>
-                            <div class="connection-info">
-                                <div class="connection-name">김철수</div>
-                                <div class="connection-preview">가치관이 92% 일치합니다</div>
-                                <div class="connection-time">방금 전</div>
-                            </div>
-                            <div class="connection-actions">
-                                <button class="action-btn primary">대화 시작</button>
-                                <button class="action-btn secondary">프로필 보기</button>
-                            </div>
-                        </div>
-                        
-                        <div class="connection-card">
-                            <div class="connection-avatar">👩‍🎨</div>
-                            <div class="connection-info">
-                                <div class="connection-name">이영희</div>
-                                <div class="connection-preview">예술과 창작에 관심이 많으시군요</div>
-                                <div class="connection-time">5분 전</div>
-                            </div>
-                            <div class="connection-actions">
-                                <button class="action-btn primary">대화 시작</button>
-                                <button class="action-btn secondary">프로필 보기</button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="tab-content" data-tab="active">
-                        <div class="connection-card">
-                            <div class="connection-avatar">👨‍🏫</div>
-                            <div class="connection-info">
-                                <div class="connection-name">박민수</div>
-                                <div class="connection-preview">여행 이야기가 정말 흥미롭네요!</div>
-                                <div class="connection-time">1시간 전</div>
-                            </div>
-                            <div class="connection-badge">3</div>
-                            <div class="connection-actions">
-                                <button class="action-btn primary">대화 계속</button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="tab-content" data-tab="all">
-                        <div class="connection-list">
-                            <div class="connection-item">
-                                <div class="connection-avatar">👨‍💼</div>
-                                <div class="connection-info">
-                                    <div class="connection-name">김철수</div>
-                                    <div class="connection-status">새로운 매치</div>
-                                </div>
-                            </div>
-                            <div class="connection-item">
-                                <div class="connection-avatar">👩‍🎨</div>
-                                <div class="connection-info">
-                                    <div class="connection-name">이영희</div>
-                                    <div class="connection-status">새로운 매치</div>
-                                </div>
-                            </div>
-                            <div class="connection-item">
-                                <div class="connection-avatar">👨‍🏫</div>
-                                <div class="connection-info">
-                                    <div class="connection-name">박민수</div>
-                                    <div class="connection-status">대화 중</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+      <div class="connections-modal-content">
+        <div class="connections-modal-header">
+          <h2>새로운 연결</h2>
+          <span class="close" data-modal="connectionsModal">&times;</span>
         </div>
+        <div class="connections-container">
+          <div class="connections-stats">
+            <div class="stat-card">
+              <div class="stat-number">3</div>
+              <div class="stat-label">새로운 매치</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number">7</div>
+              <div class="stat-label">진행 중인 대화</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number">15</div>
+              <div class="stat-label">총 연결</div>
+            </div>
+          </div>
+
+          <div class="connections-tabs">
+            <button class="tab-btn active" data-tab="new">새로운 매치</button>
+            <button class="tab-btn" data-tab="active">진행 중인 대화</button>
+            <button class="tab-btn" data-tab="all">모든 연결</button>
+          </div>
+
+          <div class="connections-content">
+            <div class="tab-content active" data-tab="new">
+              <div class="connection-card">
+                <div class="connection-avatar">👨‍💼</div>
+                <div class="connection-info">
+                  <div class="connection-name">김철수</div>
+                  <div class="connection-preview">가치관이 92% 일치합니다</div>
+                  <div class="connection-time">방금 전</div>
+                </div>
+                <div class="connection-actions">
+                  <button class="action-btn primary">대화 시작</button>
+                  <button class="action-btn secondary">프로필 보기</button>
+                </div>
+              </div>
+
+              <div class="connection-card">
+                <div class="connection-avatar">👩‍🎨</div>
+                <div class="connection-info">
+                  <div class="connection-name">이영희</div>
+                  <div class="connection-preview">
+                    예술과 창작에 관심이 많으시군요
+                  </div>
+                  <div class="connection-time">5분 전</div>
+                </div>
+                <div class="connection-actions">
+                  <button class="action-btn primary">대화 시작</button>
+                  <button class="action-btn secondary">프로필 보기</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-content" data-tab="active">
+              <div class="connection-card">
+                <div class="connection-avatar">👨‍🏫</div>
+                <div class="connection-info">
+                  <div class="connection-name">박민수</div>
+                  <div class="connection-preview">
+                    여행 이야기가 정말 흥미롭네요!
+                  </div>
+                  <div class="connection-time">1시간 전</div>
+                </div>
+                <div class="connection-badge">3</div>
+                <div class="connection-actions">
+                  <button class="action-btn primary">대화 계속</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-content" data-tab="all">
+              <div class="connection-list">
+                <div class="connection-item">
+                  <div class="connection-avatar">👨‍💼</div>
+                  <div class="connection-info">
+                    <div class="connection-name">김철수</div>
+                    <div class="connection-status">새로운 매치</div>
+                  </div>
+                </div>
+                <div class="connection-item">
+                  <div class="connection-avatar">👩‍🎨</div>
+                  <div class="connection-info">
+                    <div class="connection-name">이영희</div>
+                    <div class="connection-status">새로운 매치</div>
+                  </div>
+                </div>
+                <div class="connection-item">
+                  <div class="connection-avatar">👨‍🏫</div>
+                  <div class="connection-info">
+                    <div class="connection-name">박민수</div>
+                    <div class="connection-status">대화 중</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-brand">
-                    <div class="logo">CHARM_INYEON</div>
-                    <p>4060세대를 위한 AI 기반 가치관 매칭 플랫폼</p>
-                </div>
-                <div class="footer-links">
-                    <div class="footer-column">
-                        <h4>서비스</h4>
-                        <ul>
-                            <li><a href="#">가치관 분석</a></li>
-                            <li><a href="#">AI 매칭</a></li>
-                            <li><a href="#">대화 가이드</a></li>
-                        </ul>
-                    </div>
-                    <div class="footer-column">
-                        <h4>고객지원</h4>
-                        <ul>
-                            <li><a href="#">자주 묻는 질문</a></li>
-                            <li><a href="#">고객센터</a></li>
-                            <li><a href="#">이용약관</a></li>
-                        </ul>
-                    </div>
-                    <div class="footer-column">
-                        <h4>연락처</h4>
-                        <ul>
-                            <li>이메일: hello@valuematch.co.kr</li>
-                            <li>전화: 1588-0000</li>
-                        </ul>
-                    </div>
-                </div>
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-brand">
+            <div class="logo">CHARM_INYEON</div>
+            <p>4060세대를 위한 AI 기반 가치관 매칭 플랫폼</p>
+          </div>
+          <div class="footer-links">
+            <div class="footer-column">
+              <h4>서비스</h4>
+              <ul>
+                <li><a href="#">가치관 분석</a></li>
+                <li><a href="#">AI 매칭</a></li>
+                <li><a href="#">대화 가이드</a></li>
+              </ul>
             </div>
-            <div class="footer-bottom">
-                <p>&copy; 2024 CHARM_INYEON. All rights reserved.</p>
+            <div class="footer-column">
+              <h4>고객지원</h4>
+              <ul>
+                <li><a href="#">자주 묻는 질문</a></li>
+                <li><a href="#">고객센터</a></li>
+                <li><a href="#">이용약관</a></li>
+              </ul>
             </div>
+            <div class="footer-column">
+              <h4>연락처</h4>
+              <ul>
+                <li>이메일: hello@valuematch.co.kr</li>
+                <li>전화: 1588-0000</li>
+              </ul>
+            </div>
+          </div>
         </div>
+        <div class="footer-bottom">
+          <p>&copy; 2024 CHARM_INYEON. All rights reserved.</p>
+        </div>
+      </div>
     </footer>
 
     <!-- theme-switcher.js 비활성화 -->
     <!-- <script src="js/theme-switcher.js"></script> -->
-    
-    <script src="script.js"></script>
-</body>
+
+    <script src="script-clean.js"></script>
+  </body>
 </html>

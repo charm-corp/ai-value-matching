@@ -1,3 +1,474 @@
+// Modal functionality
+function showModal(title, message) {
+  // Remove existing modal if any
+  const existingModal = document.querySelector('.modal-overlay');
+  if (existingModal) {
+    existingModal.remove();
+  }
+  
+  // Create modal overlay
+  const modalOverlay = document.createElement('div');
+  modalOverlay.className = 'modal-overlay';
+  modalOverlay.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    animation: fadeIn 0.2s ease-out;
+  `;
+  
+  // Create modal content
+  const modalContent = document.createElement('div');
+  modalContent.className = 'modal-content';
+  modalContent.style.cssText = `
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    animation: slideUp 0.3s ease-out;
+    text-align: center;
+  `;
+  
+  modalContent.innerHTML = `
+    <h3 style="margin: 0 0 15px 0; color: #2563eb; font-size: 1.2em;">${title}</h3>
+    <p style="margin: 0 0 20px 0; color: #64748b; line-height: 1.5;">${message}</p>
+    <button class="modal-close-btn" style="
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background 0.2s;
+    ">확인</button>
+  `;
+  
+  modalOverlay.appendChild(modalContent);
+  document.body.appendChild(modalOverlay);
+  
+  // Add close functionality
+  const closeBtn = modalContent.querySelector('.modal-close-btn');
+  const closeModal = () => {
+    modalOverlay.style.animation = 'fadeOut 0.2s ease-out';
+    setTimeout(() => modalOverlay.remove(), 200);
+  };
+  
+  closeBtn.addEventListener('click', closeModal);
+  modalOverlay.addEventListener('click', (e) => {
+    if (e.target === modalOverlay) closeModal();
+  });
+  
+  // Add keyboard support
+  const handleKeyPress = (e) => {
+    if (e.key === 'Escape') {
+      closeModal();
+      document.removeEventListener('keydown', handleKeyPress);
+    }
+  };
+  document.addEventListener('keydown', handleKeyPress);
+  
+  // Hover effect for button
+  closeBtn.addEventListener('mouseenter', () => {
+    closeBtn.style.background = '#1d4ed8';
+  });
+  closeBtn.addEventListener('mouseleave', () => {
+    closeBtn.style.background = '#2563eb';
+  });
+}
+
+// 완전히 새로운 회원가입 모달 함수 (기존 signupModal과 동일하게)
+function openSignupModal() {
+  console.log('openSignupModal 함수 실행!');
+  try {
+  
+  // Remove existing modal if any
+  const existingModal = document.querySelector('.modal-overlay');
+  if (existingModal) {
+    existingModal.remove();
+  }
+  
+  // Create modal overlay
+  const modalOverlay = document.createElement('div');
+  modalOverlay.className = 'modal-overlay';
+  modalOverlay.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    animation: fadeIn 0.2s ease-out;
+  `;
+  
+  // Create modal content
+  const modalContent = document.createElement('div');
+  modalContent.className = 'modal-content';
+  modalContent.style.cssText = `
+    background: white;
+    padding: 0;
+    border-radius: 12px;
+    max-width: 450px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    animation: slideUp 0.3s ease-out;
+  `;
+  
+  modalContent.innerHTML = `
+    <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 30px; border-bottom: 1px solid #e5e7eb;">
+      <h2 style="margin: 0; color: #333; font-size: 1.4em;">회원가입</h2>
+      <span class="close-btn" style="cursor: pointer; font-size: 24px; color: #999; background: none; border: none;">&times;</span>
+    </div>
+    
+    <form class="auth-form" id="signupForm" style="padding: 30px;">
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label for="signupName" style="display: block; margin-bottom: 8px; font-weight: 500; color: #333;">이름</label>
+        <input type="text" id="signupName" name="name" required style="
+          width: 100%;
+          padding: 12px 16px;
+          border: 2px solid #e5e7eb;
+          border-radius: 8px;
+          font-size: 16px;
+          box-sizing: border-box;
+        " placeholder="실명을 입력해주세요" />
+      </div>
+      
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label for="signupEmail" style="display: block; margin-bottom: 8px; font-weight: 500; color: #333;">이메일</label>
+        <input type="email" id="signupEmail" name="email" required style="
+          width: 100%;
+          padding: 12px 16px;
+          border: 2px solid #e5e7eb;
+          border-radius: 8px;
+          font-size: 16px;
+          box-sizing: border-box;
+        " placeholder="example@email.com" />
+      </div>
+      
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label for="signupPassword" style="display: block; margin-bottom: 8px; font-weight: 500; color: #333;">비밀번호</label>
+        <input type="password" id="signupPassword" name="password" required style="
+          width: 100%;
+          padding: 12px 16px;
+          border: 2px solid #e5e7eb;
+          border-radius: 8px;
+          font-size: 16px;
+          box-sizing: border-box;
+        " placeholder="8자 이상 입력해주세요" />
+        <div class="password-requirements" style="display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap;">
+          <span class="requirement" data-requirement="length" style="
+            padding: 3px 8px; background: #f3f4f6; color: #6b7280; border-radius: 4px; font-size: 12px; transition: all 0.2s;
+          ">8자 이상</span>
+          <span class="requirement" data-requirement="uppercase" style="
+            padding: 3px 8px; background: #f3f4f6; color: #6b7280; border-radius: 4px; font-size: 12px; transition: all 0.2s;
+          ">대문자 포함</span>
+          <span class="requirement" data-requirement="lowercase" style="
+            padding: 3px 8px; background: #f3f4f6; color: #6b7280; border-radius: 4px; font-size: 12px; transition: all 0.2s;
+          ">소문자 포함</span>
+          <span class="requirement" data-requirement="number" style="
+            padding: 3px 8px; background: #f3f4f6; color: #6b7280; border-radius: 4px; font-size: 12px; transition: all 0.2s;
+          ">숫자 포함</span>
+        </div>
+      </div>
+      
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label for="confirmPassword" style="display: block; margin-bottom: 8px; font-weight: 500; color: #333;">비밀번호 확인</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" required style="
+          width: 100%;
+          padding: 12px 16px;
+          border: 2px solid #e5e7eb;
+          border-radius: 8px;
+          font-size: 16px;
+          box-sizing: border-box;
+        " placeholder="비밀번로를 다시 입력해주세요" />
+      </div>
+      
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label for="signupAge" style="display: block; margin-bottom: 8px; font-weight: 500; color: #333;">연령대</label>
+        <select id="signupAge" name="age" required style="
+          width: 100%;
+          padding: 12px 16px;
+          border: 2px solid #e5e7eb;
+          border-radius: 8px;
+          font-size: 16px;
+          box-sizing: border-box;
+        ">
+          <option value="">선택해주세요</option>
+          <option value="40-45">40-45세</option>
+          <option value="46-50">46-50세</option>
+          <option value="51-55">51-55세</option>
+          <option value="56-60">56-60세</option>
+          <option value="60+">60세 이상</option>
+        </select>
+      </div>
+      
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label class="checkbox-label" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+          <input type="checkbox" id="agreeTerms" required style="width: 16px; height: 16px;" />
+          <span style="font-size: 14px; color: #333;">
+            <a href="#" class="terms-link" style="color: #2563eb; text-decoration: none;">이용약관</a> 및
+            <a href="#" class="privacy-link" style="color: #2563eb; text-decoration: none;">개인정보처리방침</a>에 동의합니다
+          </span>
+        </label>
+      </div>
+      
+      <div class="form-group" style="margin-bottom: 25px;">
+        <label class="checkbox-label" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+          <input type="checkbox" id="agreeMarketing" style="width: 16px; height: 16px;" />
+          <span style="font-size: 14px; color: #333;">마케팅 정보 수신에 동의합니다 (선택)</span>
+        </label>
+      </div>
+      
+      <button type="submit" class="auth-submit-btn" style="
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-bottom: 20px;
+      ">회원가입</button>
+      
+      <div class="auth-divider" style="text-align: center; margin: 20px 0; position: relative;">
+        <span style="background: white; padding: 0 15px; color: #666; font-size: 14px;">또는</span>
+        <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: #e5e7eb; z-index: -1;"></div>
+      </div>
+      
+      <div class="social-login" style="display: flex; flex-direction: column; gap: 10px;">
+        <button type="button" class="social-btn google-btn" style="
+          width: 100%;
+          padding: 12px;
+          border: 2px solid #e5e7eb;
+          background: white;
+          border-radius: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+          cursor: pointer;
+          font-size: 14px;
+          font-weight: 500;
+        ">
+          <svg width="20" height="20" viewBox="0 0 24 24">
+            <path fill="#4285f4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34a853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#fbbc05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+            <path fill="#ea4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+          </svg>
+          Google로 가입
+        </button>
+        <button type="button" class="social-btn kakao-btn" style="
+          width: 100%;
+          padding: 12px;
+          background: #fee500;
+          color: #000;
+          border: none;
+          border-radius: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+          cursor: pointer;
+          font-size: 14px;
+          font-weight: 500;
+        ">
+          <svg width="20" height="20" viewBox="0 0 24 24">
+            <path fill="#000000" d="M12 3c5.799 0 10.5 3.664 10.5 8.185 0 4.52-4.701 8.184-10.5 8.184a13.5 13.5 0 0 1-1.727-.11l-4.408 2.883c-.501.265-.678.236-.472-.413l.892-3.678c-2.88-1.46-4.785-3.99-4.785-6.866C1.5 6.665 6.201 3 12 3z"/>
+          </svg>
+          카카오로 가입
+        </button>
+      </div>
+      
+      <p class="auth-switch" style="text-align: center; margin-top: 20px; font-size: 14px; color: #666;">
+        이미 계정이 있으신가요? <a href="#" id="showLoginLink" style="color: #2563eb; text-decoration: none; font-weight: 500;">로그인</a>
+      </p>
+    </form>
+  `;
+  
+  // Add to DOM
+  modalOverlay.appendChild(modalContent);
+  document.body.appendChild(modalOverlay);
+  
+  // Event listeners
+  const form = modalContent.querySelector('#signupForm');
+  const closeBtn = modalContent.querySelector('.close-btn');
+  const passwordInput = modalContent.querySelector('#signupPassword');
+  const requirements = modalContent.querySelectorAll('.requirement');
+  const googleBtn = modalContent.querySelector('.google-btn');
+  const kakaoBtn = modalContent.querySelector('.kakao-btn');
+  const showLoginLink = modalContent.querySelector('#showLoginLink');
+  
+  const closeModal = () => {
+    modalOverlay.style.animation = 'fadeOut 0.2s ease-out';
+    setTimeout(() => modalOverlay.remove(), 200);
+  };
+  
+  // Close button
+  closeBtn.addEventListener('click', closeModal);
+  
+  // Close on overlay click
+  modalOverlay.addEventListener('click', (e) => {
+    if (e.target === modalOverlay) closeModal();
+  });
+  
+  // Password validation (same as original modal)
+  function validatePassword(password) {
+    const validationResults = {
+      length: password.length >= 8,
+      uppercase: /[A-Z]/.test(password),
+      lowercase: /[a-z]/.test(password),
+      number: /\d/.test(password)
+    };
+    return validationResults;
+  }
+  
+  passwordInput.addEventListener('input', () => {
+    const password = passwordInput.value;
+    const validation = validatePassword(password);
+    
+    requirements.forEach(req => {
+      const requirement = req.dataset.requirement;
+      const isValid = validation[requirement];
+      
+      if (isValid) {
+        req.style.background = '#dcfce7';
+        req.style.color = '#166534';
+      } else {
+        req.style.background = '#f3f4f6';
+        req.style.color = '#6b7280';
+      }
+    });
+  });
+  
+  // Social login buttons
+  googleBtn.addEventListener('click', () => {
+    console.log('Google 소셜 로그인 시도');
+    closeModal();
+    showModal('준비 중', 'Google 로그인 기능을 준비 중입니다.');
+  });
+  
+  kakaoBtn.addEventListener('click', () => {
+    console.log('Kakao 소셜 로그인 시도');
+    closeModal();
+    showModal('준비 중', '카카오 로그인 기능을 준비 중입니다.');
+  });
+  
+  // Show login link
+  showLoginLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    closeModal();
+    // TODO: 로그인 모달 열기
+    showModal('로그인', '로그인 기능을 준비 중입니다.');
+  });
+  
+  // Form submission
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const formData = new FormData(form);
+    const userData = {
+      name: formData.get('name'),
+      email: formData.get('email'),
+      password: formData.get('password'),
+      confirmPassword: formData.get('confirmPassword'),
+      age: formData.get('age'),
+      agreeTerms: formData.get('agreeTerms'),
+      agreeMarketing: formData.get('agreeMarketing')
+    };
+    
+    console.log('회원가입 데이터:', userData);
+    closeModal();
+    showModal('가입 완료', '회원가입이 완료되었습니다! 로그인해주세요.');
+  });
+  
+  } catch (error) {
+    console.error('회원가입 모달 에러:', error);
+    showModal('오류', '회원가입 모달을 여는 중 오류가 발생했습니다.');
+  }
+}
+
+// 기존 showSignupModal 함수도 새로운 함수 호출하도록 변경
+function showSignupModal() {
+  openSignupModal();
+}
+
+// Add modal animations to CSS
+const modalStyles = document.createElement('style');
+modalStyles.textContent = `
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
+  @keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+`;
+document.head.appendChild(modalStyles);
+
+// 회원가입 버튼들의 이벤트 리스너 완전 초기화
+function initializeSignupButtons() {
+  const signupButtons = document.querySelectorAll('#signup-btn, #signup-btn-2, .primary-button, .cta-large-button');
+  
+  signupButtons.forEach(button => {
+    const buttonText = button.textContent.trim();
+    if (buttonText === '무료로 시작하기' || buttonText === '무료로 가입하기') {
+      // 기존 이벤트 리스너 모두 제거
+      const newButton = button.cloneNode(true);
+      button.parentNode.replaceChild(newButton, button);
+      
+      // 새로운 이벤트 리스너 추가
+      newButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        openSignupModal();
+      });
+      
+      // 보호 표시
+      newButton.setAttribute('data-signup-initialized', 'true');
+      console.log('회원가입 버튼 초기화 완료:', buttonText);
+    }
+  });
+}
+
+// DOM 로드 후 회원가입 버튼 초기화
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('DOM 로드 완료, 초기화 시작');
+  initializeSignupButtons();
+});
+
+// 즉시 실행도 추가 (이미 DOM이 로드된 경우 대비)
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM 로딩 중, 이벤트 리스너 등록');
+    initializeSignupButtons();
+  });
+} else {
+  console.log('DOM 이미 로드됨, 즉시 초기화');
+  initializeSignupButtons();
+}
+
 // Smooth scrolling for navigation links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', function (e) {
@@ -224,22 +695,14 @@ function trackEvent(eventName, eventData = {}) {
   // Future: Send to analytics service
 }
 
-// Track button clicks and handle CTA buttons
-document.querySelectorAll('.primary-button, .secondary-button, .cta-large-button, .login-btn, .signup-btn').forEach(button => {
+// Simple button click tracking (without interfering with main functionality)
+document.querySelectorAll('button').forEach(button => {
   button.addEventListener('click', function() {
+    // Just track - don't interfere with other handlers
     trackEvent('button_click', {
       button_text: this.textContent.trim(),
       button_class: this.className
     });
-        
-    // Handle signup buttons
-    if (this.classList.contains('primary-button') || this.classList.contains('cta-large-button')) {
-      const buttonText = this.textContent.trim();
-      if (buttonText.includes('시작하기') || buttonText.includes('가입하기')) {
-        openModal('signupModal');
-        trackEvent('cta_signup_click', { button_text: buttonText });
-      }
-    }
   });
 });
 
@@ -280,15 +743,25 @@ function closeModal(modalId) {
 }
 
 // Login button functionality  
-document.querySelector('.login-btn')?.addEventListener('click', function() {
-  openModal('loginModal');
-  trackEvent('login_click');
+document.querySelector('.login-btn')?.addEventListener('click', function(e) {
+  console.log('Login button clicked');
+  try {
+    openModal('loginModal');
+    trackEvent('login_click');
+  } catch (error) {
+    console.error('Login button error:', error);
+  }
 });
 
 // Signup button functionality
-document.querySelector('.signup-btn')?.addEventListener('click', function() {
-  openModal('signupModal');
-  trackEvent('signup_click');
+document.querySelector('.signup-btn')?.addEventListener('click', function(e) {
+  console.log('Signup button clicked');
+  try {
+    openModal('signupModal');
+    trackEvent('signup_click');
+  } catch (error) {
+    console.error('Signup button error:', error);
+  }
 });
 
 // Close modal functionality
@@ -482,21 +955,361 @@ document.getElementById('signupForm')?.addEventListener('submit', async function
   }
 });
 
-// Social login handlers
+// ==============================================
+// USER AUTHENTICATION SYSTEM (localStorage based)
+// ==============================================
+
+// User management utilities
+class UserManager {
+  constructor() {
+    this.storageKey = 'charminyeon_users';
+    this.currentUserKey = 'charminyeon_current_user';
+    this.initializeStorage();
+  }
+
+  initializeStorage() {
+    if (!localStorage.getItem(this.storageKey)) {
+      localStorage.setItem(this.storageKey, JSON.stringify([]));
+    }
+  }
+
+  getAllUsers() {
+    return JSON.parse(localStorage.getItem(this.storageKey) || '[]');
+  }
+
+  saveUser(userData) {
+    const users = this.getAllUsers();
+    const userWithId = {
+      ...userData,
+      id: Date.now().toString(),
+      createdAt: new Date().toISOString(),
+      profile: {
+        name: userData.name,
+        email: userData.email,
+        age: userData.age,
+        isComplete: false
+      }
+    };
+    users.push(userWithId);
+    localStorage.setItem(this.storageKey, JSON.stringify(users));
+    return userWithId;
+  }
+
+  findUserByEmail(email) {
+    const users = this.getAllUsers();
+    return users.find(user => user.email === email);
+  }
+
+  validatePassword(inputPassword, storedPassword) {
+    return inputPassword === storedPassword;
+  }
+
+  setCurrentUser(user) {
+    const userSession = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      age: user.age,
+      loginTime: new Date().toISOString()
+    };
+    localStorage.setItem(this.currentUserKey, JSON.stringify(userSession));
+  }
+
+  getCurrentUser() {
+    const userData = localStorage.getItem(this.currentUserKey);
+    return userData ? JSON.parse(userData) : null;
+  }
+
+  logout() {
+    localStorage.removeItem(this.currentUserKey);
+    this.updateUIForLoggedOutUser();
+  }
+
+  updateUIForLoggedOutUser() {
+    const authButtons = document.querySelector('.auth-buttons');
+    if (authButtons) {
+      authButtons.innerHTML = `
+        <button class="login-btn">
+          <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M10 17L15 12L10 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M15 12H3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          로그인
+        </button>
+        <button class="signup-btn">
+          <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16 21V19C16 17.9391 15.5786 16.9217 14.8284 16.1716C14.0783 15.4214 13.0609 15 12 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="8.5" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="20" y1="8" x2="20" y2="14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="17" y1="11" x2="23" y2="11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          회원가입
+        </button>
+      `;
+      this.attachAuthButtonListeners();
+    }
+  }
+
+  updateUIForLoggedInUser(user) {
+    const authButtons = document.querySelector('.auth-buttons');
+    if (authButtons) {
+      authButtons.innerHTML = `
+        <div class="user-menu">
+          <span class="user-greeting">안녕하세요, ${user.name}님!</span>
+          <button class="profile-btn" onclick="userManager.showUserDashboard()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            내 프로필
+          </button>
+          <button class="logout-btn" onclick="userManager.logout()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <polyline points="16,17 21,12 16,7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <line x1="21" y1="12" x2="9" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            로그아웃
+          </button>
+        </div>
+      `;
+    }
+
+    // Show success message
+    this.showSuccess(`${user.name}님, 환영합니다! 가치관 분석을 시작해보세요.`);
+  }
+
+  showUserDashboard() {
+    const user = this.getCurrentUser();
+    if (!user) return;
+
+    showCustomAlert('내 프로필', `
+      <div style="text-align: center; padding: 2rem;">
+        <div style="font-size: 4rem; margin-bottom: 1rem;">👤</div>
+        <h3 style="margin-bottom: 2rem; color: #333;">${user.name}님의 프로필</h3>
+        <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 15px; text-align: left; margin-bottom: 2rem;">
+          <p style="margin: 0.5rem 0;"><strong>이름:</strong> ${user.name}</p>
+          <p style="margin: 0.5rem 0;"><strong>이메일:</strong> ${user.email}</p>
+          <p style="margin: 0.5rem 0;"><strong>연령대:</strong> ${user.age}</p>
+          <p style="margin: 0.5rem 0;"><strong>가입일:</strong> ${new Date(user.loginTime).toLocaleDateString('ko-KR')}</p>
+        </div>
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+          <button onclick="document.querySelector('#valuesModal').style.display='block'; this.closest('.custom-alert').remove();" style="background: #667eea; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 10px; font-weight: 600; cursor: pointer;">가치관 분석</button>
+          <button onclick="document.querySelector('#matchingModal').style.display='block'; this.closest('.custom-alert').remove();" style="background: #10b981; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 10px; font-weight: 600; cursor: pointer;">매칭 보기</button>
+          <button onclick="this.closest('.custom-alert').remove()" style="background: #6b7280; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 10px; font-weight: 600; cursor: pointer;">닫기</button>
+        </div>
+      </div>
+    `);
+  }
+
+  showSuccess(message) {
+    showCustomAlert('성공', `
+      <div style="text-align: center; padding: 1.5rem;">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">✅</div>
+        <p style="margin-bottom: 1.5rem; font-size: 1.1rem; line-height: 1.6;">${message}</p>
+        <button onclick="this.closest('.custom-alert').remove()" style="background: #10b981; color: white; border: none; padding: 0.8rem 2rem; border-radius: 10px; font-weight: 600; cursor: pointer;">확인</button>
+      </div>
+    `);
+  }
+
+  showError(message) {
+    showCustomAlert('오류', `
+      <div style="text-align: center; padding: 1.5rem;">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">❌</div>
+        <p style="margin-bottom: 1.5rem; font-size: 1.1rem; line-height: 1.6; color: #ef4444;">${message}</p>
+        <button onclick="this.closest('.custom-alert').remove()" style="background: #ef4444; color: white; border: none; padding: 0.8rem 2rem; border-radius: 10px; font-weight: 600; cursor: pointer;">확인</button>
+      </div>
+    `);
+  }
+
+  attachAuthButtonListeners() {
+    // Login button event
+    document.querySelector('.login-btn')?.addEventListener('click', () => {
+      openModal('loginModal');
+    });
+
+    // Signup button event  
+    document.querySelector('.signup-btn')?.addEventListener('click', () => {
+      openModal('signupModal');
+    });
+  }
+}
+
+// Initialize user manager
+const userManager = new UserManager();
+
+// Check if user is already logged in on page load
+window.addEventListener('load', () => {
+  const currentUser = userManager.getCurrentUser();
+  if (currentUser) {
+    userManager.updateUIForLoggedInUser(currentUser);
+  } else {
+    userManager.attachAuthButtonListeners();
+  }
+});
+
+// Social login handlers (temporarily disabled, showing preparation message)
 document.querySelectorAll('.google-btn').forEach(btn => {
   btn.addEventListener('click', function() {
-    // TODO: Implement Google OAuth
-    alert('Google 로그인 기능은 준비 중입니다.');
+    userManager.showError('Google 로그인 기능은 준비 중입니다.');
     trackEvent('social_login_click', { provider: 'google' });
   });
 });
 
 document.querySelectorAll('.kakao-btn').forEach(btn => {
   btn.addEventListener('click', function() {
-    // TODO: Implement Kakao OAuth
-    alert('카카오 로그인 기능은 준비 중입니다.');
+    userManager.showError('카카오 로그인 기능은 준비 중입니다.');
     trackEvent('social_login_click', { provider: 'kakao' });
   });
+});
+
+// ==============================================
+// UPDATED LOGIN FORM HANDLER
+// ==============================================
+
+// Replace the existing login form handler
+document.getElementById('loginForm')?.addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const submitBtn = this.querySelector('button[type="submit"]');
+  const originalText = submitBtn.textContent;
+  
+  try {
+    const formData = new FormData(this);
+    const email = formData.get('email');
+    const password = formData.get('password');
+    const rememberMe = formData.get('rememberMe') === 'on';
+    
+    // Validate input
+    if (!email || !password) {
+      userManager.showError('이메일과 비밀번호를 입력해주세요.');
+      return;
+    }
+    
+    // Show loading state
+    submitBtn.textContent = '로그인 중...';
+    submitBtn.disabled = true;
+    
+    // Find user
+    const user = userManager.findUserByEmail(email);
+    if (!user) {
+      userManager.showError('등록되지 않은 이메일입니다.');
+      return;
+    }
+    
+    // Validate password
+    if (!userManager.validatePassword(password, user.password)) {
+      userManager.showError('비밀번호가 올바르지 않습니다.');
+      return;
+    }
+    
+    // Successful login
+    userManager.setCurrentUser(user);
+    userManager.updateUIForLoggedInUser(user);
+    closeModal('loginModal');
+    
+    // Reset form
+    this.reset();
+    
+    trackEvent('login_success', { email: email, rememberMe: rememberMe });
+    
+  } catch (error) {
+    console.error('Login error:', error);
+    userManager.showError('로그인 중 오류가 발생했습니다.');
+    trackEvent('login_error', { email: formData.get('email'), error: error.message });
+  } finally {
+    // Reset button state
+    submitBtn.textContent = originalText;
+    submitBtn.disabled = false;
+  }
+});
+
+// ==============================================
+// UPDATED SIGNUP FORM HANDLER  
+// ==============================================
+
+// Replace the existing signup form handler
+document.getElementById('signupForm')?.addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const submitBtn = this.querySelector('button[type="submit"]');
+  const originalText = submitBtn.textContent;
+  
+  try {
+    const formData = new FormData(this);
+    const data = {
+      name: formData.get('name'),
+      email: formData.get('email'),
+      password: formData.get('password'),
+      confirmPassword: formData.get('confirmPassword'),
+      age: formData.get('age'),
+      agreeTerms: formData.get('agreeTerms') === 'on',
+      agreeMarketing: formData.get('agreeMarketing') === 'on'
+    };
+    
+    // Validate required fields
+    if (!data.name || !data.email || !data.password || !data.age) {
+      userManager.showError('모든 필수 항목을 입력해주세요.');
+      return;
+    }
+    
+    // Validate password match
+    if (data.password !== data.confirmPassword) {
+      userManager.showError('비밀번호가 일치하지 않습니다.');
+      return;
+    }
+    
+    // Validate password requirements
+    const passwordValidation = validatePassword(data.password);
+    const isPasswordValid = Object.values(passwordValidation).every(valid => valid);
+    
+    if (!isPasswordValid) {
+      userManager.showError('비밀번호가 요구사항을 충족하지 않습니다.');
+      return;
+    }
+    
+    // Check terms agreement
+    if (!data.agreeTerms) {
+      userManager.showError('이용약관에 동의해주세요.');
+      return;
+    }
+    
+    // Check if email already exists
+    if (userManager.findUserByEmail(data.email)) {
+      userManager.showError('이미 사용 중인 이메일입니다.');
+      return;
+    }
+    
+    // Show loading state
+    submitBtn.textContent = '가입 중...';
+    submitBtn.disabled = true;
+    
+    // Save user
+    const newUser = userManager.saveUser(data);
+    
+    // Auto login after signup
+    userManager.setCurrentUser(newUser);
+    userManager.updateUIForLoggedInUser(newUser);
+    closeModal('signupModal');
+    
+    // Reset form
+    this.reset();
+    
+    trackEvent('signup_success', { email: data.email, age: data.age });
+    
+  } catch (error) {
+    console.error('Signup error:', error);
+    userManager.showError('회원가입 중 오류가 발생했습니다.');
+    trackEvent('signup_error', { 
+      email: formData.get('email'), 
+      error: error.message 
+    });
+  } finally {
+    // Reset button state
+    submitBtn.textContent = originalText;
+    submitBtn.disabled = false;
+  }
 });
 
 // Contact form submission
@@ -515,12 +1328,12 @@ document.getElementById('contactForm')?.addEventListener('submit', function(e) {
     
   // Validate required fields
   if (!contactData.name || !contactData.email || !contactData.subject || !contactData.message) {
-    alert('필수 항목을 모두 입력해주세요.');
+    showModal('필수 항목 확인', '필수 항목을 모두 입력해주세요.');
     return;
   }
     
   if (!contactData.agreement) {
-    alert('개인정보 수집 및 이용에 동의해주세요.');
+    showModal('개인정보 동의', '개인정보 수집 및 이용에 동의해주세요.');
     return;
   }
     
@@ -664,60 +1477,492 @@ document.querySelectorAll('.demo-option').forEach(option => {
   });
 });
 
+// Enhanced Interactive Demo Variables
+let currentDemoStep = 1;
+let demoAnswers = {};
+let analysisProgress = 0;
+let compatibilityScore = 0;
+let isAnalysisRunning = false;
+
+// Demo Questions Data
+const demoQuestions = {
+  q1: {
+    question: '퇴근 후 가장 소중한 시간은 어떻게 보내시나요?',
+    options: {
+      family: { text: '가족과 함께하는 시간', icon: '👨‍👩‍👧‍👦', tags: ['가족 중시', '안정적'] },
+      hobby: { text: '취미 활동이나 자기계발', icon: '🎨', tags: ['성장 지향', '창의적'] },
+      rest: { text: '편안한 휴식', icon: '🛋️', tags: ['여유로움', '평화 추구'] },
+      social: { text: '친구들과의 만남', icon: '👥', tags: ['사교적', '활발함'] }
+    }
+  },
+  q2: {
+    question: '인생에서 가장 중요하게 생각하는 가치는?',
+    options: {
+      stability: { text: '안정과 평화', icon: '🏡', tags: ['안정 추구', '신중함'] },
+      growth: { text: '성장과 도전', icon: '🚀', tags: ['도전적', '성장 지향'] },
+      connection: { text: '인간관계와 사랑', icon: '❤️', tags: ['인간 중심', '따뜻함'] },
+      freedom: { text: '자유와 독립', icon: '🦋', tags: ['자유로움', '독립적'] }
+    }
+  }
+};
+
 // Secondary button (소개 영상 보기) functionality
 document.querySelectorAll('.secondary-button').forEach(button => {
-  button.addEventListener('click', function() {
-    const buttonText = this.textContent.trim();
-    if (buttonText.includes('소개 영상') || buttonText.includes('영상')) {
-      openModal('demoModal');
-      // Reset demo to first step
-      currentDemoStep = 1;
-      showDemoStep(currentDemoStep);
-      trackEvent('demo_video_click');
+  button.addEventListener('click', function(e) {
+    console.log('Secondary button clicked:', this.textContent.trim());
+    try {
+      const buttonText = this.textContent.trim();
+      if (buttonText.includes('소개 영상') || buttonText.includes('영상')) {
+        console.log('Opening enhanced demo...');
+        openEnhancedDemo();
+        trackEvent('enhanced_demo_click');
+      }
+    } catch (error) {
+      console.error('Secondary button error:', error);
     }
   });
 });
 
-// Auto-play demo features
-function startDemoAnimations() {
-  // Animate progress bar in step 1
-  const progressFill = document.querySelector('.progress-fill-demo');
-  if (progressFill) {
-    progressFill.style.animation = 'progressDemo 3s ease-in-out infinite';
+// Open Enhanced Demo Modal
+function openEnhancedDemo() {
+  console.log('Opening enhanced demo modal...');
+  try {
+    const modal = document.getElementById('demoModal');
+    if (modal) {
+      console.log('Demo modal found, opening...');
+      modal.style.display = 'flex';
+      document.body.classList.add('modal-open');
+      
+      // Reset demo state
+      resetDemoState();
+      showDemoStep(1);
+      
+      // Initialize step 1 interactions
+      setTimeout(() => {
+        initializeStepInteractions();
+      }, 100);
+    } else {
+      console.error('Demo modal not found!');
+      showModal('오류', '데모 모달을 찾을 수 없습니다.');
+    }
+  } catch (error) {
+    console.error('Enhanced demo error:', error);
+    showModal('오류', '데모를 여는 중 오류가 발생했습니다.');
   }
-    
-  // Animate matching waves in step 2
-  const waves = document.querySelectorAll('.wave');
-  waves.forEach((wave, index) => {
-    wave.style.animation = `waveAnimation 2s ease-in-out infinite ${index * 0.3}s`;
+}
+
+// Reset Demo State
+function resetDemoState() {
+  currentDemoStep = 1;
+  demoAnswers = {};
+  analysisProgress = 0;
+  compatibilityScore = 0;
+  isAnalysisRunning = false;
+  
+  // Reset progress bar
+  const progressFill = document.getElementById('demoProgressFill');
+  const progressText = document.getElementById('demoProgressText');
+  if (progressFill) progressFill.style.width = '25%';
+  if (progressText) progressText.textContent = '1 / 4';
+  
+  // Hide chat demo
+  const chatDemo = document.getElementById('chatDemoContainer');
+  if (chatDemo) chatDemo.style.display = 'none';
+}
+
+// Show Demo Step
+function showDemoStep(step) {
+  // Hide all steps
+  document.querySelectorAll('.demo-step').forEach(stepEl => {
+    stepEl.classList.remove('active');
   });
-    
-  // Animate messages in step 3 (delayed appearance)
-  const messages = document.querySelectorAll('.message');
-  messages.forEach((message, index) => {
-    message.style.animationDelay = `${index * 1}s`;
+  
+  // Show current step
+  const currentStepEl = document.getElementById(`interactiveStep${step}`);
+  if (currentStepEl) {
+    currentStepEl.classList.add('active');
+  }
+  
+  // Update progress
+  updateDemoProgress(step);
+  currentDemoStep = step;
+}
+
+// Update Demo Progress
+function updateDemoProgress(step) {
+  const progressFill = document.getElementById('demoProgressFill');
+  const progressText = document.getElementById('demoProgressText');
+  
+  if (progressFill && progressText) {
+    const progressPercentage = (step / 4) * 100;
+    progressFill.style.width = `${progressPercentage}%`;
+    progressText.textContent = `${step} / 4`;
+  }
+}
+
+// Initialize Step Interactions
+function initializeStepInteractions() {
+  setupQuestionInteractions();
+  setupNavigationButtons();
+  setupDemoActions();
+  setupChatDemo();
+}
+
+// Setup Question Interactions
+function setupQuestionInteractions() {
+  // Question 1 interactions
+  document.querySelectorAll('input[name="q1"]').forEach(input => {
+    input.addEventListener('change', function() {
+      if (this.checked) {
+        // Remove previous selections
+        document.querySelectorAll('[data-value]').forEach(el => {
+          el.classList.remove('selected');
+        });
+        
+        // Add selection to current option
+        this.closest('.option-card').classList.add('selected');
+        
+        // Store answer
+        demoAnswers.q1 = this.value;
+        
+        // Enable next button
+        const nextBtn = document.getElementById('nextQ1');
+        if (nextBtn) {
+          nextBtn.disabled = false;
+        }
+      }
+    });
+  });
+  
+  // Question 2 interactions
+  document.querySelectorAll('input[name="q2"]').forEach(input => {
+    input.addEventListener('change', function() {
+      if (this.checked) {
+        // Remove previous selections
+        document.querySelectorAll('input[name="q2"]').forEach(otherInput => {
+          otherInput.closest('.option-card').classList.remove('selected');
+        });
+        
+        // Add selection to current option
+        this.closest('.option-card').classList.add('selected');
+        
+        // Store answer
+        demoAnswers.q2 = this.value;
+        
+        // Enable next button
+        const nextBtn = document.getElementById('nextQ2');
+        if (nextBtn) {
+          nextBtn.disabled = false;
+        }
+      }
+    });
   });
 }
 
-// Initialize demo when modal opens
-document.querySelector('.secondary-button')?.addEventListener('click', function() {
-  setTimeout(startDemoAnimations, 500);
-});
+// Setup Navigation Buttons
+function setupNavigationButtons() {
+  // Next Q1 button
+  const nextQ1 = document.getElementById('nextQ1');
+  if (nextQ1) {
+    nextQ1.addEventListener('click', () => {
+      showDemoStep(2);
+    });
+  }
+  
+  // Next Q2 button
+  const nextQ2 = document.getElementById('nextQ2');
+  if (nextQ2) {
+    nextQ2.addEventListener('click', () => {
+      showDemoStep(3);
+      startAnalysisAnimation();
+    });
+  }
+}
 
-// Escape key to close modals
-document.addEventListener('keydown', function(event) {
-  if (event.key === 'Escape') {
-    const openModal = document.querySelector('.modal[style*="block"]');
-    if (openModal) {
-      openModal.style.display = 'none';
-      document.body.classList.remove('modal-open');
-            
-      // Reset demo if it was the demo modal
-      if (openModal.id === 'demoModal') {
-        currentDemoStep = 1;
-        showDemoStep(currentDemoStep);
+// Start Analysis Animation
+function startAnalysisAnimation() {
+  if (isAnalysisRunning) return;
+  isAnalysisRunning = true;
+  
+  const analysisText = document.getElementById('analysisText');
+  const analysisFill = document.getElementById('analysisFill');
+  const analysisPercentage = document.getElementById('analysisPercentage');
+  
+  const analysisMessages = [
+    '답변을 분석하고 있습니다...',
+    '가치관 프로필을 생성 중...',
+    '매칭 알고리즘 실행 중...',
+    '최적의 매치를 찾고 있습니다...',
+    '분석이 완료되었습니다!'
+  ];
+  
+  let messageIndex = 0;
+  let progress = 0;
+  
+  const analysisInterval = setInterval(() => {
+    progress += Math.random() * 15 + 10;
+    
+    if (progress > 100) {
+      progress = 100;
+      clearInterval(analysisInterval);
+      
+      setTimeout(() => {
+        showDemoStep(4);
+        generateMatchingResults();
+      }, 1000);
+    }
+    
+    // Update progress
+    if (analysisFill) analysisFill.style.width = `${progress}%`;
+    if (analysisPercentage) analysisPercentage.textContent = `${Math.round(progress)}%`;
+    
+    // Update message
+    if (progress > messageIndex * 20 && messageIndex < analysisMessages.length - 1) {
+      messageIndex++;
+      if (analysisText) {
+        analysisText.style.opacity = '0';
+        setTimeout(() => {
+          analysisText.textContent = analysisMessages[messageIndex];
+          analysisText.style.opacity = '1';
+        }, 200);
       }
     }
+  }, 300);
+}
+
+// Generate Matching Results
+function generateMatchingResults() {
+  // Calculate compatibility based on answers
+  compatibilityScore = calculateCompatibility();
+  
+  // Update compatibility display
+  const compatibilityEl = document.getElementById('compatibilityScore');
+  if (compatibilityEl) {
+    animateNumber(compatibilityEl, 0, compatibilityScore, 2000);
+  }
+  
+  // Generate user tags
+  generateUserTags();
+}
+
+// Calculate Compatibility
+function calculateCompatibility() {
+  const q1Weight = 0.6;
+  const q2Weight = 0.4;
+  
+  let score = 70; // Base score
+  
+  // Adjust based on answers
+  if (demoAnswers.q1 === 'family' && demoAnswers.q2 === 'stability') {
+    score += 22; // High compatibility
+  } else if (demoAnswers.q1 === 'hobby' && demoAnswers.q2 === 'growth') {
+    score += 20;
+  } else if (demoAnswers.q1 === 'social' && demoAnswers.q2 === 'connection') {
+    score += 18;
+  } else {
+    score += Math.random() * 15 + 10;
+  }
+  
+  return Math.min(Math.round(score), 95);
+}
+
+// Generate User Tags
+function generateUserTags() {
+  const yourTagsEl = document.getElementById('yourTags');
+  if (!yourTagsEl) return;
+  
+  const tags = [];
+  
+  if (demoAnswers.q1 && demoQuestions.q1.options[demoAnswers.q1]) {
+    tags.push(...demoQuestions.q1.options[demoAnswers.q1].tags);
+  }
+  
+  if (demoAnswers.q2 && demoQuestions.q2.options[demoAnswers.q2]) {
+    tags.push(...demoQuestions.q2.options[demoAnswers.q2].tags);
+  }
+  
+  yourTagsEl.innerHTML = tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+}
+
+// Animate Number
+function animateNumber(element, start, end, duration) {
+  const startTime = Date.now();
+  const animate = () => {
+    const elapsed = Date.now() - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const current = Math.round(start + (end - start) * progress);
+    
+    element.textContent = `${current}%`;
+    
+    if (progress < 1) {
+      requestAnimationFrame(animate);
+    }
+  };
+  
+  animate();
+}
+
+// Setup Demo Actions
+function setupDemoActions() {
+  const startChatBtn = document.getElementById('startChatDemo');
+  const restartBtn = document.getElementById('restartDemo');
+  
+  if (startChatBtn) {
+    startChatBtn.addEventListener('click', () => {
+      showChatDemo();
+    });
+  }
+  
+  if (restartBtn) {
+    restartBtn.addEventListener('click', () => {
+      resetDemoState();
+      showDemoStep(1);
+      initializeStepInteractions();
+    });
+  }
+}
+
+// Show Chat Demo
+function showChatDemo() {
+  const chatContainer = document.getElementById('chatDemoContainer');
+  if (chatContainer) {
+    chatContainer.style.display = 'block';
+    
+    // Scroll to chat demo
+    chatContainer.scrollIntoView({ behavior: 'smooth' });
+    
+    // Start chat simulation
+    setTimeout(() => {
+      simulateChat();
+    }, 500);
+  }
+}
+
+// Setup Chat Demo
+function setupChatDemo() {
+  const useSuggestionBtn = document.querySelector('.use-suggestion-btn');
+  const chatInput = document.getElementById('chatInput');
+  const sendBtn = document.getElementById('sendMessage');
+  
+  if (useSuggestionBtn) {
+    useSuggestionBtn.addEventListener('click', () => {
+      const suggestionText = document.querySelector('.suggestion-text').textContent.replace(/"/g, '');
+      if (chatInput) {
+        chatInput.value = suggestionText;
+        chatInput.disabled = false;
+        sendBtn.disabled = false;
+        chatInput.focus();
+      }
+    });
+  }
+  
+  if (sendBtn) {
+    sendBtn.addEventListener('click', () => {
+      sendChatMessage();
+    });
+  }
+  
+  if (chatInput) {
+    chatInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        sendChatMessage();
+      }
+    });
+  }
+}
+
+// Send Chat Message
+function sendChatMessage() {
+  const chatInput = document.getElementById('chatInput');
+  const chatMessages = document.getElementById('chatMessages');
+  
+  if (!chatInput || !chatMessages || !chatInput.value.trim()) return;
+  
+  const message = chatInput.value.trim();
+  
+  // Add user message
+  addChatMessage(message, 'sent');
+  
+  // Clear input
+  chatInput.value = '';
+  
+  // Simulate response
+  setTimeout(() => {
+    const responses = [
+      '정말 흥미로운 관점이네요! 🤔',
+      '저도 비슷한 생각을 해본 적이 있어요.',
+      '그런 경험이 있으시군요. 더 자세히 듣고 싶어요!',
+      '우리 가치관이 많이 비슷한 것 같아요 😊'
+    ];
+    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+    addChatMessage(randomResponse, 'received');
+  }, 1000 + Math.random() * 2000);
+}
+
+// Add Chat Message
+function addChatMessage(text, type) {
+  const chatMessages = document.getElementById('chatMessages');
+  if (!chatMessages) return;
+  
+  const messageEl = document.createElement('div');
+  messageEl.className = `message ${type}`;
+  messageEl.innerHTML = `<div class="message-bubble">${text}</div>`;
+  
+  chatMessages.appendChild(messageEl);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+// Simulate Chat
+function simulateChat() {
+  const messages = [
+    { text: '안녕하세요! 프로필을 보니 관심사가 비슷하네요 😊', type: 'received', delay: 1000 },
+    { text: '네, 반갑습니다! 어떤 부분이 비슷하다고 느끼셨나요?', type: 'sent', delay: 2500 }
+  ];
+  
+  messages.forEach((msg, index) => {
+    setTimeout(() => {
+      addChatMessage(msg.text, msg.type);
+    }, msg.delay);
+  });
+}
+
+// Enhanced Modal Close Functionality
+document.addEventListener('keydown', function(event) {
+  if (event.key === 'Escape') {
+    closeActiveModal();
+  }
+});
+
+// Close active modal function
+function closeActiveModal() {
+  const openModal = document.querySelector('.enhanced-demo-modal[style*="flex"], .modal[style*="block"]');
+  if (openModal) {
+    openModal.style.display = 'none';
+    document.body.classList.remove('modal-open');
+    
+    // Reset demo if it was the demo modal
+    if (openModal.id === 'demoModal') {
+      resetDemoState();
+    }
+  }
+}
+
+// Setup modal close buttons
+document.addEventListener('DOMContentLoaded', function() {
+  // Enhanced demo modal close button
+  const demoCloseBtn = document.querySelector('#demoModal .close');
+  if (demoCloseBtn) {
+    demoCloseBtn.addEventListener('click', closeActiveModal);
+  }
+  
+  // Close modal when clicking outside
+  const demoModal = document.getElementById('demoModal');
+  if (demoModal) {
+    demoModal.addEventListener('click', function(e) {
+      if (e.target === demoModal) {
+        closeActiveModal();
+      }
+    });
   }
 });
 
@@ -1079,7 +2324,275 @@ document.querySelector('.prev-values-btn')?.addEventListener('click', function()
   }
 });
 
-document.querySelector('.complete-values-btn')?.addEventListener('click', async function() {
+// ==============================================
+// VALUES ANALYSIS SYSTEM (localStorage based)
+// ==============================================
+
+class ValuesAnalysisManager {
+  constructor() {
+    this.storageKey = 'charminyeon_values_analysis';
+    this.currentQuestion = 1;
+    this.totalQuestions = 20;
+    this.answers = {};
+    this.analysisResults = null;
+  }
+
+  // Generate analysis results based on answers
+  generateAnalysis(answers) {
+    const scores = {
+      family: 0,
+      growth: 0,
+      stability: 0,
+      adventure: 0,
+      creativity: 0,
+      social: 0,
+      independence: 0,
+      tradition: 0
+    };
+
+    // Simple scoring algorithm
+    Object.values(answers).forEach(answer => {
+      switch(answer.value) {
+        case 'family':
+          scores.family += 5;
+          scores.stability += 3;
+          break;
+        case 'growth':
+          scores.growth += 5;
+          scores.adventure += 3;
+          break;
+        case 'stability':
+          scores.stability += 5;
+          scores.family += 2;
+          break;
+        case 'freedom':
+          scores.independence += 5;
+          scores.adventure += 3;
+          break;
+        case 'social':
+          scores.social += 5;
+          scores.family += 2;
+          break;
+        case 'creative':
+          scores.creativity += 5;
+          scores.independence += 2;
+          break;
+        case 'active':
+          scores.adventure += 4;
+          scores.growth += 2;
+          break;
+        case 'quiet':
+          scores.stability += 4;
+          scores.tradition += 2;
+          break;
+        case 'logic':
+          scores.growth += 3;
+          scores.independence += 3;
+          break;
+        case 'emotion':
+          scores.family += 3;
+          scores.creativity += 3;
+          break;
+        default:
+          scores.stability += 1;
+      }
+    });
+
+    // Find top 3 values
+    const sortedScores = Object.entries(scores)
+      .sort(([,a], [,b]) => b - a)
+      .slice(0, 3);
+
+    const analysis = {
+      scores: scores,
+      topValues: sortedScores.map(([key, score]) => ({
+        key,
+        score,
+        label: this.getValueLabel(key)
+      })),
+      personality: this.generatePersonalityInsight(sortedScores),
+      completedAt: new Date().toISOString(),
+      answers: answers
+    };
+
+    return analysis;
+  }
+
+  getValueLabel(key) {
+    const labels = {
+      family: '가족 중심',
+      growth: '성장 추구',
+      stability: '안정 추구',
+      adventure: '모험 정신',
+      creativity: '창의성',
+      social: '사회적 관계',
+      independence: '독립성',
+      tradition: '전통 중시'
+    };
+    return labels[key] || key;
+  }
+
+  generatePersonalityInsight(topValues) {
+    const [first, second, third] = topValues;
+    
+    const insights = {
+      'family_stability': '가족과 안정적인 관계를 중시하며, 신뢰할 수 있는 파트너를 찾고 계시네요.',
+      'growth_adventure': '새로운 도전을 즐기며, 함께 성장할 수 있는 상대를 원하시는군요.',
+      'social_family': '사람들과의 따뜻한 관계를 소중히 여기며, 소통을 중시하시는 분이시네요.',
+      'independence_creativity': '자신만의 개성과 창의성을 중요하게 생각하는 독립적인 성향이시네요.',
+      'stability_tradition': '전통적인 가치와 안정적인 삶을 추구하시는 신중한 분이시네요.'
+    };
+
+    const key = `${first[0]}_${second[0]}`;
+    return insights[key] || `${this.getValueLabel(first[0])}과 ${this.getValueLabel(second[0])}을 중시하는 균형잡힌 가치관을 가지고 계시네요.`;
+  }
+
+  saveAnalysis(analysis) {
+    const currentUser = userManager.getCurrentUser();
+    if (currentUser) {
+      const userAnalysis = {
+        userId: currentUser.id,
+        analysis: analysis,
+        createdAt: new Date().toISOString()
+      };
+      localStorage.setItem(this.storageKey, JSON.stringify(userAnalysis));
+      this.analysisResults = analysis;
+    }
+  }
+
+  getAnalysis() {
+    const stored = localStorage.getItem(this.storageKey);
+    if (stored) {
+      const userAnalysis = JSON.parse(stored);
+      return userAnalysis.analysis;
+    }
+    return null;
+  }
+
+  showAnalysisResult(analysis) {
+    userManager.showSuccess('가치관 분석이 완료되었습니다!');
+    
+    setTimeout(() => {
+      showCustomAlert('가치관 분석 결과', `
+        <div style="text-align: center; padding: 2rem;">
+          <div style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
+          <h3 style="margin-bottom: 2rem; color: #333;">당신의 가치관 분석 결과</h3>
+          <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 1.5rem; border-radius: 15px; margin-bottom: 2rem;">
+            <h4 style="margin-bottom: 1rem;">주요 가치관 TOP 3</h4>
+            <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 1rem;">
+              ${analysis.topValues.map((value, index) => `
+                <div style="text-align: center;">
+                  <div style="font-size: 2rem; margin-bottom: 0.5rem;">${['🥇', '🥈', '🥉'][index]}</div>
+                  <div style="font-weight: bold;">${value.label}</div>
+                  <div style="opacity: 0.9;">${value.score}점</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+          <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 15px; text-align: left; margin-bottom: 2rem;">
+            <h4 style="color: #667eea; margin-bottom: 1rem;">💡 가치관 분석</h4>
+            <p style="line-height: 1.6; margin: 0;">${analysis.personality}</p>
+          </div>
+          <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+            <button onclick="document.querySelector('#matchingModal').style.display='block'; this.closest('.custom-alert').remove(); valuesAnalysisManager.startMatching();" style="background: #10b981; color: white; border: none; padding: 1rem 2rem; border-radius: 10px; font-weight: 600; cursor: pointer;">매칭 시작하기</button>
+            <button onclick="this.closest('.custom-alert').remove()" style="background: #6b7280; color: white; border: none; padding: 1rem 2rem; border-radius: 10px; font-weight: 600; cursor: pointer;">나중에</button>
+          </div>
+        </div>
+      `);
+    }, 1000);
+  }
+
+  startMatching() {
+    startMatchingAnimation();
+    setTimeout(() => {
+      this.generateMatches();
+    }, 2000);
+  }
+
+  generateMatches() {
+    const analysis = this.getAnalysis();
+    if (!analysis) return;
+
+    // Generate sample matches based on values
+    const matches = this.createSampleMatches(analysis);
+    this.displayMatches(matches);
+  }
+
+  createSampleMatches(analysis) {
+    const matchProfiles = [
+      { name: '김철수', age: 52, avatar: '👨‍💼', traits: ['성장 지향', '운동 좋아함'], compatibility: 92 },
+      { name: '이영희', age: 48, avatar: '👩‍🎨', traits: ['예술 애호가', '가족 중시'], compatibility: 87 },
+      { name: '박민수', age: 55, avatar: '👨‍🏫', traits: ['독서 좋아함', '안정 추구'], compatibility: 84 },
+      { name: '최은미', age: 45, avatar: '👩‍💼', traits: ['여행 좋아함', '사회적 관계'], compatibility: 89 },
+      { name: '정혜진', age: 50, avatar: '👩‍🌾', traits: ['자연 친화', '창의적'], compatibility: 86 }
+    ];
+
+    // Sort by compatibility and adjust based on user's top values
+    return matchProfiles
+      .map(profile => {
+        // Adjust compatibility based on value alignment
+        let adjustedCompatibility = profile.compatibility;
+        analysis.topValues.forEach(value => {
+          if (profile.traits.some(trait => this.isTraitAligned(trait, value.key))) {
+            adjustedCompatibility += 2;
+          }
+        });
+        return { ...profile, compatibility: Math.min(adjustedCompatibility, 98) };
+      })
+      .sort((a, b) => b.compatibility - a.compatibility)
+      .slice(0, 3);
+  }
+
+  isTraitAligned(trait, valueKey) {
+    const alignments = {
+      family: ['가족 중시', '안정 추구'],
+      growth: ['성장 지향', '운동 좋아함'],
+      social: ['사회적 관계', '소통 중시'],
+      creativity: ['예술 애호가', '창의적'],
+      adventure: ['여행 좋아함', '모험 정신'],
+      stability: ['안정 추구', '독서 좋아함'],
+      independence: ['독립적', '자유로움']
+    };
+    return alignments[valueKey]?.includes(trait) || false;
+  }
+
+  displayMatches(matches) {
+    const matchCards = document.querySelector('.match-cards');
+    if (matchCards) {
+      matchCards.innerHTML = matches.map(match => `
+        <div class="match-card">
+          <div class="match-avatar">${match.avatar}</div>
+          <div class="match-info">
+            <div class="match-name">${match.name}</div>
+            <div class="match-age">${match.age}세</div>
+            <div class="match-percentage">${match.compatibility}% 일치</div>
+            <div class="match-tags">
+              ${match.traits.map(trait => `<span class="tag">${trait}</span>`).join('')}
+            </div>
+          </div>
+          <button class="connect-btn" onclick="valuesAnalysisManager.connectWithMatch('${match.name}')">연결하기</button>
+        </div>
+      `).join('');
+    }
+  }
+
+  connectWithMatch(matchName) {
+    userManager.showSuccess(`${matchName}님과 연결되었습니다! 새로운 연결 페이지에서 대화를 시작해보세요.`);
+    trackEvent('connect_match', { matchName });
+    
+    // Close matching modal and show connections
+    setTimeout(() => {
+      closeModal('matchingModal');
+      openModal('connectionsModal');
+    }, 1500);
+  }
+}
+
+// Initialize values analysis manager
+const valuesAnalysisManager = new ValuesAnalysisManager();
+
+// Updated complete button handler
+document.querySelector('.complete-values-btn')?.addEventListener('click', function() {
   const submitBtn = this;
   const originalText = submitBtn.textContent;
     
@@ -1103,31 +2616,32 @@ document.querySelector('.complete-values-btn')?.addEventListener('click', async 
         
     console.log('Values Analysis Complete:', answers);
         
-    // Submit to backend
-    const response = await apiClient.submitValuesAssessment(answers);
-        
-    if (response.success) {
-      // Save to localStorage for quick access
-      localStorage.setItem('userProfile', JSON.stringify(response.data.assessment));
-            
-      apiClient.showSuccess(response.message);
-            
-      // Close values modal and open matching modal
-      closeModal('valuesModal');
-      setTimeout(() => {
-        openModal('matchingModal');
-        startMatchingAnimation();
-                
-        // Load actual matching results
-        loadMatchingResults();
-      }, 300);
-            
-      trackEvent('values_complete', { completed: true });
+    // Check if enough questions answered
+    const answeredCount = Object.keys(answers).length;
+    if (answeredCount < 3) {
+      userManager.showError('최소 3개 이상의 질문에 답변해주세요.');
+      return;
     }
+        
+    // Generate analysis
+    const analysis = valuesAnalysisManager.generateAnalysis(answers);
+    valuesAnalysisManager.saveAnalysis(analysis);
+    
+    // Close values modal
+    closeModal('valuesModal');
+    
+    // Show results
+    valuesAnalysisManager.showAnalysisResult(analysis);
+            
+    trackEvent('values_complete', { 
+      completed: true, 
+      answeredQuestions: answeredCount,
+      topValue: analysis.topValues[0].key
+    });
         
   } catch (error) {
     console.error('Values submission error:', error);
-    apiClient.showError(error.message || '가치관 분석 중 오류가 발생했습니다.');
+    userManager.showError('가치관 분석 중 오류가 발생했습니다.');
     trackEvent('values_error', { error: error.message });
   } finally {
     // Reset button state
@@ -1193,7 +2707,7 @@ document.querySelectorAll('.connect-btn').forEach(btn => {
         
     // Update connections count (would be done via API in real app)
     setTimeout(() => {
-      alert(`${matchName}님과 연결되었습니다! 새로운 연결 페이지에서 대화를 시작해보세요.`);
+      showModal('연결 성공', `${matchName}님과 연결되었습니다! 새로운 연결 페이지에서 대화를 시작해보세요.`);
     }, 500);
         
     trackEvent('connect_match', { match_name: matchName });
@@ -1221,22 +2735,381 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
   });
 });
 
-// Action buttons in connections
-document.querySelectorAll('.action-btn').forEach(btn => {
-  btn.addEventListener('click', function() {
-    const action = this.textContent.trim();
-    const connectionCard = this.closest('.connection-card');
-    const connectionName = connectionCard.querySelector('.connection-name').textContent;
-        
-    if (action.includes('대화')) {
-      alert(`${connectionName}님과의 대화를 시작합니다!`);
-      trackEvent('start_conversation', { name: connectionName });
-    } else if (action.includes('프로필')) {
-      alert(`${connectionName}님의 프로필을 확인합니다!`);
-      trackEvent('view_profile', { name: connectionName });
+// ==============================================
+// CONNECTION & CHAT MANAGEMENT SYSTEM
+// ==============================================
+
+class ConnectionManager {
+  constructor() {
+    this.connectionsKey = 'charminyeon_connections';
+    this.messagesKey = 'charminyeon_messages';
+    this.initializeConnections();
+  }
+
+  initializeConnections() {
+    if (!localStorage.getItem(this.connectionsKey)) {
+      // Initialize with demo connections
+      const demoConnections = [
+        {
+          id: 'conn_1',
+          name: '김철수',
+          age: 52,
+          avatar: '👨‍💼',
+          compatibility: 92,
+          status: 'new',
+          connectedAt: new Date().toISOString(),
+          lastMessage: '가치관이 92% 일치합니다',
+          unreadCount: 0
+        },
+        {
+          id: 'conn_2',
+          name: '이영희',
+          age: 48,
+          avatar: '👩‍🎨',
+          compatibility: 87,
+          status: 'new',
+          connectedAt: new Date(Date.now() - 300000).toISOString(),
+          lastMessage: '예술과 창작에 관심이 많으시군요',
+          unreadCount: 0
+        },
+        {
+          id: 'conn_3',
+          name: '박민수',
+          age: 55,
+          avatar: '👨‍🏫',
+          compatibility: 84,
+          status: 'active',
+          connectedAt: new Date(Date.now() - 3600000).toISOString(),
+          lastMessage: '여행 이야기가 정말 흥미롭네요!',
+          unreadCount: 3
+        }
+      ];
+      localStorage.setItem(this.connectionsKey, JSON.stringify(demoConnections));
     }
-  });
-});
+
+    if (!localStorage.getItem(this.messagesKey)) {
+      // Initialize with demo messages
+      const demoMessages = {
+        'conn_3': [
+          {
+            id: 'msg_1',
+            senderId: 'conn_3',
+            senderName: '박민수',
+            content: '안녕하세요! 프로필을 보니 여행을 좋아하시는군요',
+            timestamp: new Date(Date.now() - 7200000).toISOString(),
+            isRead: true
+          },
+          {
+            id: 'msg_2',
+            senderId: 'current_user',
+            senderName: '나',
+            content: '네! 특히 혼자 떠나는 여행을 즐겨해요 😊',
+            timestamp: new Date(Date.now() - 7100000).toISOString(),
+            isRead: true
+          },
+          {
+            id: 'msg_3',
+            senderId: 'conn_3',
+            senderName: '박민수',
+            content: '오, 저도 마찬가지예요! 어디를 가장 인상 깊게 여행하셨나요?',
+            timestamp: new Date(Date.now() - 3700000).toISOString(),
+            isRead: false
+          },
+          {
+            id: 'msg_4',
+            senderId: 'conn_3',
+            senderName: '박민수',
+            content: '저는 작년에 제주도에 혼자 다녀왔는데 정말 좋았어요',
+            timestamp: new Date(Date.now() - 3600000).toISOString(),
+            isRead: false
+          },
+          {
+            id: 'msg_5',
+            senderId: 'conn_3',
+            senderName: '박민수',
+            content: '혹시 시간 되시면 여행 이야기 더 나누어요!',
+            timestamp: new Date(Date.now() - 3500000).toISOString(),
+            isRead: false
+          }
+        ]
+      };
+      localStorage.setItem(this.messagesKey, JSON.stringify(demoMessages));
+    }
+  }
+
+  getConnections() {
+    return JSON.parse(localStorage.getItem(this.connectionsKey) || '[]');
+  }
+
+  getConnection(connectionId) {
+    const connections = this.getConnections();
+    return connections.find(conn => conn.id === connectionId);
+  }
+
+  updateConnectionsDisplay() {
+    const connections = this.getConnections();
+    
+    // Update new connections
+    this.displayConnectionsInTab('new', connections.filter(conn => conn.status === 'new'));
+    
+    // Update active conversations
+    this.displayConnectionsInTab('active', connections.filter(conn => conn.status === 'active'));
+    
+    // Update all connections
+    this.displayConnectionsInTab('all', connections);
+  }
+
+  displayConnectionsInTab(tabName, connections) {
+    const tabContent = document.querySelector(`.tab-content[data-tab="${tabName}"]`);
+    if (!tabContent) return;
+
+    if (tabName === 'all') {
+      // Simple list view for all connections
+      const connectionList = tabContent.querySelector('.connection-list');
+      if (connectionList) {
+        connectionList.innerHTML = connections.map(conn => `
+          <div class="connection-item">
+            <div class="connection-avatar">${conn.avatar}</div>
+            <div class="connection-info">
+              <div class="connection-name">${conn.name}</div>
+              <div class="connection-status">${conn.status === 'new' ? '새로운 매치' : '대화 중'}</div>
+            </div>
+          </div>
+        `).join('');
+      }
+    } else {
+      // Card view for new and active
+      tabContent.innerHTML = connections.map(conn => `
+        <div class="connection-card" data-connection-id="${conn.id}">
+          <div class="connection-avatar">${conn.avatar}</div>
+          <div class="connection-info">
+            <div class="connection-name">${conn.name}</div>
+            <div class="connection-preview">${conn.lastMessage}</div>
+            <div class="connection-time">${this.formatTime(conn.connectedAt)}</div>
+          </div>
+          ${conn.unreadCount > 0 ? `<div class="connection-badge">${conn.unreadCount}</div>` : ''}
+          <div class="connection-actions">
+            <button class="action-btn primary" onclick="connectionManager.startChat('${conn.id}')">
+              ${conn.status === 'new' ? '대화 시작' : '대화 계속'}
+            </button>
+            <button class="action-btn secondary" onclick="connectionManager.viewProfile('${conn.id}')">프로필 보기</button>
+          </div>
+        </div>
+      `).join('');
+    }
+  }
+
+  formatTime(timestamp) {
+    const now = new Date();
+    const time = new Date(timestamp);
+    const diffInMinutes = Math.floor((now - time) / (1000 * 60));
+    
+    if (diffInMinutes < 60) {
+      return `${diffInMinutes}분 전`;
+    } else if (diffInMinutes < 1440) {
+      return `${Math.floor(diffInMinutes / 60)}시간 전`;
+    } else {
+      return `${Math.floor(diffInMinutes / 1440)}일 전`;
+    }
+  }
+
+  startChat(connectionId) {
+    const connection = this.getConnection(connectionId);
+    if (!connection) return;
+
+    // Update connection status to active
+    const connections = this.getConnections();
+    const connIndex = connections.findIndex(conn => conn.id === connectionId);
+    if (connIndex !== -1) {
+      connections[connIndex].status = 'active';
+      connections[connIndex].unreadCount = 0;
+      localStorage.setItem(this.connectionsKey, JSON.stringify(connections));
+    }
+    
+    // Open chat interface
+    this.openChatInterface(connection);
+    
+    trackEvent('start_conversation', { connectionId, name: connection.name });
+  }
+
+  viewProfile(connectionId) {
+    const connection = this.getConnection(connectionId);
+    if (!connection) return;
+
+    showCustomAlert(`${connection.name}님의 프로필`, `
+      <div style="text-align: center; padding: 2rem;">
+        <div style="font-size: 4rem; margin-bottom: 1rem;">${connection.avatar}</div>
+        <h3 style="margin-bottom: 1rem; color: #333;">${connection.name}, ${connection.age}세</h3>
+        <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 1rem; border-radius: 10px; margin-bottom: 1.5rem;">
+          <div style="font-size: 1.5rem; font-weight: bold;">${connection.compatibility}%</div>
+          <div>가치관 일치도</div>
+        </div>
+        <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 15px; text-align: left; margin-bottom: 1.5rem;">
+          <h4 style="color: #667eea; margin-bottom: 1rem;">💬 공통 관심사</h4>
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <span style="background: #667eea; color: white; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.9rem;">여행</span>
+            <span style="background: #667eea; color: white; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.9rem;">독서</span>
+            <span style="background: #667eea; color: white; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.9rem;">자연</span>
+          </div>
+        </div>
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+          <button onclick="connectionManager.startChat('${connectionId}'); this.closest('.custom-alert').remove();" style="background: #10b981; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 10px; font-weight: 600; cursor: pointer;">대화 시작</button>
+          <button onclick="this.closest('.custom-alert').remove()" style="background: #6b7280; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 10px; font-weight: 600; cursor: pointer;">닫기</button>
+        </div>
+      </div>
+    `);
+    
+    trackEvent('view_profile', { connectionId, name: connection.name });
+  }
+
+  openChatInterface(connection) {
+    const messages = this.getMessages(connection.id);
+    
+    showCustomAlert(`${connection.name}님과의 대화`, `
+      <div style="width: 100%; max-width: 500px; height: 600px; display: flex; flex-direction: column;">
+        <!-- Chat Header -->
+        <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 1rem; border-radius: 15px 15px 0 0; display: flex; align-items: center; gap: 1rem;">
+          <div style="font-size: 2rem;">${connection.avatar}</div>
+          <div>
+            <div style="font-weight: bold; font-size: 1.1rem;">${connection.name}</div>
+            <div style="opacity: 0.9; font-size: 0.9rem;">온라인</div>
+          </div>
+        </div>
+        
+        <!-- Messages Container -->
+        <div id="chatMessages" style="flex: 1; padding: 1rem; background: #f8f9fa; overflow-y: auto; min-height: 400px; max-height: 400px;">
+          ${this.renderMessages(messages)}
+        </div>
+        
+        <!-- Message Input -->
+        <div style="padding: 1rem; background: white; border-radius: 0 0 15px 15px; border-top: 1px solid #e5e7eb;">
+          <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <input type="text" id="messageInput" placeholder="메시지를 입력하세요..." style="flex: 1; padding: 0.8rem; border: 1px solid #d1d5db; border-radius: 20px; outline: none;" onkeypress="if(event.key==='Enter') connectionManager.sendMessage('${connection.id}')">
+            <button onclick="connectionManager.sendMessage('${connection.id}')" style="background: #667eea; color: white; border: none; padding: 0.8rem 1.2rem; border-radius: 20px; cursor: pointer; font-weight: 600;">전송</button>
+          </div>
+          <div style="text-align: center; margin-top: 0.5rem;">
+            <button onclick="this.closest('.custom-alert').remove()" style="background: transparent; color: #6b7280; border: none; padding: 0.5rem; cursor: pointer; font-size: 0.9rem;">대화 나가기</button>
+          </div>
+        </div>
+      </div>
+    `, false); // false = don't auto-close
+  }
+
+  getMessages(connectionId) {
+    const allMessages = JSON.parse(localStorage.getItem(this.messagesKey) || '{}');
+    return allMessages[connectionId] || [];
+  }
+
+  renderMessages(messages) {
+    return messages.map(msg => {
+      const isCurrentUser = msg.senderId === 'current_user';
+      const time = new Date(msg.timestamp).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+      
+      return `
+        <div style="display: flex; justify-content: ${isCurrentUser ? 'flex-end' : 'flex-start'}; margin-bottom: 1rem;">
+          <div style="max-width: 70%; ${isCurrentUser ? 'order: 2;' : ''}">
+            <div style="background: ${isCurrentUser ? '#667eea' : 'white'}; color: ${isCurrentUser ? 'white' : '#333'}; padding: 0.8rem 1rem; border-radius: ${isCurrentUser ? '15px 15px 5px 15px' : '15px 15px 15px 5px'}; box-shadow: 0 2px 5px rgba(0,0,0,0.1); word-wrap: break-word;">
+              ${msg.content}
+            </div>
+            <div style="font-size: 0.75rem; color: #6b7280; margin-top: 0.3rem; text-align: ${isCurrentUser ? 'right' : 'left'};">
+              ${time}
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  sendMessage(connectionId) {
+    const input = document.getElementById('messageInput');
+    const content = input.value.trim();
+    
+    if (!content) return;
+    
+    const currentUser = userManager.getCurrentUser();
+    if (!currentUser) return;
+    
+    // Add message
+    const allMessages = JSON.parse(localStorage.getItem(this.messagesKey) || '{}');
+    if (!allMessages[connectionId]) {
+      allMessages[connectionId] = [];
+    }
+    
+    const newMessage = {
+      id: `msg_${Date.now()}`,
+      senderId: 'current_user',
+      senderName: currentUser.name,
+      content: content,
+      timestamp: new Date().toISOString(),
+      isRead: false
+    };
+    
+    allMessages[connectionId].push(newMessage);
+    localStorage.setItem(this.messagesKey, JSON.stringify(allMessages));
+    
+    // Clear input
+    input.value = '';
+    
+    // Update chat display
+    const chatMessages = document.getElementById('chatMessages');
+    if (chatMessages) {
+      const messages = this.getMessages(connectionId);
+      chatMessages.innerHTML = this.renderMessages(messages);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    
+    // Simulate response after a delay
+    setTimeout(() => {
+      this.simulateResponse(connectionId);
+    }, 1000 + Math.random() * 2000);
+    
+    trackEvent('send_message', { connectionId, messageLength: content.length });
+  }
+
+  simulateResponse(connectionId) {
+    const connection = this.getConnection(connectionId);
+    if (!connection) return;
+    
+    const responses = [
+      '정말 그렇군요! 저도 비슷한 생각이에요 😊',
+      '우와, 흥미롭네요! 더 자세히 들려주시겠어요?',
+      '이런 이야기 나누니 좋아요. 언제 시간 되시면 만나서 대화해요!',
+      '하하, 정말 우리 생각이 비슷해요!',
+      '아, 저도 그런 경험이 있어요. 정말 인상 깊었죠.',
+      '공감되네요! 우리 정말 잘 맞는 것 같아요 😄'
+    ];
+    
+    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+    
+    const allMessages = JSON.parse(localStorage.getItem(this.messagesKey) || '{}');
+    if (!allMessages[connectionId]) {
+      allMessages[connectionId] = [];
+    }
+    
+    const responseMessage = {
+      id: `msg_${Date.now()}`,
+      senderId: connectionId,
+      senderName: connection.name,
+      content: randomResponse,
+      timestamp: new Date().toISOString(),
+      isRead: false
+    };
+    
+    allMessages[connectionId].push(responseMessage);
+    localStorage.setItem(this.messagesKey, JSON.stringify(allMessages));
+    
+    // Update chat display if open
+    const chatMessages = document.getElementById('chatMessages');
+    if (chatMessages) {
+      const messages = this.getMessages(connectionId);
+      chatMessages.innerHTML = this.renderMessages(messages);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+  }
+}
+
+// Initialize connection manager
+const connectionManager = new ConnectionManager();
 
 // Hero floating cards functionality - make them clickable
 document.querySelector('.floating-card.card-1')?.addEventListener('click', function() {
@@ -1254,6 +3127,7 @@ document.querySelector('.floating-card.card-2')?.addEventListener('click', funct
 
 document.querySelector('.floating-card.card-3')?.addEventListener('click', function() {
   openModal('connectionsModal');
+  connectionManager.updateConnectionsDisplay();
   trackEvent('hero_card_connections_click');
 });
 
@@ -1455,7 +3329,7 @@ document.querySelectorAll('.feature-item').forEach((item, index) => {
                             <li>안전한 첫 만남 장소 추천</li>
                             <li>24시간 고객지원 서비스</li>
                         </ul>
-                        <button onclick="alert('안전 가이드를 확인하세요!'); this.closest('.custom-alert').remove();" class="feature-btn">안전 가이드 확인</button>
+                        <button onclick="showModal('안전 가이드', '안전한 만남을 위한 가이드를 확인해보세요. 공공장소에서 만나고, 개인정보는 주의깊게 공유하세요.'); this.closest('.custom-alert').remove();" class="feature-btn">안전 가이드 확인</button>
                     </div>
                 `;
       break;
@@ -2683,4 +4557,5 @@ document.addEventListener('DOMContentLoaded', function() {
   setTimeout(() => {
     checkUserStatus();
   }, 500);
+  
 });
