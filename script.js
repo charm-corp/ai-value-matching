@@ -1523,27 +1523,18 @@ document.querySelectorAll('.secondary-button').forEach(button => {
   });
 });
 
-// Open Enhanced Demo Modal
+// Open Video Modal (소개 영상 보기)
 function openEnhancedDemo() {
-  console.log('Opening enhanced demo modal...');
+  console.log('Opening video modal...');
   try {
-    const modal = document.getElementById('demoModal');
+    const modal = document.getElementById('videoModal');
     if (modal) {
-      console.log('Demo modal found, opening...');
-      modal.style.display = 'flex';
+      console.log('Video modal found, opening...');
+      modal.style.display = 'block';
       document.body.classList.add('modal-open');
-      
-      // Reset demo state
-      resetDemoState();
-      showDemoStep(1);
-      
-      // Initialize step 1 interactions
-      setTimeout(() => {
-        initializeStepInteractions();
-      }, 100);
     } else {
-      console.error('Demo modal not found!');
-      showModal('오류', '데모 모달을 찾을 수 없습니다.');
+      console.error('Video modal not found!');
+      showModal('오류', '비디오 모달을 찾을 수 없습니다.');
     }
   } catch (error) {
     console.error('Enhanced demo error:', error);
@@ -1935,7 +1926,7 @@ document.addEventListener('keydown', function(event) {
 
 // Close active modal function
 function closeActiveModal() {
-  const openModal = document.querySelector('.enhanced-demo-modal[style*="flex"], .modal[style*="block"]');
+  const openModal = document.querySelector('.enhanced-demo-modal[style*="flex"], .modal[style*="block"], .video-modal[style*="block"]');
   if (openModal) {
     openModal.style.display = 'none';
     document.body.classList.remove('modal-open');
@@ -1944,6 +1935,8 @@ function closeActiveModal() {
     if (openModal.id === 'demoModal') {
       resetDemoState();
     }
+    
+    console.log('Modal closed:', openModal.id);
   }
 }
 
@@ -1955,6 +1948,21 @@ document.addEventListener('DOMContentLoaded', function() {
     demoCloseBtn.addEventListener('click', closeActiveModal);
   }
   
+  // Video modal close button
+  const videoCloseBtn = document.querySelector('#videoModal .close');
+  if (videoCloseBtn) {
+    videoCloseBtn.addEventListener('click', closeActiveModal);
+  }
+  
+  // Video play button
+  const playVideoBtn = document.getElementById('playVideoBtn');
+  if (playVideoBtn) {
+    playVideoBtn.addEventListener('click', function() {
+      console.log('비디오 재생 버튼 클릭');
+      showModal('영상 준비 중', '곧 실제 소개 영상이 준비될 예정입니다!');
+    });
+  }
+  
   // Close modal when clicking outside
   const demoModal = document.getElementById('demoModal');
   if (demoModal) {
@@ -1964,7 +1972,52 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   }
+  
+  // Close video modal when clicking outside
+  const videoModal = document.getElementById('videoModal');
+  if (videoModal) {
+    videoModal.addEventListener('click', function(e) {
+      if (e.target === videoModal) {
+        closeActiveModal();
+      }
+    });
+  }
+  
+  // 우측 사이드바 위젯 클릭 이벤트 리스너
+  initializeWidgetClickEvents();
 });
+
+// 위젯 클릭 이벤트 초기화 함수
+function initializeWidgetClickEvents() {
+  // 가치관 분석 위젯
+  const valuesAnalysisWidget = document.getElementById('valuesAnalysisWidget');
+  if (valuesAnalysisWidget) {
+    valuesAnalysisWidget.addEventListener('click', function() {
+      console.log('가치관 분석 위젯 클릭됨');
+      openModal('valuesModal');
+      trackEvent('values_analysis_widget_click');
+    });
+  }
+  
+  // AI 매칭 위젯
+  const aiMatchingWidget = document.getElementById('aiMatchingWidget');
+  if (aiMatchingWidget) {
+    aiMatchingWidget.addEventListener('click', function() {
+      console.log('AI 매칭 위젯 클릭됨');
+      openModal('matchingModal');
+      trackEvent('ai_matching_widget_click');
+    });
+  }
+  
+  // 새로운 연결 위젯
+  const newConnectionsWidget = document.getElementById('newConnectionsWidget');
+  if (newConnectionsWidget) {
+    newConnectionsWidget.addEventListener('click', function() {
+      console.log('새로운 연결 위젯 클릭됨');
+      openModal('connectionsModal');
+      trackEvent('new_connections_widget_click');
+    });
+  }
 
 // Values Analysis Functionality
 let currentValuesQuestion = 1;

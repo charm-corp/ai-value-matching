@@ -405,10 +405,7 @@
               깊이 있는 대화와 의미 있는 만남이 시작됩니다
             </p>
             <div class="hero-buttons">
-              <button
-                class="primary-button"
-                id="signup-btn"
-              >
+              <button class="primary-button" id="signup-btn">
                 무료로 시작하기
               </button>
               <button class="secondary-button">
@@ -418,7 +415,7 @@
             </div>
           </div>
           <div class="hero-visual">
-            <div class="floating-card card-1">
+            <div class="floating-card card-1" id="valuesAnalysisWidget">
               <div class="card-header">가치관 분석</div>
               <div class="card-content">
                 <div class="progress-bar">
@@ -427,7 +424,7 @@
                 <span>85% 일치</span>
               </div>
             </div>
-            <div class="floating-card card-2">
+            <div class="floating-card card-2" id="aiMatchingWidget">
               <div class="card-header">AI 매칭</div>
               <div class="card-content">
                 <div class="matching-dots">
@@ -438,7 +435,7 @@
                 <span>매칭 중...</span>
               </div>
             </div>
-            <div class="floating-card card-3">
+            <div class="floating-card card-3" id="newConnectionsWidget">
               <div class="card-header">새로운 연결</div>
               <div class="card-content">
                 <div class="profile-pics">
@@ -655,10 +652,7 @@
           <div class="cta-content">
             <h2>지금 시작해보세요</h2>
             <p>인생의 새로운 장을 여는 특별한 만남이 기다리고 있습니다</p>
-            <button
-              class="cta-large-button"
-              id="signup-btn-2"
-            >
+            <button class="cta-large-button" id="signup-btn-2">
               무료로 가입하기
             </button>
             <p class="cta-note">가입비 무료 • 언제든 탈퇴 가능</p>
@@ -1020,7 +1014,7 @@
           <h2>🎯 CHARM_INYEON 체험하기</h2>
           <span class="close" data-modal="demoModal">&times;</span>
         </div>
-        
+
         <div class="demo-progress-bar">
           <div class="demo-progress-fill" id="demoProgressFill"></div>
           <div class="demo-progress-text" id="demoProgressText">1 / 4</div>
@@ -1032,7 +1026,7 @@
             <div class="step-icon">📝</div>
             <h3>실제 가치관 분석 체험</h3>
             <p>몇 가지 질문에 답하며 실제 분석 과정을 경험해보세요</p>
-            
+
             <div class="interactive-question" id="question1">
               <div class="question-header">
                 <span class="question-number">Q1</span>
@@ -1040,28 +1034,28 @@
               </div>
               <div class="question-options">
                 <label class="option-card" data-value="family">
-                  <input type="radio" name="q1" value="family">
+                  <input type="radio" name="q1" value="family" />
                   <div class="option-content">
                     <div class="option-icon">👨‍👩‍👧‍👦</div>
                     <div class="option-text">가족과 함께하는 시간</div>
                   </div>
                 </label>
                 <label class="option-card" data-value="hobby">
-                  <input type="radio" name="q1" value="hobby">
+                  <input type="radio" name="q1" value="hobby" />
                   <div class="option-content">
                     <div class="option-icon">🎨</div>
                     <div class="option-text">취미 활동이나 자기계발</div>
                   </div>
                 </label>
                 <label class="option-card" data-value="rest">
-                  <input type="radio" name="q1" value="rest">
+                  <input type="radio" name="q1" value="rest" />
                   <div class="option-content">
                     <div class="option-icon">🛋️</div>
                     <div class="option-text">편안한 휴식</div>
                   </div>
                 </label>
                 <label class="option-card" data-value="social">
-                  <input type="radio" name="q1" value="social">
+                  <input type="radio" name="q1" value="social" />
                   <div class="option-content">
                     <div class="option-icon">👥</div>
                     <div class="option-text">친구들과의 만남</div>
@@ -1069,8 +1063,10 @@
                 </label>
               </div>
             </div>
-            
-            <button class="next-question-btn" id="nextQ1" disabled>다음 질문</button>
+
+            <button class="next-question-btn" id="nextQ1" disabled>
+              다음 질문
+            </button>
           </div>
         </div>
 
@@ -1079,7 +1075,7 @@
           <div class="step-container">
             <div class="step-icon">💭</div>
             <h3>가치관 심화 분석</h3>
-            
+
             <div class="interactive-question" id="question2">
               <div class="question-header">
                 <span class="question-number">Q2</span>
@@ -1087,28 +1083,28 @@
               </div>
               <div class="question-options">
                 <label class="option-card" data-value="stability">
-                  <input type="radio" name="q2" value="stability">
+                  <input type="radio" name="q2" value="stability" />
                   <div class="option-content">
                     <div class="option-icon">🏡</div>
                     <div class="option-text">안정과 평화</div>
                   </div>
                 </label>
                 <label class="option-card" data-value="growth">
-                  <input type="radio" name="q2" value="growth">
+                  <input type="radio" name="q2" value="growth" />
                   <div class="option-content">
                     <div class="option-icon">🚀</div>
                     <div class="option-text">성장과 도전</div>
                   </div>
                 </label>
                 <label class="option-card" data-value="connection">
-                  <input type="radio" name="q2" value="connection">
+                  <input type="radio" name="q2" value="connection" />
                   <div class="option-content">
                     <div class="option-icon">❤️</div>
                     <div class="option-text">인간관계와 사랑</div>
                   </div>
                 </label>
                 <label class="option-card" data-value="freedom">
-                  <input type="radio" name="q2" value="freedom">
+                  <input type="radio" name="q2" value="freedom" />
                   <div class="option-content">
                     <div class="option-icon">🦋</div>
                     <div class="option-text">자유와 독립</div>
@@ -1116,8 +1112,10 @@
                 </label>
               </div>
             </div>
-            
-            <button class="next-question-btn" id="nextQ2" disabled>분석 결과 보기</button>
+
+            <button class="next-question-btn" id="nextQ2" disabled>
+              분석 결과 보기
+            </button>
           </div>
         </div>
 
@@ -1126,7 +1124,7 @@
           <div class="step-container">
             <div class="step-icon">🤖</div>
             <h3>AI 분석 중...</h3>
-            
+
             <div class="analysis-container">
               <div class="analysis-visual">
                 <div class="brain-animation">
@@ -1141,12 +1139,14 @@
                   답변을 분석하고 있습니다...
                 </div>
               </div>
-              
+
               <div class="analysis-progress">
                 <div class="analysis-bar">
                   <div class="analysis-fill" id="analysisFill"></div>
                 </div>
-                <div class="analysis-percentage" id="analysisPercentage">0%</div>
+                <div class="analysis-percentage" id="analysisPercentage">
+                  0%
+                </div>
               </div>
             </div>
           </div>
@@ -1157,7 +1157,7 @@
           <div class="step-container">
             <div class="step-icon">✨</div>
             <h3>매칭 결과</h3>
-            
+
             <div class="matching-result">
               <div class="user-profile">
                 <div class="profile-card your-profile">
@@ -1170,10 +1170,12 @@
                   </div>
                 </div>
               </div>
-              
+
               <div class="matching-animation">
                 <div class="compatibility-circle">
-                  <div class="compatibility-number" id="compatibilityScore">0%</div>
+                  <div class="compatibility-number" id="compatibilityScore">
+                    0%
+                  </div>
                   <div class="compatibility-label">가치관 일치도</div>
                 </div>
                 <div class="matching-particles">
@@ -1184,7 +1186,7 @@
                   <div class="particle"></div>
                 </div>
               </div>
-              
+
               <div class="match-profiles">
                 <div class="profile-card match-profile">
                   <div class="profile-avatar">👩</div>
@@ -1210,30 +1212,45 @@
                 </div>
               </div>
             </div>
-            
+
             <div class="demo-actions">
-              <button class="demo-action-btn primary" id="startChatDemo">대화 체험하기</button>
-              <button class="demo-action-btn secondary" id="restartDemo">다시 체험하기</button>
+              <button class="demo-action-btn primary" id="startChatDemo">
+                대화 체험하기
+              </button>
+              <button class="demo-action-btn secondary" id="restartDemo">
+                다시 체험하기
+              </button>
             </div>
           </div>
         </div>
 
         <!-- Chat Demo (Hidden initially) -->
-        <div class="chat-demo-container" id="chatDemoContainer" style="display: none;">
+        <div
+          class="chat-demo-container"
+          id="chatDemoContainer"
+          style="display: none"
+        >
           <div class="chat-header">
             <h3>💬 AI 대화 가이드 체험</h3>
           </div>
           <div class="chat-interface">
             <div class="ai-suggestion active">
               <div class="suggestion-icon">💡</div>
-              <div class="suggestion-text">"안녕하세요! 가치관이 비슷해서 흥미롭네요"</div>
+              <div class="suggestion-text">
+                "안녕하세요! 가치관이 비슷해서 흥미롭네요"
+              </div>
               <button class="use-suggestion-btn">이 문장 사용하기</button>
             </div>
             <div class="chat-messages" id="chatMessages">
               <!-- 메시지가 동적으로 추가됩니다 -->
             </div>
             <div class="chat-input-container">
-              <input type="text" id="chatInput" placeholder="메시지를 입력하세요..." disabled>
+              <input
+                type="text"
+                id="chatInput"
+                placeholder="메시지를 입력하세요..."
+                disabled
+              />
               <button id="sendMessage" disabled>전송</button>
             </div>
           </div>
@@ -1566,6 +1583,39 @@
         </div>
       </div>
     </footer>
+
+    <!-- Video Modal -->
+    <div id="videoModal" class="modal video-modal">
+      <div class="video-modal-content">
+        <div class="video-modal-header">
+          <h2>CHARM_INYEON 소개 영상</h2>
+          <span class="close" data-modal="videoModal">&times;</span>
+        </div>
+        <div class="video-container">
+          <div class="video-placeholder">
+            <div class="video-icon">🎬</div>
+            <h3>CHARM_INYEON 플랫폼 소개</h3>
+            <p>AI 기반 가치관 매칭으로 새로운 인연을 만나보세요</p>
+            <div class="video-duration">3:45</div>
+          </div>
+          <div class="video-controls">
+            <button class="play-btn" id="playVideoBtn">
+              <span class="play-icon">▶</span>
+              영상 재생
+            </button>
+          </div>
+        </div>
+        <div class="video-description">
+          <h4>이 영상에서 확인하실 수 있습니다:</h4>
+          <ul>
+            <li>✨ AI 가치관 분석 시스템 소개</li>
+            <li>🎯 정확한 매칭 알고리즘 설명</li>
+            <li>💬 대화 가이드 기능 안내</li>
+            <li>🔒 안전한 만남 환경 보장</li>
+          </ul>
+        </div>
+      </div>
+    </div>
 
     <!-- theme-switcher.js 비활성화 -->
     <!-- <script src="js/theme-switcher.js"></script> -->
