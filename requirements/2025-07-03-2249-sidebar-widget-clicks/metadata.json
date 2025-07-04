@@ -1,0 +1,22 @@
+{
+  "id": "sidebar-widget-clicks",
+  "started": "2025-07-03T22:49:00Z",
+  "lastUpdated": "2025-07-04T11:07:00Z",
+  "status": "completed",
+  "phase": "specification",
+  "progress": {
+    "discovery": { "answered": 5, "total": 5 },
+    "detail": { "answered": 8, "total": 8 }
+  },
+  "contextFiles": [
+    "index.html",
+    "test-buttons.html",
+    "script.js",
+    "script-clean.js",
+    "senior-ui.js",
+    "js/theme-switcher.js",
+    "styles/components/cards.css",
+    "styles/pages/landing.css"
+  ],
+  "relatedFeatures": []
+}

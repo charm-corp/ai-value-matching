@@ -335,4 +335,317 @@ window.addEventListener('scroll', () => {
   }
 });
 
+// ========== 위젯 클릭 기능 ==========
+
+// 위젯 클릭 처리 메인 함수
+function handleWidgetClick(widgetType) {
+  console.log(`${widgetType} 위젯 클릭됨`);
+  
+  // 클릭 피드백 애니메이션 적용
+  const widget = document.getElementById(getWidgetId(widgetType));
+  if (widget) {
+    widget.style.transform = 'scale(0.95)';
+    widget.style.transition = 'transform 0.1s ease';
+    
+    setTimeout(() => {
+      widget.style.transform = 'scale(1)';
+    }, 100);
+  }
+  
+  // 인증 상태 확인 후 처리 (현재는 항상 게스트로 처리)
+  showGuestWidgetModal(widgetType);
+}
+
+// 키보드 이벤트 처리 (접근성)
+function handleWidgetKeydown(event, widgetType) {
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault();
+    handleWidgetClick(widgetType);
+  }
+}
+
+// 위젯 ID 반환 함수
+function getWidgetId(widgetType) {
+  const widgetIds = {
+    'values': 'valuesAnalysisWidget',
+    'matching': 'aiMatchingWidget',
+    'connections': 'newConnectionsWidget'
+  };
+  return widgetIds[widgetType] || '';
+}
+
+// 게스트 사용자용 모달 표시
+function showGuestWidgetModal(widgetType) {
+  const modalContent = getGuestModalContent(widgetType);
+  showAdvancedModal(modalContent.title, modalContent.content, modalContent.actions);
+}
+
+// 게스트용 모달 콘텐츠 생성
+function getGuestModalContent(widgetType) {
+  const contents = {
+    'values': {
+      title: '🎯 가치관 분석 미리보기',
+      content: `
+        <div style="text-align: left;">
+          <h4 style="color: #1e293b; margin-bottom: 16px;">가치관 분석 예시</h4>
+          <div style="margin-bottom: 16px;">
+            <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px;">
+              <div style="font-size: 24px;">📊</div>
+              <div>
+                <h5 style="margin: 0 0 4px 0; color: #374151;">상세한 가치관 프로필</h5>
+                <p style="margin: 0; font-size: 14px; color: #64748b;">AI가 분석한 당신만의 가치관 지표와 성향</p>
+              </div>
+            </div>
+            <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px;">
+              <div style="font-size: 24px;">💡</div>
+              <div>
+                <h5 style="margin: 0 0 4px 0; color: #374151;">호환성 분석</h5>
+                <p style="margin: 0; font-size: 14px; color: #64748b;">다른 회원들과의 가치관 호환성 점수</p>
+              </div>
+            </div>
+            <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px;">
+              <div style="font-size: 24px;">🎨</div>
+              <div>
+                <h5 style="margin: 0 0 4px 0; color: #374151;">개인화된 추천</h5>
+                <p style="margin: 0; font-size: 14px; color: #64748b;">가치관 기반 맞춤형 매칭 추천</p>
+              </div>
+            </div>
+          </div>
+          <div style="background: #f8fafc; padding: 16px; border-radius: 8px; border-left: 4px solid #667eea;">
+            <p style="margin: 0; font-size: 14px; color: #475569;">
+              로그인 후 본인만의 가치관 분석을 받아보세요!
+            </p>
+          </div>
+        </div>
+      `,
+      actions: [
+        { text: '회원가입하기', action: 'signup', primary: true },
+        { text: '로그인하기', action: 'login', primary: false }
+      ]
+    },
+    'matching': {
+      title: '💝 AI 매칭 미리보기',
+      content: `
+        <div style="text-align: left;">
+          <h4 style="color: #1e293b; margin-bottom: 16px;">AI 매칭 서비스</h4>
+          <div style="margin-bottom: 16px;">
+            <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px;">
+              <div style="font-size: 24px;">🤖</div>
+              <div>
+                <h5 style="margin: 0 0 4px 0; color: #374151;">AI 기반 매칭</h5>
+                <p style="margin: 0; font-size: 14px; color: #64748b;">고도화된 알고리즘으로 최적의 상대 찾기</p>
+              </div>
+            </div>
+            <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px;">
+              <div style="font-size: 24px;">⚡</div>
+              <div>
+                <h5 style="margin: 0 0 4px 0; color: #374151;">실시간 매칭</h5>
+                <p style="margin: 0; font-size: 14px; color: #64748b;">24시간 자동으로 새로운 매칭 기회 발굴</p>
+              </div>
+            </div>
+            <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px;">
+              <div style="font-size: 24px;">🎯</div>
+              <div>
+                <h5 style="margin: 0 0 4px 0; color: #374151;">정확한 매칭</h5>
+                <p style="margin: 0; font-size: 14px; color: #64748b;">가치관, 취향, 라이프스타일 종합 분석</p>
+              </div>
+            </div>
+          </div>
+          <div style="background: #f8fafc; padding: 16px; border-radius: 8px; border-left: 4px solid #667eea;">
+            <p style="margin: 0; font-size: 14px; color: #475569;">
+              지금 가입하고 AI 매칭 서비스를 경험해보세요!
+            </p>
+          </div>
+        </div>
+      `,
+      actions: [
+        { text: '무료 체험하기', action: 'signup', primary: true },
+        { text: '서비스 더 알아보기', action: 'learnMore', primary: false }
+      ]
+    },
+    'connections': {
+      title: '🌟 새로운 연결 미리보기',
+      content: `
+        <div style="text-align: left;">
+          <h4 style="color: #1e293b; margin-bottom: 16px;">연결 관리 서비스</h4>
+          <div style="margin-bottom: 16px;">
+            <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px;">
+              <div style="font-size: 24px;">👥</div>
+              <div>
+                <h5 style="margin: 0 0 4px 0; color: #374151;">새로운 만남</h5>
+                <p style="margin: 0; font-size: 14px; color: #64748b;">매일 새로운 매칭 기회와 연결 알림</p>
+              </div>
+            </div>
+            <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px;">
+              <div style="font-size: 24px;">💌</div>
+              <div>
+                <h5 style="margin: 0 0 4px 0; color: #374151;">안전한 소통</h5>
+                <p style="margin: 0; font-size: 14px; color: #64748b;">검증된 회원들과의 안전한 메시지 교환</p>
+              </div>
+            </div>
+            <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px;">
+              <div style="font-size: 24px;">🏆</div>
+              <div>
+                <h5 style="margin: 0 0 4px 0; color: #374151;">성공 사례</h5>
+                <p style="margin: 0; font-size: 14px; color: #64748b;">실제 커플 성사률 78%의 검증된 플랫폼</p>
+              </div>
+            </div>
+          </div>
+          <div style="background: #f8fafc; padding: 16px; border-radius: 8px; border-left: 4px solid #667eea;">
+            <p style="margin: 0; font-size: 14px; color: #475569;">
+              지금 시작하고 새로운 인연을 만나보세요!
+            </p>
+          </div>
+        </div>
+      `,
+      actions: [
+        { text: '지금 시작하기', action: 'signup', primary: true },
+        { text: '성공 사례 보기', action: 'viewSuccess', primary: false }
+      ]
+    }
+  };
+  
+  return contents[widgetType] || contents['values'];
+}
+
+// 고급 모달 표시 함수
+function showAdvancedModal(title, content, actions) {
+  // 기존 모달 제거
+  const existingModal = document.querySelector('.advanced-modal-overlay');
+  if (existingModal) {
+    existingModal.remove();
+  }
+  
+  // 모달 오버레이 생성
+  const modalOverlay = document.createElement('div');
+  modalOverlay.className = 'advanced-modal-overlay';
+  modalOverlay.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    animation: fadeIn 0.3s ease-out;
+  `;
+  
+  // 모달 콘텐츠 생성
+  const modalContent = document.createElement('div');
+  modalContent.style.cssText = `
+    background: white;
+    border-radius: 16px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    font-size: 16px;
+    line-height: 1.6;
+  `;
+  
+  // 액션 버튼 생성
+  const actionButtons = actions.map(action => 
+    `<button onclick="handleModalAction('${action.action}')"
+             style="
+               ${action.primary ? 
+                 'background: #667eea; color: white; border: none;' : 
+                 'background: transparent; color: #667eea; border: 2px solid #667eea;'
+               }
+               padding: 12px 24px;
+               border-radius: 8px;
+               font-size: 14px;
+               font-weight: 600;
+               cursor: pointer;
+               margin: 0 8px;
+               transition: all 0.2s;
+               min-width: 120px;
+             ">
+      ${action.text}
+    </button>`
+  ).join('');
+  
+  modalContent.innerHTML = `
+    <div style="padding: 24px 24px 16px; border-bottom: 1px solid #e2e8f0;">
+      <h3 style="margin: 0; font-size: 1.5em; color: #1e293b; display: flex; align-items: center; justify-content: space-between;">
+        ${title}
+        <button onclick="this.closest('.advanced-modal-overlay').remove()" style="
+          background: none;
+          border: none;
+          font-size: 24px;
+          color: #64748b;
+          cursor: pointer;
+          padding: 0;
+          width: 32px;
+          height: 32px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 6px;
+        ">×</button>
+      </h3>
+    </div>
+    <div style="padding: 24px;">
+      ${content}
+    </div>
+    <div style="padding: 16px 24px 24px; text-align: center; border-top: 1px solid #e2e8f0;">
+      ${actionButtons}
+    </div>
+  `;
+  
+  modalOverlay.appendChild(modalContent);
+  document.body.appendChild(modalOverlay);
+  
+  // 모달 닫기 기능
+  modalOverlay.addEventListener('click', (e) => {
+    if (e.target === modalOverlay) {
+      modalOverlay.remove();
+    }
+  });
+  
+  // 키보드 지원 (ESC 키로 닫기)
+  const handleKeyPress = (e) => {
+    if (e.key === 'Escape') {
+      modalOverlay.remove();
+      document.removeEventListener('keydown', handleKeyPress);
+    }
+  };
+  document.addEventListener('keydown', handleKeyPress);
+}
+
+// 모달 액션 처리 함수
+function handleModalAction(action) {
+  console.log(`Modal action: ${action}`);
+  
+  switch(action) {
+    case 'signup':
+      // 기존 모달 닫기
+      document.querySelector('.advanced-modal-overlay')?.remove();
+      // 회원가입 모달 열기
+      createSignupModal();
+      break;
+    case 'login':
+      // 기존 모달 닫기
+      document.querySelector('.advanced-modal-overlay')?.remove();
+      // 로그인 알림
+      showSimpleModal('로그인', '로그인 기능을 구현 중입니다. 잠시만 기다려주세요.');
+      break;
+    case 'learnMore':
+      document.querySelector('.advanced-modal-overlay')?.remove();
+      showSimpleModal('서비스 소개', 'CHARM_INYEON의 더 자세한 서비스를 소개합니다.');
+      break;
+    case 'viewSuccess':
+      document.querySelector('.advanced-modal-overlay')?.remove();
+      showSimpleModal('성공 사례', '실제 커플들의 성공 스토리를 확인하세요.');
+      break;
+    default:
+      document.querySelector('.advanced-modal-overlay')?.remove();
+      showSimpleModal('준비 중', '해당 기능을 준비 중입니다.');
+  }
+}
+
 console.log('✨ CHARM_INYEON 초기화 완료');
+console.log('🎯 위젯 클릭 기능 활성화됨!');
