@@ -92,8 +92,88 @@
         border-radius: 8px;
       }
 
-      .nav-links a:hover {
+      .nav-links a:hover,
+      .nav-links a.active {
         background: var(--bg-secondary);
+        color: var(--primary-color);
+      }
+
+      /* 모바일 메뉴 토글 버튼 */
+      .mobile-menu-toggle {
+        display: none;
+        flex-direction: column;
+        cursor: pointer;
+        padding: 0.5rem;
+      }
+
+      .mobile-menu-toggle span {
+        width: 25px;
+        height: 3px;
+        background: var(--text-primary);
+        margin: 3px 0;
+        transition: 0.3s;
+        border-radius: 2px;
+      }
+
+      .mobile-menu-toggle.active span:nth-child(1) {
+        transform: rotate(-45deg) translate(-5px, 6px);
+      }
+
+      .mobile-menu-toggle.active span:nth-child(2) {
+        opacity: 0;
+      }
+
+      .mobile-menu-toggle.active span:nth-child(3) {
+        transform: rotate(45deg) translate(-5px, -6px);
+      }
+
+      /* 스크롤 오프셋 - 고정 헤더 때문에 */
+      section[id] {
+        scroll-margin-top: 100px;
+      }
+
+      /* 부드러운 스크롤 */
+      html {
+        scroll-behavior: smooth;
+      }
+
+      /* 모바일 반응형 */
+      @media (max-width: 768px) {
+        section[id] {
+          scroll-margin-top: 80px;
+        }
+        .mobile-menu-toggle {
+          display: flex;
+        }
+
+        .nav-links {
+          position: fixed;
+          top: 100%;
+          left: 0;
+          width: 100%;
+          background: rgba(255, 255, 255, 0.98);
+          backdrop-filter: blur(10px);
+          flex-direction: column;
+          padding: 2rem;
+          gap: 1rem;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+          transform: translateY(-100vh);
+          transition: transform 0.3s ease;
+        }
+
+        .nav-links.active {
+          transform: translateY(0);
+        }
+
+        .nav-links a {
+          padding: 1rem;
+          border-bottom: 1px solid var(--bg-secondary);
+          text-align: center;
+        }
+
+        .nav {
+          padding: 1rem;
+        }
       }
 
       .auth-buttons {
@@ -597,6 +677,14 @@
           <li><a href="#how-it-works">작동원리</a></li>
           <li><a href="#contact">문의</a></li>
         </ul>
+
+        <!-- 모바일 메뉴 토글 버튼 -->
+        <div class="mobile-menu-toggle">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+
         <div class="auth-buttons">
           <button class="login-btn">
             <svg
@@ -776,7 +864,13 @@
             </p>
           </div>
           <div class="about-grid">
-            <div class="about-card">
+            <div class="about-card about-card-clickable" 
+                 id="valuesAnalysisCard"
+                 role="button"
+                 tabindex="0"
+                 aria-label="AI 가치관 분석 - 클릭하면 자세한 정보를 확인할 수 있습니다"
+                 onclick="handleAboutCardClick('values')"
+                 onkeydown="handleAboutCardKeydown(event, 'values')">
               <div class="about-icon-wrapper">
                 <div class="about-icon location-icon">
                   <div class="icon-bg"></div>
@@ -810,8 +904,15 @@
                 </p>
               </div>
               <div class="card-overlay"></div>
+              <div class="card-action-hint">클릭하여 자세히 보기 →</div>
             </div>
-            <div class="about-card">
+            <div class="about-card about-card-clickable" 
+                 id="meaningfulMatchingCard"
+                 role="button"
+                 tabindex="0"
+                 aria-label="의미 있는 매칭 - 클릭하면 자세한 정보를 확인할 수 있습니다"
+                 onclick="handleAboutCardClick('matching')"
+                 onkeydown="handleAboutCardKeydown(event, 'matching')">
               <div class="about-icon-wrapper">
                 <div class="about-icon heart-icon">
                   <div class="icon-bg"></div>
@@ -838,8 +939,15 @@
                 </p>
               </div>
               <div class="card-overlay"></div>
+              <div class="card-action-hint">클릭하여 자세히 보기 →</div>
             </div>
-            <div class="about-card">
+            <div class="about-card about-card-clickable" 
+                 id="seniorSpecializedCard"
+                 role="button"
+                 tabindex="0"
+                 aria-label="4060 특화 - 클릭하면 자세한 정보를 확인할 수 있습니다"
+                 onclick="handleAboutCardClick('senior')"
+                 onkeydown="handleAboutCardKeydown(event, 'senior')">
               <div class="about-icon-wrapper">
                 <div class="about-icon star-icon">
                   <div class="icon-bg"></div>
@@ -863,6 +971,7 @@
                 <p>인생 경험이 풍부한 4060세대의 특성을 이해한 맞춤형 플랫폼</p>
               </div>
               <div class="card-overlay"></div>
+              <div class="card-action-hint">클릭하여 자세히 보기 →</div>
             </div>
           </div>
         </div>
@@ -876,7 +985,13 @@
             <p>깊이 있는 연결을 위한 혁신적인 기능들을 경험해보세요</p>
           </div>
           <div class="features-grid">
-            <div class="feature-item">
+            <div class="feature-item feature-item-clickable" 
+                 id="deepAnalysisFeature"
+                 role="button"
+                 tabindex="0"
+                 aria-label="심층 가치관 분석 - 클릭하면 자세한 정보를 확인할 수 있습니다"
+                 onclick="handleFeatureClick('deepAnalysis')"
+                 onkeydown="handleFeatureKeydown(event, 'deepAnalysis')">
               <div class="feature-visual">
                 <div class="feature-icon">📊</div>
               </div>
@@ -885,8 +1000,15 @@
                 100여 개의 정교한 질문을 통해 당신의 가치관을 다차원적으로
                 분석합니다
               </p>
+              <div class="feature-action-hint">체험해보기 →</div>
             </div>
-            <div class="feature-item">
+            <div class="feature-item feature-item-clickable" 
+                 id="aiMatchingFeature"
+                 role="button"
+                 tabindex="0"
+                 aria-label="스마트 AI 매칭 - 클릭하면 자세한 정보를 확인할 수 있습니다"
+                 onclick="handleFeatureClick('aiMatching')"
+                 onkeydown="handleFeatureKeydown(event, 'aiMatching')">
               <div class="feature-visual">
                 <div class="feature-icon">🤖</div>
               </div>
@@ -895,8 +1017,15 @@
                 머신러닝 알고리즘이 당신과 가장 잘 맞는 상대를 정확하게
                 찾아드립니다
               </p>
+              <div class="feature-action-hint">매칭해보기 →</div>
             </div>
-            <div class="feature-item">
+            <div class="feature-item feature-item-clickable" 
+                 id="chatGuideFeature"
+                 role="button"
+                 tabindex="0"
+                 aria-label="대화 가이드 - 클릭하면 자세한 정보를 확인할 수 있습니다"
+                 onclick="handleFeatureClick('chatGuide')"
+                 onkeydown="handleFeatureKeydown(event, 'chatGuide')">
               <div class="feature-visual">
                 <div class="feature-icon">💬</div>
               </div>
@@ -905,8 +1034,15 @@
                 첫 만남이 어색하지 않도록 AI가 개인 맞춤형 대화 주제를
                 제안합니다
               </p>
+              <div class="feature-action-hint">가이드 보기 →</div>
             </div>
-            <div class="feature-item">
+            <div class="feature-item feature-item-clickable" 
+                 id="safeEnvironmentFeature"
+                 role="button"
+                 tabindex="0"
+                 aria-label="안전한 환경 - 클릭하면 자세한 정보를 확인할 수 있습니다"
+                 onclick="handleFeatureClick('safeEnvironment')"
+                 onkeydown="handleFeatureKeydown(event, 'safeEnvironment')">
               <div class="feature-visual">
                 <div class="feature-icon">🔒</div>
               </div>
@@ -915,6 +1051,7 @@
                 철저한 본인 인증과 프라이버시 보호로 안전하고 신뢰할 수 있는
                 만남을 보장합니다
               </p>
+              <div class="feature-action-hint">보안 정보 →</div>
             </div>
           </div>
         </div>
@@ -928,7 +1065,13 @@
             <p>간단한 3단계로 시작하는 새로운 만남</p>
           </div>
           <div class="steps">
-            <div class="step">
+            <div class="step step-clickable" 
+                 id="valuesAssessmentStep"
+                 role="button"
+                 tabindex="0"
+                 aria-label="가치관 진단 단계 - 클릭하면 자세한 정보를 확인할 수 있습니다"
+                 onclick="handleStepClick('valuesAssessment')"
+                 onkeydown="handleStepKeydown(event, 'valuesAssessment')">
               <div class="step-number">1</div>
               <div class="step-content">
                 <h3>가치관 진단</h3>
@@ -937,8 +1080,15 @@
                   완성합니다
                 </p>
               </div>
+              <div class="step-action-hint">자세히 보기 →</div>
             </div>
-            <div class="step">
+            <div class="step step-clickable" 
+                 id="smartMatchingStep"
+                 role="button"
+                 tabindex="0"
+                 aria-label="스마트 매칭 단계 - 클릭하면 자세한 정보를 확인할 수 있습니다"
+                 onclick="handleStepClick('smartMatching')"
+                 onkeydown="handleStepKeydown(event, 'smartMatching')">
               <div class="step-number">2</div>
               <div class="step-content">
                 <h3>스마트 매칭</h3>
@@ -947,8 +1097,15 @@
                   찾아드립니다
                 </p>
               </div>
+              <div class="step-action-hint">매칭 과정 보기 →</div>
             </div>
-            <div class="step">
+            <div class="step step-clickable" 
+                 id="meaningfulMeetingStep"
+                 role="button"
+                 tabindex="0"
+                 aria-label="의미 있는 만남 단계 - 클릭하면 자세한 정보를 확인할 수 있습니다"
+                 onclick="handleStepClick('meaningfulMeeting')"
+                 onkeydown="handleStepKeydown(event, 'meaningfulMeeting')">
               <div class="step-number">3</div>
               <div class="step-content">
                 <h3>의미 있는 만남</h3>
@@ -957,6 +1114,7 @@
                   시작합니다
                 </p>
               </div>
+              <div class="step-action-hint">대화 가이드 보기 →</div>
             </div>
           </div>
         </div>
@@ -1936,6 +2094,6 @@
     <!-- theme-switcher.js 비활성화 -->
     <!-- <script src="js/theme-switcher.js"></script> -->
 
-    <script src="script-clean.js"></script>
+    <script src="script.js"></script>
   </body>
 </html>

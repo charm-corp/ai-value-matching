@@ -1,12 +1,305 @@
-// Modal functionality
+// CHARM_INYEON 메인 스크립트 - 통합 및 정리된 버전
+
+// 페이지 로드 시 모든 기능 초기화
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('🚀 CHARM_INYEON 초기화 시작');
+  
+  initializeNavigation();
+  initializeContactForm();
+  initializeMobileMenu();
+  initializeButtons();
+  initializeModals();
+  
+  console.log('✅ 모든 기능 초기화 완료');
+});
+
+// ========== 네비게이션 기능 ==========
+function initializeNavigation() {
+  // 네비게이션 링크 클릭 이벤트
+  const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+  
+  navLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      const targetId = this.getAttribute('href').substring(1);
+      const targetSection = document.getElementById(targetId);
+      
+      if (targetSection) {
+        targetSection.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+        
+        updateActiveNavLink(this);
+      }
+    });
+  });
+  
+  // 스크롤 시 활성 네비게이션 업데이트
+  window.addEventListener('scroll', throttle(updateActiveNavOnScroll, 100));
+}
+
+function updateActiveNavLink(activeLink) {
+  document.querySelectorAll('.nav-links a').forEach(link => {
+    link.classList.remove('active');
+  });
+  activeLink.classList.add('active');
+}
+
+function updateActiveNavOnScroll() {
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+  
+  let current = '';
+  
+  sections.forEach(section => {
+    const sectionTop = section.getBoundingClientRect().top;
+    const sectionHeight = section.offsetHeight;
+    
+    if (sectionTop <= 100 && sectionTop + sectionHeight > 100) {
+      current = section.getAttribute('id');
+    }
+  });
+  
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === `#${current}`) {
+      link.classList.add('active');
+    }
+  });
+}
+
+function throttle(func, limit) {
+  let inThrottle;
+  return function() {
+    const args = arguments;
+    const context = this;
+    if (!inThrottle) {
+      func.apply(context, args);
+      inThrottle = true;
+      setTimeout(() => inThrottle = false, limit);
+    }
+  }
+}
+
+// ========== 모바일 메뉴 ==========
+function initializeMobileMenu() {
+  const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+  const navLinks = document.querySelector('.nav-links');
+  
+  if (mobileMenuToggle && navLinks) {
+    mobileMenuToggle.addEventListener('click', function() {
+      navLinks.classList.toggle('active');
+      this.classList.toggle('active');
+    });
+    
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', function() {
+        navLinks.classList.remove('active');
+        mobileMenuToggle.classList.remove('active');
+      });
+    });
+  }
+}
+
+// ========== 버튼 기능 통합 ==========
+function initializeButtons() {
+  console.log('🔘 버튼 초기화 시작');
+  
+  // 1. 무료로 시작하기 버튼 → 가치관 테스트
+  const startButtons = document.querySelectorAll('.primary-button');
+  startButtons.forEach(button => {
+    if (button.textContent.includes('무료로 시작하기')) {
+      button.addEventListener('click', function(e) {
+        e.preventDefault();
+        console.log('🎯 가치관 테스트로 이동');
+        window.location.href = 'values-assessment.html';
+      });
+      console.log('✅ 무료로 시작하기 버튼 연결됨');
+    }
+  });
+  
+  // 2. 회원가입 버튼들 → 회원가입 페이지
+  const signupButtons = document.querySelectorAll('.signup-btn, #signup-btn-2, .cta-large-button');
+  signupButtons.forEach(button => {
+    button.addEventListener('click', function(e) {
+      e.preventDefault();
+      console.log('📝 회원가입 페이지로 이동');
+      window.location.href = 'signup.html';
+    });
+  });
+  console.log('✅ 회원가입 버튼들 연결됨');
+  
+  // 3. 소개 영상 보기 버튼 → 애니메이션
+  const videoButton = document.querySelector('.secondary-button');
+  if (videoButton) {
+    videoButton.addEventListener('click', function(e) {
+      e.preventDefault();
+      console.log('🎬 소개 애니메이션 실행');
+      openIntroAnimation();
+    });
+    console.log('✅ 소개 영상 버튼 연결됨');
+  }
+  
+  // 4. 로그인 버튼 → 로그인 모달
+  const loginButtons = document.querySelectorAll('.login-btn');
+  loginButtons.forEach(button => {
+    button.addEventListener('click', function(e) {
+      e.preventDefault();
+      console.log('🔑 로그인 모달 실행');
+      openLoginModal();
+    });
+  });
+  console.log('✅ 로그인 버튼들 연결됨');
+}
+
+// ========== 모달 관리 시스템 ==========
+function initializeModals() {
+  console.log('🖼️ 모달 시스템 초기화');
+  
+  // 모든 모달 닫기 버튼
+  const closeButtons = document.querySelectorAll('.close[data-modal]');
+  closeButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      const modalId = this.getAttribute('data-modal');
+      closeModal(modalId);
+    });
+  });
+  
+  // 모달 배경 클릭 시 닫기
+  const modals = document.querySelectorAll('.modal');
+  modals.forEach(modal => {
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) {
+        closeModal(modal.id);
+      }
+    });
+  });
+  
+  // ESC 키로 모달 닫기
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      const openModals = document.querySelectorAll('.modal[style*="display: block"]');
+      openModals.forEach(modal => {
+        closeModal(modal.id);
+      });
+    }
+  });
+  
+  // 회원가입 <-> 로그인 전환
+  const showSignupLink = document.getElementById('showSignup');
+  const showLoginLink = document.getElementById('showLogin');
+  
+  if (showSignupLink) {
+    showSignupLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      closeModal('loginModal');
+      setTimeout(() => openSignupModal(), 300);
+    });
+  }
+  
+  if (showLoginLink) {
+    showLoginLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      closeModal('signupModal');
+      setTimeout(() => openLoginModal(), 300);
+    });
+  }
+  
+  // 로그인 폼 제출
+  const loginForm = document.getElementById('loginForm');
+  if (loginForm) {
+    loginForm.addEventListener('submit', handleLoginSubmit);
+  }
+  
+  // 회원가입 폼 제출
+  const signupForm = document.getElementById('signupForm');
+  if (signupForm) {
+    signupForm.addEventListener('submit', handleSignupSubmit);
+  }
+  
+  console.log('✅ 모달 시스템 초기화 완료');
+}
+
+function closeModal(modalId) {
+  const modal = document.getElementById(modalId);
+  if (modal) {
+    modal.style.display = 'none';
+    document.body.style.overflow = 'auto'; // 스크롤 복원
+    console.log(`📱 모달 닫힘: ${modalId}`);
+  }
+}
+
+function openSignupModal() {
+  console.log('📝 회원가입 모달 열기');
+  const signupModal = document.getElementById('signupModal');
+  if (signupModal) {
+    signupModal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+    
+    setTimeout(() => {
+      signupModal.style.opacity = '1';
+    }, 10);
+  }
+}
+
+function handleLoginSubmit(e) {
+  e.preventDefault();
+  console.log('🔐 로그인 시도');
+  
+  const formData = new FormData(e.target);
+  const email = formData.get('email');
+  const password = formData.get('password');
+  
+  // 임시 로그인 처리 (실제로는 백엔드 API 호출)
+  if (email && password) {
+    showModal('로그인 성공', `환영합니다! ${email}님\n\n현재는 프론트엔드 테스트 모드입니다.\n백엔드 연동 후 실제 로그인 기능이 활성화됩니다.`);
+    closeModal('loginModal');
+    
+    // 폼 초기화
+    e.target.reset();
+  } else {
+    showModal('입력 오류', '이메일과 비밀번호를 모두 입력해주세요.');
+  }
+}
+
+function handleSignupSubmit(e) {
+  e.preventDefault();
+  console.log('📝 회원가입 시도');
+  
+  const formData = new FormData(e.target);
+  const name = formData.get('name');
+  const email = formData.get('email');
+  const password = formData.get('password');
+  const confirmPassword = formData.get('confirmPassword');
+  
+  // 기본 검증
+  if (!name || !email || !password || !confirmPassword) {
+    showModal('입력 오류', '모든 필수 항목을 입력해주세요.');
+    return;
+  }
+  
+  if (password !== confirmPassword) {
+    showModal('비밀번호 오류', '비밀번호와 비밀번호 확인이 일치하지 않습니다.');
+    return;
+  }
+  
+  // 임시 회원가입 처리
+  showModal('회원가입 완료', `환영합니다, ${name}님!\n\n회원가입이 완료되었습니다.\n현재는 프론트엔드 테스트 모드입니다.`);
+  closeModal('signupModal');
+  
+  // 폼 초기화
+  e.target.reset();
+}
+
+// ========== 모달 기능 ==========
 function showModal(title, message) {
-  // Remove existing modal if any
   const existingModal = document.querySelector('.modal-overlay');
   if (existingModal) {
     existingModal.remove();
   }
   
-  // Create modal overlay
   const modalOverlay = document.createElement('div');
   modalOverlay.className = 'modal-overlay';
   modalOverlay.style.cssText = `
@@ -23,7 +316,6 @@ function showModal(title, message) {
     animation: fadeIn 0.2s ease-out;
   `;
   
-  // Create modal content
   const modalContent = document.createElement('div');
   modalContent.className = 'modal-content';
   modalContent.style.cssText = `
@@ -56,7 +348,6 @@ function showModal(title, message) {
   modalOverlay.appendChild(modalContent);
   document.body.appendChild(modalOverlay);
   
-  // Add close functionality
   const closeBtn = modalContent.querySelector('.modal-close-btn');
   const closeModal = () => {
     modalOverlay.style.animation = 'fadeOut 0.2s ease-out';
@@ -68,36 +359,228 @@ function showModal(title, message) {
     if (e.target === modalOverlay) closeModal();
   });
   
-  // Add keyboard support
-  const handleKeyPress = (e) => {
+  document.addEventListener('keydown', function handleKeyPress(e) {
     if (e.key === 'Escape') {
       closeModal();
       document.removeEventListener('keydown', handleKeyPress);
     }
-  };
-  document.addEventListener('keydown', handleKeyPress);
-  
-  // Hover effect for button
-  closeBtn.addEventListener('mouseenter', () => {
-    closeBtn.style.background = '#1d4ed8';
-  });
-  closeBtn.addEventListener('mouseleave', () => {
-    closeBtn.style.background = '#2563eb';
   });
 }
 
-// 완전히 새로운 회원가입 모달 함수 (기존 signupModal과 동일하게)
-function openSignupModal() {
-  console.log('openSignupModal 함수 실행!');
-  try {
+function openLoginModal() {
+  console.log('🔑 로그인 모달 열기');
+  const loginModal = document.getElementById('loginModal');
+  if (loginModal) {
+    loginModal.style.display = 'block';
+    document.body.style.overflow = 'hidden'; // 배경 스크롤 방지
+    
+    // 모달 애니메이션
+    setTimeout(() => {
+      loginModal.style.opacity = '1';
+    }, 10);
+  } else {
+    console.error('로그인 모달을 찾을 수 없습니다.');
+    showModal('로그인', '로그인 기능은 곧 추가될 예정입니다!');
+  }
+}
+
+// ========== 소개 애니메이션 ==========
+function openIntroAnimation() {
+  console.log('🎭 소개 애니메이션 모달 열기');
   
-  // Remove existing modal if any
+  const modalOverlay = document.createElement('div');
+  modalOverlay.className = 'intro-modal-overlay';
+  modalOverlay.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    animation: fadeIn 0.5s ease-out;
+  `;
+
+  const animationContainer = document.createElement('div');
+  animationContainer.className = 'intro-animation-container';
+  animationContainer.style.cssText = `
+    width: 90%;
+    max-width: 800px;
+    height: 80%;
+    max-height: 600px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    animation: slideUp 0.6s ease-out;
+  `;
+
+  const closeButton = document.createElement('button');
+  closeButton.innerHTML = '✕';
+  closeButton.style.cssText = `
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    font-size: 24px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10001;
+  `;
+
+  animationContainer.innerHTML = `
+    <div style="text-align: center; color: white; padding: 2rem;">
+      <div style="font-size: 3rem; font-weight: bold; margin-bottom: 2rem; animation: pulse 2s infinite;">
+        CHARM_INYEON
+      </div>
+      <div style="font-size: 1.5rem; margin-bottom: 3rem; opacity: 0.9;">
+        💕 진정한 인연을 위한 여정
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin: 2rem 0;">
+        <div style="text-align: center;">
+          <div style="font-size: 3rem; margin-bottom: 1rem; animation: bounce 2s infinite;">🧠</div>
+          <h3 style="margin-bottom: 0.5rem;">AI 기반 분석</h3>
+          <p style="font-size: 0.9rem; opacity: 0.8;">가치관 맞춤 매칭</p>
+        </div>
+        <div style="text-align: center;">
+          <div style="font-size: 3rem; margin-bottom: 1rem; animation: bounce 2s infinite 0.3s;">🎯</div>
+          <h3 style="margin-bottom: 0.5rem;">정확한 매칭</h3>
+          <p style="font-size: 0.9rem; opacity: 0.8;">70% 이상 호환성</p>
+        </div>
+        <div style="text-align: center;">
+          <div style="font-size: 3rem; margin-bottom: 1rem; animation: bounce 2s infinite 0.6s;">🔒</div>
+          <h3 style="margin-bottom: 0.5rem;">안전한 만남</h3>
+          <p style="font-size: 0.9rem; opacity: 0.8;">신뢰할 수 있는 플랫폼</p>
+        </div>
+      </div>
+      <button onclick="closeIntroAnimation()" style="
+        background: rgba(255, 255, 255, 0.2);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        margin-top: 2rem;
+      ">
+        ✨ 지금 시작하기
+      </button>
+    </div>
+  `;
+
+  animationContainer.appendChild(closeButton);
+  modalOverlay.appendChild(animationContainer);
+  document.body.appendChild(modalOverlay);
+
+  // 애니메이션 스타일 추가
+  if (!document.getElementById('introAnimationStyles')) {
+    const style = document.createElement('style');
+    style.id = 'introAnimationStyles';
+    style.textContent = `
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+      }
+      @keyframes slideUp {
+        from { opacity: 0; transform: translateY(50px) scale(0.9); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+      }
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+      }
+      @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+        40% { transform: translateY(-10px); }
+        60% { transform: translateY(-5px); }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  // 닫기 기능
+  const closeModal = () => {
+    modalOverlay.style.animation = 'fadeOut 0.3s ease-out';
+    setTimeout(() => modalOverlay.remove(), 300);
+  };
+
+  closeButton.addEventListener('click', closeModal);
+  modalOverlay.addEventListener('click', (e) => {
+    if (e.target === modalOverlay) closeModal();
+  });
+
+  // 전역 함수로 만들어서 버튼에서 호출 가능하게
+  window.closeIntroAnimation = closeModal;
+
+  document.addEventListener('keydown', function handleKeyPress(e) {
+    if (e.key === 'Escape') {
+      closeModal();
+      document.removeEventListener('keydown', handleKeyPress);
+    }
+  });
+}
+
+// ========== 문의 폼 기능 ==========
+function initializeContactForm() {
+  const contactForm = document.getElementById('contactForm');
+  if (contactForm) {
+    contactForm.addEventListener('submit', handleContactFormSubmit);
+    
+    const requiredFields = contactForm.querySelectorAll('input[required], select[required], textarea[required]');
+    requiredFields.forEach(field => {
+      field.addEventListener('blur', validateField);
+      field.addEventListener('input', clearFieldError);
+    });
+  }
+}
+
+function handleContactFormSubmit(e) {
+  e.preventDefault();
+  
+  const form = e.target;
+  const formData = new FormData(form);
+  
+  if (!validateForm(form)) {
+    return;
+  }
+  
+  const submitBtn = form.querySelector('button[type="submit"]');
+  const originalText = submitBtn.textContent;
+  submitBtn.disabled = true;
+  submitBtn.textContent = '전송 중...';
+  
+  setTimeout(() => {
+    showContactSuccessModal();
+    form.reset();
+    clearAllErrors(form);
+    submitBtn.disabled = false;
+    submitBtn.textContent = originalText;
+  }, 1500);
+}
+
+function showContactSuccessModal() {
   const existingModal = document.querySelector('.modal-overlay');
   if (existingModal) {
     existingModal.remove();
   }
   
-  // Create modal overlay
   const modalOverlay = document.createElement('div');
   modalOverlay.className = 'modal-overlay';
   modalOverlay.style.cssText = `
@@ -114,5236 +597,320 @@ function openSignupModal() {
     animation: fadeIn 0.2s ease-out;
   `;
   
-  // Create modal content
   const modalContent = document.createElement('div');
   modalContent.className = 'modal-content';
   modalContent.style.cssText = `
     background: white;
-    padding: 0;
+    padding: 2rem;
     border-radius: 12px;
-    max-width: 450px;
+    max-width: 500px;
     width: 90%;
-    max-height: 85vh;
-    overflow-y: auto;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     animation: slideUp 0.3s ease-out;
+    text-align: center;
   `;
   
   modalContent.innerHTML = `
-    <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 30px; border-bottom: 1px solid #e5e7eb;">
-      <h2 style="margin: 0; color: #333; font-size: 1.4em;">회원가입</h2>
-      <span class="close-btn" style="cursor: pointer; font-size: 24px; color: #999; background: none; border: none;">&times;</span>
+    <div style="font-size: 3rem; margin-bottom: 1rem;">✅</div>
+    <h3 style="margin: 0 0 1rem 0; color: #2563eb; font-size: 1.4em;">문의 접수 완료!</h3>
+    <p style="margin: 0 0 1.5rem 0; color: #64748b; line-height: 1.6;">
+      문의가 성공적으로 접수되었습니다.<br>
+      24시간 내에 답변드리겠습니다.
+    </p>
+    
+    <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+      <h4 style="margin: 0 0 1rem 0; color: #334155; font-size: 1.1em;">💬 더 빠른 상담을 원하시나요?</h4>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+        <button onclick="openKakaoTalk()" style="
+          background: #FEE500;
+          border: none;
+          color: #3C1E1E;
+          padding: 0.75rem;
+          border-radius: 8px;
+          cursor: pointer;
+          font-weight: 600;
+          transition: all 0.3s ease;
+        ">💬 카카오톡 상담</button>
+        
+        <button onclick="openEmail()" style="
+          background: #2563eb;
+          border: none;
+          color: white;
+          padding: 0.75rem;
+          border-radius: 8px;
+          cursor: pointer;
+          font-weight: 600;
+          transition: all 0.3s ease;
+        ">📧 이메일 보내기</button>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.9rem; color: #64748b;">
+        <div>📞 전화: 1588-0000<br><small>평일 9:00-18:00</small></div>
+        <div>📍 서울시 강남구 테헤란로 123<br><small>CHARM_INYEON 본사</small></div>
+      </div>
     </div>
     
-    <form class="auth-form" id="signupForm" style="padding: 30px;">
-      <div class="form-group" style="margin-bottom: 20px;">
-        <label for="signupName" style="display: block; margin-bottom: 8px; font-weight: 500; color: #333;">이름</label>
-        <input type="text" id="signupName" name="name" required style="
-          width: 100%;
-          padding: 12px 16px;
-          border: 2px solid #e5e7eb;
-          border-radius: 8px;
-          font-size: 16px;
-          box-sizing: border-box;
-        " placeholder="실명을 입력해주세요" />
-      </div>
-      
-      <div class="form-group" style="margin-bottom: 20px;">
-        <label for="signupEmail" style="display: block; margin-bottom: 8px; font-weight: 500; color: #333;">이메일</label>
-        <input type="email" id="signupEmail" name="email" required style="
-          width: 100%;
-          padding: 12px 16px;
-          border: 2px solid #e5e7eb;
-          border-radius: 8px;
-          font-size: 16px;
-          box-sizing: border-box;
-        " placeholder="example@email.com" />
-      </div>
-      
-      <div class="form-group" style="margin-bottom: 20px;">
-        <label for="signupPassword" style="display: block; margin-bottom: 8px; font-weight: 500; color: #333;">비밀번호</label>
-        <input type="password" id="signupPassword" name="password" required style="
-          width: 100%;
-          padding: 12px 16px;
-          border: 2px solid #e5e7eb;
-          border-radius: 8px;
-          font-size: 16px;
-          box-sizing: border-box;
-        " placeholder="8자 이상 입력해주세요" />
-        <div class="password-requirements" style="display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap;">
-          <span class="requirement" data-requirement="length" style="
-            padding: 3px 8px; background: #f3f4f6; color: #6b7280; border-radius: 4px; font-size: 12px; transition: all 0.2s;
-          ">8자 이상</span>
-          <span class="requirement" data-requirement="uppercase" style="
-            padding: 3px 8px; background: #f3f4f6; color: #6b7280; border-radius: 4px; font-size: 12px; transition: all 0.2s;
-          ">대문자 포함</span>
-          <span class="requirement" data-requirement="lowercase" style="
-            padding: 3px 8px; background: #f3f4f6; color: #6b7280; border-radius: 4px; font-size: 12px; transition: all 0.2s;
-          ">소문자 포함</span>
-          <span class="requirement" data-requirement="number" style="
-            padding: 3px 8px; background: #f3f4f6; color: #6b7280; border-radius: 4px; font-size: 12px; transition: all 0.2s;
-          ">숫자 포함</span>
-        </div>
-      </div>
-      
-      <div class="form-group" style="margin-bottom: 20px;">
-        <label for="confirmPassword" style="display: block; margin-bottom: 8px; font-weight: 500; color: #333;">비밀번호 확인</label>
-        <input type="password" id="confirmPassword" name="confirmPassword" required style="
-          width: 100%;
-          padding: 12px 16px;
-          border: 2px solid #e5e7eb;
-          border-radius: 8px;
-          font-size: 16px;
-          box-sizing: border-box;
-        " placeholder="비밀번로를 다시 입력해주세요" />
-      </div>
-      
-      <div class="form-group" style="margin-bottom: 20px;">
-        <label for="signupAge" style="display: block; margin-bottom: 8px; font-weight: 500; color: #333;">연령대</label>
-        <select id="signupAge" name="age" required style="
-          width: 100%;
-          padding: 12px 16px;
-          border: 2px solid #e5e7eb;
-          border-radius: 8px;
-          font-size: 16px;
-          box-sizing: border-box;
-        ">
-          <option value="">선택해주세요</option>
-          <option value="40-45">40-45세</option>
-          <option value="46-50">46-50세</option>
-          <option value="51-55">51-55세</option>
-          <option value="56-60">56-60세</option>
-          <option value="60+">60세 이상</option>
-        </select>
-      </div>
-      
-      <div class="form-group" style="margin-bottom: 20px;">
-        <label class="checkbox-label" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-          <input type="checkbox" id="agreeTerms" required style="width: 16px; height: 16px;" />
-          <span style="font-size: 14px; color: #333;">
-            <a href="#" class="terms-link" style="color: #2563eb; text-decoration: none;">이용약관</a> 및
-            <a href="#" class="privacy-link" style="color: #2563eb; text-decoration: none;">개인정보처리방침</a>에 동의합니다
-          </span>
-        </label>
-      </div>
-      
-      <div class="form-group" style="margin-bottom: 25px;">
-        <label class="checkbox-label" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-          <input type="checkbox" id="agreeMarketing" style="width: 16px; height: 16px;" />
-          <span style="font-size: 14px; color: #333;">마케팅 정보 수신에 동의합니다 (선택)</span>
-        </label>
-      </div>
-      
-      <button type="submit" class="auth-submit-btn" style="
-        width: 100%;
-        padding: 14px;
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        margin-bottom: 20px;
-      ">회원가입</button>
-      
-      <div class="auth-divider" style="text-align: center; margin: 20px 0; position: relative;">
-        <span style="background: white; padding: 0 15px; color: #666; font-size: 14px;">또는</span>
-        <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: #e5e7eb; z-index: -1;"></div>
-      </div>
-      
-      <div class="social-login" style="display: flex; flex-direction: column; gap: 10px;">
-        <button type="button" class="social-btn google-btn" style="
-          width: 100%;
-          padding: 12px;
-          border: 2px solid #e5e7eb;
-          background: white;
-          border-radius: 8px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 10px;
-          cursor: pointer;
-          font-size: 14px;
-          font-weight: 500;
-        ">
-          <svg width="20" height="20" viewBox="0 0 24 24">
-            <path fill="#4285f4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-            <path fill="#34a853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-            <path fill="#fbbc05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-            <path fill="#ea4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-          </svg>
-          Google로 가입
-        </button>
-        <button type="button" class="social-btn kakao-btn" style="
-          width: 100%;
-          padding: 12px;
-          background: #fee500;
-          color: #000;
-          border: none;
-          border-radius: 8px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 10px;
-          cursor: pointer;
-          font-size: 14px;
-          font-weight: 500;
-        ">
-          <svg width="20" height="20" viewBox="0 0 24 24">
-            <path fill="#000000" d="M12 3c5.799 0 10.5 3.664 10.5 8.185 0 4.52-4.701 8.184-10.5 8.184a13.5 13.5 0 0 1-1.727-.11l-4.408 2.883c-.501.265-.678.236-.472-.413l.892-3.678c-2.88-1.46-4.785-3.99-4.785-6.866C1.5 6.665 6.201 3 12 3z"/>
-          </svg>
-          카카오로 가입
-        </button>
-      </div>
-      
-      <p class="auth-switch" style="text-align: center; margin-top: 20px; font-size: 14px; color: #666;">
-        이미 계정이 있으신가요? <a href="#" id="showLoginLink" style="color: #2563eb; text-decoration: none; font-weight: 500;">로그인</a>
-      </p>
-    </form>
+    <button class="modal-close-btn" style="
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background 0.2s;
+      width: 100%;
+    ">확인</button>
   `;
   
-  // Add to DOM
   modalOverlay.appendChild(modalContent);
   document.body.appendChild(modalOverlay);
   
-  // Event listeners
-  const form = modalContent.querySelector('#signupForm');
-  const closeBtn = modalContent.querySelector('.close-btn');
-  const passwordInput = modalContent.querySelector('#signupPassword');
-  const requirements = modalContent.querySelectorAll('.requirement');
-  const googleBtn = modalContent.querySelector('.google-btn');
-  const kakaoBtn = modalContent.querySelector('.kakao-btn');
-  const showLoginLink = modalContent.querySelector('#showLoginLink');
-  
+  const closeBtn = modalContent.querySelector('.modal-close-btn');
   const closeModal = () => {
     modalOverlay.style.animation = 'fadeOut 0.2s ease-out';
     setTimeout(() => modalOverlay.remove(), 200);
   };
   
-  // Close button
-  closeBtn.addEventListener('click', closeModal);
-  
-  // Close on overlay click
-  modalOverlay.addEventListener('click', (e) => {
-    if (e.target === modalOverlay) closeModal();
-  });
-  
-  // Password validation (same as original modal)
-  function validatePassword(password) {
-    const validationResults = {
-      length: password.length >= 8,
-      uppercase: /[A-Z]/.test(password),
-      lowercase: /[a-z]/.test(password),
-      number: /\d/.test(password)
-    };
-    return validationResults;
-  }
-  
-  passwordInput.addEventListener('input', () => {
-    const password = passwordInput.value;
-    const validation = validatePassword(password);
-    
-    requirements.forEach(req => {
-      const requirement = req.dataset.requirement;
-      const isValid = validation[requirement];
-      
-      if (isValid) {
-        req.style.background = '#dcfce7';
-        req.style.color = '#166534';
-      } else {
-        req.style.background = '#f3f4f6';
-        req.style.color = '#6b7280';
-      }
-    });
-  });
-  
-  // Social login buttons
-  googleBtn.addEventListener('click', () => {
-    console.log('Google 소셜 로그인 시도');
-    closeModal();
-    showModal('준비 중', 'Google 로그인 기능을 준비 중입니다.');
-  });
-  
-  kakaoBtn.addEventListener('click', () => {
-    console.log('Kakao 소셜 로그인 시도');
-    closeModal();
-    showModal('준비 중', '카카오 로그인 기능을 준비 중입니다.');
-  });
-  
-  // Show login link
-  showLoginLink.addEventListener('click', (e) => {
-    e.preventDefault();
-    closeModal();
-    // TODO: 로그인 모달 열기
-    showModal('로그인', '로그인 기능을 준비 중입니다.');
-  });
-  
-  // Form submission
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const formData = new FormData(form);
-    const userData = {
-      name: formData.get('name'),
-      email: formData.get('email'),
-      password: formData.get('password'),
-      confirmPassword: formData.get('confirmPassword'),
-      age: formData.get('age'),
-      agreeTerms: formData.get('agreeTerms'),
-      agreeMarketing: formData.get('agreeMarketing')
-    };
-    
-    console.log('회원가입 데이터:', userData);
-    closeModal();
-    showModal('가입 완료', '회원가입이 완료되었습니다! 로그인해주세요.');
-  });
-  
-  } catch (error) {
-    console.error('회원가입 모달 에러:', error);
-    showModal('오류', '회원가입 모달을 여는 중 오류가 발생했습니다.');
-  }
-}
-
-// 기존 showSignupModal 함수도 새로운 함수 호출하도록 변경
-function showSignupModal() {
-  openSignupModal();
-}
-
-// Add modal animations to CSS
-const modalStyles = document.createElement('style');
-modalStyles.textContent = `
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  @keyframes fadeOut {
-    from { opacity: 1; }
-    to { opacity: 0; }
-  }
-  @keyframes slideUp {
-    from { transform: translateY(20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-  }
-`;
-document.head.appendChild(modalStyles);
-
-// 회원가입 버튼들의 이벤트 리스너 완전 초기화
-function initializeSignupButtons() {
-  const signupButtons = document.querySelectorAll('#signup-btn, #signup-btn-2, .primary-button, .cta-large-button');
-  
-  signupButtons.forEach(button => {
-    const buttonText = button.textContent.trim();
-    if (buttonText === '무료로 시작하기' || buttonText === '무료로 가입하기') {
-      // 기존 이벤트 리스너 모두 제거
-      const newButton = button.cloneNode(true);
-      button.parentNode.replaceChild(newButton, button);
-      
-      // 새로운 이벤트 리스너 추가
-      newButton.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        openSignupModal();
-      });
-      
-      // 보호 표시
-      newButton.setAttribute('data-signup-initialized', 'true');
-      console.log('회원가입 버튼 초기화 완료:', buttonText);
-    }
-  });
-}
-
-// DOM 로드 후 회원가입 버튼 초기화
-document.addEventListener('DOMContentLoaded', function() {
-  console.log('DOM 로드 완료, 초기화 시작');
-  initializeSignupButtons();
-});
-
-// 즉시 실행도 추가 (이미 DOM이 로드된 경우 대비)
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM 로딩 중, 이벤트 리스너 등록');
-    initializeSignupButtons();
-  });
-} else {
-  console.log('DOM 이미 로드됨, 즉시 초기화');
-  initializeSignupButtons();
-}
-
-// Smooth scrolling for navigation links
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-  anchor.addEventListener('click', function (e) {
-    e.preventDefault();
-    const target = document.querySelector(this.getAttribute('href'));
-    if (target) {
-      target.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-      });
-    }
-  });
-});
-
-// Header scroll effect
-window.addEventListener('scroll', () => {
-  const header = document.querySelector('.header');
-  if (window.scrollY > 100) {
-    header.style.background = 'rgba(255, 255, 255, 0.98)';
-    header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
-  } else {
-    header.style.background = 'rgba(255, 255, 255, 0.95)';
-    header.style.boxShadow = 'none';
-  }
-});
-
-// Intersection Observer for animations
-const observerOptions = {
-  threshold: 0.1,
-  rootMargin: '0px 0px -50px 0px'
-};
-
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.style.opacity = '1';
-      entry.target.style.transform = 'translateY(0)';
-    }
-  });
-}, observerOptions);
-
-// Observe elements for scroll animations
-document.querySelectorAll('.about-card, .feature-item, .step').forEach(el => {
-  el.style.opacity = '0';
-  el.style.transform = 'translateY(30px)';
-  el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-  observer.observe(el);
-});
-
-// Floating cards animation enhancement
-const floatingCards = document.querySelectorAll('.floating-card');
-floatingCards.forEach((card, index) => {
-  card.addEventListener('mouseenter', () => {
-    card.style.transform = 'translateY(-10px) scale(1.05)';
-    card.style.boxShadow = '0 25px 50px rgba(0, 0, 0, 0.15)';
-  });
-    
-  card.addEventListener('mouseleave', () => {
-    card.style.transform = 'translateY(0) scale(1)';
-    card.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.1)';
-  });
-});
-
-// Progress bar animation
-const progressBar = document.querySelector('.progress-fill');
-const progressObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      progressBar.style.animation = 'progress 3s ease-in-out infinite';
-    }
-  });
-}, { threshold: 0.5 });
-
-if (progressBar) {
-  progressObserver.observe(progressBar);
-}
-
-// Widget click handling functions
-let isAuthenticated = false; // 실제 프로젝트에서는 인증 상태를 실제로 확인해야 함
-let widgetHistory = []; // 브라우저 히스토리 관리용
-
-// 위젯 클릭 처리 메인 함수
-function handleWidgetClick(widgetType) {
-  console.log(`${widgetType} 위젯 클릭됨`);
-  
-  // 클릭 피드백 애니메이션 적용
-  const widget = document.getElementById(getWidgetId(widgetType));
-  if (widget) {
-    widget.style.transform = 'scale(0.95)';
-    widget.style.transition = 'transform 0.1s ease';
-    
-    setTimeout(() => {
-      widget.style.transform = 'scale(1)';
-    }, 100);
-  }
-  
-  // 인증 상태 확인 후 처리
-  if (isAuthenticated) {
-    showLoadingState(widgetType);
-    setTimeout(() => {
-      showAuthenticatedWidgetModal(widgetType);
-    }, 1000); // 1초 로딩 시뮬레이션
-  } else {
-    showGuestWidgetModal(widgetType);
-  }
-  
-  // 브라우저 히스토리에 추가
-  addToHistory(widgetType);
-}
-
-// 키보드 이벤트 처리 (접근성)
-function handleWidgetKeydown(event, widgetType) {
-  if (event.key === 'Enter' || event.key === ' ') {
-    event.preventDefault();
-    handleWidgetClick(widgetType);
-  }
-}
-
-// 위젯 ID 반환 함수
-function getWidgetId(widgetType) {
-  const widgetIds = {
-    'values': 'valuesAnalysisWidget',
-    'matching': 'aiMatchingWidget',
-    'connections': 'newConnectionsWidget'
-  };
-  return widgetIds[widgetType] || '';
-}
-
-// 로딩 상태 표시 함수
-function showLoadingState(widgetType) {
-  const widget = document.getElementById(getWidgetId(widgetType));
-  if (!widget) return;
-  
-  // 로딩 오버레이 생성
-  const loadingOverlay = document.createElement('div');
-  loadingOverlay.className = 'widget-loading-overlay';
-  loadingOverlay.style.cssText = `
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.9);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 12px;
-    z-index: 1000;
-  `;
-  
-  // 로딩 스피너 생성
-  const spinner = document.createElement('div');
-  spinner.className = 'loading-spinner';
-  spinner.style.cssText = `
-    width: 24px;
-    height: 24px;
-    border: 2px solid #e2e8f0;
-    border-top: 2px solid #667eea;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-  `;
-  
-  loadingOverlay.appendChild(spinner);
-  widget.style.position = 'relative';
-  widget.appendChild(loadingOverlay);
-  
-  // 1초 후 로딩 제거
-  setTimeout(() => {
-    if (loadingOverlay && loadingOverlay.parentNode) {
-      loadingOverlay.remove();
-    }
-  }, 1000);
-}
-
-// 인증된 사용자용 모달 표시
-function showAuthenticatedWidgetModal(widgetType) {
-  const modalContent = getAuthenticatedModalContent(widgetType);
-  showAdvancedModal(modalContent.title, modalContent.content, modalContent.actions);
-}
-
-// 게스트 사용자용 모달 표시
-function showGuestWidgetModal(widgetType) {
-  const modalContent = getGuestModalContent(widgetType);
-  showAdvancedModal(modalContent.title, modalContent.content, modalContent.actions);
-}
-
-// 인증된 사용자용 모달 콘텐츠 생성
-function getAuthenticatedModalContent(widgetType) {
-  const contents = {
-    'values': {
-      title: '🎯 가치관 분석 결과',
-      content: `
-        <div class="modal-section">
-          <h4>귀하의 가치관 프로필</h4>
-          <div class="values-chart">
-            <div class="value-item">
-              <span class="value-label">가족 중심</span>
-              <div class="value-bar"><div class="value-progress" style="width: 90%"></div></div>
-              <span class="value-score">90%</span>
-            </div>
-            <div class="value-item">
-              <span class="value-label">안정 추구</span>
-              <div class="value-bar"><div class="value-progress" style="width: 85%"></div></div>
-              <span class="value-score">85%</span>
-            </div>
-            <div class="value-item">
-              <span class="value-label">소통 중시</span>
-              <div class="value-bar"><div class="value-progress" style="width: 78%"></div></div>
-              <span class="value-score">78%</span>
-            </div>
-          </div>
-          <p class="analysis-summary">
-            귀하는 가족과 안정을 가장 중시하는 성향을 보입니다. 
-            이러한 가치관을 공유하는 분들과 85% 이상의 높은 호환성을 보입니다.
-          </p>
-        </div>
-      `,
-      actions: [
-        { text: '상세 분석 보기', action: 'viewDetailedAnalysis', primary: true },
-        { text: '매칭 시작하기', action: 'startMatching', primary: false }
-      ]
-    },
-    'matching': {
-      title: '💝 AI 매칭 현황',
-      content: `
-        <div class="modal-section">
-          <h4>현재 매칭 상태</h4>
-          <div class="matching-status">
-            <div class="status-item active">
-              <div class="status-icon">✓</div>
-              <span>가치관 분석 완료</span>
-            </div>
-            <div class="status-item active">
-              <div class="status-icon">✓</div>
-              <span>프로필 검증 완료</span>
-            </div>
-            <div class="status-item processing">
-              <div class="status-icon">⏳</div>
-              <span>호환성 매칭 진행 중</span>
-            </div>
-          </div>
-          <div class="matching-progress">
-            <div class="progress-text">매칭 진행도: 73%</div>
-            <div class="progress-bar-modal">
-              <div class="progress-fill-modal" style="width: 73%"></div>
-            </div>
-          </div>
-          <p class="matching-summary">
-            현재 12명의 호환 가능한 분들을 발견했습니다. 
-            곧 최적의 매칭 결과를 보여드릴 예정입니다.
-          </p>
-        </div>
-      `,
-      actions: [
-        { text: '매칭 설정 변경', action: 'changeSettings', primary: false },
-        { text: '매칭 가속화', action: 'accelerateMatching', primary: true }
-      ]
-    },
-    'connections': {
-      title: '🌟 새로운 연결',
-      content: `
-        <div class="modal-section">
-          <h4>새로운 매치 알림</h4>
-          <div class="connections-list">
-            <div class="connection-item">
-              <div class="connection-avatar">👤</div>
-              <div class="connection-info">
-                <div class="connection-name">김○○ 님</div>
-                <div class="connection-compatibility">가치관 호환성 92%</div>
-                <div class="connection-location">서울 강남구</div>
-              </div>
-              <div class="connection-status">새로운 매치</div>
-            </div>
-            <div class="connection-item">
-              <div class="connection-avatar">👤</div>
-              <div class="connection-info">
-                <div class="connection-name">박○○ 님</div>
-                <div class="connection-compatibility">가치관 호환성 88%</div>
-                <div class="connection-location">서울 송파구</div>
-              </div>
-              <div class="connection-status">새로운 매치</div>
-            </div>
-            <div class="connection-item">
-              <div class="connection-avatar">👤</div>
-              <div class="connection-info">
-                <div class="connection-name">이○○ 님</div>
-                <div class="connection-compatibility">가치관 호환성 87%</div>
-                <div class="connection-location">서울 마포구</div>
-              </div>
-              <div class="connection-status">새로운 매치</div>
-            </div>
-          </div>
-          <p class="connections-summary">
-            귀하와 높은 호환성을 보이는 3명의 새로운 분들을 찾았습니다.
-          </p>
-        </div>
-      `,
-      actions: [
-        { text: '프로필 둘러보기', action: 'viewProfiles', primary: true },
-        { text: '메시지 보내기', action: 'sendMessage', primary: false }
-      ]
-    }
-  };
-  
-  return contents[widgetType] || contents['values'];
-}
-
-// 게스트용 모달 콘텐츠 생성
-function getGuestModalContent(widgetType) {
-  const contents = {
-    'values': {
-      title: '🎯 가치관 분석 미리보기',
-      content: `
-        <div class="modal-section">
-          <h4>가치관 분석 예시</h4>
-          <div class="guest-preview">
-            <div class="preview-item">
-              <div class="preview-icon">📊</div>
-              <div class="preview-text">
-                <h5>상세한 가치관 프로필</h5>
-                <p>AI가 분석한 당신만의 가치관 지표와 성향</p>
-              </div>
-            </div>
-            <div class="preview-item">
-              <div class="preview-icon">💡</div>
-              <div class="preview-text">
-                <h5>호환성 분석</h5>
-                <p>다른 회원들과의 가치관 호환성 점수</p>
-              </div>
-            </div>
-            <div class="preview-item">
-              <div class="preview-icon">🎨</div>
-              <div class="preview-text">
-                <h5>개인화된 추천</h5>
-                <p>가치관 기반 맞춤형 매칭 추천</p>
-              </div>
-            </div>
-          </div>
-          <p class="guest-message">
-            로그인 후 본인만의 가치관 분석을 받아보세요!
-          </p>
-        </div>
-      `,
-      actions: [
-        { text: '회원가입하기', action: 'signup', primary: true },
-        { text: '로그인하기', action: 'login', primary: false }
-      ]
-    },
-    'matching': {
-      title: '💝 AI 매칭 미리보기',
-      content: `
-        <div class="modal-section">
-          <h4>AI 매칭 서비스</h4>
-          <div class="guest-preview">
-            <div class="preview-item">
-              <div class="preview-icon">🤖</div>
-              <div class="preview-text">
-                <h5>AI 기반 매칭</h5>
-                <p>고도화된 알고리즘으로 최적의 상대 찾기</p>
-              </div>
-            </div>
-            <div class="preview-item">
-              <div class="preview-icon">⚡</div>
-              <div class="preview-text">
-                <h5>실시간 매칭</h5>
-                <p>24시간 자동으로 새로운 매칭 기회 발굴</p>
-              </div>
-            </div>
-            <div class="preview-item">
-              <div class="preview-icon">🎯</div>
-              <div class="preview-text">
-                <h5>정확한 매칭</h5>
-                <p>가치관, 취향, 라이프스타일 종합 분석</p>
-              </div>
-            </div>
-          </div>
-          <p class="guest-message">
-            지금 가입하고 AI 매칭 서비스를 경험해보세요!
-          </p>
-        </div>
-      `,
-      actions: [
-        { text: '무료 체험하기', action: 'signup', primary: true },
-        { text: '서비스 더 알아보기', action: 'learnMore', primary: false }
-      ]
-    },
-    'connections': {
-      title: '🌟 새로운 연결 미리보기',
-      content: `
-        <div class="modal-section">
-          <h4>연결 관리 서비스</h4>
-          <div class="guest-preview">
-            <div class="preview-item">
-              <div class="preview-icon">👥</div>
-              <div class="preview-text">
-                <h5>새로운 만남</h5>
-                <p>매일 새로운 매칭 기회와 연결 알림</p>
-              </div>
-            </div>
-            <div class="preview-item">
-              <div class="preview-icon">💌</div>
-              <div class="preview-text">
-                <h5>안전한 소통</h5>
-                <p>검증된 회원들과의 안전한 메시지 교환</p>
-              </div>
-            </div>
-            <div class="preview-item">
-              <div class="preview-icon">🏆</div>
-              <div class="preview-text">
-                <h5>성공 사례</h5>
-                <p>실제 커플 성사률 78%의 검증된 플랫폼</p>
-              </div>
-            </div>
-          </div>
-          <p class="guest-message">
-            지금 시작하고 새로운 인연을 만나보세요!
-          </p>
-        </div>
-      `,
-      actions: [
-        { text: '지금 시작하기', action: 'signup', primary: true },
-        { text: '성공 사례 보기', action: 'viewSuccess', primary: false }
-      ]
-    }
-  };
-  
-  return contents[widgetType] || contents['values'];
-}
-
-// 고급 모달 표시 함수
-function showAdvancedModal(title, content, actions) {
-  // 기존 모달 제거
-  const existingModal = document.querySelector('.modal-overlay');
-  if (existingModal) {
-    existingModal.remove();
-  }
-  
-  // 모달 오버레이 생성
-  const modalOverlay = document.createElement('div');
-  modalOverlay.className = 'modal-overlay widget-modal';
-  modalOverlay.style.cssText = `
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 10000;
-    animation: fadeIn 0.3s ease-out;
-  `;
-  
-  // 모달 콘텐츠 생성
-  const modalContent = document.createElement('div');
-  modalContent.className = 'modal-content widget-modal-content';
-  modalContent.style.cssText = `
-    background: white;
-    border-radius: 16px;
-    max-width: 500px;
-    width: 90%;
-    max-height: 80vh;
-    overflow-y: auto;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-    animation: slideUp 0.4s ease-out;
-    font-size: 16px;
-    line-height: 1.6;
-  `;
-  
-  // 액션 버튼 생성
-  const actionButtons = actions.map(action => 
-    `<button class="modal-action-btn ${action.primary ? 'primary' : 'secondary'}" 
-             onclick="handleModalAction('${action.action}')"
-             style="
-               ${action.primary ? 
-                 'background: #667eea; color: white; border: none;' : 
-                 'background: transparent; color: #667eea; border: 2px solid #667eea;'
-               }
-               padding: 12px 24px;
-               border-radius: 8px;
-               font-size: 14px;
-               font-weight: 600;
-               cursor: pointer;
-               margin: 0 8px;
-               transition: all 0.2s;
-               min-width: 120px;
-             "
-             onmouseover="this.style.transform='translateY(-2px)'"
-             onmouseout="this.style.transform='translateY(0)'"
-             >
-      ${action.text}
-    </button>`
-  ).join('');
-  
-  modalContent.innerHTML = `
-    <div class="modal-header" style="padding: 24px 24px 16px; border-bottom: 1px solid #e2e8f0;">
-      <h3 style="margin: 0; font-size: 1.5em; color: #1e293b; display: flex; align-items: center; justify-content: space-between;">
-        ${title}
-        <button class="modal-close-btn" style="
-          background: none;
-          border: none;
-          font-size: 24px;
-          color: #64748b;
-          cursor: pointer;
-          padding: 0;
-          width: 32px;
-          height: 32px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 6px;
-          transition: background 0.2s;
-        " onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='none'">×</button>
-      </h3>
-    </div>
-    <div class="modal-body" style="padding: 24px;">
-      ${content}
-    </div>
-    <div class="modal-footer" style="padding: 16px 24px 24px; text-align: center; border-top: 1px solid #e2e8f0;">
-      ${actionButtons}
-    </div>
-  `;
-  
-  modalOverlay.appendChild(modalContent);
-  document.body.appendChild(modalOverlay);
-  
-  // 모달 닫기 기능
-  const closeBtn = modalContent.querySelector('.modal-close-btn');
-  const closeModal = () => {
-    modalOverlay.style.animation = 'fadeOut 0.3s ease-out';
-    setTimeout(() => {
-      modalOverlay.remove();
-      // 히스토리에서 제거
-      if (widgetHistory.length > 0) {
-        widgetHistory.pop();
-        if (widgetHistory.length > 0) {
-          window.history.back();
-        }
-      }
-    }, 300);
-  };
-  
   closeBtn.addEventListener('click', closeModal);
   modalOverlay.addEventListener('click', (e) => {
     if (e.target === modalOverlay) closeModal();
   });
   
-  // 키보드 지원 (ESC 키로 닫기)
-  const handleKeyPress = (e) => {
-    if (e.key === 'Escape') {
-      closeModal();
-      document.removeEventListener('keydown', handleKeyPress);
-    }
-  };
-  document.addEventListener('keydown', handleKeyPress);
-}
-
-// 모달 액션 처리 함수
-function handleModalAction(action) {
-  console.log(`Modal action: ${action}`);
-  
-  switch(action) {
-    case 'signup':
-      // 기존 회원가입 모달 열기
-      document.querySelector('.modal-overlay').remove();
-      openSignupModal();
-      break;
-    case 'login':
-      // 로그인 모달 열기 (기존 로그인 로직 사용)
-      document.querySelector('.modal-overlay').remove();
-      showModal('로그인', '로그인 기능을 구현 중입니다. 잠시만 기다려주세요.');
-      break;
-    case 'viewDetailedAnalysis':
-      showModal('상세 분석', '상세 가치관 분석 페이지로 이동합니다.');
-      break;
-    case 'startMatching':
-      showModal('매칭 시작', '매칭 서비스를 시작합니다.');
-      break;
-    case 'viewProfiles':
-      showModal('프로필 보기', '매칭된 회원들의 프로필을 확인할 수 있습니다.');
-      break;
-    case 'sendMessage':
-      showModal('메시지 보내기', '안전한 메시지 시스템으로 소통하세요.');
-      break;
-    case 'learnMore':
-      showModal('서비스 소개', 'CHARM_INYEON의 더 자세한 서비스를 소개합니다.');
-      break;
-    case 'viewSuccess':
-      showModal('성공 사례', '실제 커플들의 성공 스토리를 확인하세요.');
-      break;
-    default:
-      showModal('준비 중', '해당 기능을 준비 중입니다.');
-  }
-}
-
-// 브라우저 히스토리 관리
-function addToHistory(widgetType) {
-  const state = { widget: widgetType, timestamp: Date.now() };
-  widgetHistory.push(state);
-  window.history.pushState(state, '', `#widget-${widgetType}`);
-}
-
-// 브라우저 뒤로가기 처리
-window.addEventListener('popstate', (event) => {
-  const modal = document.querySelector('.modal-overlay');
-  if (modal && event.state && event.state.widget) {
-    modal.remove();
-    widgetHistory.pop();
-  }
-});
-
-// 모바일 터치 최적화
-function optimizeForMobile() {
-  const widgets = document.querySelectorAll('.widget-clickable');
-  
-  widgets.forEach(widget => {
-    // 터치 이벤트 최적화
-    widget.addEventListener('touchstart', function(e) {
-      this.style.transform = 'scale(0.98)';
-    }, { passive: true });
+  // 전역 함수들
+  window.openKakaoTalk = function() {
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     
-    widget.addEventListener('touchend', function(e) {
-      this.style.transform = 'scale(1)';
-    }, { passive: true });
-    
-    // 모바일에서 호버 효과 제거
-    if (window.innerWidth <= 768) {
-      widget.style.transition = 'transform 0.1s ease';
-    }
-  });
-}
-
-// 중장년층 친화적 UX 적용
-function applyAccessibilityFeatures() {
-  const widgets = document.querySelectorAll('.widget-clickable');
-  
-  widgets.forEach(widget => {
-    // 포커스 스타일 개선
-    widget.addEventListener('focus', function() {
-      this.style.outline = '3px solid #667eea';
-      this.style.outlineOffset = '2px';
-    });
-    
-    widget.addEventListener('blur', function() {
-      this.style.outline = 'none';
-    });
-    
-    // 클릭 영역 확대 (터치 최적화)
-    widget.style.minHeight = '44px';
-    widget.style.minWidth = '44px';
-  });
-}
-
-// Initialize page animations when page loads
-window.addEventListener('load', () => {
-  // Add loaded class for CSS animations
-  document.body.classList.add('loaded');
-  
-  // 위젯 기능 초기화
-  optimizeForMobile();
-  applyAccessibilityFeatures();
-    
-  // Initialize hero animations
-  const heroTitle = document.querySelector('.hero-title');
-  const heroSubtitle = document.querySelector('.hero-subtitle');
-  const heroButtons = document.querySelector('.hero-buttons');
-    
-  if (heroTitle) {
-    setTimeout(() => {
-      heroTitle.style.opacity = '1';
-      heroTitle.style.transform = 'translateY(0)';
-    }, 300);
-  }
-    
-  if (heroSubtitle) {
-    setTimeout(() => {
-      heroSubtitle.style.opacity = '1';
-      heroSubtitle.style.transform = 'translateY(0)';
-    }, 600);
-  }
-    
-  if (heroButtons) {
-    setTimeout(() => {
-      heroButtons.style.opacity = '1';
-      heroButtons.style.transform = 'translateY(0)';
-    }, 900);
-  }
-});
-
-// Button hover effects
-document.querySelectorAll('.primary-button, .secondary-button, .cta-large-button, .login-btn, .signup-btn').forEach(button => {
-  button.addEventListener('mouseenter', function() {
-    this.style.transform = 'translateY(-3px)';
-  });
-    
-  button.addEventListener('mouseleave', function() {
-    this.style.transform = 'translateY(0)';
-  });
-});
-
-// Parallax effect for hero section
-window.addEventListener('scroll', () => {
-  const scrolled = window.pageYOffset;
-  const hero = document.querySelector('.hero');
-  const heroContent = document.querySelector('.hero-content');
-    
-  if (hero && heroContent) {
-    heroContent.style.transform = `translateY(${scrolled * 0.1}px)`;
-  }
-});
-
-// Mobile menu toggle (for responsive design)
-function createMobileMenu() {
-  const nav = document.querySelector('.nav');
-  const navLinks = document.querySelector('.nav-links');
-    
-  // Create hamburger menu button
-  const hamburger = document.createElement('button');
-  hamburger.classList.add('hamburger');
-  hamburger.innerHTML = '☰';
-  hamburger.style.display = 'none';
-  hamburger.style.background = 'none';
-  hamburger.style.border = 'none';
-  hamburger.style.fontSize = '1.5rem';
-  hamburger.style.cursor = 'pointer';
-  hamburger.style.color = '#333';
-    
-  nav.insertBefore(hamburger, navLinks);
-    
-  // Toggle mobile menu
-  hamburger.addEventListener('click', () => {
-    navLinks.classList.toggle('mobile-active');
-  });
-    
-  // Show/hide hamburger based on screen size
-  function checkScreenSize() {
-    if (window.innerWidth <= 768) {
-      hamburger.style.display = 'block';
-      navLinks.style.display = navLinks.classList.contains('mobile-active') ? 'flex' : 'none';
-    } else {
-      hamburger.style.display = 'none';
-      navLinks.style.display = 'flex';
-      navLinks.classList.remove('mobile-active');
-    }
-  }
-    
-  window.addEventListener('resize', checkScreenSize);
-  checkScreenSize();
-}
-
-// Initialize mobile menu
-createMobileMenu();
-
-// Add mobile menu styles
-const mobileStyles = `
-@media (max-width: 768px) {
-    .nav-links {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: white;
-        flex-direction: column;
-        padding: 1rem;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        display: none;
-    }
-    
-    .nav-links.mobile-active {
-        display: flex !important;
-    }
-    
-    .hamburger {
-        display: block !important;
-    }
-}
-`;
-
-const styleSheet = document.createElement('style');
-styleSheet.textContent = mobileStyles;
-document.head.appendChild(styleSheet);
-
-// Form validation and interaction (for future forms)
-function setupFormInteractions() {
-  document.querySelectorAll('input, textarea').forEach(input => {
-    input.addEventListener('focus', function() {
-      this.parentElement.classList.add('focused');
-    });
-        
-    input.addEventListener('blur', function() {
-      if (!this.value) {
-        this.parentElement.classList.remove('focused');
-      }
-    });
-  });
-}
-
-// Call setup function
-setupFormInteractions();
-
-// Analytics tracking (placeholder for future implementation)
-function trackEvent(eventName, eventData = {}) {
-  console.log(`Event tracked: ${eventName}`, eventData);
-  // Future: Send to analytics service
-}
-
-// Simple button click tracking (without interfering with main functionality)
-document.querySelectorAll('button').forEach(button => {
-  button.addEventListener('click', function() {
-    // Just track - don't interfere with other handlers
-    trackEvent('button_click', {
-      button_text: this.textContent.trim(),
-      button_class: this.className
-    });
-  });
-});
-
-// Home button functionality
-document.querySelector('.home-link')?.addEventListener('click', function(e) {
-  e.preventDefault();
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth'
-  });
-  trackEvent('home_click');
-});
-
-// Modal functionality
-function openModal(modalId) {
-  console.log('Attempting to open modal:', modalId);
-  const modal = document.getElementById(modalId);
-  if (modal) {
-    console.log('Modal found, opening...');
-    modal.style.display = 'block';
-    document.body.classList.add('modal-open');
-    // Focus first input for accessibility
-    setTimeout(() => {
-      const firstInput = modal.querySelector('input');
-      if (firstInput) {firstInput.focus();}
-    }, 100);
-  } else {
-    console.error('Modal not found:', modalId);
-  }
-}
-
-function closeModal(modalId) {
-  const modal = document.getElementById(modalId);
-  if (modal) {
-    modal.style.display = 'none';
-    document.body.classList.remove('modal-open');
-  }
-}
-
-// Login button functionality  
-document.querySelector('.login-btn')?.addEventListener('click', function(e) {
-  console.log('Login button clicked');
-  try {
-    openModal('loginModal');
-    trackEvent('login_click');
-  } catch (error) {
-    console.error('Login button error:', error);
-  }
-});
-
-// Signup button functionality
-document.querySelector('.signup-btn')?.addEventListener('click', function(e) {
-  console.log('Signup button clicked');
-  try {
-    openModal('signupModal');
-    trackEvent('signup_click');
-  } catch (error) {
-    console.error('Signup button error:', error);
-  }
-});
-
-// Close modal functionality
-document.querySelectorAll('.close').forEach(closeBtn => {
-  closeBtn.addEventListener('click', function() {
-    const modalId = this.getAttribute('data-modal');
-    closeModal(modalId);
-  });
-});
-
-// Close modal when clicking outside
-window.addEventListener('click', function(event) {
-  if (event.target.classList.contains('modal')) {
-    event.target.style.display = 'none';
-    document.body.classList.remove('modal-open');
-  }
-});
-
-// Switch between login and signup modals
-document.getElementById('showSignup')?.addEventListener('click', function(e) {
-  e.preventDefault();
-  closeModal('loginModal');
-  openModal('signupModal');
-});
-
-document.getElementById('showLogin')?.addEventListener('click', function(e) {
-  e.preventDefault();
-  closeModal('signupModal');
-  openModal('loginModal');
-});
-
-// Password validation
-function validatePassword(password) {
-  const requirements = {
-    length: password.length >= 8,
-    uppercase: /[A-Z]/.test(password),
-    lowercase: /[a-z]/.test(password),
-    number: /\d/.test(password)
-  };
-  return requirements;
-}
-
-// Real-time password validation
-document.getElementById('signupPassword')?.addEventListener('input', function() {
-  const password = this.value;
-  const requirements = validatePassword(password);
-    
-  Object.keys(requirements).forEach(req => {
-    const element = document.querySelector(`[data-requirement="${req}"]`);
-    if (element) {
-      if (requirements[req]) {
-        element.classList.add('valid');
-        element.classList.remove('invalid');
-      } else {
-        element.classList.add('invalid');
-        element.classList.remove('valid');
-      }
-    }
-  });
-});
-
-// Password confirmation validation
-document.getElementById('confirmPassword')?.addEventListener('input', function() {
-  const password = document.getElementById('signupPassword')?.value;
-  const confirmPassword = this.value;
-    
-  if (confirmPassword) {
-    if (password === confirmPassword) {
-      this.classList.add('valid');
-      this.classList.remove('invalid');
-    } else {
-      this.classList.add('invalid');
-      this.classList.remove('valid');
-    }
-  }
-});
-
-// Form submissions
-document.getElementById('loginForm')?.addEventListener('submit', async function(e) {
-  e.preventDefault();
-    
-  const submitBtn = this.querySelector('button[type="submit"]');
-  const originalText = submitBtn.textContent;
-    
-  try {
-    // Show loading state
-    submitBtn.textContent = '로그인 중...';
-    submitBtn.disabled = true;
-        
-    const formData = new FormData(this);
-    const email = formData.get('email');
-    const password = formData.get('password');
-    const rememberMe = formData.get('rememberMe');
-        
-    console.log('Login attempt:', { email });
-        
-    // Call login API
-    const response = await apiClient.login(email, password, !!rememberMe);
-        
-    if (response.success) {
-      apiClient.showSuccess('로그인되었습니다!');
-      closeModal('loginModal');
-            
-      // Update UI for logged in state
-      updateUIForAuthenticatedUser(response.data.user);
-            
-      trackEvent('login_success', { email });
-    }
-        
-  } catch (error) {
-    console.error('Login error:', error);
-    apiClient.showError(error.message || '로그인 중 오류가 발생했습니다.');
-    trackEvent('login_error', { email: formData.get('email'), error: error.message });
-  } finally {
-    // Reset button state
-    submitBtn.textContent = originalText;
-    submitBtn.disabled = false;
-  }
-});
-
-document.getElementById('signupForm')?.addEventListener('submit', async function(e) {
-  e.preventDefault();
-    
-  const submitBtn = this.querySelector('button[type="submit"]');
-  const originalText = submitBtn.textContent;
-    
-  try {
-    const formData = new FormData(this);
-    const data = {
-      name: formData.get('name'),
-      email: formData.get('email'),
-      password: formData.get('password'),
-      confirmPassword: formData.get('confirmPassword'),
-      age: formData.get('age'),
-      agreeTerms: formData.get('agreeTerms') === 'on',
-      agreePrivacy: formData.get('agreeTerms') === 'on', // Same as terms for simplicity
-      agreeMarketing: formData.get('agreeMarketing') === 'on'
-    };
-        
-    // Validate password match
-    if (data.password !== data.confirmPassword) {
-      apiClient.showError('비밀번호가 일치하지 않습니다.');
-      return;
-    }
-        
-    // Validate password requirements
-    const passwordValidation = validatePassword(data.password);
-    const isPasswordValid = Object.values(passwordValidation).every(valid => valid);
-        
-    if (!isPasswordValid) {
-      apiClient.showError('비밀번호가 요구사항을 충족하지 않습니다.');
-      return;
-    }
-        
-    // Check terms agreement
-    if (!data.agreeTerms) {
-      apiClient.showError('이용약관에 동의해주세요.');
-      return;
-    }
-        
-    // Show loading state
-    submitBtn.textContent = '가입 중...';
-    submitBtn.disabled = true;
-        
-    console.log('Signup attempt:', data);
-        
-    // Call signup API
-    const response = await apiClient.register(data);
-        
-    if (response.success) {
-      apiClient.showSuccess('회원가입이 완료되었습니다! 이메일을 확인해주세요.');
-      closeModal('signupModal');
-            
-      // Update UI for logged in state
-      updateUIForAuthenticatedUser(response.data.user);
-            
-      trackEvent('signup_success', { email: data.email, age: data.age });
-    }
-        
-  } catch (error) {
-    console.error('Signup error:', error);
-    apiClient.showError(error.message || '회원가입 중 오류가 발생했습니다.');
-    trackEvent('signup_error', { 
-      email: formData.get('email'), 
-      error: error.message 
-    });
-  } finally {
-    // Reset button state
-    submitBtn.textContent = originalText;
-    submitBtn.disabled = false;
-  }
-});
-
-// ==============================================
-// USER AUTHENTICATION SYSTEM (localStorage based)
-// ==============================================
-
-// User management utilities
-class UserManager {
-  constructor() {
-    this.storageKey = 'charminyeon_users';
-    this.currentUserKey = 'charminyeon_current_user';
-    this.initializeStorage();
-  }
-
-  initializeStorage() {
-    if (!localStorage.getItem(this.storageKey)) {
-      localStorage.setItem(this.storageKey, JSON.stringify([]));
-    }
-  }
-
-  getAllUsers() {
-    return JSON.parse(localStorage.getItem(this.storageKey) || '[]');
-  }
-
-  saveUser(userData) {
-    const users = this.getAllUsers();
-    const userWithId = {
-      ...userData,
-      id: Date.now().toString(),
-      createdAt: new Date().toISOString(),
-      profile: {
-        name: userData.name,
-        email: userData.email,
-        age: userData.age,
-        isComplete: false
-      }
-    };
-    users.push(userWithId);
-    localStorage.setItem(this.storageKey, JSON.stringify(users));
-    return userWithId;
-  }
-
-  findUserByEmail(email) {
-    const users = this.getAllUsers();
-    return users.find(user => user.email === email);
-  }
-
-  validatePassword(inputPassword, storedPassword) {
-    return inputPassword === storedPassword;
-  }
-
-  setCurrentUser(user) {
-    const userSession = {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      age: user.age,
-      loginTime: new Date().toISOString()
-    };
-    localStorage.setItem(this.currentUserKey, JSON.stringify(userSession));
-  }
-
-  getCurrentUser() {
-    const userData = localStorage.getItem(this.currentUserKey);
-    return userData ? JSON.parse(userData) : null;
-  }
-
-  logout() {
-    localStorage.removeItem(this.currentUserKey);
-    this.updateUIForLoggedOutUser();
-  }
-
-  updateUIForLoggedOutUser() {
-    const authButtons = document.querySelector('.auth-buttons');
-    if (authButtons) {
-      authButtons.innerHTML = `
-        <button class="login-btn">
-          <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M15 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M10 17L15 12L10 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M15 12H3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          로그인
-        </button>
-        <button class="signup-btn">
-          <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M16 21V19C16 17.9391 15.5786 16.9217 14.8284 16.1716C14.0783 15.4214 13.0609 15 12 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="8.5" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <line x1="20" y1="8" x2="20" y2="14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <line x1="17" y1="11" x2="23" y2="11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          회원가입
-        </button>
-      `;
-      this.attachAuthButtonListeners();
-    }
-  }
-
-  updateUIForLoggedInUser(user) {
-    const authButtons = document.querySelector('.auth-buttons');
-    if (authButtons) {
-      authButtons.innerHTML = `
-        <div class="user-menu">
-          <span class="user-greeting">안녕하세요, ${user.name}님!</span>
-          <button class="profile-btn" onclick="userManager.showUserDashboard()">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            내 프로필
-          </button>
-          <button class="logout-btn" onclick="userManager.logout()">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M9 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <polyline points="16,17 21,12 16,7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <line x1="21" y1="12" x2="9" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            로그아웃
-          </button>
-        </div>
-      `;
-    }
-
-    // Show success message
-    this.showSuccess(`${user.name}님, 환영합니다! 가치관 분석을 시작해보세요.`);
-  }
-
-  showUserDashboard() {
-    const user = this.getCurrentUser();
-    if (!user) return;
-
-    showCustomAlert('내 프로필', `
-      <div style="text-align: center; padding: 2rem;">
-        <div style="font-size: 4rem; margin-bottom: 1rem;">👤</div>
-        <h3 style="margin-bottom: 2rem; color: #333;">${user.name}님의 프로필</h3>
-        <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 15px; text-align: left; margin-bottom: 2rem;">
-          <p style="margin: 0.5rem 0;"><strong>이름:</strong> ${user.name}</p>
-          <p style="margin: 0.5rem 0;"><strong>이메일:</strong> ${user.email}</p>
-          <p style="margin: 0.5rem 0;"><strong>연령대:</strong> ${user.age}</p>
-          <p style="margin: 0.5rem 0;"><strong>가입일:</strong> ${new Date(user.loginTime).toLocaleDateString('ko-KR')}</p>
-        </div>
-        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-          <button onclick="document.querySelector('#valuesModal').style.display='block'; this.closest('.custom-alert').remove();" style="background: #667eea; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 10px; font-weight: 600; cursor: pointer;">가치관 분석</button>
-          <button onclick="document.querySelector('#matchingModal').style.display='block'; this.closest('.custom-alert').remove();" style="background: #10b981; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 10px; font-weight: 600; cursor: pointer;">매칭 보기</button>
-          <button onclick="this.closest('.custom-alert').remove()" style="background: #6b7280; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 10px; font-weight: 600; cursor: pointer;">닫기</button>
-        </div>
-      </div>
-    `);
-  }
-
-  showSuccess(message) {
-    showCustomAlert('성공', `
-      <div style="text-align: center; padding: 1.5rem;">
-        <div style="font-size: 3rem; margin-bottom: 1rem;">✅</div>
-        <p style="margin-bottom: 1.5rem; font-size: 1.1rem; line-height: 1.6;">${message}</p>
-        <button onclick="this.closest('.custom-alert').remove()" style="background: #10b981; color: white; border: none; padding: 0.8rem 2rem; border-radius: 10px; font-weight: 600; cursor: pointer;">확인</button>
-      </div>
-    `);
-  }
-
-  showError(message) {
-    showCustomAlert('오류', `
-      <div style="text-align: center; padding: 1.5rem;">
-        <div style="font-size: 3rem; margin-bottom: 1rem;">❌</div>
-        <p style="margin-bottom: 1.5rem; font-size: 1.1rem; line-height: 1.6; color: #ef4444;">${message}</p>
-        <button onclick="this.closest('.custom-alert').remove()" style="background: #ef4444; color: white; border: none; padding: 0.8rem 2rem; border-radius: 10px; font-weight: 600; cursor: pointer;">확인</button>
-      </div>
-    `);
-  }
-
-  attachAuthButtonListeners() {
-    // Login button event
-    document.querySelector('.login-btn')?.addEventListener('click', () => {
-      openModal('loginModal');
-    });
-
-    // Signup button event  
-    document.querySelector('.signup-btn')?.addEventListener('click', () => {
-      openModal('signupModal');
-    });
-  }
-}
-
-// Initialize user manager
-const userManager = new UserManager();
-
-// Check if user is already logged in on page load
-window.addEventListener('load', () => {
-  const currentUser = userManager.getCurrentUser();
-  if (currentUser) {
-    userManager.updateUIForLoggedInUser(currentUser);
-  } else {
-    userManager.attachAuthButtonListeners();
-  }
-});
-
-// Social login handlers (temporarily disabled, showing preparation message)
-document.querySelectorAll('.google-btn').forEach(btn => {
-  btn.addEventListener('click', function() {
-    userManager.showError('Google 로그인 기능은 준비 중입니다.');
-    trackEvent('social_login_click', { provider: 'google' });
-  });
-});
-
-document.querySelectorAll('.kakao-btn').forEach(btn => {
-  btn.addEventListener('click', function() {
-    userManager.showError('카카오 로그인 기능은 준비 중입니다.');
-    trackEvent('social_login_click', { provider: 'kakao' });
-  });
-});
-
-// ==============================================
-// UPDATED LOGIN FORM HANDLER
-// ==============================================
-
-// Replace the existing login form handler
-document.getElementById('loginForm')?.addEventListener('submit', function(e) {
-  e.preventDefault();
-  
-  const submitBtn = this.querySelector('button[type="submit"]');
-  const originalText = submitBtn.textContent;
-  
-  try {
-    const formData = new FormData(this);
-    const email = formData.get('email');
-    const password = formData.get('password');
-    const rememberMe = formData.get('rememberMe') === 'on';
-    
-    // Validate input
-    if (!email || !password) {
-      userManager.showError('이메일과 비밀번호를 입력해주세요.');
-      return;
-    }
-    
-    // Show loading state
-    submitBtn.textContent = '로그인 중...';
-    submitBtn.disabled = true;
-    
-    // Find user
-    const user = userManager.findUserByEmail(email);
-    if (!user) {
-      userManager.showError('등록되지 않은 이메일입니다.');
-      return;
-    }
-    
-    // Validate password
-    if (!userManager.validatePassword(password, user.password)) {
-      userManager.showError('비밀번호가 올바르지 않습니다.');
-      return;
-    }
-    
-    // Successful login
-    userManager.setCurrentUser(user);
-    userManager.updateUIForLoggedInUser(user);
-    closeModal('loginModal');
-    
-    // Reset form
-    this.reset();
-    
-    trackEvent('login_success', { email: email, rememberMe: rememberMe });
-    
-  } catch (error) {
-    console.error('Login error:', error);
-    userManager.showError('로그인 중 오류가 발생했습니다.');
-    trackEvent('login_error', { email: formData.get('email'), error: error.message });
-  } finally {
-    // Reset button state
-    submitBtn.textContent = originalText;
-    submitBtn.disabled = false;
-  }
-});
-
-// ==============================================
-// UPDATED SIGNUP FORM HANDLER  
-// ==============================================
-
-// Replace the existing signup form handler
-document.getElementById('signupForm')?.addEventListener('submit', function(e) {
-  e.preventDefault();
-  
-  const submitBtn = this.querySelector('button[type="submit"]');
-  const originalText = submitBtn.textContent;
-  
-  try {
-    const formData = new FormData(this);
-    const data = {
-      name: formData.get('name'),
-      email: formData.get('email'),
-      password: formData.get('password'),
-      confirmPassword: formData.get('confirmPassword'),
-      age: formData.get('age'),
-      agreeTerms: formData.get('agreeTerms') === 'on',
-      agreeMarketing: formData.get('agreeMarketing') === 'on'
-    };
-    
-    // Validate required fields
-    if (!data.name || !data.email || !data.password || !data.age) {
-      userManager.showError('모든 필수 항목을 입력해주세요.');
-      return;
-    }
-    
-    // Validate password match
-    if (data.password !== data.confirmPassword) {
-      userManager.showError('비밀번호가 일치하지 않습니다.');
-      return;
-    }
-    
-    // Validate password requirements
-    const passwordValidation = validatePassword(data.password);
-    const isPasswordValid = Object.values(passwordValidation).every(valid => valid);
-    
-    if (!isPasswordValid) {
-      userManager.showError('비밀번호가 요구사항을 충족하지 않습니다.');
-      return;
-    }
-    
-    // Check terms agreement
-    if (!data.agreeTerms) {
-      userManager.showError('이용약관에 동의해주세요.');
-      return;
-    }
-    
-    // Check if email already exists
-    if (userManager.findUserByEmail(data.email)) {
-      userManager.showError('이미 사용 중인 이메일입니다.');
-      return;
-    }
-    
-    // Show loading state
-    submitBtn.textContent = '가입 중...';
-    submitBtn.disabled = true;
-    
-    // Save user
-    const newUser = userManager.saveUser(data);
-    
-    // Auto login after signup
-    userManager.setCurrentUser(newUser);
-    userManager.updateUIForLoggedInUser(newUser);
-    closeModal('signupModal');
-    
-    // Reset form
-    this.reset();
-    
-    trackEvent('signup_success', { email: data.email, age: data.age });
-    
-  } catch (error) {
-    console.error('Signup error:', error);
-    userManager.showError('회원가입 중 오류가 발생했습니다.');
-    trackEvent('signup_error', { 
-      email: formData.get('email'), 
-      error: error.message 
-    });
-  } finally {
-    // Reset button state
-    submitBtn.textContent = originalText;
-    submitBtn.disabled = false;
-  }
-});
-
-// Contact form submission
-document.getElementById('contactForm')?.addEventListener('submit', function(e) {
-  e.preventDefault();
-    
-  const formData = new FormData(this);
-  const contactData = {
-    name: formData.get('name'),
-    email: formData.get('email'),
-    phone: formData.get('phone'),
-    subject: formData.get('subject'),
-    message: formData.get('message'),
-    agreement: formData.get('contactAgreement')
-  };
-    
-  // Validate required fields
-  if (!contactData.name || !contactData.email || !contactData.subject || !contactData.message) {
-    showModal('필수 항목 확인', '필수 항목을 모두 입력해주세요.');
-    return;
-  }
-    
-  if (!contactData.agreement) {
-    showModal('개인정보 동의', '개인정보 수집 및 이용에 동의해주세요.');
-    return;
-  }
-    
-  // TODO: Send contact data to server
-  console.log('Contact form submitted:', contactData);
-    
-  // Show success message
-  showCustomAlert('문의 완료', `
-        <div style="text-align: center; padding: 1rem;">
-            <div style="font-size: 3rem; margin-bottom: 1rem;">✅</div>
-            <h3 style="color: #10b981; margin-bottom: 1rem;">문의가 성공적으로 전송되었습니다!</h3>
-            <p style="margin-bottom: 1.5rem; line-height: 1.6;">
-                <strong>${contactData.name}</strong>님의 문의를 접수했습니다.<br>
-                24시간 이내에 <strong>${contactData.email}</strong>로 답변드리겠습니다.
-            </p>
-            <div style="background: #f8f9fa; padding: 1rem; border-radius: 10px; margin-bottom: 1rem;">
-                <p style="margin: 0; font-size: 0.9rem; color: #666;">
-                    <strong>문의 유형:</strong> ${getSubjectText(contactData.subject)}<br>
-                    <strong>접수 시간:</strong> ${new Date().toLocaleString('ko-KR')}
-                </p>
-            </div>
-            <button onclick="this.closest('.custom-alert').remove()" style="
-                background: #667eea;
-                color: white;
-                border: none;
-                padding: 0.8rem 2rem;
-                border-radius: 10px;
-                font-weight: 600;
-                cursor: pointer;
-                transition: all 0.3s ease;
-            " onmouseover="this.style.background='#5a6fd8'" onmouseout="this.style.background='#667eea'">
-                확인
-            </button>
-        </div>
-    `);
-    
-  // Reset form
-  this.reset();
-    
-  // Track event
-  trackEvent('contact_submit', { 
-    subject: contactData.subject,
-    email: contactData.email 
-  });
-});
-
-function getSubjectText(value) {
-  const subjects = {
-    'service': '서비스 문의',
-    'technical': '기술적 문제',
-    'account': '계정 관련',
-    'partnership': '제휴 문의',
-    'other': '기타'
-  };
-  return subjects[value] || value;
-}
-
-// Demo modal functionality
-let currentDemoStep = 1;
-const totalDemoSteps = 3;
-
-function showDemoStep(stepNumber) {
-  // Hide all steps
-  document.querySelectorAll('.demo-step').forEach(step => {
-    step.classList.remove('active');
-  });
-    
-  // Show current step
-  const currentStep = document.getElementById(`step${stepNumber}`);
-  if (currentStep) {
-    currentStep.classList.add('active');
-  }
-    
-  // Update dots
-  document.querySelectorAll('.demo-dots .dot').forEach((dot, index) => {
-    if (index + 1 === stepNumber) {
-      dot.classList.add('active');
-    } else {
-      dot.classList.remove('active');
-    }
-  });
-    
-  // Update buttons
-  const prevBtn = document.querySelector('.prev-btn');
-  const nextBtn = document.querySelector('.next-btn');
-  const restartBtn = document.querySelector('.restart-btn');
-    
-  if (prevBtn) {prevBtn.disabled = stepNumber === 1;}
-    
-  if (stepNumber === totalDemoSteps) {
-    if (nextBtn) {nextBtn.style.display = 'none';}
-    if (restartBtn) {restartBtn.style.display = 'inline-block';}
-  } else {
-    if (nextBtn) {nextBtn.style.display = 'inline-block';}
-    if (restartBtn) {restartBtn.style.display = 'none';}
-  }
-}
-
-// Demo navigation
-document.querySelector('.next-btn')?.addEventListener('click', function() {
-  if (currentDemoStep < totalDemoSteps) {
-    currentDemoStep++;
-    showDemoStep(currentDemoStep);
-    trackEvent('demo_next', { step: currentDemoStep });
-  }
-});
-
-document.querySelector('.prev-btn')?.addEventListener('click', function() {
-  if (currentDemoStep > 1) {
-    currentDemoStep--;
-    showDemoStep(currentDemoStep);
-    trackEvent('demo_prev', { step: currentDemoStep });
-  }
-});
-
-document.querySelector('.restart-btn')?.addEventListener('click', function() {
-  currentDemoStep = 1;
-  showDemoStep(currentDemoStep);
-  trackEvent('demo_restart');
-});
-
-// Dot navigation
-document.querySelectorAll('.demo-dots .dot').forEach((dot, index) => {
-  dot.addEventListener('click', function() {
-    currentDemoStep = index + 1;
-    showDemoStep(currentDemoStep);
-    trackEvent('demo_dot_click', { step: currentDemoStep });
-  });
-});
-
-// Demo option interactions
-document.querySelectorAll('.demo-option').forEach(option => {
-  option.addEventListener('click', function() {
-    // Remove selected class from siblings
-    this.parentElement.querySelectorAll('.demo-option').forEach(opt => {
-      opt.classList.remove('selected');
-    });
-    // Add selected class to clicked option
-    this.classList.add('selected');
-    trackEvent('demo_option_select', { option: this.textContent.trim() });
-  });
-});
-
-// Enhanced Interactive Demo Variables
-// currentDemoStep은 위에서 이미 선언됨 (1976줄)
-let demoAnswers = {};
-let analysisProgress = 0;
-let compatibilityScore = 0;
-let isAnalysisRunning = false;
-
-// Demo Questions Data
-const demoQuestions = {
-  q1: {
-    question: '퇴근 후 가장 소중한 시간은 어떻게 보내시나요?',
-    options: {
-      family: { text: '가족과 함께하는 시간', icon: '👨‍👩‍👧‍👦', tags: ['가족 중시', '안정적'] },
-      hobby: { text: '취미 활동이나 자기계발', icon: '🎨', tags: ['성장 지향', '창의적'] },
-      rest: { text: '편안한 휴식', icon: '🛋️', tags: ['여유로움', '평화 추구'] },
-      social: { text: '친구들과의 만남', icon: '👥', tags: ['사교적', '활발함'] }
-    }
-  },
-  q2: {
-    question: '인생에서 가장 중요하게 생각하는 가치는?',
-    options: {
-      stability: { text: '안정과 평화', icon: '🏡', tags: ['안정 추구', '신중함'] },
-      growth: { text: '성장과 도전', icon: '🚀', tags: ['도전적', '성장 지향'] },
-      connection: { text: '인간관계와 사랑', icon: '❤️', tags: ['인간 중심', '따뜻함'] },
-      freedom: { text: '자유와 독립', icon: '🦋', tags: ['자유로움', '독립적'] }
-    }
-  }
-};
-
-// Secondary button (소개 영상 보기) functionality
-document.querySelectorAll('.secondary-button').forEach(button => {
-  button.addEventListener('click', function(e) {
-    console.log('Secondary button clicked:', this.textContent.trim());
-    try {
-      const buttonText = this.textContent.trim();
-      if (buttonText.includes('소개 영상') || buttonText.includes('영상')) {
-        console.log('Opening enhanced demo...');
-        openEnhancedDemo();
-        trackEvent('enhanced_demo_click');
-      }
-    } catch (error) {
-      console.error('Secondary button error:', error);
-    }
-  });
-});
-
-// Open Video Modal (소개 영상 보기)
-function openEnhancedDemo() {
-  console.log('Opening video modal...');
-  try {
-    const modal = document.getElementById('videoModal');
-    if (modal) {
-      console.log('Video modal found, opening...');
-      modal.style.display = 'block';
-      document.body.classList.add('modal-open');
-    } else {
-      console.error('Video modal not found!');
-      showModal('오류', '비디오 모달을 찾을 수 없습니다.');
-    }
-  } catch (error) {
-    console.error('Enhanced demo error:', error);
-    showModal('오류', '데모를 여는 중 오류가 발생했습니다.');
-  }
-}
-
-// Reset Demo State
-function resetDemoState() {
-  currentDemoStep = 1;
-  demoAnswers = {};
-  analysisProgress = 0;
-  compatibilityScore = 0;
-  isAnalysisRunning = false;
-  
-  // Reset progress bar
-  const progressFill = document.getElementById('demoProgressFill');
-  const progressText = document.getElementById('demoProgressText');
-  if (progressFill) progressFill.style.width = '25%';
-  if (progressText) progressText.textContent = '1 / 4';
-  
-  // Hide chat demo
-  const chatDemo = document.getElementById('chatDemoContainer');
-  if (chatDemo) chatDemo.style.display = 'none';
-}
-
-// Show Demo Step
-function showDemoStep(step) {
-  // Hide all steps
-  document.querySelectorAll('.demo-step').forEach(stepEl => {
-    stepEl.classList.remove('active');
-  });
-  
-  // Show current step
-  const currentStepEl = document.getElementById(`interactiveStep${step}`);
-  if (currentStepEl) {
-    currentStepEl.classList.add('active');
-  }
-  
-  // Update progress
-  updateDemoProgress(step);
-  currentDemoStep = step;
-}
-
-// Update Demo Progress
-function updateDemoProgress(step) {
-  const progressFill = document.getElementById('demoProgressFill');
-  const progressText = document.getElementById('demoProgressText');
-  
-  if (progressFill && progressText) {
-    const progressPercentage = (step / 4) * 100;
-    progressFill.style.width = `${progressPercentage}%`;
-    progressText.textContent = `${step} / 4`;
-  }
-}
-
-// Initialize Step Interactions
-function initializeStepInteractions() {
-  setupQuestionInteractions();
-  setupNavigationButtons();
-  setupDemoActions();
-  setupChatDemo();
-}
-
-// Setup Question Interactions
-function setupQuestionInteractions() {
-  // Question 1 interactions
-  document.querySelectorAll('input[name="q1"]').forEach(input => {
-    input.addEventListener('change', function() {
-      if (this.checked) {
-        // Remove previous selections
-        document.querySelectorAll('[data-value]').forEach(el => {
-          el.classList.remove('selected');
-        });
-        
-        // Add selection to current option
-        this.closest('.option-card').classList.add('selected');
-        
-        // Store answer
-        demoAnswers.q1 = this.value;
-        
-        // Enable next button
-        const nextBtn = document.getElementById('nextQ1');
-        if (nextBtn) {
-          nextBtn.disabled = false;
-        }
-      }
-    });
-  });
-  
-  // Question 2 interactions
-  document.querySelectorAll('input[name="q2"]').forEach(input => {
-    input.addEventListener('change', function() {
-      if (this.checked) {
-        // Remove previous selections
-        document.querySelectorAll('input[name="q2"]').forEach(otherInput => {
-          otherInput.closest('.option-card').classList.remove('selected');
-        });
-        
-        // Add selection to current option
-        this.closest('.option-card').classList.add('selected');
-        
-        // Store answer
-        demoAnswers.q2 = this.value;
-        
-        // Enable next button
-        const nextBtn = document.getElementById('nextQ2');
-        if (nextBtn) {
-          nextBtn.disabled = false;
-        }
-      }
-    });
-  });
-}
-
-// Setup Navigation Buttons
-function setupNavigationButtons() {
-  // Next Q1 button
-  const nextQ1 = document.getElementById('nextQ1');
-  if (nextQ1) {
-    nextQ1.addEventListener('click', () => {
-      showDemoStep(2);
-    });
-  }
-  
-  // Next Q2 button
-  const nextQ2 = document.getElementById('nextQ2');
-  if (nextQ2) {
-    nextQ2.addEventListener('click', () => {
-      showDemoStep(3);
-      startAnalysisAnimation();
-    });
-  }
-}
-
-// Start Analysis Animation
-function startAnalysisAnimation() {
-  if (isAnalysisRunning) return;
-  isAnalysisRunning = true;
-  
-  const analysisText = document.getElementById('analysisText');
-  const analysisFill = document.getElementById('analysisFill');
-  const analysisPercentage = document.getElementById('analysisPercentage');
-  
-  const analysisMessages = [
-    '답변을 분석하고 있습니다...',
-    '가치관 프로필을 생성 중...',
-    '매칭 알고리즘 실행 중...',
-    '최적의 매치를 찾고 있습니다...',
-    '분석이 완료되었습니다!'
-  ];
-  
-  let messageIndex = 0;
-  let progress = 0;
-  
-  const analysisInterval = setInterval(() => {
-    progress += Math.random() * 15 + 10;
-    
-    if (progress > 100) {
-      progress = 100;
-      clearInterval(analysisInterval);
-      
+    if (isMobile) {
+      window.location.href = 'kakaotalk://plusfriend/home/@charm_inyeon';
       setTimeout(() => {
-        showDemoStep(4);
-        generateMatchingResults();
-      }, 1000);
+        window.open('https://pf.kakao.com/_xmwxmxl', '_blank');
+      }, 3000);
+    } else {
+      window.open('https://pf.kakao.com/_xmwxmxl', '_blank');
     }
     
-    // Update progress
-    if (analysisFill) analysisFill.style.width = `${progress}%`;
-    if (analysisPercentage) analysisPercentage.textContent = `${Math.round(progress)}%`;
-    
-    // Update message
-    if (progress > messageIndex * 20 && messageIndex < analysisMessages.length - 1) {
-      messageIndex++;
-      if (analysisText) {
-        analysisText.style.opacity = '0';
-        setTimeout(() => {
-          analysisText.textContent = analysisMessages[messageIndex];
-          analysisText.style.opacity = '1';
-        }, 200);
-      }
-    }
-  }, 300);
-}
-
-// Generate Matching Results
-function generateMatchingResults() {
-  // Calculate compatibility based on answers
-  compatibilityScore = calculateCompatibility();
-  
-  // Update compatibility display
-  const compatibilityEl = document.getElementById('compatibilityScore');
-  if (compatibilityEl) {
-    animateNumber(compatibilityEl, 0, compatibilityScore, 2000);
-  }
-  
-  // Generate user tags
-  generateUserTags();
-}
-
-// Calculate Compatibility
-function calculateCompatibility() {
-  const q1Weight = 0.6;
-  const q2Weight = 0.4;
-  
-  let score = 70; // Base score
-  
-  // Adjust based on answers
-  if (demoAnswers.q1 === 'family' && demoAnswers.q2 === 'stability') {
-    score += 22; // High compatibility
-  } else if (demoAnswers.q1 === 'hobby' && demoAnswers.q2 === 'growth') {
-    score += 20;
-  } else if (demoAnswers.q1 === 'social' && demoAnswers.q2 === 'connection') {
-    score += 18;
-  } else {
-    score += Math.random() * 15 + 10;
-  }
-  
-  return Math.min(Math.round(score), 95);
-}
-
-// Generate User Tags
-function generateUserTags() {
-  const yourTagsEl = document.getElementById('yourTags');
-  if (!yourTagsEl) return;
-  
-  const tags = [];
-  
-  if (demoAnswers.q1 && demoQuestions.q1.options[demoAnswers.q1]) {
-    tags.push(...demoQuestions.q1.options[demoAnswers.q1].tags);
-  }
-  
-  if (demoAnswers.q2 && demoQuestions.q2.options[demoAnswers.q2]) {
-    tags.push(...demoQuestions.q2.options[demoAnswers.q2].tags);
-  }
-  
-  yourTagsEl.innerHTML = tags.map(tag => `<span class="tag">${tag}</span>`).join('');
-}
-
-// Animate Number
-function animateNumber(element, start, end, duration) {
-  const startTime = Date.now();
-  const animate = () => {
-    const elapsed = Date.now() - startTime;
-    const progress = Math.min(elapsed / duration, 1);
-    const current = Math.round(start + (end - start) * progress);
-    
-    element.textContent = `${current}%`;
-    
-    if (progress < 1) {
-      requestAnimationFrame(animate);
-    }
+    showModal('카카오톡 상담', '카카오톡 채널 "@CHARM_INYEON"을 검색하시거나\n준비 중인 링크로 곧 연결됩니다!');
   };
   
-  animate();
-}
-
-// Setup Demo Actions
-function setupDemoActions() {
-  const startChatBtn = document.getElementById('startChatDemo');
-  const restartBtn = document.getElementById('restartDemo');
-  
-  if (startChatBtn) {
-    startChatBtn.addEventListener('click', () => {
-      showChatDemo();
-    });
-  }
-  
-  if (restartBtn) {
-    restartBtn.addEventListener('click', () => {
-      resetDemoState();
-      showDemoStep(1);
-      initializeStepInteractions();
-    });
-  }
-}
-
-// Show Chat Demo
-function showChatDemo() {
-  const chatContainer = document.getElementById('chatDemoContainer');
-  if (chatContainer) {
-    chatContainer.style.display = 'block';
+  window.openEmail = function() {
+    const subject = encodeURIComponent('CHARM_INYEON 문의사항');
+    const body = encodeURIComponent('안녕하세요, CHARM_INYEON 담당자님\n\n다음과 같이 문의드립니다:\n\n[문의 내용을 작성해주세요]\n\n감사합니다.');
     
-    // Scroll to chat demo
-    chatContainer.scrollIntoView({ behavior: 'smooth' });
+    window.location.href = `mailto:hello@valuematch.co.kr?subject=${subject}&body=${body}`;
     
-    // Start chat simulation
     setTimeout(() => {
-      simulateChat();
-    }, 500);
-  }
-}
-
-// Setup Chat Demo
-function setupChatDemo() {
-  const useSuggestionBtn = document.querySelector('.use-suggestion-btn');
-  const chatInput = document.getElementById('chatInput');
-  const sendBtn = document.getElementById('sendMessage');
-  
-  if (useSuggestionBtn) {
-    useSuggestionBtn.addEventListener('click', () => {
-      const suggestionText = document.querySelector('.suggestion-text').textContent.replace(/"/g, '');
-      if (chatInput) {
-        chatInput.value = suggestionText;
-        chatInput.disabled = false;
-        sendBtn.disabled = false;
-        chatInput.focus();
-      }
-    });
-  }
-  
-  if (sendBtn) {
-    sendBtn.addEventListener('click', () => {
-      sendChatMessage();
-    });
-  }
-  
-  if (chatInput) {
-    chatInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        sendChatMessage();
-      }
-    });
-  }
-}
-
-// Send Chat Message
-function sendChatMessage() {
-  const chatInput = document.getElementById('chatInput');
-  const chatMessages = document.getElementById('chatMessages');
-  
-  if (!chatInput || !chatMessages || !chatInput.value.trim()) return;
-  
-  const message = chatInput.value.trim();
-  
-  // Add user message
-  addChatMessage(message, 'sent');
-  
-  // Clear input
-  chatInput.value = '';
-  
-  // Simulate response
-  setTimeout(() => {
-    const responses = [
-      '정말 흥미로운 관점이네요! 🤔',
-      '저도 비슷한 생각을 해본 적이 있어요.',
-      '그런 경험이 있으시군요. 더 자세히 듣고 싶어요!',
-      '우리 가치관이 많이 비슷한 것 같아요 😊'
-    ];
-    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-    addChatMessage(randomResponse, 'received');
-  }, 1000 + Math.random() * 2000);
-}
-
-// Add Chat Message
-function addChatMessage(text, type) {
-  const chatMessages = document.getElementById('chatMessages');
-  if (!chatMessages) return;
-  
-  const messageEl = document.createElement('div');
-  messageEl.className = `message ${type}`;
-  messageEl.innerHTML = `<div class="message-bubble">${text}</div>`;
-  
-  chatMessages.appendChild(messageEl);
-  chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-
-// Simulate Chat
-function simulateChat() {
-  const messages = [
-    { text: '안녕하세요! 프로필을 보니 관심사가 비슷하네요 😊', type: 'received', delay: 1000 },
-    { text: '네, 반갑습니다! 어떤 부분이 비슷하다고 느끼셨나요?', type: 'sent', delay: 2500 }
-  ];
-  
-  messages.forEach((msg, index) => {
-    setTimeout(() => {
-      addChatMessage(msg.text, msg.type);
-    }, msg.delay);
-  });
-}
-
-// Enhanced Modal Close Functionality
-document.addEventListener('keydown', function(event) {
-  if (event.key === 'Escape') {
-    closeActiveModal();
-  }
-});
-
-// Close active modal function
-function closeActiveModal() {
-  const openModal = document.querySelector('.enhanced-demo-modal[style*="flex"], .modal[style*="block"], .video-modal[style*="block"]');
-  if (openModal) {
-    openModal.style.display = 'none';
-    document.body.classList.remove('modal-open');
-    
-    // Reset demo if it was the demo modal
-    if (openModal.id === 'demoModal') {
-      resetDemoState();
-    }
-    
-    console.log('Modal closed:', openModal.id);
-  }
-}
-
-// Setup modal close buttons
-document.addEventListener('DOMContentLoaded', function() {
-  // Enhanced demo modal close button
-  const demoCloseBtn = document.querySelector('#demoModal .close');
-  if (demoCloseBtn) {
-    demoCloseBtn.addEventListener('click', closeActiveModal);
-  }
-  
-  // Video modal close button
-  const videoCloseBtn = document.querySelector('#videoModal .close');
-  if (videoCloseBtn) {
-    videoCloseBtn.addEventListener('click', closeActiveModal);
-  }
-  
-  // Video play button
-  const playVideoBtn = document.getElementById('playVideoBtn');
-  if (playVideoBtn) {
-    playVideoBtn.addEventListener('click', function() {
-      console.log('비디오 재생 버튼 클릭');
-      showModal('영상 준비 중', '곧 실제 소개 영상이 준비될 예정입니다!');
-    });
-  }
-  
-  // Close modal when clicking outside
-  const demoModal = document.getElementById('demoModal');
-  if (demoModal) {
-    demoModal.addEventListener('click', function(e) {
-      if (e.target === demoModal) {
-        closeActiveModal();
-      }
-    });
-  }
-  
-  // Close video modal when clicking outside
-  const videoModal = document.getElementById('videoModal');
-  if (videoModal) {
-    videoModal.addEventListener('click', function(e) {
-      if (e.target === videoModal) {
-        closeActiveModal();
-      }
-    });
-  }
-  
-  // 우측 사이드바 위젯 클릭 이벤트 리스너
-  initializeWidgetClickEvents();
-});
-
-// 위젯 클릭 이벤트 초기화 함수
-function initializeWidgetClickEvents() {
-  // 가치관 분석 위젯
-  const valuesAnalysisWidget = document.getElementById('valuesAnalysisWidget');
-  if (valuesAnalysisWidget) {
-    valuesAnalysisWidget.addEventListener('click', function() {
-      console.log('가치관 분석 위젯 클릭됨');
-      openModal('valuesModal');
-      trackEvent('values_analysis_widget_click');
-    });
-  }
-  
-  // AI 매칭 위젯
-  const aiMatchingWidget = document.getElementById('aiMatchingWidget');
-  if (aiMatchingWidget) {
-    aiMatchingWidget.addEventListener('click', function() {
-      console.log('AI 매칭 위젯 클릭됨');
-      openModal('matchingModal');
-      trackEvent('ai_matching_widget_click');
-    });
-  }
-  
-  // 새로운 연결 위젯
-  const newConnectionsWidget = document.getElementById('newConnectionsWidget');
-  if (newConnectionsWidget) {
-    newConnectionsWidget.addEventListener('click', function() {
-      console.log('새로운 연결 위젯 클릭됨');
-      openModal('connectionsModal');
-      trackEvent('new_connections_widget_click');
-    });
-  }
-
-// Values Analysis Functionality
-let currentValuesQuestion = 1;
-const totalValuesQuestions = 20; // Full assessment
-const valuesAnswers = {};
-const userProfile = {
-  values: {},
-  personalityScore: {},
-  interests: [],
-  lifestyle: {},
-  communicationStyle: {}
-};
-
-// Expanded question bank
-const valuesQuestions = [
-  {
-    id: 1,
-    text: '인생에서 가장 중요하게 생각하는 가치는 무엇인가요?',
-    category: 'life_values',
-    options: [
-      { value: 'family', text: '가족과의 시간', score: { family: 5, stability: 3 } },
-      { value: 'growth', text: '성장과 도전', score: { growth: 5, adventure: 3 } },
-      { value: 'stability', text: '안정과 평화', score: { stability: 5, security: 4 } },
-      { value: 'freedom', text: '자유와 독립', score: { freedom: 5, independence: 4 } }
-    ]
-  },
-  {
-    id: 2,
-    text: '여가 시간을 어떻게 보내는 것을 선호하시나요?',
-    category: 'lifestyle',
-    options: [
-      { value: 'quiet', text: '조용한 곳에서 독서나 명상', score: { introversion: 4, intellectual: 5 } },
-      { value: 'social', text: '친구들과 함께 활동', score: { extroversion: 5, social: 4 } },
-      { value: 'active', text: '운동이나 야외활동', score: { active: 5, health: 4 } },
-      { value: 'creative', text: '예술이나 창작활동', score: { creative: 5, artistic: 4 } }
-    ]
-  },
-  {
-    id: 3,
-    text: '어려운 결정을 내릴 때 주로 무엇을 고려하시나요?',
-    category: 'decision_making',
-    options: [
-      { value: 'logic', text: '논리적 분석', score: { analytical: 5, logical: 4 } },
-      { value: 'emotion', text: '감정과 직감', score: { emotional: 5, intuitive: 4 } },
-      { value: 'others', text: '주변 사람들의 의견', score: { collaborative: 4, social: 3 } },
-      { value: 'experience', text: '과거 경험', score: { practical: 5, wisdom: 4 } }
-    ]
-  },
-  {
-    id: 4,
-    text: '이상적인 주말을 어떻게 보내고 싶으신가요?',
-    category: 'lifestyle',
-    options: [
-      { value: 'home', text: '집에서 편안하게', score: { homebody: 5, comfort: 4 } },
-      { value: 'adventure', text: '새로운 곳 탐험', score: { adventure: 5, curiosity: 4 } },
-      { value: 'friends', text: '친구들과 모임', score: { social: 5, friendship: 4 } },
-      { value: 'family', text: '가족과 함께', score: { family: 5, traditional: 3 } }
-    ]
-  },
-  {
-    id: 5,
-    text: '갈등 상황에서 어떻게 대처하시나요?',
-    category: 'communication',
-    options: [
-      { value: 'direct', text: '직접적으로 대화', score: { direct: 5, assertive: 4 } },
-      { value: 'avoid', text: '시간을 두고 피함', score: { peaceful: 4, avoidant: 3 } },
-      { value: 'mediate', text: '중재자를 통해', score: { diplomatic: 5, collaborative: 4 } },
-      { value: 'compromise', text: '타협점을 찾음', score: { flexible: 5, cooperative: 4 } }
-    ]
-  },
-  {
-    id: 6,
-    text: '미래에 대한 계획을 세울 때 어떤 방식을 선호하시나요?',
-    category: 'planning',
-    options: [
-      { value: 'detailed', text: '세부적인 계획', score: { organized: 5, detailed: 4 } },
-      { value: 'flexible', text: '유연한 방향성', score: { adaptable: 5, spontaneous: 3 } },
-      { value: 'goals', text: '목표 중심', score: { ambitious: 5, focused: 4 } },
-      { value: 'flow', text: '자연스럽게', score: { relaxed: 4, trusting: 3 } }
-    ]
-  },
-  {
-    id: 7,
-    text: '돈에 대한 당신의 가치관은?',
-    category: 'financial',
-    options: [
-      { value: 'security', text: '안정과 저축이 중요', score: { security: 5, conservative: 4 } },
-      { value: 'experience', text: '경험에 투자', score: { experiential: 5, adventurous: 3 } },
-      { value: 'sharing', text: '나눔과 기부', score: { generous: 5, caring: 4 } },
-      { value: 'growth', text: '투자와 성장', score: { ambitious: 4, risk_taking: 3 } }
-    ]
-  },
-  {
-    id: 8,
-    text: '건강관리에 대한 접근 방식은?',
-    category: 'health',
-    options: [
-      { value: 'active', text: '적극적인 운동', score: { active: 5, disciplined: 4 } },
-      { value: 'balanced', text: '균형잡힌 생활', score: { balanced: 5, mindful: 4 } },
-      { value: 'natural', text: '자연스러운 관리', score: { natural: 4, relaxed: 3 } },
-      { value: 'medical', text: '의학적 접근', score: { scientific: 4, cautious: 3 } }
-    ]
-  },
-  {
-    id: 9,
-    text: '새로운 사람들과 만날 때 어떤 느낌인가요?',
-    category: 'social',
-    options: [
-      { value: 'excited', text: '설레고 즐겁다', score: { extroversion: 5, optimistic: 4 } },
-      { value: 'curious', text: '호기심이 생긴다', score: { curious: 5, open: 4 } },
-      { value: 'cautious', text: '조심스럽다', score: { cautious: 4, introverted: 3 } },
-      { value: 'comfortable', text: '편안하다', score: { confident: 4, social: 5 } }
-    ]
-  },
-  {
-    id: 10,
-    text: '스트레스를 받을 때 주로 어떻게 해소하시나요?',
-    category: 'stress_management',
-    options: [
-      { value: 'exercise', text: '운동이나 신체활동', score: { active: 5, physical: 4 } },
-      { value: 'social', text: '사람들과 대화', score: { social: 5, expressive: 4 } },
-      { value: 'alone', text: '혼자만의 시간', score: { introspective: 5, independent: 4 } },
-      { value: 'hobby', text: '취미 활동', score: { creative: 4, balanced: 3 } }
-    ]
-  },
-  {
-    id: 11,
-    text: '여행할 때 선호하는 스타일은?',
-    category: 'travel',
-    options: [
-      { value: 'planned', text: '계획적인 여행', score: { organized: 5, efficient: 4 } },
-      { value: 'spontaneous', text: '즉흥적인 여행', score: { spontaneous: 5, adventurous: 4 } },
-      { value: 'comfort', text: '편안한 여행', score: { comfort: 5, relaxed: 4 } },
-      { value: 'cultural', text: '문화 체험 중심', score: { intellectual: 5, curious: 4 } }
-    ]
-  },
-  {
-    id: 12,
-    text: '친구와의 관계에서 가장 중요한 것은?',
-    category: 'relationships',
-    options: [
-      { value: 'trust', text: '신뢰와 솔직함', score: { trustworthy: 5, honest: 4 } },
-      { value: 'support', text: '서로 지지해주기', score: { supportive: 5, caring: 4 } },
-      { value: 'fun', text: '즐거운 시간 공유', score: { fun: 5, positive: 4 } },
-      { value: 'understanding', text: '깊은 이해', score: { empathetic: 5, deep: 4 } }
-    ]
-  },
-  {
-    id: 13,
-    text: '일과 삶의 균형에 대한 생각은?',
-    category: 'work_life',
-    options: [
-      { value: 'balance', text: '완전한 균형이 중요', score: { balanced: 5, mindful: 4 } },
-      { value: 'work_first', text: '일의 성취가 우선', score: { ambitious: 5, driven: 4 } },
-      { value: 'life_first', text: '개인 시간이 더 중요', score: { relaxed: 5, self_care: 4 } },
-      { value: 'flexible', text: '상황에 따라 유연하게', score: { adaptable: 5, practical: 4 } }
-    ]
-  },
-  {
-    id: 14,
-    text: '문제 해결 시 어떤 접근을 선호하시나요?',
-    category: 'problem_solving',
-    options: [
-      { value: 'systematic', text: '체계적 분석', score: { analytical: 5, methodical: 4 } },
-      { value: 'creative', text: '창의적 해결', score: { creative: 5, innovative: 4 } },
-      { value: 'collaborative', text: '협력적 접근', score: { collaborative: 5, team_oriented: 4 } },
-      { value: 'intuitive', text: '직관적 판단', score: { intuitive: 5, confident: 4 } }
-    ]
-  },
-  {
-    id: 15,
-    text: '성격적으로 자신을 어떻게 표현하시겠어요?',
-    category: 'personality',
-    options: [
-      { value: 'outgoing', text: '외향적이고 활발함', score: { extroversion: 5, energetic: 4 } },
-      { value: 'thoughtful', text: '사려깊고 신중함', score: { thoughtful: 5, wise: 4 } },
-      { value: 'optimistic', text: '긍정적이고 밝음', score: { optimistic: 5, positive: 4 } },
-      { value: 'calm', text: '차분하고 안정적', score: { calm: 5, stable: 4 } }
-    ]
-  },
-  {
-    id: 16,
-    text: '학습이나 성장에 대한 태도는?',
-    category: 'growth',
-    options: [
-      { value: 'continuous', text: '지속적인 학습', score: { growth_minded: 5, curious: 4 } },
-      { value: 'practical', text: '실용적 지식 위주', score: { practical: 5, efficient: 4 } },
-      { value: 'deep', text: '깊이 있는 탐구', score: { intellectual: 5, thorough: 4 } },
-      { value: 'experiential', text: '경험을 통한 학습', score: { experiential: 5, hands_on: 4 } }
-    ]
-  },
-  {
-    id: 17,
-    text: '소통할 때 중요하게 생각하는 것은?',
-    category: 'communication',
-    options: [
-      { value: 'clarity', text: '명확한 표현', score: { clear: 5, direct: 4 } },
-      { value: 'empathy', text: '공감과 이해', score: { empathetic: 5, caring: 4 } },
-      { value: 'humor', text: '유머와 재미', score: { humorous: 5, fun: 4 } },
-      { value: 'respect', text: '상호 존중', score: { respectful: 5, considerate: 4 } }
-    ]
-  },
-  {
-    id: 18,
-    text: '변화에 대한 당신의 태도는?',
-    category: 'change',
-    options: [
-      { value: 'embrace', text: '적극적으로 수용', score: { adaptable: 5, progressive: 4 } },
-      { value: 'cautious', text: '신중하게 접근', score: { cautious: 4, thoughtful: 3 } },
-      { value: 'gradual', text: '점진적으로 적응', score: { steady: 4, practical: 3 } },
-      { value: 'resistant', text: '기존 방식 선호', score: { traditional: 4, stable: 5 } }
-    ]
-  },
-  {
-    id: 19,
-    text: '인생의 의미를 어디서 찾으시나요?',
-    category: 'meaning',
-    options: [
-      { value: 'relationships', text: '인간관계에서', score: { social: 5, loving: 4 } },
-      { value: 'achievement', text: '성취와 목표 달성', score: { ambitious: 5, driven: 4 } },
-      { value: 'service', text: '타인에 대한 봉사', score: { altruistic: 5, caring: 4 } },
-      { value: 'growth', text: '개인적 성장', score: { growth_minded: 5, self_aware: 4 } }
-    ]
-  },
-  {
-    id: 20,
-    text: '이상적인 파트너와의 관계는?',
-    category: 'partnership',
-    options: [
-      { value: 'companion', text: '인생의 동반자', score: { companionship: 5, loyal: 4 } },
-      { value: 'best_friend', text: '가장 친한 친구', score: { friendship: 5, fun: 4 } },
-      { value: 'soulmate', text: '영혼의 짝', score: { deep: 5, romantic: 4 } },
-      { value: 'team', text: '최고의 팀', score: { collaborative: 5, supportive: 4 } }
-    ]
-  }
-];
-
-function showValuesQuestion(questionNumber) {
-  // Hide all questions
-  document.querySelectorAll('.question-card').forEach(card => {
-    card.classList.remove('active');
-  });
-    
-  // Create or update question dynamically
-  const questionContainer = document.querySelector('.question-container');
-  const existingQuestion = document.querySelector(`[data-question="${questionNumber}"]`);
-    
-  if (!existingQuestion && questionNumber <= totalValuesQuestions) {
-    createQuestionCard(questionNumber);
-  }
-    
-  // Show current question
-  const currentQuestion = document.querySelector(`[data-question="${questionNumber}"]`);
-  if (currentQuestion) {
-    currentQuestion.classList.add('active');
-  }
-    
-  // Update progress
-  updateValuesProgress(questionNumber);
-    
-  // Update buttons
-  const prevBtn = document.querySelector('.prev-values-btn');
-  const nextBtn = document.querySelector('.next-values-btn');
-  const completeBtn = document.querySelector('.complete-values-btn');
-    
-  if (prevBtn) {prevBtn.disabled = questionNumber === 1;}
-    
-  if (questionNumber === totalValuesQuestions) {
-    if (nextBtn) {nextBtn.style.display = 'none';}
-    if (completeBtn) {completeBtn.style.display = 'inline-block';}
-  } else {
-    if (nextBtn) {nextBtn.style.display = 'inline-block';}
-    if (completeBtn) {completeBtn.style.display = 'none';}
-  }
-}
-
-function createQuestionCard(questionNumber) {
-  const question = valuesQuestions.find(q => q.id === questionNumber);
-  if (!question) {return;}
-    
-  const questionContainer = document.querySelector('.question-container');
-  const questionCard = document.createElement('div');
-  questionCard.className = 'question-card';
-  questionCard.setAttribute('data-question', questionNumber);
-    
-  let optionsHTML = '';
-  question.options.forEach((option, index) => {
-    optionsHTML += `
-            <label class="answer-option">
-                <input type="radio" name="q${questionNumber}" value="${option.value}">
-                <span class="option-text">${option.text}</span>
-            </label>
-        `;
-  });
-    
-  questionCard.innerHTML = `
-        <h3>${question.text}</h3>
-        <div class="answer-options">
-            ${optionsHTML}
-        </div>
-    `;
-    
-  questionContainer.appendChild(questionCard);
-    
-  // Add event listeners for new options
-  questionCard.querySelectorAll('.answer-option').forEach(option => {
-    option.addEventListener('click', function() {
-      const radio = this.querySelector('input[type="radio"]');
-      if (radio) {
-        radio.checked = true;
-        const questionData = valuesQuestions.find(q => q.id === questionNumber);
-        const selectedOption = questionData.options.find(opt => opt.value === radio.value);
-                
-        // Store answer with scoring data
-        valuesAnswers[questionNumber] = {
-          value: radio.value,
-          text: selectedOption.text,
-          score: selectedOption.score,
-          category: questionData.category
-        };
-                
-        trackEvent('values_answer_select', { 
-          question: radio.name, 
-          answer: radio.value,
-          category: questionData.category
+      const emailAddress = 'hello@valuematch.co.kr';
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(emailAddress).then(() => {
+          showModal('이메일 주소 복사', `이메일 주소가 복사되었습니다:\n${emailAddress}`);
         });
+      } else {
+        showModal('이메일 주소', `이메일로 문의해주세요:\n${emailAddress}`);
       }
-    });
-  });
-}
-
-function updateValuesProgress(questionNumber) {
-  const progressPercent = Math.round((questionNumber / totalValuesQuestions) * 100);
-  const currentQuestionEl = document.querySelector('.current-question');
-  const progressFill = document.querySelector('.progress-fill-values');
-  const progressPercentEl = document.querySelector('.progress-percent');
-    
-  if (currentQuestionEl) {currentQuestionEl.textContent = questionNumber;}
-  if (progressFill) {progressFill.style.width = `${progressPercent}%`;}
-  if (progressPercentEl) {progressPercentEl.textContent = `${progressPercent}%`;}
-}
-
-// Values navigation
-document.querySelector('.next-values-btn')?.addEventListener('click', function() {
-  if (currentValuesQuestion < totalValuesQuestions) {
-    currentValuesQuestion++;
-    showValuesQuestion(currentValuesQuestion);
-    trackEvent('values_next', { question: currentValuesQuestion });
-  }
-});
-
-document.querySelector('.prev-values-btn')?.addEventListener('click', function() {
-  if (currentValuesQuestion > 1) {
-    currentValuesQuestion--;
-    showValuesQuestion(currentValuesQuestion);
-    trackEvent('values_prev', { question: currentValuesQuestion });
-  }
-});
-
-// ==============================================
-// VALUES ANALYSIS SYSTEM (localStorage based)
-// ==============================================
-
-class ValuesAnalysisManager {
-  constructor() {
-    this.storageKey = 'charminyeon_values_analysis';
-    this.currentQuestion = 1;
-    this.totalQuestions = 20;
-    this.answers = {};
-    this.analysisResults = null;
-  }
-
-  // Generate analysis results based on answers
-  generateAnalysis(answers) {
-    const scores = {
-      family: 0,
-      growth: 0,
-      stability: 0,
-      adventure: 0,
-      creativity: 0,
-      social: 0,
-      independence: 0,
-      tradition: 0
-    };
-
-    // Simple scoring algorithm
-    Object.values(answers).forEach(answer => {
-      switch(answer.value) {
-        case 'family':
-          scores.family += 5;
-          scores.stability += 3;
-          break;
-        case 'growth':
-          scores.growth += 5;
-          scores.adventure += 3;
-          break;
-        case 'stability':
-          scores.stability += 5;
-          scores.family += 2;
-          break;
-        case 'freedom':
-          scores.independence += 5;
-          scores.adventure += 3;
-          break;
-        case 'social':
-          scores.social += 5;
-          scores.family += 2;
-          break;
-        case 'creative':
-          scores.creativity += 5;
-          scores.independence += 2;
-          break;
-        case 'active':
-          scores.adventure += 4;
-          scores.growth += 2;
-          break;
-        case 'quiet':
-          scores.stability += 4;
-          scores.tradition += 2;
-          break;
-        case 'logic':
-          scores.growth += 3;
-          scores.independence += 3;
-          break;
-        case 'emotion':
-          scores.family += 3;
-          scores.creativity += 3;
-          break;
-        default:
-          scores.stability += 1;
-      }
-    });
-
-    // Find top 3 values
-    const sortedScores = Object.entries(scores)
-      .sort(([,a], [,b]) => b - a)
-      .slice(0, 3);
-
-    const analysis = {
-      scores: scores,
-      topValues: sortedScores.map(([key, score]) => ({
-        key,
-        score,
-        label: this.getValueLabel(key)
-      })),
-      personality: this.generatePersonalityInsight(sortedScores),
-      completedAt: new Date().toISOString(),
-      answers: answers
-    };
-
-    return analysis;
-  }
-
-  getValueLabel(key) {
-    const labels = {
-      family: '가족 중심',
-      growth: '성장 추구',
-      stability: '안정 추구',
-      adventure: '모험 정신',
-      creativity: '창의성',
-      social: '사회적 관계',
-      independence: '독립성',
-      tradition: '전통 중시'
-    };
-    return labels[key] || key;
-  }
-
-  generatePersonalityInsight(topValues) {
-    const [first, second, third] = topValues;
-    
-    const insights = {
-      'family_stability': '가족과 안정적인 관계를 중시하며, 신뢰할 수 있는 파트너를 찾고 계시네요.',
-      'growth_adventure': '새로운 도전을 즐기며, 함께 성장할 수 있는 상대를 원하시는군요.',
-      'social_family': '사람들과의 따뜻한 관계를 소중히 여기며, 소통을 중시하시는 분이시네요.',
-      'independence_creativity': '자신만의 개성과 창의성을 중요하게 생각하는 독립적인 성향이시네요.',
-      'stability_tradition': '전통적인 가치와 안정적인 삶을 추구하시는 신중한 분이시네요.'
-    };
-
-    const key = `${first[0]}_${second[0]}`;
-    return insights[key] || `${this.getValueLabel(first[0])}과 ${this.getValueLabel(second[0])}을 중시하는 균형잡힌 가치관을 가지고 계시네요.`;
-  }
-
-  saveAnalysis(analysis) {
-    const currentUser = userManager.getCurrentUser();
-    if (currentUser) {
-      const userAnalysis = {
-        userId: currentUser.id,
-        analysis: analysis,
-        createdAt: new Date().toISOString()
-      };
-      localStorage.setItem(this.storageKey, JSON.stringify(userAnalysis));
-      this.analysisResults = analysis;
-    }
-  }
-
-  getAnalysis() {
-    const stored = localStorage.getItem(this.storageKey);
-    if (stored) {
-      const userAnalysis = JSON.parse(stored);
-      return userAnalysis.analysis;
-    }
-    return null;
-  }
-
-  showAnalysisResult(analysis) {
-    userManager.showSuccess('가치관 분석이 완료되었습니다!');
-    
-    setTimeout(() => {
-      showCustomAlert('가치관 분석 결과', `
-        <div style="text-align: center; padding: 2rem;">
-          <div style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
-          <h3 style="margin-bottom: 2rem; color: #333;">당신의 가치관 분석 결과</h3>
-          <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 1.5rem; border-radius: 15px; margin-bottom: 2rem;">
-            <h4 style="margin-bottom: 1rem;">주요 가치관 TOP 3</h4>
-            <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 1rem;">
-              ${analysis.topValues.map((value, index) => `
-                <div style="text-align: center;">
-                  <div style="font-size: 2rem; margin-bottom: 0.5rem;">${['🥇', '🥈', '🥉'][index]}</div>
-                  <div style="font-weight: bold;">${value.label}</div>
-                  <div style="opacity: 0.9;">${value.score}점</div>
-                </div>
-              `).join('')}
-            </div>
-          </div>
-          <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 15px; text-align: left; margin-bottom: 2rem;">
-            <h4 style="color: #667eea; margin-bottom: 1rem;">💡 가치관 분석</h4>
-            <p style="line-height: 1.6; margin: 0;">${analysis.personality}</p>
-          </div>
-          <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-            <button onclick="document.querySelector('#matchingModal').style.display='block'; this.closest('.custom-alert').remove(); valuesAnalysisManager.startMatching();" style="background: #10b981; color: white; border: none; padding: 1rem 2rem; border-radius: 10px; font-weight: 600; cursor: pointer;">매칭 시작하기</button>
-            <button onclick="this.closest('.custom-alert').remove()" style="background: #6b7280; color: white; border: none; padding: 1rem 2rem; border-radius: 10px; font-weight: 600; cursor: pointer;">나중에</button>
-          </div>
-        </div>
-      `);
     }, 1000);
-  }
-
-  startMatching() {
-    startMatchingAnimation();
-    setTimeout(() => {
-      this.generateMatches();
-    }, 2000);
-  }
-
-  generateMatches() {
-    const analysis = this.getAnalysis();
-    if (!analysis) return;
-
-    // Generate sample matches based on values
-    const matches = this.createSampleMatches(analysis);
-    this.displayMatches(matches);
-  }
-
-  createSampleMatches(analysis) {
-    const matchProfiles = [
-      { name: '김철수', age: 52, avatar: '👨‍💼', traits: ['성장 지향', '운동 좋아함'], compatibility: 92 },
-      { name: '이영희', age: 48, avatar: '👩‍🎨', traits: ['예술 애호가', '가족 중시'], compatibility: 87 },
-      { name: '박민수', age: 55, avatar: '👨‍🏫', traits: ['독서 좋아함', '안정 추구'], compatibility: 84 },
-      { name: '최은미', age: 45, avatar: '👩‍💼', traits: ['여행 좋아함', '사회적 관계'], compatibility: 89 },
-      { name: '정혜진', age: 50, avatar: '👩‍🌾', traits: ['자연 친화', '창의적'], compatibility: 86 }
-    ];
-
-    // Sort by compatibility and adjust based on user's top values
-    return matchProfiles
-      .map(profile => {
-        // Adjust compatibility based on value alignment
-        let adjustedCompatibility = profile.compatibility;
-        analysis.topValues.forEach(value => {
-          if (profile.traits.some(trait => this.isTraitAligned(trait, value.key))) {
-            adjustedCompatibility += 2;
-          }
-        });
-        return { ...profile, compatibility: Math.min(adjustedCompatibility, 98) };
-      })
-      .sort((a, b) => b.compatibility - a.compatibility)
-      .slice(0, 3);
-  }
-
-  isTraitAligned(trait, valueKey) {
-    const alignments = {
-      family: ['가족 중시', '안정 추구'],
-      growth: ['성장 지향', '운동 좋아함'],
-      social: ['사회적 관계', '소통 중시'],
-      creativity: ['예술 애호가', '창의적'],
-      adventure: ['여행 좋아함', '모험 정신'],
-      stability: ['안정 추구', '독서 좋아함'],
-      independence: ['독립적', '자유로움']
-    };
-    return alignments[valueKey]?.includes(trait) || false;
-  }
-
-  displayMatches(matches) {
-    const matchCards = document.querySelector('.match-cards');
-    if (matchCards) {
-      matchCards.innerHTML = matches.map(match => `
-        <div class="match-card">
-          <div class="match-avatar">${match.avatar}</div>
-          <div class="match-info">
-            <div class="match-name">${match.name}</div>
-            <div class="match-age">${match.age}세</div>
-            <div class="match-percentage">${match.compatibility}% 일치</div>
-            <div class="match-tags">
-              ${match.traits.map(trait => `<span class="tag">${trait}</span>`).join('')}
-            </div>
-          </div>
-          <button class="connect-btn" onclick="valuesAnalysisManager.connectWithMatch('${match.name}')">연결하기</button>
-        </div>
-      `).join('');
-    }
-  }
-
-  connectWithMatch(matchName) {
-    userManager.showSuccess(`${matchName}님과 연결되었습니다! 새로운 연결 페이지에서 대화를 시작해보세요.`);
-    trackEvent('connect_match', { matchName });
-    
-    // Close matching modal and show connections
-    setTimeout(() => {
-      closeModal('matchingModal');
-      openModal('connectionsModal');
-    }, 1500);
-  }
-}
-
-// Initialize values analysis manager
-const valuesAnalysisManager = new ValuesAnalysisManager();
-
-// Updated complete button handler
-document.querySelector('.complete-values-btn')?.addEventListener('click', function() {
-  const submitBtn = this;
-  const originalText = submitBtn.textContent;
-    
-  try {
-    // Show loading state
-    submitBtn.textContent = '분석 중...';
-    submitBtn.disabled = true;
-        
-    // Collect all answers
-    const answers = {};
-    document.querySelectorAll('.question-card').forEach(card => {
-      const questionNum = card.dataset.question;
-      const selectedAnswer = card.querySelector('input[type="radio"]:checked');
-      if (selectedAnswer) {
-        answers[questionNum] = {
-          value: selectedAnswer.value,
-          text: selectedAnswer.nextElementSibling?.textContent || selectedAnswer.value
-        };
-      }
-    });
-        
-    console.log('Values Analysis Complete:', answers);
-        
-    // Check if enough questions answered
-    const answeredCount = Object.keys(answers).length;
-    if (answeredCount < 3) {
-      userManager.showError('최소 3개 이상의 질문에 답변해주세요.');
-      return;
-    }
-        
-    // Generate analysis
-    const analysis = valuesAnalysisManager.generateAnalysis(answers);
-    valuesAnalysisManager.saveAnalysis(analysis);
-    
-    // Close values modal
-    closeModal('valuesModal');
-    
-    // Show results
-    valuesAnalysisManager.showAnalysisResult(analysis);
-            
-    trackEvent('values_complete', { 
-      completed: true, 
-      answeredQuestions: answeredCount,
-      topValue: analysis.topValues[0].key
-    });
-        
-  } catch (error) {
-    console.error('Values submission error:', error);
-    userManager.showError('가치관 분석 중 오류가 발생했습니다.');
-    trackEvent('values_error', { error: error.message });
-  } finally {
-    // Reset button state
-    submitBtn.textContent = originalText;
-    submitBtn.disabled = false;
-  }
-});
-
-// Answer selection
-document.querySelectorAll('.answer-option').forEach(option => {
-  option.addEventListener('click', function() {
-    const radio = this.querySelector('input[type="radio"]');
-    if (radio) {
-      radio.checked = true;
-      trackEvent('values_answer_select', { 
-        question: radio.name, 
-        answer: radio.value 
-      });
-    }
-  });
-});
-
-// Matching functionality
-function startMatchingAnimation() {
-  // Start wave animations
-  const wavesLarge = document.querySelectorAll('.wave-large');
-  wavesLarge.forEach((wave, index) => {
-    wave.style.animation = `waveAnimationLarge 2s ease-in-out infinite ${index * 0.3}s`;
-  });
-    
-  // Animate percentage counter
-  animatePercentage();
-}
-
-function animatePercentage() {
-  const percentageEl = document.querySelector('.percentage-number');
-  if (percentageEl) {
-    let current = 0;
-    const target = 92;
-    const increment = target / 30; // 30 frames
-        
-    const timer = setInterval(() => {
-      current += increment;
-      if (current >= target) {
-        current = target;
-        clearInterval(timer);
-      }
-      percentageEl.textContent = Math.round(current) + '%';
-    }, 50);
-  }
-}
-
-// Connect buttons
-document.querySelectorAll('.connect-btn').forEach(btn => {
-  btn.addEventListener('click', function() {
-    const matchCard = this.closest('.match-card');
-    const matchName = matchCard.querySelector('.match-name').textContent;
-        
-    // Simulate connection
-    this.textContent = '연결됨!';
-    this.style.background = '#10b981';
-    this.disabled = true;
-        
-    // Update connections count (would be done via API in real app)
-    setTimeout(() => {
-      showModal('연결 성공', `${matchName}님과 연결되었습니다! 새로운 연결 페이지에서 대화를 시작해보세요.`);
-    }, 500);
-        
-    trackEvent('connect_match', { match_name: matchName });
-  });
-});
-
-// Connections tab functionality
-document.querySelectorAll('.tab-btn').forEach(btn => {
-  btn.addEventListener('click', function() {
-    const tabName = this.dataset.tab;
-        
-    // Update active tab
-    document.querySelectorAll('.tab-btn').forEach(tab => {
-      tab.classList.remove('active');
-    });
-    this.classList.add('active');
-        
-    // Show corresponding content
-    document.querySelectorAll('.tab-content').forEach(content => {
-      content.classList.remove('active');
-    });
-    document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
-        
-    trackEvent('connections_tab_switch', { tab: tabName });
-  });
-});
-
-// ==============================================
-// CONNECTION & CHAT MANAGEMENT SYSTEM
-// ==============================================
-
-class ConnectionManager {
-  constructor() {
-    this.connectionsKey = 'charminyeon_connections';
-    this.messagesKey = 'charminyeon_messages';
-    this.initializeConnections();
-  }
-
-  initializeConnections() {
-    if (!localStorage.getItem(this.connectionsKey)) {
-      // Initialize with demo connections
-      const demoConnections = [
-        {
-          id: 'conn_1',
-          name: '김철수',
-          age: 52,
-          avatar: '👨‍💼',
-          compatibility: 92,
-          status: 'new',
-          connectedAt: new Date().toISOString(),
-          lastMessage: '가치관이 92% 일치합니다',
-          unreadCount: 0
-        },
-        {
-          id: 'conn_2',
-          name: '이영희',
-          age: 48,
-          avatar: '👩‍🎨',
-          compatibility: 87,
-          status: 'new',
-          connectedAt: new Date(Date.now() - 300000).toISOString(),
-          lastMessage: '예술과 창작에 관심이 많으시군요',
-          unreadCount: 0
-        },
-        {
-          id: 'conn_3',
-          name: '박민수',
-          age: 55,
-          avatar: '👨‍🏫',
-          compatibility: 84,
-          status: 'active',
-          connectedAt: new Date(Date.now() - 3600000).toISOString(),
-          lastMessage: '여행 이야기가 정말 흥미롭네요!',
-          unreadCount: 3
-        }
-      ];
-      localStorage.setItem(this.connectionsKey, JSON.stringify(demoConnections));
-    }
-
-    if (!localStorage.getItem(this.messagesKey)) {
-      // Initialize with demo messages
-      const demoMessages = {
-        'conn_3': [
-          {
-            id: 'msg_1',
-            senderId: 'conn_3',
-            senderName: '박민수',
-            content: '안녕하세요! 프로필을 보니 여행을 좋아하시는군요',
-            timestamp: new Date(Date.now() - 7200000).toISOString(),
-            isRead: true
-          },
-          {
-            id: 'msg_2',
-            senderId: 'current_user',
-            senderName: '나',
-            content: '네! 특히 혼자 떠나는 여행을 즐겨해요 😊',
-            timestamp: new Date(Date.now() - 7100000).toISOString(),
-            isRead: true
-          },
-          {
-            id: 'msg_3',
-            senderId: 'conn_3',
-            senderName: '박민수',
-            content: '오, 저도 마찬가지예요! 어디를 가장 인상 깊게 여행하셨나요?',
-            timestamp: new Date(Date.now() - 3700000).toISOString(),
-            isRead: false
-          },
-          {
-            id: 'msg_4',
-            senderId: 'conn_3',
-            senderName: '박민수',
-            content: '저는 작년에 제주도에 혼자 다녀왔는데 정말 좋았어요',
-            timestamp: new Date(Date.now() - 3600000).toISOString(),
-            isRead: false
-          },
-          {
-            id: 'msg_5',
-            senderId: 'conn_3',
-            senderName: '박민수',
-            content: '혹시 시간 되시면 여행 이야기 더 나누어요!',
-            timestamp: new Date(Date.now() - 3500000).toISOString(),
-            isRead: false
-          }
-        ]
-      };
-      localStorage.setItem(this.messagesKey, JSON.stringify(demoMessages));
-    }
-  }
-
-  getConnections() {
-    return JSON.parse(localStorage.getItem(this.connectionsKey) || '[]');
-  }
-
-  getConnection(connectionId) {
-    const connections = this.getConnections();
-    return connections.find(conn => conn.id === connectionId);
-  }
-
-  updateConnectionsDisplay() {
-    const connections = this.getConnections();
-    
-    // Update new connections
-    this.displayConnectionsInTab('new', connections.filter(conn => conn.status === 'new'));
-    
-    // Update active conversations
-    this.displayConnectionsInTab('active', connections.filter(conn => conn.status === 'active'));
-    
-    // Update all connections
-    this.displayConnectionsInTab('all', connections);
-  }
-
-  displayConnectionsInTab(tabName, connections) {
-    const tabContent = document.querySelector(`.tab-content[data-tab="${tabName}"]`);
-    if (!tabContent) return;
-
-    if (tabName === 'all') {
-      // Simple list view for all connections
-      const connectionList = tabContent.querySelector('.connection-list');
-      if (connectionList) {
-        connectionList.innerHTML = connections.map(conn => `
-          <div class="connection-item">
-            <div class="connection-avatar">${conn.avatar}</div>
-            <div class="connection-info">
-              <div class="connection-name">${conn.name}</div>
-              <div class="connection-status">${conn.status === 'new' ? '새로운 매치' : '대화 중'}</div>
-            </div>
-          </div>
-        `).join('');
-      }
-    } else {
-      // Card view for new and active
-      tabContent.innerHTML = connections.map(conn => `
-        <div class="connection-card" data-connection-id="${conn.id}">
-          <div class="connection-avatar">${conn.avatar}</div>
-          <div class="connection-info">
-            <div class="connection-name">${conn.name}</div>
-            <div class="connection-preview">${conn.lastMessage}</div>
-            <div class="connection-time">${this.formatTime(conn.connectedAt)}</div>
-          </div>
-          ${conn.unreadCount > 0 ? `<div class="connection-badge">${conn.unreadCount}</div>` : ''}
-          <div class="connection-actions">
-            <button class="action-btn primary" onclick="connectionManager.startChat('${conn.id}')">
-              ${conn.status === 'new' ? '대화 시작' : '대화 계속'}
-            </button>
-            <button class="action-btn secondary" onclick="connectionManager.viewProfile('${conn.id}')">프로필 보기</button>
-          </div>
-        </div>
-      `).join('');
-    }
-  }
-
-  formatTime(timestamp) {
-    const now = new Date();
-    const time = new Date(timestamp);
-    const diffInMinutes = Math.floor((now - time) / (1000 * 60));
-    
-    if (diffInMinutes < 60) {
-      return `${diffInMinutes}분 전`;
-    } else if (diffInMinutes < 1440) {
-      return `${Math.floor(diffInMinutes / 60)}시간 전`;
-    } else {
-      return `${Math.floor(diffInMinutes / 1440)}일 전`;
-    }
-  }
-
-  startChat(connectionId) {
-    const connection = this.getConnection(connectionId);
-    if (!connection) return;
-
-    // Update connection status to active
-    const connections = this.getConnections();
-    const connIndex = connections.findIndex(conn => conn.id === connectionId);
-    if (connIndex !== -1) {
-      connections[connIndex].status = 'active';
-      connections[connIndex].unreadCount = 0;
-      localStorage.setItem(this.connectionsKey, JSON.stringify(connections));
-    }
-    
-    // Open chat interface
-    this.openChatInterface(connection);
-    
-    trackEvent('start_conversation', { connectionId, name: connection.name });
-  }
-
-  viewProfile(connectionId) {
-    const connection = this.getConnection(connectionId);
-    if (!connection) return;
-
-    showCustomAlert(`${connection.name}님의 프로필`, `
-      <div style="text-align: center; padding: 2rem;">
-        <div style="font-size: 4rem; margin-bottom: 1rem;">${connection.avatar}</div>
-        <h3 style="margin-bottom: 1rem; color: #333;">${connection.name}, ${connection.age}세</h3>
-        <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 1rem; border-radius: 10px; margin-bottom: 1.5rem;">
-          <div style="font-size: 1.5rem; font-weight: bold;">${connection.compatibility}%</div>
-          <div>가치관 일치도</div>
-        </div>
-        <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 15px; text-align: left; margin-bottom: 1.5rem;">
-          <h4 style="color: #667eea; margin-bottom: 1rem;">💬 공통 관심사</h4>
-          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-            <span style="background: #667eea; color: white; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.9rem;">여행</span>
-            <span style="background: #667eea; color: white; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.9rem;">독서</span>
-            <span style="background: #667eea; color: white; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.9rem;">자연</span>
-          </div>
-        </div>
-        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-          <button onclick="connectionManager.startChat('${connectionId}'); this.closest('.custom-alert').remove();" style="background: #10b981; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 10px; font-weight: 600; cursor: pointer;">대화 시작</button>
-          <button onclick="this.closest('.custom-alert').remove()" style="background: #6b7280; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 10px; font-weight: 600; cursor: pointer;">닫기</button>
-        </div>
-      </div>
-    `);
-    
-    trackEvent('view_profile', { connectionId, name: connection.name });
-  }
-
-  openChatInterface(connection) {
-    const messages = this.getMessages(connection.id);
-    
-    showCustomAlert(`${connection.name}님과의 대화`, `
-      <div style="width: 100%; max-width: 500px; height: 600px; display: flex; flex-direction: column;">
-        <!-- Chat Header -->
-        <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 1rem; border-radius: 15px 15px 0 0; display: flex; align-items: center; gap: 1rem;">
-          <div style="font-size: 2rem;">${connection.avatar}</div>
-          <div>
-            <div style="font-weight: bold; font-size: 1.1rem;">${connection.name}</div>
-            <div style="opacity: 0.9; font-size: 0.9rem;">온라인</div>
-          </div>
-        </div>
-        
-        <!-- Messages Container -->
-        <div id="chatMessages" style="flex: 1; padding: 1rem; background: #f8f9fa; overflow-y: auto; min-height: 400px; max-height: 400px;">
-          ${this.renderMessages(messages)}
-        </div>
-        
-        <!-- Message Input -->
-        <div style="padding: 1rem; background: white; border-radius: 0 0 15px 15px; border-top: 1px solid #e5e7eb;">
-          <div style="display: flex; gap: 0.5rem; align-items: center;">
-            <input type="text" id="messageInput" placeholder="메시지를 입력하세요..." style="flex: 1; padding: 0.8rem; border: 1px solid #d1d5db; border-radius: 20px; outline: none;" onkeypress="if(event.key==='Enter') connectionManager.sendMessage('${connection.id}')">
-            <button onclick="connectionManager.sendMessage('${connection.id}')" style="background: #667eea; color: white; border: none; padding: 0.8rem 1.2rem; border-radius: 20px; cursor: pointer; font-weight: 600;">전송</button>
-          </div>
-          <div style="text-align: center; margin-top: 0.5rem;">
-            <button onclick="this.closest('.custom-alert').remove()" style="background: transparent; color: #6b7280; border: none; padding: 0.5rem; cursor: pointer; font-size: 0.9rem;">대화 나가기</button>
-          </div>
-        </div>
-      </div>
-    `, false); // false = don't auto-close
-  }
-
-  getMessages(connectionId) {
-    const allMessages = JSON.parse(localStorage.getItem(this.messagesKey) || '{}');
-    return allMessages[connectionId] || [];
-  }
-
-  renderMessages(messages) {
-    return messages.map(msg => {
-      const isCurrentUser = msg.senderId === 'current_user';
-      const time = new Date(msg.timestamp).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
-      
-      return `
-        <div style="display: flex; justify-content: ${isCurrentUser ? 'flex-end' : 'flex-start'}; margin-bottom: 1rem;">
-          <div style="max-width: 70%; ${isCurrentUser ? 'order: 2;' : ''}">
-            <div style="background: ${isCurrentUser ? '#667eea' : 'white'}; color: ${isCurrentUser ? 'white' : '#333'}; padding: 0.8rem 1rem; border-radius: ${isCurrentUser ? '15px 15px 5px 15px' : '15px 15px 15px 5px'}; box-shadow: 0 2px 5px rgba(0,0,0,0.1); word-wrap: break-word;">
-              ${msg.content}
-            </div>
-            <div style="font-size: 0.75rem; color: #6b7280; margin-top: 0.3rem; text-align: ${isCurrentUser ? 'right' : 'left'};">
-              ${time}
-            </div>
-          </div>
-        </div>
-      `;
-    }).join('');
-  }
-
-  sendMessage(connectionId) {
-    const input = document.getElementById('messageInput');
-    const content = input.value.trim();
-    
-    if (!content) return;
-    
-    const currentUser = userManager.getCurrentUser();
-    if (!currentUser) return;
-    
-    // Add message
-    const allMessages = JSON.parse(localStorage.getItem(this.messagesKey) || '{}');
-    if (!allMessages[connectionId]) {
-      allMessages[connectionId] = [];
-    }
-    
-    const newMessage = {
-      id: `msg_${Date.now()}`,
-      senderId: 'current_user',
-      senderName: currentUser.name,
-      content: content,
-      timestamp: new Date().toISOString(),
-      isRead: false
-    };
-    
-    allMessages[connectionId].push(newMessage);
-    localStorage.setItem(this.messagesKey, JSON.stringify(allMessages));
-    
-    // Clear input
-    input.value = '';
-    
-    // Update chat display
-    const chatMessages = document.getElementById('chatMessages');
-    if (chatMessages) {
-      const messages = this.getMessages(connectionId);
-      chatMessages.innerHTML = this.renderMessages(messages);
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-    
-    // Simulate response after a delay
-    setTimeout(() => {
-      this.simulateResponse(connectionId);
-    }, 1000 + Math.random() * 2000);
-    
-    trackEvent('send_message', { connectionId, messageLength: content.length });
-  }
-
-  simulateResponse(connectionId) {
-    const connection = this.getConnection(connectionId);
-    if (!connection) return;
-    
-    const responses = [
-      '정말 그렇군요! 저도 비슷한 생각이에요 😊',
-      '우와, 흥미롭네요! 더 자세히 들려주시겠어요?',
-      '이런 이야기 나누니 좋아요. 언제 시간 되시면 만나서 대화해요!',
-      '하하, 정말 우리 생각이 비슷해요!',
-      '아, 저도 그런 경험이 있어요. 정말 인상 깊었죠.',
-      '공감되네요! 우리 정말 잘 맞는 것 같아요 😄'
-    ];
-    
-    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-    
-    const allMessages = JSON.parse(localStorage.getItem(this.messagesKey) || '{}');
-    if (!allMessages[connectionId]) {
-      allMessages[connectionId] = [];
-    }
-    
-    const responseMessage = {
-      id: `msg_${Date.now()}`,
-      senderId: connectionId,
-      senderName: connection.name,
-      content: randomResponse,
-      timestamp: new Date().toISOString(),
-      isRead: false
-    };
-    
-    allMessages[connectionId].push(responseMessage);
-    localStorage.setItem(this.messagesKey, JSON.stringify(allMessages));
-    
-    // Update chat display if open
-    const chatMessages = document.getElementById('chatMessages');
-    if (chatMessages) {
-      const messages = this.getMessages(connectionId);
-      chatMessages.innerHTML = this.renderMessages(messages);
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-  }
-}
-
-// Initialize connection manager
-const connectionManager = new ConnectionManager();
-
-// Hero floating cards functionality - make them clickable
-document.querySelector('.floating-card.card-1')?.addEventListener('click', function() {
-  openModal('valuesModal');
-  currentValuesQuestion = 1;
-  showValuesQuestion(currentValuesQuestion);
-  trackEvent('hero_card_values_click');
-});
-
-document.querySelector('.floating-card.card-2')?.addEventListener('click', function() {
-  openModal('matchingModal');
-  startMatchingAnimation();
-  trackEvent('hero_card_matching_click');
-});
-
-document.querySelector('.floating-card.card-3')?.addEventListener('click', function() {
-  openModal('connectionsModal');
-  connectionManager.updateConnectionsDisplay();
-  trackEvent('hero_card_connections_click');
-});
-
-// Add hover effects to floating cards
-document.querySelectorAll('.floating-card').forEach(card => {
-  card.style.cursor = 'pointer';
-    
-  card.addEventListener('mouseenter', function() {
-    this.style.transform = 'translateY(-10px) scale(1.05)';
-    this.style.boxShadow = '0 25px 50px rgba(0, 0, 0, 0.15)';
-  });
-    
-  card.addEventListener('mouseleave', function() {
-    this.style.transform = 'translateY(0) scale(1)';
-    this.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.1)';
-  });
-});
-
-// About section cards functionality
-document.querySelectorAll('.about-card').forEach((card, index) => {
-  card.style.cursor = 'pointer';
-    
-  card.addEventListener('click', function() {
-    const cardTitle = this.querySelector('h3').textContent;
-        
-    switch(index) {
-    case 0: // AI 가치관 분석
-      openModal('valuesModal');
-      currentValuesQuestion = 1;
-      showValuesQuestion(currentValuesQuestion);
-      trackEvent('about_card_values_click');
-      break;
-    case 1: // 의미 있는 매칭
-      openModal('matchingModal');
-      startMatchingAnimation();
-      trackEvent('about_card_matching_click');
-      break;
-    case 2: // 4060 특화
-      showSpecializedInfo();
-      trackEvent('about_card_specialized_click');
-      break;
-    }
-  });
-});
-
-// Specialized info function for 4060 특화
-function showSpecializedInfo() {
-  const specializedContent = `
-        <div class="specialized-info">
-            <h3>4060세대 특화 서비스</h3>
-            <div class="specialized-features">
-                <div class="feature">
-                    <strong>인생 경험 중시:</strong> 풍부한 경험과 지혜를 바탕으로 한 매칭
-                </div>
-                <div class="feature">
-                    <strong>안정적인 관계:</strong> 진지하고 성숙한 만남을 추구하는 회원들
-                </div>
-                <div class="feature">
-                    <strong>맞춤형 인터페이스:</strong> 4060세대가 사용하기 편한 직관적 디자인
-                </div>
-                <div class="feature">
-                    <strong>안전한 환경:</strong> 철저한 신원 확인과 프라이버시 보호
-                </div>
-                <div class="feature">
-                    <strong>오프라인 만남 지원:</strong> 안전한 첫 만남을 위한 장소 추천
-                </div>
-            </div>
-            <div class="specialized-cta">
-                <button onclick="openModal('signupModal')" class="specialized-btn">지금 시작해보세요</button>
-            </div>
-        </div>
-    `;
-    
-  // Create and show specialized modal
-  showCustomAlert('4060 특화 서비스', specializedContent);
-}
-
-// Custom alert function for better UX
-function showCustomAlert(title, content) {
-  // Remove existing alert if any
-  const existingAlert = document.querySelector('.custom-alert');
-  if (existingAlert) {
-    existingAlert.remove();
-  }
-    
-  const alertHTML = `
-        <div class="custom-alert" style="
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10001;
-        ">
-            <div style="
-                background: white;
-                padding: 2rem;
-                border-radius: 20px;
-                max-width: 500px;
-                width: 90%;
-                max-height: 80vh;
-                overflow-y: auto;
-                box-shadow: 0 25px 60px rgba(0,0,0,0.3);
-            ">
-                <div style="
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    margin-bottom: 1.5rem;
-                    padding-bottom: 1rem;
-                    border-bottom: 2px solid #f0f0f0;
-                ">
-                    <h3 style="margin: 0; color: #333; font-size: 1.5rem;">${title}</h3>
-                    <button onclick="this.closest('.custom-alert').remove()" style="
-                        background: none;
-                        border: none;
-                        font-size: 1.5rem;
-                        cursor: pointer;
-                        color: #666;
-                        padding: 0.5rem;
-                        border-radius: 50%;
-                        transition: all 0.3s ease;
-                    " onmouseover="this.style.background='#f0f0f0'" onmouseout="this.style.background='none'">&times;</button>
-                </div>
-                ${content}
-            </div>
-        </div>
-    `;
-    
-  document.body.insertAdjacentHTML('beforeend', alertHTML);
-}
-
-// Feature items functionality
-document.querySelectorAll('.feature-item').forEach((item, index) => {
-  item.style.cursor = 'pointer';
-    
-  item.addEventListener('click', function() {
-    const featureTitle = this.querySelector('h3').textContent;
-    let featureContent = '';
-        
-    switch(index) {
-    case 0: // 심층 가치관 분석
-      featureContent = `
-                    <div class="feature-detail">
-                        <p><strong>100여 개의 정교한 질문</strong>으로 당신의 가치관을 분석합니다:</p>
-                        <ul style="margin: 1rem 0; padding-left: 1.5rem;">
-                            <li>인생관과 목표</li>
-                            <li>가족과 관계에 대한 가치관</li>
-                            <li>여가 활동과 취미 성향</li>
-                            <li>경제관과 미래 계획</li>
-                            <li>소통 스타일과 갈등 해결 방식</li>
-                        </ul>
-                        <button onclick="openModal('valuesModal'); currentValuesQuestion = 1; showValuesQuestion(currentValuesQuestion); this.closest('.custom-alert').remove();" class="feature-btn">가치관 분석 시작하기</button>
-                    </div>
-                `;
-      break;
-    case 1: // 스마트 AI 매칭
-      featureContent = `
-                    <div class="feature-detail">
-                        <p><strong>머신러닝 알고리즘</strong>이 최적의 상대를 찾아드립니다:</p>
-                        <ul style="margin: 1rem 0; padding-left: 1.5rem;">
-                            <li>가치관 일치도 분석 (최대 95%)</li>
-                            <li>성격 궁합도 계산</li>
-                            <li>관심사 및 취미 유사성</li>
-                            <li>라이프스타일 호환성</li>
-                            <li>소통 패턴 매칭</li>
-                        </ul>
-                        <button onclick="openModal('matchingModal'); startMatchingAnimation(); this.closest('.custom-alert').remove();" class="feature-btn">AI 매칭 체험하기</button>
-                    </div>
-                `;
-      break;
-    case 2: // 대화 가이드
-      featureContent = `
-                    <div class="feature-detail">
-                        <p><strong>AI 대화 가이드</strong>가 자연스러운 소통을 도와드립니다:</p>
-                        <ul style="margin: 1rem 0; padding-left: 1.5rem;">
-                            <li>개인 맞춤형 대화 주제 제안</li>
-                            <li>공통 관심사 발견</li>
-                            <li>어색함 해소 팁</li>
-                            <li>깊이 있는 대화로 발전시키는 방법</li>
-                            <li>오프라인 만남 가이드</li>
-                        </ul>
-                        <button onclick="openModal('connectionsModal'); this.closest('.custom-alert').remove();" class="feature-btn">대화 가이드 보기</button>
-                    </div>
-                `;
-      break;
-    case 3: // 안전한 환경
-      featureContent = `
-                    <div class="feature-detail">
-                        <p><strong>안전하고 신뢰할 수 있는</strong> 만남 환경을 제공합니다:</p>
-                        <ul style="margin: 1rem 0; padding-left: 1.5rem;">
-                            <li>본인 인증 및 신원 확인</li>
-                            <li>개인정보 암호화 보호</li>
-                            <li>부적절한 행동 신고 시스템</li>
-                            <li>안전한 첫 만남 장소 추천</li>
-                            <li>24시간 고객지원 서비스</li>
-                        </ul>
-                        <button onclick="showModal('안전 가이드', '안전한 만남을 위한 가이드를 확인해보세요. 공공장소에서 만나고, 개인정보는 주의깊게 공유하세요.'); this.closest('.custom-alert').remove();" class="feature-btn">안전 가이드 확인</button>
-                    </div>
-                `;
-      break;
-    }
-        
-    showCustomAlert(featureTitle, featureContent);
-    trackEvent('feature_item_click', { feature: featureTitle });
-  });
-});
-
-// Performance optimization: Lazy loading for images (when added)
-function setupLazyLoading() {
-  const imageObserver = new IntersectionObserver((entries, observer) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const img = entry.target;
-        img.src = img.dataset.src;
-        img.classList.remove('lazy');
-        observer.unobserve(img);
-      }
-    });
-  });
-    
-  document.querySelectorAll('img[data-src]').forEach(img => {
-    imageObserver.observe(img);
-  });
-}
-
-// Initialize lazy loading
-setupLazyLoading();
-
-// Accessibility improvements
-function setupAccessibility() {
-  // Add skip to main content link
-  const skipLink = document.createElement('a');
-  skipLink.href = '#main';
-  skipLink.textContent = '메인 콘텐츠로 건너뛰기';
-  skipLink.style.position = 'absolute';
-  skipLink.style.top = '-40px';
-  skipLink.style.left = '6px';
-  skipLink.style.background = '#667eea';
-  skipLink.style.color = 'white';
-  skipLink.style.padding = '8px';
-  skipLink.style.textDecoration = 'none';
-  skipLink.style.borderRadius = '4px';
-  skipLink.style.zIndex = '9999';
-    
-  skipLink.addEventListener('focus', function() {
-    this.style.top = '6px';
-  });
-    
-  skipLink.addEventListener('blur', function() {
-    this.style.top = '-40px';
-  });
-    
-  document.body.insertBefore(skipLink, document.body.firstChild);
-    
-  // Add main id to main element
-  const main = document.querySelector('main');
-  if (main) {
-    main.id = 'main';
-  }
-}
-
-// Initialize accessibility features
-setupAccessibility();
-
-// Smooth reveal animations on scroll
-window.addEventListener('scroll', () => {
-  const reveals = document.querySelectorAll('.reveal');
-    
-  reveals.forEach(reveal => {
-    const windowHeight = window.innerHeight;
-    const elementTop = reveal.getBoundingClientRect().top;
-    const elementVisible = 150;
-        
-    if (elementTop < windowHeight - elementVisible) {
-      reveal.classList.add('active');
-    }
-  });
-});
-
-
-// How It Works Section - Make steps clickable
-function setupHowItWorksInteractivity() {
-  const steps = document.querySelectorAll('.step');
-  console.log('Setting up step interactivity for', steps.length, 'steps');
-    
-  steps.forEach((step, index) => {
-    const stepNumber = index + 1;
-    console.log(`Setting up step ${stepNumber}`);
-        
-    step.style.cursor = 'pointer';
-    step.style.transition = 'all 0.3s ease';
-        
-    // Add hover effects
-    step.addEventListener('mouseenter', function() {
-      this.style.transform = 'translateY(-10px)';
-      this.style.boxShadow = '0 15px 35px rgba(0, 0, 0, 0.15)';
-    });
-        
-    step.addEventListener('mouseleave', function() {
-      this.style.transform = 'translateY(0)';
-      this.style.boxShadow = 'none';
-    });
-        
-    // Add click functionality
-    step.addEventListener('click', function() {
-      console.log(`Step ${stepNumber} clicked!`);
-      handleStepClick(stepNumber, this);
-    });
-  });
-}
-
-function handleStepClick(stepNumber, stepElement) {
-  // Add click animation
-  stepElement.style.transform = 'scale(0.95)';
-  setTimeout(() => {
-    stepElement.style.transform = 'translateY(-5px)';
-  }, 150);
-    
-  switch(stepNumber) {
-  case 1: // 가치관 진단
-    trackEvent('step_click', { step: 1, name: '가치관 진단' });
-    setTimeout(() => {
-      openModal('valuesModal');
-      currentValuesQuestion = 1;
-      showValuesQuestion(currentValuesQuestion);
-                
-      // Show helpful message
-      showStepNotification('1단계: 가치관 진단을 시작합니다!', 
-        '20개의 질문으로 당신의 가치관을 분석해보세요.');
-    }, 200);
-    break;
-            
-  case 2: // 스마트 매칭
-    trackEvent('step_click', { step: 2, name: '스마트 매칭' });
-    console.log('Step 2 clicked: 스마트 매칭');
-            
-    // Check if user has completed values assessment
-    const userProfile = JSON.parse(localStorage.getItem('userProfile') || 'null');
-    console.log('User profile check:', userProfile);
-            
-    if (!userProfile || !userProfile.completed) {
-      // Create a demo profile for better UX
-      const demoProfile = {
-        values: { 1: 'growth', 2: 'active', 3: 'logic' },
-        completed: true,
-        completedAt: new Date().toISOString(),
-        personalityScore: { extroversion: 3, stability: 4, growth: 5, creativity: 3, social: 4 },
-        interests: ['운동', '성장'],
-        lifestyle: { preferredPace: 'active', socialLevel: 'moderate', planningStyle: 'organized' }
-      };
-      localStorage.setItem('userProfile', JSON.stringify(demoProfile));
-      console.log('Created demo profile for matching');
-                
-      showStepNotification('2단계: AI 매칭 시작!', 
-        '데모 프로필로 매칭을 체험해보세요!');
-    } else {
-      showStepNotification('2단계: AI 매칭을 시작합니다!', 
-        '당신과 가장 잘 맞는 상대를 찾고 있습니다.');
-    }
-            
-    setTimeout(() => {
-      console.log('Opening matching modal...');
-      openModal('matchingModal');
-      startMatchingAnimation();
-                
-      // Generate matches with user's profile
-      setTimeout(() => {
-        console.log('Generating matches...');
-        if (typeof generateMatches === 'function') {
-          generateMatches();
-        } else {
-          console.log('generateMatches function not found, matches already displayed');
-        }
-      }, 2000);
-    }, 200);
-    break;
-            
-  case 3: // 의미 있는 만남
-    trackEvent('step_click', { step: 3, name: '의미 있는 만남' });
-    console.log('Step 3 clicked: 의미 있는 만남');
-            
-    // Check if user has any connections
-    const currentConnections = JSON.parse(localStorage.getItem('connections') || '[]');
-    console.log('Current connections:', currentConnections);
-            
-    setTimeout(() => {
-      console.log('Opening connections modal...');
-      openModal('connectionsModal');
-                
-      if (currentConnections.length === 0) {
-        // Create some demo connections for better UX
-        const demoConnections = [
-          { name: '김철수', age: 52, match: 92, status: 'new' },
-          { name: '이영희', age: 48, match: 87, status: 'new' },
-          { name: '박민수', age: 55, match: 84, status: 'active' }
-        ];
-        localStorage.setItem('connections', JSON.stringify(demoConnections));
-        updateConnectionsDisplay();
-                    
-        showStepNotification('3단계: 의미 있는 만남!', 
-          '데모 연결이 생성되었습니다. 대화를 시작해보세요!');
-      } else {
-        showStepNotification('3단계: 의미 있는 만남!', 
-          `${currentConnections.length}명과 연결되어 있습니다. 대화를 시작해보세요.`);
-      }
-    }, 200);
-    break;
-  }
-}
-
-function showStepNotification(title, message) {
-  // Remove existing notification
-  const existingNotification = document.querySelector('.step-notification');
-  if (existingNotification) {
-    existingNotification.remove();
-  }
-    
-  const notification = document.createElement('div');
-  notification.className = 'step-notification';
-  notification.style.cssText = `
-        position: fixed;
-        top: 100px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 1.5rem 2rem;
-        border-radius: 15px;
-        z-index: 10002;
-        box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-        animation: stepNotificationSlide 0.5s ease;
-        max-width: 400px;
-        text-align: center;
-        cursor: pointer;
-    `;
-    
-  notification.innerHTML = `
-        <div style="font-weight: 600; font-size: 1.1rem; margin-bottom: 0.5rem;">${title}</div>
-        <div style="font-size: 0.95rem; opacity: 0.9; line-height: 1.4;">${message}</div>
-        <div style="font-size: 0.8rem; opacity: 0.7; margin-top: 0.5rem;">클릭하여 닫기</div>
-    `;
-    
-  document.body.appendChild(notification);
-    
-  // Auto remove after 4 seconds
-  setTimeout(() => {
-    if (notification.parentNode) {
-      notification.style.animation = 'stepNotificationSlideOut 0.5s ease';
-      setTimeout(() => notification.remove(), 500);
-    }
-  }, 4000);
-    
-  // Click to dismiss
-  notification.addEventListener('click', () => {
-    notification.style.animation = 'stepNotificationSlideOut 0.5s ease';
-    setTimeout(() => notification.remove(), 500);
-  });
-}
-
-// Enhanced step navigation functionality
-function navigateToStep(stepNumber) {
-  const steps = document.querySelectorAll('.step');
-  if (steps[stepNumber - 1]) {
-    steps[stepNumber - 1].scrollIntoView({ 
-      behavior: 'smooth', 
-      block: 'center' 
-    });
-        
-    // Highlight the step briefly
-    setTimeout(() => {
-      handleStepClick(stepNumber, steps[stepNumber - 1]);
-    }, 500);
-  }
-}
-
-// Add navigation helper for other parts of the site
-window.navigateToStep = navigateToStep;
-
-// Connect feature cards to steps
-function connectFeaturesToSteps() {
-  document.querySelectorAll('.feature-item').forEach((item, index) => {
-    const featureTitle = item.querySelector('h3').textContent;
-        
-    // Add a subtle indicator that these lead to steps
-    item.style.position = 'relative';
-        
-    const stepIndicator = document.createElement('div');
-    stepIndicator.style.cssText = `
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(102, 126, 234, 0.1);
-            color: #667eea;
-            padding: 0.3rem 0.6rem;
-            border-radius: 15px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        `;
-        
-    if (featureTitle.includes('가치관 분석') || featureTitle.includes('심층')) {
-      stepIndicator.textContent = '1단계';
-    } else if (featureTitle.includes('스마트') || featureTitle.includes('매칭')) {
-      stepIndicator.textContent = '2단계';
-    } else if (featureTitle.includes('대화') || featureTitle.includes('가이드')) {
-      stepIndicator.textContent = '3단계';
-    }
-        
-    if (stepIndicator.textContent) {
-      item.appendChild(stepIndicator);
-            
-      item.addEventListener('mouseenter', () => {
-        stepIndicator.style.opacity = '1';
-      });
-            
-      item.addEventListener('mouseleave', () => {
-        stepIndicator.style.opacity = '0';
-      });
-    }
-  });
-}
-
-function calculatePersonalityScore(answers) {
-  // Simple personality scoring based on answers
-  const scores = {
-    extroversion: 0,
-    stability: 0,
-    growth: 0,
-    creativity: 0,
-    social: 0
   };
-    
-  // Add scoring logic based on answers
-  Object.values(answers).forEach(answer => {
-    if (typeof answer === 'object' && answer.score) {
-      Object.keys(answer.score).forEach(trait => {
-        if (scores[trait] !== undefined) {
-          scores[trait] += answer.score[trait];
-        }
-      });
-    }
-  });
-    
-  return scores;
 }
 
-function extractInterests(answers) {
-  // Extract interests from answers
-  const interests = [];
-  Object.values(answers).forEach(answer => {
-    if (typeof answer === 'object' && answer.value) {
-      switch(answer.value) {
-      case 'creative':
-        interests.push('창작활동');
-        break;
-      case 'active':
-        interests.push('운동');
-        break;
-      case 'social':
-        interests.push('사교활동');
-        break;
-      case 'reading':
-        interests.push('독서');
-        break;
-      }
-    }
-  });
-  return [...new Set(interests)]; // Remove duplicates
-}
-
-function extractLifestyle(answers) {
-  // Extract lifestyle preferences from answers
-  const lifestyle = {
-    preferredPace: 'balanced',
-    socialLevel: 'moderate',
-    planningStyle: 'flexible'
-  };
-    
-  // This would be more sophisticated in a real application
-  return lifestyle;
-}
-
-function updateConnectionsDisplay() {
-  // This function would update the connections display in the modal
-  console.log('Updating connections display...');
-}
-
-function updateConnectionsCount() {
-  // Update connections count if needed
-  const connections = JSON.parse(localStorage.getItem('connections') || '[]');
-  console.log('Total connections:', connections.length);
-}
-
-// Initialize everything when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-  // Load existing data
-  const connections = JSON.parse(localStorage.getItem('connections') || '[]');
-    
-  // Update UI elements
-  updateConnectionsCount();
-    
-  // Update total questions display
-  const totalQuestionsEl = document.querySelector('.total-questions');
-  if (totalQuestionsEl) {
-    totalQuestionsEl.textContent = totalValuesQuestions;
-  }
-    
-  // Setup how it works interactivity
-  setTimeout(() => {
-    setupHowItWorksInteractivity();
-    connectFeaturesToSteps();
-  }, 1000);
-    
-  // Add visual hints for interactive elements
-  setTimeout(() => {
-    addInteractiveHints();
-  }, 3000);
-});
-
-function addInteractiveHints() {
-  const steps = document.querySelectorAll('.step');
-  steps.forEach((step, index) => {
-    const hint = document.createElement('div');
-    hint.style.cssText = `
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: #ff6b6b;
-            color: white;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            font-weight: bold;
-            animation: pulse 2s infinite;
-            cursor: pointer;
-            z-index: 10;
-        `;
-    hint.textContent = '!';
-    hint.title = '클릭하여 시작하기';
-        
-    step.style.position = 'relative';
-    step.appendChild(hint);
-        
-    // Remove hint after click
-    step.addEventListener('click', () => {
-      hint.remove();
-    });
-        
-    // Auto remove hints after 10 seconds
-    setTimeout(() => {
-      if (hint.parentNode) {
-        hint.style.animation = 'fadeOut 0.5s ease';
-        setTimeout(() => hint.remove(), 500);
-      }
-    }, 10000);
-  });
-}
-
-// Add CSS animations for the new features
-const stepInteractionStyles = `
-@keyframes stepNotificationSlide {
-    from { 
-        transform: translateX(-50%) translateY(-20px); 
-        opacity: 0; 
-        scale: 0.9;
-    }
-    to { 
-        transform: translateX(-50%) translateY(0); 
-        opacity: 1; 
-        scale: 1;
-    }
-}
-
-@keyframes stepNotificationSlideOut {
-    from { 
-        transform: translateX(-50%) translateY(0); 
-        opacity: 1; 
-        scale: 1;
-    }
-    to { 
-        transform: translateX(-50%) translateY(-20px); 
-        opacity: 0; 
-        scale: 0.9;
-    }
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.2); }
-    100% { transform: scale(1); }
-}
-
-@keyframes fadeOut {
-    from { opacity: 1; }
-    to { opacity: 0; }
-}
-
-/* Step interaction styles */
-.step {
-    position: relative;
-    overflow: hidden;
-    cursor: pointer;
-}
-
-.step::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    border-radius: 15px;
-}
-
-.step:hover::before {
-    opacity: 1;
-}
-
-.step-number {
-    transition: all 0.3s ease;
-    position: relative;
-    z-index: 2;
-}
-
-.step:hover .step-number {
-    transform: scale(1.1);
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-}
-
-.step-content {
-    position: relative;
-    z-index: 2;
-}
-
-/* Add click indicator */
-.step::after {
-    content: '클릭하여 시작 →';
-    position: absolute;
-    bottom: 1rem;
-    right: 1rem;
-    font-size: 0.8rem;
-    color: #667eea;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    font-weight: 500;
-    z-index: 3;
-}
-
-.step:hover::after {
-    opacity: 1;
-}
-`;
-
-const stepStyleSheet = document.createElement('style');
-stepStyleSheet.textContent = stepInteractionStyles;
-document.head.appendChild(stepStyleSheet);
-
-// Show feature status
-setTimeout(() => {
-  if (document.querySelector('.hero')) {
-    const statusNotification = document.createElement('div');
-    statusNotification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #10b981;
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 10px;
-            z-index: 9999;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            animation: slideIn 0.5s ease;
-            cursor: pointer;
-        `;
-    statusNotification.innerHTML = `
-            <div style="font-weight: 600; margin-bottom: 0.5rem;">🎯 3단계 프로세스 활성화!</div>
-            <div style="font-size: 0.9rem; opacity: 0.9;">각 단계를 클릭해보세요</div>
-            <div style="font-size: 0.8rem; opacity: 0.8; margin-top: 0.3rem;">클릭하여 닫기</div>
-        `;
-        
-    document.body.appendChild(statusNotification);
-        
-    // Click to close
-    statusNotification.addEventListener('click', () => {
-      statusNotification.style.animation = 'slideOut 0.5s ease';
-      setTimeout(() => statusNotification.remove(), 500);
-    });
-        
-    // Auto remove after 8 seconds
-    setTimeout(() => {
-      if (statusNotification.parentNode) {
-        statusNotification.style.animation = 'slideOut 0.5s ease';
-        setTimeout(() => statusNotification.remove(), 500);
-      }
-    }, 8000);
-  }
-}, 2000);
-
-console.log('CHARM_INYEON 랜딩 페이지가 로드되었습니다! 🎉');
-console.log('✅ 가치관 진단 시스템 활성화');
-console.log('✅ 스마트 AI 매칭 알고리즘 활성화');
-console.log('✅ 의미있는 연결 시스템 활성화');
-console.log('🎯 3단계 프로세스 인터랙션 활성화');
-console.log('💬 모든 기능이 실제로 작동합니다!');
-console.log('📋 클릭 가능한 요소들:');
-console.log('   • Hero 섹션 플로팅 카드');
-console.log('   • About 섹션 기능 카드');
-console.log('   • Features 섹션 아이템');
-console.log('   • How it works 3단계 프로세스 ← NEW!');
-console.log('   • 모든 버튼과 링크');
-
-// ==============================================
-// BACKEND INTEGRATION FUNCTIONS
-// ==============================================
-
-// Update UI for authenticated user
-function updateUIForAuthenticatedUser(user) {
-  console.log('Updating UI for authenticated user:', user);
-    
-  // Update login/signup buttons to show user menu
-  const loginBtn = document.querySelector('.login-btn');
-  const signupBtn = document.querySelector('.signup-btn');
-    
-  if (loginBtn && signupBtn) {
-    // Create user menu
-    const userMenu = document.createElement('div');
-    userMenu.className = 'user-menu';
-    userMenu.style.cssText = `
-            position: relative;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            color: #333;
-            font-weight: 500;
-        `;
-        
-    userMenu.innerHTML = `
-            <div class="user-welcome">
-                안녕하세요, ${user.name || user.email}님!
-            </div>
-            <div class="user-dropdown">
-                <button class="user-dropdown-btn" style="
-                    background: #667eea;
-                    color: white;
-                    border: none;
-                    padding: 0.5rem 1rem;
-                    border-radius: 8px;
-                    cursor: pointer;
-                    font-weight: 500;
-                ">
-                    내 계정 ⌄
-                </button>
-                <div class="user-dropdown-menu" style="
-                    position: absolute;
-                    top: 100%;
-                    right: 0;
-                    background: white;
-                    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-                    border-radius: 10px;
-                    min-width: 200px;
-                    display: none;
-                    z-index: 1000;
-                    margin-top: 0.5rem;
-                ">
-                    <a href="#" class="menu-item profile-link" style="
-                        display: block;
-                        padding: 1rem;
-                        text-decoration: none;
-                        color: #333;
-                        border-bottom: 1px solid #eee;
-                        transition: background 0.3s;
-                    ">프로필 관리</a>
-                    <a href="#" class="menu-item matches-link" style="
-                        display: block;
-                        padding: 1rem;
-                        text-decoration: none;
-                        color: #333;
-                        border-bottom: 1px solid #eee;
-                        transition: background 0.3s;
-                    ">내 매치</a>
-                    <a href="#" class="menu-item settings-link" style="
-                        display: block;
-                        padding: 1rem;
-                        text-decoration: none;
-                        color: #333;
-                        border-bottom: 1px solid #eee;
-                        transition: background 0.3s;
-                    ">설정</a>
-                    <a href="#" class="menu-item logout-link" style="
-                        display: block;
-                        padding: 1rem;
-                        text-decoration: none;
-                        color: #ff4757;
-                        transition: background 0.3s;
-                    ">로그아웃</a>
-                </div>
-            </div>
-        `;
-        
-    // Replace login/signup buttons with user menu
-    const navLinks = loginBtn.parentElement;
-    navLinks.innerHTML = '';
-    navLinks.appendChild(userMenu);
-        
-    // Add dropdown functionality
-    const dropdownBtn = userMenu.querySelector('.user-dropdown-btn');
-    const dropdownMenu = userMenu.querySelector('.user-dropdown-menu');
-        
-    dropdownBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
-    });
-        
-    // Close dropdown when clicking outside
-    document.addEventListener('click', () => {
-      dropdownMenu.style.display = 'none';
-    });
-        
-    // Add menu item event listeners
-    userMenu.querySelector('.logout-link').addEventListener('click', (e) => {
-      e.preventDefault();
-      handleLogout();
-    });
-        
-    userMenu.querySelector('.profile-link').addEventListener('click', (e) => {
-      e.preventDefault();
-      openProfileModal();
-    });
-        
-    userMenu.querySelector('.matches-link').addEventListener('click', (e) => {
-      e.preventDefault();
-      openModal('matchingModal');
-      loadMatchingResults();
-    });
-        
-    // Add hover effects to menu items
-    userMenu.querySelectorAll('.menu-item').forEach(item => {
-      item.addEventListener('mouseenter', function() {
-        this.style.background = '#f8f9fa';
-      });
-      item.addEventListener('mouseleave', function() {
-        this.style.background = 'white';
-      });
-    });
-  }
-    
-  // Store user data
-  localStorage.setItem('isLoggedIn', 'true');
-  localStorage.setItem('currentUser', JSON.stringify(user));
-    
-  // Trigger any post-login actions
-  checkUserStatus();
-}
-
-// Handle logout
-function handleLogout() {
-  try {
-    // Clear API client tokens
-    apiClient.logout();
-        
-    // Clear local storage
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('currentUser');
-        
-    // Reset UI to login state
-    location.reload(); // Simple way to reset UI
-        
-    apiClient.showSuccess('로그아웃되었습니다.');
-    trackEvent('logout_success');
-        
-  } catch (error) {
-    console.error('Logout error:', error);
-    apiClient.showError('로그아웃 중 오류가 발생했습니다.');
-  }
-}
-
-// Load matching results from backend
-async function loadMatchingResults() {
-  console.log('Loading matching results from backend...');
-    
-  try {
-    // Show loading state
-    const matchingContent = document.querySelector('.matching-content');
-    if (matchingContent) {
-      matchingContent.innerHTML = `
-                <div class="loading-matches" style="text-align: center; padding: 2rem;">
-                    <div class="loading-spinner" style="
-                        border: 4px solid #f3f3f4;
-                        border-radius: 50%;
-                        border-top: 4px solid #667eea;
-                        width: 40px;
-                        height: 40px;
-                        animation: spin 1s linear infinite;
-                        margin: 0 auto 1rem;
-                    "></div>
-                    <p>완벽한 매치를 찾고 있습니다...</p>
-                </div>
-            `;
-    }
-        
-    // Check if user is authenticated
-    if (!apiClient.isAuthenticated()) {
-      // Show demo matches for non-authenticated users
-      displayDemoMatches();
-      return;
-    }
-        
-    // Try to generate matches first
-    try {
-      console.log('Generating new matches...');
-      await apiClient.generateMatches();
-    } catch (generateError) {
-      console.log('Generate matches not available, loading existing matches');
-    }
-        
-    // Load existing matches
-    const response = await apiClient.getMyMatches();
-        
-    if (response.success && response.data && response.data.matches) {
-      displayMatches(response.data.matches);
-            
-      // Update stats if available
-      if (response.data.stats) {
-        updateMatchingStats(response.data.stats);
-      }
-    } else {
-      console.log('No matches found, showing demo matches');
-      displayDemoMatches();
-    }
-        
-  } catch (error) {
-    console.error('Error loading matches:', error);
-        
-    // Fallback to demo matches on error
-    displayDemoMatches();
-        
-    // Show error to user but don't block the experience
-    if (error.message && !error.message.includes('TOKEN_REFRESHED')) {
-      apiClient.showError('매칭 결과를 불러오는 중 문제가 발생했습니다. 데모 결과를 표시합니다.');
-    }
-  }
-}
-
-// Display matches in the UI
-function displayMatches(matches) {
-  console.log('Displaying matches:', matches);
-    
-  const matchingContent = document.querySelector('.matching-content');
-  if (!matchingContent) {return;}
-    
-  if (!matches || matches.length === 0) {
-    matchingContent.innerHTML = `
-            <div class="no-matches" style="text-align: center; padding: 2rem;">
-                <div style="font-size: 3rem; margin-bottom: 1rem;">💡</div>
-                <h3>아직 매치가 없습니다</h3>
-                <p>가치관 평가를 완료하고 더 많은 매치를 받아보세요!</p>
-                <button onclick="openModal('valuesModal')" class="primary-button">가치관 평가 시작</button>
-            </div>
-        `;
-    return;
-  }
-    
-  // Create matches display
-  let matchesHTML = `
-        <div class="matches-header" style="margin-bottom: 2rem; text-align: center;">
-            <h3 style="color: #333; margin-bottom: 0.5rem;">당신과 잘 맞는 ${matches.length}명을 찾았습니다!</h3>
-            <p style="color: #666; margin: 0;">호환성 점수를 기준으로 정렬되었습니다</p>
-        </div>
-        <div class="matches-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
-    `;
-    
-  matches.forEach(match => {
-    const compatibilityScore = match.compatibilityScore || match.compatibility || 85;
-    const otherUser = match.otherUser || match.user || {};
-        
-    matchesHTML += `
-            <div class="match-card" style="
-                background: white;
-                border-radius: 15px;
-                padding: 1.5rem;
-                box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-                transition: transform 0.3s ease;
-            " onmouseenter="this.style.transform='translateY(-5px)'" onmouseleave="this.style.transform='translateY(0)'">
-                <div class="match-header" style="display: flex; align-items: center; margin-bottom: 1rem;">
-                    <div class="match-avatar" style="
-                        width: 60px;
-                        height: 60px;
-                        border-radius: 50%;
-                        background: linear-gradient(135deg, #667eea, #764ba2);
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        color: white;
-                        font-weight: bold;
-                        font-size: 1.5rem;
-                        margin-right: 1rem;
-                    ">
-                        ${(otherUser.name || '익명')[0].toUpperCase()}
-                    </div>
-                    <div class="match-info">
-                        <h4 class="match-name" style="margin: 0 0 0.25rem 0; color: #333;">
-                            ${otherUser.name || '익명 사용자'}
-                        </h4>
-                        <p class="match-age" style="margin: 0; color: #666; font-size: 0.9rem;">
-                            ${otherUser.age || '나이 미공개'}세
-                        </p>
-                    </div>
-                </div>
-                
-                <div class="compatibility-score" style="margin-bottom: 1rem;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                        <span style="font-weight: 600; color: #333;">호환성</span>
-                        <span style="font-weight: 700; color: #10b981; font-size: 1.1rem;">${compatibilityScore}%</span>
-                    </div>
-                    <div style="background: #f0f0f0; border-radius: 10px; height: 8px; overflow: hidden;">
-                        <div style="
-                            background: linear-gradient(90deg, #10b981, #05a773);
-                            width: ${compatibilityScore}%;
-                            height: 100%;
-                            border-radius: 10px;
-                            transition: width 1s ease;
-                        "></div>
-                    </div>
-                </div>
-                
-                <div class="match-details" style="margin-bottom: 1.5rem;">
-                    <div class="match-values" style="margin-bottom: 1rem;">
-                        <h5 style="margin: 0 0 0.5rem 0; color: #333; font-size: 0.9rem;">공통 가치관</h5>
-                        <div class="values-tags" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                            ${getCommonValues(match.commonValues || ['성장', '안정']).map(value => 
-    `<span style="
-                                    background: rgba(102, 126, 234, 0.1);
-                                    color: #667eea;
-                                    padding: 0.25rem 0.75rem;
-                                    border-radius: 15px;
-                                    font-size: 0.8rem;
-                                    font-weight: 500;
-                                ">${value}</span>`
-  ).join('')}
-                        </div>
-                    </div>
-                    
-                    ${otherUser.bio ? `
-                        <div class="match-bio">
-                            <p style="
-                                margin: 0;
-                                color: #666;
-                                font-size: 0.9rem;
-                                line-height: 1.4;
-                                font-style: italic;
-                            ">"${otherUser.bio.substring(0, 100)}${otherUser.bio.length > 100 ? '...' : ''}"</p>
-                        </div>
-                    ` : ''}
-                </div>
-                
-                <div class="match-actions" style="display: flex; gap: 0.75rem;">
-                    <button class="connect-btn" onclick="handleMatchAction('${match._id || match.id}', 'like')" style="
-                        flex: 1;
-                        background: #667eea;
-                        color: white;
-                        border: none;
-                        padding: 0.75rem;
-                        border-radius: 10px;
-                        font-weight: 600;
-                        cursor: pointer;
-                        transition: all 0.3s ease;
-                    " onmouseover="this.style.background='#5a6fd8'" onmouseout="this.style.background='#667eea'">
-                        관심 표현
-                    </button>
-                    <button class="view-profile-btn" onclick="viewMatchProfile('${match._id || match.id}')" style="
-                        background: #f8f9fa;
-                        color: #333;
-                        border: 1px solid #ddd;
-                        padding: 0.75rem 1rem;
-                        border-radius: 10px;
-                        font-weight: 500;
-                        cursor: pointer;
-                        transition: all 0.3s ease;
-                    " onmouseover="this.style.background='#e9ecef'" onmouseout="this.style.background='#f8f9fa'">
-                        프로필
-                    </button>
-                </div>
-            </div>
-        `;
-  });
-    
-  matchesHTML += '</div>';
-  matchingContent.innerHTML = matchesHTML;
-}
-
-// Display demo matches for non-authenticated users
-function displayDemoMatches() {
-  console.log('Displaying demo matches');
-    
-  const demoMatches = [
-    {
-      id: 'demo1',
-      user: {
-        name: '김미영',
-        age: 52,
-        bio: '가족과 함께하는 시간을 소중히 여기며, 새로운 문화 체험을 좋아합니다. 진솔한 대화를 나눌 수 있는 분을 만나고 싶어요.'
-      },
-      compatibilityScore: 94,
-      commonValues: ['가족', '성장', '안정']
-    },
-    {
-      id: 'demo2',
-      user: {
-        name: '박준호',
-        age: 58,
-        bio: '독서와 클래식 음악을 즐기며, 차분하고 지적인 대화를 좋아합니다. 함께 박물관이나 전시회를 관람할 분을 찾고 있어요.'
-      },
-      compatibilityScore: 87,
-      commonValues: ['지성', '문화', '평화']
-    },
-    {
-      id: 'demo3',
-      user: {
-        name: '이정숙',
-        age: 49,
-        bio: '요리와 여행을 좋아하며, 긍정적인 에너지로 가득한 사람입니다. 함께 새로운 장소를 탐험하고 맛있는 음식을 나눌 분을 기다려요.'
-      },
-      compatibilityScore: 91,
-      commonValues: ['모험', '즐거움', '나눔']
-    }
-  ];
-    
-  displayMatches(demoMatches);
-    
-  // Add demo banner
-  const matchingContent = document.querySelector('.matching-content');
-  if (matchingContent) {
-    const demoBanner = document.createElement('div');
-    demoBanner.style.cssText = `
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 1rem;
-            border-radius: 10px;
-            text-align: center;
-            margin-bottom: 1.5rem;
-        `;
-    demoBanner.innerHTML = `
-            <div style="font-weight: 600; margin-bottom: 0.5rem;">🎯 데모 매칭 결과</div>
-            <div style="font-size: 0.9rem; opacity: 0.9;">실제 매칭을 받으려면 회원가입 후 가치관 평가를 완료해주세요</div>
-            <button onclick="openModal('signupModal'); closeModal('matchingModal');" style="
-                background: white;
-                color: #667eea;
-                border: none;
-                padding: 0.5rem 1rem;
-                border-radius: 8px;
-                font-weight: 600;
-                cursor: pointer;
-                margin-top: 0.75rem;
-            ">지금 시작하기</button>
-        `;
-    matchingContent.insertBefore(demoBanner, matchingContent.firstChild);
-  }
-}
-
-// Get common values for display
-function getCommonValues(values) {
-  if (Array.isArray(values)) {
-    return values;
-  }
-  // Default values if not provided
-  return ['성장', '안정', '가족'];
-}
-
-// Handle match actions (like/pass)
-async function handleMatchAction(matchId, action) {
-  console.log(`Match action: ${action} for match ${matchId}`);
-    
-  if (!apiClient.isAuthenticated()) {
-    // Demo action for non-authenticated users
-    const btn = event.target;
-    btn.textContent = action === 'like' ? '관심 표현됨!' : '패스됨';
-    btn.style.background = action === 'like' ? '#10b981' : '#6c757d';
-    btn.disabled = true;
-        
-    setTimeout(() => {
-      apiClient.showSuccess('회원가입하고 실제 매칭을 시작해보세요!');
-    }, 500);
-        
-    trackEvent('demo_match_action', { action, matchId });
-    return;
-  }
-    
-  try {
-    const btn = event.target;
-    const originalText = btn.textContent;
-        
-    btn.textContent = action === 'like' ? '처리 중...' : '처리 중...';
-    btn.disabled = true;
-        
-    const response = await apiClient.respondToMatch(matchId, action);
-        
-    if (response.success) {
-      btn.textContent = action === 'like' ? '관심 표현됨!' : '패스됨';
-      btn.style.background = action === 'like' ? '#10b981' : '#6c757d';
-            
-      if (action === 'like') {
-        apiClient.showSuccess('관심을 표현했습니다! 상대방도 관심을 보이면 대화를 시작할 수 있어요.');
-      }
-            
-      // Check for mutual matches
-      if (response.data && response.data.isMutual) {
-        setTimeout(() => {
-          apiClient.showSuccess('🎉 상호 매치! 이제 대화를 시작할 수 있습니다.');
-          // Could open chat or show celebration animation
-        }, 1000);
-      }
-            
-      trackEvent('match_action_success', { action, matchId });
-    }
-        
-  } catch (error) {
-    console.error('Match action error:', error);
-    apiClient.showError(error.message || '매치 응답 중 오류가 발생했습니다.');
-        
-    // Reset button
-    const btn = event.target;
-    btn.textContent = action === 'like' ? '관심 표현' : '패스';
-    btn.disabled = false;
-        
-    trackEvent('match_action_error', { action, matchId, error: error.message });
-  }
-}
-
-// View match profile
-function viewMatchProfile(matchId) {
-  console.log('Viewing profile for match:', matchId);
-    
-  // For now, show a placeholder
-  showCustomAlert('프로필 보기', `
-        <div style="text-align: center; padding: 1rem;">
-            <div style="font-size: 3rem; margin-bottom: 1rem;">👤</div>
-            <h3>프로필 상세보기</h3>
-            <p>이 기능은 곧 추가될 예정입니다.</p>
-            <p>상대방의 자세한 프로필과 공통 관심사를 확인할 수 있게 됩니다.</p>
-            <button onclick="this.closest('.custom-alert').remove()" class="primary-button">확인</button>
-        </div>
-    `);
-    
-  trackEvent('view_profile_click', { matchId });
-}
-
-// Open profile modal
-function openProfileModal() {
-  // Create profile modal content
-  const profileContent = `
-        <div class="profile-modal-content" style="max-width: 600px; margin: 0 auto;">
-            <h3 style="margin-bottom: 1.5rem; text-align: center;">내 프로필 관리</h3>
-            
-            <div class="profile-section" style="margin-bottom: 2rem;">
-                <h4 style="color: #333; margin-bottom: 1rem;">기본 정보</h4>
-                <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 10px;">
-                    <p>프로필 관리 기능은 곧 추가될 예정입니다.</p>
-                    <p>현재 계정: ${JSON.parse(localStorage.getItem('currentUser') || '{}').email || '로그인된 사용자'}</p>
-                </div>
-            </div>
-            
-            <div class="profile-actions" style="text-align: center;">
-                <button onclick="this.closest('.custom-alert').remove()" class="primary-button">
-                    확인
-                </button>
-            </div>
-        </div>
-    `;
-    
-  showCustomAlert('프로필 관리', profileContent);
-  trackEvent('profile_modal_open');
-}
-
-// Update matching stats
-function updateMatchingStats(stats) {
-  console.log('Updating matching stats:', stats);
-    
-  // Update any stats displays in the UI
-  const statsElements = document.querySelectorAll('.matching-stats');
-  statsElements.forEach(el => {
-    // Update stats display if elements exist
-    if (stats.totalMatches !== undefined) {
-      const totalEl = el.querySelector('.total-matches');
-      if (totalEl) {totalEl.textContent = stats.totalMatches;}
-    }
-        
-    if (stats.mutualMatches !== undefined) {
-      const mutualEl = el.querySelector('.mutual-matches');
-      if (mutualEl) {mutualEl.textContent = stats.mutualMatches;}
-    }
-  });
-}
-
-// Check user status on page load
-function checkUserStatus() {
-  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-  const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
-    
-  if (isLoggedIn && currentUser && apiClient.isAuthenticated()) {
-    console.log('User is authenticated, updating UI');
-    updateUIForAuthenticatedUser(currentUser);
-  } else {
-    console.log('User is not authenticated');
-    // Clear any stale data
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('currentUser');
-  }
-}
-
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', function() {
-  // Check authentication status
-  setTimeout(() => {
-    checkUserStatus();
-  }, 500);
+// ========== 폼 검증 유틸리티 ==========
+function validateForm(form) {
+  let isValid = true;
+  const requiredFields = form.querySelectorAll('input[required], select[required], textarea[required]');
   
-});
+  requiredFields.forEach(field => {
+    if (!validateField({ target: field })) {
+      isValid = false;
+    }
+  });
+  
+  return isValid;
+}
+
+function validateField(e) {
+  const field = e.target;
+  const value = field.value.trim();
+  let isValid = true;
+  let errorMessage = '';
+  
+  if (field.hasAttribute('required') && !value) {
+    isValid = false;
+    errorMessage = '필수 입력 항목입니다.';
+  }
+  
+  if (field.type === 'email' && value) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(value)) {
+      isValid = false;
+      errorMessage = '올바른 이메일 형식을 입력해주세요.';
+    }
+  }
+  
+  if (field.type === 'tel' && value) {
+    const phoneRegex = /^[0-9-+\s()]+$/;
+    if (!phoneRegex.test(value)) {
+      isValid = false;
+      errorMessage = '올바른 전화번호 형식을 입력해주세요.';
+    }
+  }
+  
+  if (field.name === 'message' && value && value.length < 10) {
+    isValid = false;
+    errorMessage = '메시지는 10자 이상 입력해주세요.';
+  }
+  
+  if (!isValid) {
+    showFieldError(field, errorMessage);
+  } else {
+    clearFieldError(field);
+  }
+  
+  return isValid;
+}
+
+function showFieldError(field, message) {
+  clearFieldError(field);
+  
+  const errorElement = document.createElement('div');
+  errorElement.className = 'field-error';
+  errorElement.textContent = message;
+  errorElement.style.cssText = `
+    color: #dc2626;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    display: block;
+  `;
+  
+  field.style.borderColor = '#dc2626';
+  field.parentNode.insertBefore(errorElement, field.nextSibling);
+}
+
+function clearFieldError(field) {
+  const errorElement = field.parentNode.querySelector('.field-error');
+  if (errorElement) {
+    errorElement.remove();
+  }
+  field.style.borderColor = '';
+}
+
+function clearAllErrors(form) {
+  const errorElements = form.querySelectorAll('.field-error');
+  errorElements.forEach(error => error.remove());
+  
+  const fields = form.querySelectorAll('input, select, textarea');
+  fields.forEach(field => {
+    field.style.borderColor = '';
+  });
+}
 
 // ========== 위젯 클릭 기능 ==========
-
-// 위젯 클릭 처리 메인 함수
 function handleWidgetClick(widgetType) {
-  console.log(`${widgetType} 위젯 클릭됨`);
+  console.log(`🎯 위젯 클릭: ${widgetType}`);
   
-  // 클릭 피드백 애니메이션 적용
-  const widget = document.getElementById(getWidgetId(widgetType));
-  if (widget) {
-    widget.style.transform = 'scale(0.95)';
-    widget.style.transition = 'transform 0.1s ease';
-    
-    setTimeout(() => {
-      widget.style.transform = 'scale(1)';
-    }, 100);
+  // 위젯별 액션 분기
+  switch(widgetType) {
+    case 'values':
+      openValuesAnalysisModal();
+      break;
+    case 'matching':
+      openMatchingModal();
+      break;
+    case 'connections':
+      openConnectionsModal();
+      break;
+    default:
+      console.warn('알 수 없는 위젯 타입:', widgetType);
   }
-  
-  // 인증 상태 확인 후 처리
-  const isAuthenticated = localStorage.getItem('isLoggedIn') === 'true';
-  
-  if (isAuthenticated) {
-    showLoadingState(widgetType);
-    setTimeout(() => {
-      showAuthenticatedWidgetModal(widgetType);
-    }, 1000); // 1초 로딩 시뮬레이션
-  } else {
-    showGuestWidgetModal(widgetType);
-  }
-  
-  // 브라우저 히스토리에 추가
-  addToHistory(widgetType);
 }
 
-// 키보드 이벤트 처리 (접근성)
 function handleWidgetKeydown(event, widgetType) {
+  // 키보드 접근성: Enter 또는 Space 키 처리
   if (event.key === 'Enter' || event.key === ' ') {
     event.preventDefault();
     handleWidgetClick(widgetType);
   }
 }
 
-// 위젯 ID 반환 함수
-function getWidgetId(widgetType) {
-  const widgetIds = {
-    'values': 'valuesAnalysisWidget',
-    'matching': 'aiMatchingWidget',
-    'connections': 'newConnectionsWidget'
-  };
-  return widgetIds[widgetType] || '';
-}
-
-// 로딩 상태 표시 함수
-function showLoadingState(widgetType) {
-  const widget = document.getElementById(getWidgetId(widgetType));
-  if (!widget) return;
-  
-  // 로딩 오버레이 생성
-  const loadingOverlay = document.createElement('div');
-  loadingOverlay.className = 'widget-loading-overlay';
-  loadingOverlay.style.cssText = `
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.9);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 12px;
-    z-index: 1000;
-  `;
-  
-  // 로딩 스피너 생성
-  const spinner = document.createElement('div');
-  spinner.className = 'loading-spinner';
-  spinner.style.cssText = `
-    width: 24px;
-    height: 24px;
-    border: 2px solid #e2e8f0;
-    border-top: 2px solid #667eea;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-  `;
-  
-  loadingOverlay.appendChild(spinner);
-  widget.style.position = 'relative';
-  widget.appendChild(loadingOverlay);
-  
-  // 1초 후 로딩 제거
-  setTimeout(() => {
-    if (loadingOverlay && loadingOverlay.parentNode) {
-      loadingOverlay.remove();
-    }
-  }, 1000);
-}
-
-// 인증된 사용자용 모달 표시
-function showAuthenticatedWidgetModal(widgetType) {
-  const modalContent = getAuthenticatedModalContent(widgetType);
-  showAdvancedModal(modalContent.title, modalContent.content, modalContent.actions);
-}
-
-// 게스트 사용자용 모달 표시
-function showGuestWidgetModal(widgetType) {
-  const modalContent = getGuestModalContent(widgetType);
-  showAdvancedModal(modalContent.title, modalContent.content, modalContent.actions);
-}
-
-// 인증된 사용자용 모달 콘텐츠 생성
-function getAuthenticatedModalContent(widgetType) {
-  const contents = {
-    'values': {
-      title: '🎯 가치관 분석 결과',
-      content: `
+// ========== 위젯 모달 함수들 ==========
+function openValuesAnalysisModal() {
+  console.log('💎 가치관 분석 모달 열기');
+  showWidgetModal('가치관 분석', 'values', {
+    icon: '📊',
+    title: '당신의 가치관 분석 결과',
+    content: `
+      <div class="widget-modal-content">
         <div class="modal-section">
-          <h4>귀하의 가치관 프로필</h4>
+          <h4>🎯 핵심 가치관 분석</h4>
           <div class="values-chart">
             <div class="value-item">
-              <span class="value-label">가족 중심</span>
-              <div class="value-bar"><div class="value-progress" style="width: 90%"></div></div>
-              <span class="value-score">90%</span>
-            </div>
-            <div class="value-item">
-              <span class="value-label">안정 추구</span>
-              <div class="value-bar"><div class="value-progress" style="width: 85%"></div></div>
+              <span class="value-label">가족 중시</span>
+              <div class="value-bar">
+                <div class="value-progress" style="width: 85%"></div>
+              </div>
               <span class="value-score">85%</span>
             </div>
             <div class="value-item">
-              <span class="value-label">소통 중시</span>
-              <div class="value-bar"><div class="value-progress" style="width: 78%"></div></div>
+              <span class="value-label">안정 추구</span>
+              <div class="value-bar">
+                <div class="value-progress" style="width: 78%"></div>
+              </div>
               <span class="value-score">78%</span>
             </div>
+            <div class="value-item">
+              <span class="value-label">성장 지향</span>
+              <div class="value-bar">
+                <div class="value-progress" style="width: 72%"></div>
+              </div>
+              <span class="value-score">72%</span>
+            </div>
+            <div class="value-item">
+              <span class="value-label">사회 기여</span>
+              <div class="value-bar">
+                <div class="value-progress" style="width: 68%"></div>
+              </div>
+              <span class="value-score">68%</span>
+            </div>
           </div>
-          <p class="analysis-summary">
-            귀하는 가족과 안정을 가장 중시하는 성향을 보입니다. 
-            이러한 가치관을 공유하는 분들과 85% 이상의 높은 호환성을 보입니다.
-          </p>
         </div>
-      `,
-      actions: [
-        { text: '상세 분석 보기', action: 'viewDetailedAnalysis', primary: true },
-        { text: '매칭 시작하기', action: 'startMatching', primary: false }
-      ]
-    },
-    'matching': {
-      title: '💝 AI 매칭 현황',
-      content: `
+        
+        <div class="analysis-summary">
+          <strong>💡 분석 요약:</strong> 당신은 가족과의 시간을 가장 소중히 여기며, 
+          안정적인 환경에서 지속적인 성장을 추구하는 성향을 보입니다. 
+          사회에 긍정적인 영향을 미치는 것에도 관심이 많으시네요!
+        </div>
+      </div>
+    `,
+    actions: [
+      {
+        text: '자세한 분석 받기',
+        class: 'primary',
+        action: () => {
+          closeAllModals();
+          window.location.href = 'values-assessment.html';
+        }
+      },
+      {
+        text: '매칭 확인하기',
+        class: 'secondary',
+        action: () => {
+          closeAllModals();
+          setTimeout(() => openMatchingModal(), 300);
+        }
+      }
+    ]
+  });
+}
+
+function openMatchingModal() {
+  console.log('🤖 AI 매칭 모달 열기');
+  showWidgetModal('AI 매칭', 'matching', {
+    icon: '🎯',
+    title: '당신을 위한 맞춤 매칭',
+    content: `
+      <div class="widget-modal-content">
         <div class="modal-section">
-          <h4>현재 매칭 상태</h4>
+          <h4>🔄 매칭 상태</h4>
           <div class="matching-status">
             <div class="status-item active">
               <div class="status-icon">✓</div>
@@ -5351,212 +918,167 @@ function getAuthenticatedModalContent(widgetType) {
             </div>
             <div class="status-item active">
               <div class="status-icon">✓</div>
-              <span>프로필 검증 완료</span>
+              <span>프로필 매칭 진행</span>
             </div>
             <div class="status-item processing">
-              <div class="status-icon">⏳</div>
-              <span>호환성 매칭 진행 중</span>
+              <div class="status-icon">⟳</div>
+              <span>최적 매치 검색 중...</span>
             </div>
           </div>
+          
           <div class="matching-progress">
-            <div class="progress-text">매칭 진행도: 73%</div>
+            <div class="progress-text">매칭 진행률: 73%</div>
             <div class="progress-bar-modal">
               <div class="progress-fill-modal" style="width: 73%"></div>
             </div>
           </div>
-          <p class="matching-summary">
-            현재 12명의 호환 가능한 분들을 발견했습니다. 
-            곧 최적의 매칭 결과를 보여드릴 예정입니다.
-          </p>
         </div>
-      `,
-      actions: [
-        { text: '매칭 설정 변경', action: 'changeSettings', primary: false },
-        { text: '매칭 가속화', action: 'accelerateMatching', primary: true }
-      ]
-    },
-    'connections': {
-      title: '🌟 새로운 연결',
-      content: `
+        
         <div class="modal-section">
-          <h4>새로운 매치 알림</h4>
+          <h4>💫 예상 매칭 결과</h4>
           <div class="connections-list">
             <div class="connection-item">
-              <div class="connection-avatar">👤</div>
+              <div class="connection-avatar">👨‍💼</div>
               <div class="connection-info">
-                <div class="connection-name">김○○ 님</div>
-                <div class="connection-compatibility">가치관 호환성 92%</div>
+                <div class="connection-name">김철수님</div>
+                <div class="connection-compatibility">92% 가치관 일치</div>
                 <div class="connection-location">서울 강남구</div>
               </div>
               <div class="connection-status">새로운 매치</div>
             </div>
             <div class="connection-item">
-              <div class="connection-avatar">👤</div>
+              <div class="connection-avatar">👩‍🎨</div>
               <div class="connection-info">
-                <div class="connection-name">박○○ 님</div>
-                <div class="connection-compatibility">가치관 호환성 88%</div>
-                <div class="connection-location">서울 송파구</div>
+                <div class="connection-name">이영희님</div>
+                <div class="connection-compatibility">88% 가치관 일치</div>
+                <div class="connection-location">서울 서초구</div>
               </div>
-              <div class="connection-status">새로운 매치</div>
+              <div class="connection-status">매칭 대기</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="matching-summary">
+          <strong>🎯 매칭 팁:</strong> 가치관이 80% 이상 일치하는 분들을 우선 추천드립니다. 
+          첫 대화에서는 공통 관심사부터 이야기해보세요!
+        </div>
+      </div>
+    `,
+    actions: [
+      {
+        text: '매칭 결과 보기',
+        class: 'primary',
+        action: () => {
+          closeAllModals();
+          setTimeout(() => openConnectionsModal(), 300);
+        }
+      },
+      {
+        text: '더 정확한 매칭',
+        class: 'secondary',
+        action: () => {
+          closeAllModals();
+          showModal('더 정확한 매칭', '추가 질문을 통해 더욱 정확한 매칭을 받아보세요!\n곧 추가 설문 기능이 제공됩니다.');
+        }
+      }
+    ]
+  });
+}
+
+function openConnectionsModal() {
+  console.log('💕 새로운 연결 모달 열기');
+  showWidgetModal('새로운 연결', 'connections', {
+    icon: '💕',
+    title: '새로운 인연들',
+    content: `
+      <div class="widget-modal-content">
+        <div class="modal-section">
+          <h4>✨ 오늘의 새로운 매치</h4>
+          <div class="connections-list">
+            <div class="connection-item">
+              <div class="connection-avatar">👨‍💼</div>
+              <div class="connection-info">
+                <div class="connection-name">김철수님 (52세)</div>
+                <div class="connection-compatibility">92% 가치관 일치</div>
+                <div class="connection-location">가족 중시 • 안정 추구 • 운동 좋아함</div>
+              </div>
+              <div class="connection-status">2시간 전</div>
             </div>
             <div class="connection-item">
-              <div class="connection-avatar">👤</div>
+              <div class="connection-avatar">👩‍🎨</div>
               <div class="connection-info">
-                <div class="connection-name">이○○ 님</div>
-                <div class="connection-compatibility">가치관 호환성 87%</div>
-                <div class="connection-location">서울 마포구</div>
+                <div class="connection-name">이영희님 (48세)</div>
+                <div class="connection-compatibility">88% 가치관 일치</div>
+                <div class="connection-location">예술 애호 • 가족 중시 • 독서 좋아함</div>
               </div>
-              <div class="connection-status">새로운 매치</div>
+              <div class="connection-status">5시간 전</div>
+            </div>
+            <div class="connection-item">
+              <div class="connection-avatar">👨‍🏫</div>
+              <div class="connection-info">
+                <div class="connection-name">박민수님 (55세)</div>
+                <div class="connection-compatibility">85% 가치관 일치</div>
+                <div class="connection-location">안정 추구 • 사회 기여 • 여행 좋아함</div>
+              </div>
+              <div class="connection-status">어제</div>
             </div>
           </div>
-          <p class="connections-summary">
-            귀하와 높은 호환성을 보이는 3명의 새로운 분들을 찾았습니다.
-          </p>
         </div>
-      `,
-      actions: [
-        { text: '프로필 둘러보기', action: 'viewProfiles', primary: true },
-        { text: '메시지 보내기', action: 'sendMessage', primary: false }
-      ]
-    }
-  };
-  
-  return contents[widgetType] || contents['values'];
+        
+        <div class="modal-section">
+          <h5>📊 이번 주 연결 현황</h5>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1rem;">
+            <div style="text-align: center; padding: 1rem; background: #f8fafc; border-radius: 8px;">
+              <div style="font-size: 1.5rem; font-weight: bold; color: #667eea;">3</div>
+              <div style="font-size: 0.9rem; color: #64748b;">새로운 매치</div>
+            </div>
+            <div style="text-align: center; padding: 1rem; background: #f8fafc; border-radius: 8px;">
+              <div style="font-size: 1.5rem; font-weight: bold; color: #667eea;">7</div>
+              <div style="font-size: 0.9rem; color: #64748b;">진행 중 대화</div>
+            </div>
+            <div style="text-align: center; padding: 1rem; background: #f8fafc; border-radius: 8px;">
+              <div style="font-size: 1.5rem; font-weight: bold; color: #667eea;">15</div>
+              <div style="font-size: 0.9rem; color: #64748b;">총 연결 수</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="connections-summary">
+          <strong>💡 연결 팁:</strong> 적극적인 소통이 좋은 관계의 시작입니다. 
+          상대방의 프로필을 자세히 읽고, 공통 관심사로 대화를 시작해보세요!
+        </div>
+      </div>
+    `,
+    actions: [
+      {
+        text: '메시지 보내기',
+        class: 'primary',
+        action: () => {
+          closeAllModals();
+          showModal('메시지 보내기', '곧 실시간 채팅 기능이 추가됩니다!\n지금은 체험 버전입니다.');
+        }
+      },
+      {
+        text: '프로필 상세보기',
+        class: 'secondary',
+        action: () => {
+          closeAllModals();
+          showModal('프로필 보기', '상세 프로필 보기 기능이 곧 추가됩니다!\n더 많은 정보를 확인할 수 있을 예정입니다.');
+        }
+      }
+    ]
+  });
 }
 
-// 게스트용 모달 콘텐츠 생성
-function getGuestModalContent(widgetType) {
-  const contents = {
-    'values': {
-      title: '🎯 가치관 분석 미리보기',
-      content: `
-        <div class="modal-section">
-          <h4>가치관 분석 예시</h4>
-          <div class="guest-preview">
-            <div class="preview-item">
-              <div class="preview-icon">📊</div>
-              <div class="preview-text">
-                <h5>상세한 가치관 프로필</h5>
-                <p>AI가 분석한 당신만의 가치관 지표와 성향</p>
-              </div>
-            </div>
-            <div class="preview-item">
-              <div class="preview-icon">💡</div>
-              <div class="preview-text">
-                <h5>호환성 분석</h5>
-                <p>다른 회원들과의 가치관 호환성 점수</p>
-              </div>
-            </div>
-            <div class="preview-item">
-              <div class="preview-icon">🎨</div>
-              <div class="preview-text">
-                <h5>개인화된 추천</h5>
-                <p>가치관 기반 맞춤형 매칭 추천</p>
-              </div>
-            </div>
-          </div>
-          <p class="guest-message">
-            로그인 후 본인만의 가치관 분석을 받아보세요!
-          </p>
-        </div>
-      `,
-      actions: [
-        { text: '회원가입하기', action: 'signup', primary: true },
-        { text: '로그인하기', action: 'login', primary: false }
-      ]
-    },
-    'matching': {
-      title: '💝 AI 매칭 미리보기',
-      content: `
-        <div class="modal-section">
-          <h4>AI 매칭 서비스</h4>
-          <div class="guest-preview">
-            <div class="preview-item">
-              <div class="preview-icon">🤖</div>
-              <div class="preview-text">
-                <h5>AI 기반 매칭</h5>
-                <p>고도화된 알고리즘으로 최적의 상대 찾기</p>
-              </div>
-            </div>
-            <div class="preview-item">
-              <div class="preview-icon">⚡</div>
-              <div class="preview-text">
-                <h5>실시간 매칭</h5>
-                <p>24시간 자동으로 새로운 매칭 기회 발굴</p>
-              </div>
-            </div>
-            <div class="preview-item">
-              <div class="preview-icon">🎯</div>
-              <div class="preview-text">
-                <h5>정확한 매칭</h5>
-                <p>가치관, 취향, 라이프스타일 종합 분석</p>
-              </div>
-            </div>
-          </div>
-          <p class="guest-message">
-            지금 가입하고 AI 매칭 서비스를 경험해보세요!
-          </p>
-        </div>
-      `,
-      actions: [
-        { text: '무료 체험하기', action: 'signup', primary: true },
-        { text: '서비스 더 알아보기', action: 'learnMore', primary: false }
-      ]
-    },
-    'connections': {
-      title: '🌟 새로운 연결 미리보기',
-      content: `
-        <div class="modal-section">
-          <h4>연결 관리 서비스</h4>
-          <div class="guest-preview">
-            <div class="preview-item">
-              <div class="preview-icon">👥</div>
-              <div class="preview-text">
-                <h5>새로운 만남</h5>
-                <p>매일 새로운 매칭 기회와 연결 알림</p>
-              </div>
-            </div>
-            <div class="preview-item">
-              <div class="preview-icon">💌</div>
-              <div class="preview-text">
-                <h5>안전한 소통</h5>
-                <p>검증된 회원들과의 안전한 메시지 교환</p>
-              </div>
-            </div>
-            <div class="preview-item">
-              <div class="preview-icon">🏆</div>
-              <div class="preview-text">
-                <h5>성공 사례</h5>
-                <p>실제 커플 성사률 78%의 검증된 플랫폼</p>
-              </div>
-            </div>
-          </div>
-          <p class="guest-message">
-            지금 시작하고 새로운 인연을 만나보세요!
-          </p>
-        </div>
-      `,
-      actions: [
-        { text: '지금 시작하기', action: 'signup', primary: true },
-        { text: '성공 사례 보기', action: 'viewSuccess', primary: false }
-      ]
-    }
-  };
-  
-  return contents[widgetType] || contents['values'];
-}
-
-// 고급 모달 표시 함수
-function showAdvancedModal(title, content, actions) {
-  // 기존 모달 제거
-  const existingModal = document.querySelector('.modal-overlay');
+// ========== 공통 위젯 모달 시스템 ==========
+function showWidgetModal(title, type, config) {
+  const existingModal = document.querySelector('.widget-modal-overlay');
   if (existingModal) {
     existingModal.remove();
   }
   
-  // 모달 오버레이 생성
   const modalOverlay = document.createElement('div');
-  modalOverlay.className = 'modal-overlay widget-modal';
+  modalOverlay.className = 'widget-modal-overlay';
   modalOverlay.style.cssText = `
     position: fixed;
     top: 0;
@@ -5569,74 +1091,73 @@ function showAdvancedModal(title, content, actions) {
     align-items: center;
     z-index: 10000;
     animation: fadeIn 0.3s ease-out;
+    backdrop-filter: blur(5px);
   `;
   
-  // 모달 콘텐츠 생성
   const modalContent = document.createElement('div');
-  modalContent.className = 'modal-content widget-modal-content';
+  modalContent.className = 'widget-modal-content';
   modalContent.style.cssText = `
     background: white;
-    border-radius: 16px;
-    max-width: 500px;
-    width: 90%;
-    max-height: 80vh;
+    border-radius: 20px;
+    max-width: 600px;
+    width: 95%;
+    max-height: 90vh;
     overflow-y: auto;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
     animation: slideUp 0.4s ease-out;
-    font-size: 16px;
-    line-height: 1.6;
+    position: relative;
   `;
   
-  // 액션 버튼 생성
+  const actions = config.actions || [];
   const actionButtons = actions.map(action => 
-    `<button class="modal-action-btn ${action.primary ? 'primary' : 'secondary'}" 
-             onclick="handleModalAction('${action.action}')"
-             style="
-               ${action.primary ? 
-                 'background: #667eea; color: white; border: none;' : 
-                 'background: transparent; color: #667eea; border: 2px solid #667eea;'
-               }
-               padding: 12px 24px;
-               border-radius: 8px;
-               font-size: 14px;
-               font-weight: 600;
-               cursor: pointer;
-               margin: 0 8px;
-               transition: all 0.2s;
-               min-width: 120px;
-             "
-             onmouseover="this.style.transform='translateY(-2px)'"
-             onmouseout="this.style.transform='translateY(0)'"
-             >
+    `<button class="modal-action-btn ${action.class}" data-action="${actions.indexOf(action)}">
       ${action.text}
     </button>`
   ).join('');
   
   modalContent.innerHTML = `
-    <div class="modal-header" style="padding: 24px 24px 16px; border-bottom: 1px solid #e2e8f0;">
-      <h3 style="margin: 0; font-size: 1.5em; color: #1e293b; display: flex; align-items: center; justify-content: space-between;">
-        ${title}
-        <button class="modal-close-btn" style="
-          background: none;
-          border: none;
-          font-size: 24px;
-          color: #64748b;
-          cursor: pointer;
-          padding: 0;
-          width: 32px;
-          height: 32px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 6px;
-          transition: background 0.2s;
-        " onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='none'">×</button>
-      </h3>
+    <div class="modal-header" style="
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      padding: 1.5rem 2rem;
+      border-radius: 20px 20px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    ">
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <span style="font-size: 1.5rem;">${config.icon}</span>
+        <h2 style="margin: 0; font-size: 1.3rem;">${config.title}</h2>
+      </div>
+      <button class="modal-close-btn" style="
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        font-size: 1.5rem;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+      ">&times;</button>
     </div>
-    <div class="modal-body" style="padding: 24px;">
-      ${content}
+    
+    <div class="modal-body" style="padding: 2rem;">
+      ${config.content}
     </div>
-    <div class="modal-footer" style="padding: 16px 24px 24px; text-align: center; border-top: 1px solid #e2e8f0;">
+    
+    <div class="modal-footer" style="
+      padding: 1.5rem 2rem;
+      border-top: 1px solid #e5e7eb;
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+      background: #f8fafc;
+      border-radius: 0 0 20px 20px;
+    ">
       ${actionButtons}
     </div>
   `;
@@ -5644,12 +1165,44 @@ function showAdvancedModal(title, content, actions) {
   modalOverlay.appendChild(modalContent);
   document.body.appendChild(modalOverlay);
   
-  // 모달 닫기 기능
+  // 버튼 스타일 추가
+  const style = document.createElement('style');
+  style.textContent = `
+    .modal-action-btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+    }
+    .modal-action-btn.primary {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+    }
+    .modal-action-btn.secondary {
+      background: transparent;
+      color: #667eea;
+      border: 2px solid #667eea;
+    }
+    .modal-action-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+    .modal-close-btn:hover {
+      background: rgba(255, 255, 255, 0.3) !important;
+    }
+  `;
+  document.head.appendChild(style);
+  
+  // 이벤트 리스너 추가
   const closeBtn = modalContent.querySelector('.modal-close-btn');
   const closeModal = () => {
     modalOverlay.style.animation = 'fadeOut 0.3s ease-out';
     setTimeout(() => {
       modalOverlay.remove();
+      style.remove();
     }, 300);
   };
   
@@ -5658,75 +1211,1720 @@ function showAdvancedModal(title, content, actions) {
     if (e.target === modalOverlay) closeModal();
   });
   
-  // 키보드 지원 (ESC 키로 닫기)
-  const handleKeyPress = (e) => {
+  // 액션 버튼 이벤트
+  actions.forEach((action, index) => {
+    const btn = modalContent.querySelector(`[data-action="${index}"]`);
+    if (btn && action.action) {
+      btn.addEventListener('click', action.action);
+    }
+  });
+  
+  // ESC 키 처리
+  document.addEventListener('keydown', function handleKeyPress(e) {
     if (e.key === 'Escape') {
       closeModal();
       document.removeEventListener('keydown', handleKeyPress);
     }
-  };
-  document.addEventListener('keydown', handleKeyPress);
+  });
 }
 
-// 모달 액션 처리 함수
-function handleModalAction(action) {
-  console.log(`Modal action: ${action}`);
+function closeAllModals() {
+  const modals = document.querySelectorAll('.widget-modal-overlay, .modal-overlay');
+  modals.forEach(modal => modal.remove());
+}
+
+// ========== Features 카드 클릭 기능 ==========
+function handleFeatureClick(featureType) {
+  console.log(`🎯 Feature 카드 클릭: ${featureType}`);
   
-  switch(action) {
-    case 'signup':
-      // 기존 회원가입 모달 열기
-      document.querySelector('.modal-overlay').remove();
-      openSignupModal();
+  // 특징별 액션 분기
+  switch(featureType) {
+    case 'deepAnalysis':
+      openDeepAnalysisModal();
       break;
-    case 'login':
-      // 로그인 모달 열기 (기존 로그인 로직 사용)
-      document.querySelector('.modal-overlay').remove();
-      showModal('로그인', '로그인 기능을 구현 중입니다. 잠시만 기다려주세요.');
+    case 'aiMatching':
+      openAIMatchingModal();
       break;
-    case 'viewDetailedAnalysis':
-      showModal('상세 분석', '상세 가치관 분석 페이지로 이동합니다.');
+    case 'chatGuide':
+      openChatGuideModal();
       break;
-    case 'startMatching':
-      showModal('매칭 시작', '매칭 서비스를 시작합니다.');
-      break;
-    case 'viewProfiles':
-      showModal('프로필 보기', '매칭된 회원들의 프로필을 확인할 수 있습니다.');
-      break;
-    case 'sendMessage':
-      showModal('메시지 보내기', '안전한 메시지 시스템으로 소통하세요.');
-      break;
-    case 'learnMore':
-      showModal('서비스 소개', 'CHARM_INYEON의 더 자세한 서비스를 소개합니다.');
-      break;
-    case 'viewSuccess':
-      showModal('성공 사례', '실제 커플들의 성공 스토리를 확인하세요.');
+    case 'safeEnvironment':
+      openSafeEnvironmentModal();
       break;
     default:
-      showModal('준비 중', '해당 기능을 준비 중입니다.');
+      console.warn('알 수 없는 특징 타입:', featureType);
   }
 }
 
-// 브라우저 히스토리 관리
-// widgetHistory는 위에서 이미 선언됨 (551줄)
-
-function addToHistory(widgetType) {
-  const state = { widget: widgetType, timestamp: Date.now() };
-  widgetHistory.push(state);
-  window.history.pushState(state, '', `#widget-${widgetType}`);
+function handleFeatureKeydown(event, featureType) {
+  // 키보드 접근성: Enter 또는 Space 키 처리
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault();
+    handleFeatureClick(featureType);
+  }
 }
 
-// 브라우저 뒤로가기 처리
-window.addEventListener('popstate', (event) => {
-  const modal = document.querySelector('.modal-overlay');
-  if (modal && event.state && event.state.widget) {
-    modal.remove();
-    widgetHistory.pop();
+// ========== Features 모달 함수들 ==========
+function openDeepAnalysisModal() {
+  console.log('📊 심층 가치관 분석 모달 열기');
+  showWidgetModal('심층 가치관 분석', 'deep-analysis', {
+    icon: '📊',
+    title: '100여 개 질문으로 완성하는 정밀 가치관 분석',
+    content: `
+      <div class="widget-modal-content">
+        <div class="modal-section">
+          <h4>🔍 분석 과정</h4>
+          <div class="analysis-process">
+            <div class="process-step">
+              <div class="step-icon">📝</div>
+              <div class="step-content">
+                <h5>1단계: 기본 가치관 설문</h5>
+                <p>가족, 경제, 관계, 미래에 대한 30개 기본 질문</p>
+              </div>
+            </div>
+            <div class="process-step">
+              <div class="step-icon">💭</div>
+              <div class="step-content">
+                <h5>2단계: 심층 성향 분석</h5>
+                <p>상황별 선택 질문 40개로 세밀한 성향 파악</p>
+              </div>
+            </div>
+            <div class="process-step">
+              <div class="step-icon">🎯</div>
+              <div class="step-content">
+                <h5>3단계: 라이프스타일 분석</h5>
+                <p>취미, 여가, 생활패턴 등 30개 질문으로 완성</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-section">
+          <h4>📊 분석 결과 리포트</h4>
+          <div class="analysis-results">
+            <div class="result-category">
+              <div class="category-icon">💝</div>
+              <div class="category-info">
+                <h5>가치관 매트릭스</h5>
+                <p>8개 주요 가치관 영역별 점수와 순위</p>
+              </div>
+            </div>
+            <div class="result-category">
+              <div class="category-icon">🧠</div>
+              <div class="category-info">
+                <h5>성격 유형 분석</h5>
+                <p>MBTI 기반 확장 성격 분석 결과</p>
+              </div>
+            </div>
+            <div class="result-category">
+              <div class="category-icon">🌟</div>
+              <div class="category-info">
+                <h5>매칭 적합도</h5>
+                <p>이상형 조건과 현실적 매칭 가능성</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-section">
+          <h4>⏱️ 분석 소요 시간</h4>
+          <div class="timing-info">
+            <div class="time-estimate">
+              <span class="time-duration">15-20분</span>
+              <span class="time-desc">설문 응답 시간</span>
+            </div>
+            <div class="time-estimate">
+              <span class="time-duration">2-3분</span>
+              <span class="time-desc">AI 분석 처리</span>
+            </div>
+            <div class="time-estimate">
+              <span class="time-duration">평생</span>
+              <span class="time-desc">결과 열람 가능</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="analysis-summary">
+          <strong>🎯 분석의 특별함:</strong> 단순한 성격 테스트를 넘어 중장년층의 
+          인생 경험과 현재 상황을 반영한 깊이 있는 가치관 분석을 제공합니다.
+          매칭 정확도 향상은 물론, 자신을 더 잘 이해하는 계기가 됩니다.
+        </div>
+      </div>
+    `,
+    actions: [
+      {
+        text: '가치관 분석 시작하기',
+        class: 'primary',
+        action: () => {
+          closeAllModals();
+          window.location.href = 'values-assessment.html';
+        }
+      },
+      {
+        text: '샘플 결과 보기',
+        class: 'secondary',
+        action: () => {
+          closeAllModals();
+          setTimeout(() => openValuesAnalysisModal(), 300);
+        }
+      }
+    ]
+  });
+}
+
+function openAIMatchingModal() {
+  console.log('🤖 스마트 AI 매칭 모달 열기');
+  showWidgetModal('스마트 AI 매칭', 'ai-matching', {
+    icon: '🤖',
+    title: '머신러닝 기반 정밀 매칭 시스템',
+    content: `
+      <div class="widget-modal-content">
+        <div class="modal-section">
+          <h4>🧠 AI 매칭 알고리즘</h4>
+          <div class="ai-features">
+            <div class="ai-feature">
+              <div class="feature-icon">⚡</div>
+              <div class="feature-content">
+                <h5>실시간 학습</h5>
+                <p>매칭 성공 사례를 분석하여 알고리즘 지속 개선</p>
+              </div>
+            </div>
+            <div class="ai-feature">
+              <div class="feature-icon">🎯</div>
+              <div class="feature-content">
+                <h5>다차원 분석</h5>
+                <p>가치관, 성격, 라이프스타일 등 50개 이상 변수 고려</p>
+              </div>
+            </div>
+            <div class="ai-feature">
+              <div class="feature-icon">📈</div>
+              <div class="feature-content">
+                <h5>예측 모델링</h5>
+                <p>장기 관계 지속 가능성까지 예측하여 매칭</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-section">
+          <h4>🔄 매칭 과정</h4>
+          <div class="matching-flow">
+            <div class="flow-step">
+              <div class="step-number">1</div>
+              <div class="step-description">
+                <h5>프로필 분석</h5>
+                <p>가치관 분석 결과를 AI가 심층 분석</p>
+              </div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="step-number">2</div>
+              <div class="step-description">
+                <h5>후보군 스크리닝</h5>
+                <p>전체 회원 중 기본 조건 부합자 선별</p>
+              </div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="step-number">3</div>
+              <div class="step-description">
+                <h5>호환성 계산</h5>
+                <p>다차원 알고리즘으로 호환성 점수 산출</p>
+              </div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="step-number">4</div>
+              <div class="step-description">
+                <h5>최적 매치 추천</h5>
+                <p>상위 호환성 순으로 맞춤 추천</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-section">
+          <h4>📊 매칭 성과</h4>
+          <div class="matching-stats">
+            <div class="stat-item">
+              <div class="stat-value">94%</div>
+              <div class="stat-label">첫 대화 성공률</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">78%</div>
+              <div class="stat-label">실제 만남 전환율</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">63%</div>
+              <div class="stat-label">6개월 이상 관계 지속</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="analysis-summary">
+          <strong>🎯 매칭의 차별점:</strong> 단순한 외모나 조건 매칭이 아닌, 
+          깊이 있는 가치관과 성격 호환성을 바탕으로 한 진정한 매칭입니다. 
+          중장년층의 성숙한 관계 형성을 위한 최적화된 알고리즘입니다.
+        </div>
+      </div>
+    `,
+    actions: [
+      {
+        text: '매칭 시작하기',
+        class: 'primary',
+        action: () => {
+          closeAllModals();
+          setTimeout(() => openMatchingModal(), 300);
+        }
+      },
+      {
+        text: '매칭 과정 체험',
+        class: 'secondary',
+        action: () => {
+          closeAllModals();
+          showModal('매칭 체험', '🔄 AI 매칭 과정 체험하기\n\n실제 매칭 과정을 단계별로 체험해볼 수 있는\n데모 모드가 곧 추가됩니다!\n\n현재는 가치관 분석 완료 후 자동으로\n매칭 과정이 시작됩니다.');
+        }
+      }
+    ]
+  });
+}
+
+function openChatGuideModal() {
+  console.log('💬 대화 가이드 모달 열기');
+  showWidgetModal('대화 가이드', 'chat-guide', {
+    icon: '💬',
+    title: 'AI 기반 개인 맞춤형 대화 가이드',
+    content: `
+      <div class="widget-modal-content">
+        <div class="modal-section">
+          <h4>🎯 대화 가이드 기능</h4>
+          <div class="guide-features">
+            <div class="guide-feature">
+              <div class="feature-icon">💡</div>
+              <div class="feature-content">
+                <h5>상황별 대화 주제</h5>
+                <p>첫 만남부터 깊은 관계까지 단계별 대화 주제 제안</p>
+              </div>
+            </div>
+            <div class="guide-feature">
+              <div class="feature-icon">🎪</div>
+              <div class="feature-content">
+                <h5>대화 분위기 분석</h5>
+                <p>실시간 대화 흐름을 분석하여 적절한 반응 가이드</p>
+              </div>
+            </div>
+            <div class="guide-feature">
+              <div class="feature-icon">🎭</div>
+              <div class="feature-content">
+                <h5>성격 맞춤 조언</h5>
+                <p>상대방 성격에 맞는 최적의 소통 방법 제안</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-section">
+          <h4>📝 대화 주제 카테고리</h4>
+          <div class="topic-categories">
+            <div class="topic-category">
+              <div class="category-icon">☕</div>
+              <div class="category-name">첫 만남</div>
+              <div class="category-desc">안전하고 편안한 아이스브레이킹 주제</div>
+            </div>
+            <div class="topic-category">
+              <div class="category-icon">🌟</div>
+              <div class="category-name">관심사 공유</div>
+              <div class="category-desc">취미, 여행, 문화 등 공통 관심사 발견</div>
+            </div>
+            <div class="topic-category">
+              <div class="category-icon">❤️</div>
+              <div class="category-name">깊은 이야기</div>
+              <div class="category-desc">인생 경험, 가치관, 미래 계획 등</div>
+            </div>
+            <div class="topic-category">
+              <div class="category-icon">🏡</div>
+              <div class="category-name">일상 대화</div>
+              <div class="category-desc">편안한 일상 대화와 유머 소재</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-section">
+          <h4>🛠️ 대화 지원 도구</h4>
+          <div class="support-tools">
+            <div class="tool-item">
+              <div class="tool-icon">📱</div>
+              <div class="tool-info">
+                <h5>실시간 조언</h5>
+                <p>대화 중 막힐 때 즉시 도움말 제공</p>
+              </div>
+            </div>
+            <div class="tool-item">
+              <div class="tool-icon">🎯</div>
+              <div class="tool-info">
+                <h5>응답 예시</h5>
+                <p>상황별 자연스러운 응답 예시 제공</p>
+              </div>
+            </div>
+            <div class="tool-item">
+              <div class="tool-icon">⚡</div>
+              <div class="tool-info">
+                <h5>대화 플로우</h5>
+                <p>대화 흐름 분석 및 다음 단계 제안</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-section">
+          <h4>📈 대화 성공 통계</h4>
+          <div class="conversation-stats">
+            <div class="conv-stat">
+              <div class="stat-icon">💬</div>
+              <div class="stat-info">
+                <div class="stat-number">91%</div>
+                <div class="stat-text">가이드 사용 시 대화 성공률</div>
+              </div>
+            </div>
+            <div class="conv-stat">
+              <div class="stat-icon">📞</div>
+              <div class="stat-info">
+                <div class="stat-number">76%</div>
+                <div class="stat-text">전화통화 전환율</div>
+              </div>
+            </div>
+            <div class="conv-stat">
+              <div class="stat-icon">☕</div>
+              <div class="stat-info">
+                <div class="stat-number">68%</div>
+                <div class="stat-text">오프라인 만남 성사율</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="analysis-summary">
+          <strong>💡 대화의 비밀:</strong> 40-60세 연령대는 진정성 있는 대화를 
+          가장 중요하게 생각합니다. AI가 각자의 성격과 상황에 맞는 
+          자연스러운 대화법을 안내하여 어색함 없는 소통을 도와드립니다.
+        </div>
+      </div>
+    `,
+    actions: [
+      {
+        text: '대화 가이드 체험하기',
+        class: 'primary',
+        action: () => {
+          closeAllModals();
+          showModal('대화 가이드 체험', '💬 AI 대화 가이드 체험판\n\n실제 대화 상황에서 AI가 어떻게 도움을 주는지\n체험해볼 수 있는 기능이 곧 추가됩니다!\n\n현재는 매칭 완료 후 이용 가능합니다.');
+        }
+      },
+      {
+        text: '대화 팁 모음 보기',
+        class: 'secondary',
+        action: () => {
+          closeAllModals();
+          showModal('중장년층 대화 팁', '💡 성공적인 첫 대화를 위한 팁\n\n1. 진정성 있게 접근하기\n2. 공통 관심사부터 시작\n3. 상대방 이야기에 집중\n4. 자연스러운 질문하기\n5. 너무 개인적인 질문은 피하기\n\n경험과 지혜가 있는 만큼 여유롭게!');
+        }
+      }
+    ]
+  });
+}
+
+function openSafeEnvironmentModal() {
+  console.log('🔒 안전한 환경 모달 열기');
+  showWidgetModal('안전한 환경', 'safe-environment', {
+    icon: '🛡️',
+    title: '신뢰할 수 있는 안전한 만남의 공간',
+    content: `
+      <div class="widget-modal-content">
+        <div class="modal-section">
+          <h4>🔐 다단계 보안 시스템</h4>
+          <div class="security-layers">
+            <div class="security-item">
+              <div class="security-icon">📱</div>
+              <div class="security-info">
+                <h5>휴대폰 본인 인증</h5>
+                <p>SMS 인증으로 가짜 계정 원천 차단</p>
+                <div class="security-status">✅ 필수</div>
+              </div>
+            </div>
+            <div class="security-item">
+              <div class="security-icon">🆔</div>
+              <div class="security-info">
+                <h5>신분증 확인</h5>
+                <p>AI 기반 신분증 진위 여부 자동 검증</p>
+                <div class="security-status">✅ 권장</div>
+              </div>
+            </div>
+            <div class="security-item">
+              <div class="security-icon">🤖</div>
+              <div class="security-info">
+                <h5>AI 행동 패턴 분석</h5>
+                <p>의심스러운 활동 실시간 모니터링</p>
+                <div class="security-status">🔄 자동</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-section">
+          <h4>🚨 사기 방지 시스템</h4>
+          <div class="fraud-prevention">
+            <div class="prevention-feature">
+              <div class="prevention-icon">🔍</div>
+              <div class="prevention-content">
+                <h5>프로필 사진 검증</h5>
+                <p>역방향 이미지 검색으로 도용 사진 탐지</p>
+              </div>
+            </div>
+            <div class="prevention-feature">
+              <div class="prevention-icon">💰</div>
+              <div class="prevention-content">
+                <h5>금전 요구 차단</h5>
+                <p>돈 관련 키워드 자동 감지 및 경고</p>
+              </div>
+            </div>
+            <div class="prevention-feature">
+              <div class="prevention-icon">📍</div>
+              <div class="prevention-content">
+                <h5>안전한 첫 만남 장소</h5>
+                <p>공공장소 위주 만남 장소 추천</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-section">
+          <h4>📊 안전 통계</h4>
+          <div class="safety-stats">
+            <div class="safety-metric">
+              <div class="metric-value">99.7%</div>
+              <div class="metric-label">검증된 회원 비율</div>
+            </div>
+            <div class="safety-metric">
+              <div class="metric-value">0.1%</div>
+              <div class="metric-label">신고 사례 비율</div>
+            </div>
+            <div class="safety-metric">
+              <div class="metric-value">24시간</div>
+              <div class="metric-label">신고 처리 시간</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-section">
+          <h4>🛟 안전 가이드라인</h4>
+          <div class="safety-guidelines">
+            <div class="guideline-item">✅ 첫 만남은 카페, 레스토랑 등 공공장소에서</div>
+            <div class="guideline-item">✅ 개인정보(주소, 직장) 공유는 신중하게</div>
+            <div class="guideline-item">✅ 의심스러운 행동은 즉시 신고</div>
+            <div class="guideline-item">✅ 금전 관련 요구 시 즉시 차단</div>
+          </div>
+        </div>
+        
+        <div class="analysis-summary">
+          <strong>🛡️ 안전 약속:</strong> CHARM_INYEON은 중장년층의 소중한 
+          만남이 안전하고 신뢰할 수 있는 환경에서 이루어질 수 있도록 
+          최선을 다하고 있습니다. 24시간 모니터링과 즉시 대응 체계를 운영합니다.
+        </div>
+      </div>
+    `,
+    actions: [
+      {
+        text: '안전 신고하기',
+        class: 'primary',
+        action: () => {
+          closeAllModals();
+          showModal('안전 신고', '🚨 의심스러운 활동을 발견하셨나요?\n\n• 신고 이메일: safety@charm-inyeon.com\n• 신고 전화: 1588-0000 (24시간)\n• 앱 내 신고 버튼 이용\n\n모든 신고는 24시간 내 처리됩니다.');
+        }
+      },
+      {
+        text: '안전 가이드 전체보기',
+        class: 'secondary',
+        action: () => {
+          closeAllModals();
+          showModal('안전 가이드', '📋 CHARM_INYEON 안전 가이드\n\n1. 계정 보안 관리\n2. 첫 만남 안전 수칙\n3. 개인정보 보호 방법\n4. 의심스러운 상황 대처법\n5. 신고 및 차단 방법\n\n자세한 가이드는 곧 업데이트됩니다!');
+        }
+      }
+    ]
+  });
+}
+
+// ========== How It Works 단계 클릭 기능 ==========
+function handleStepClick(stepType) {
+  console.log(`👣 How It Works 단계 클릭: ${stepType}`);
+  
+  // 단계별 액션 분기
+  switch(stepType) {
+    case 'valuesAssessment':
+      openValuesAssessmentStepModal();
+      break;
+    case 'smartMatching':
+      openSmartMatchingStepModal();
+      break;
+    case 'meaningfulMeeting':
+      openMeaningfulMeetingStepModal();
+      break;
+    default:
+      console.warn('알 수 없는 단계 타입:', stepType);
   }
-});
+}
 
-// 페이지 로드 시 위젯 기능 초기화
-window.addEventListener('load', () => {
-  console.log('위젯 클릭 기능이 초기화되었습니다!');
-});
+function handleStepKeydown(event, stepType) {
+  // 키보드 접근성: Enter 또는 Space 키 처리
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault();
+    handleStepClick(stepType);
+  }
+}
 
-console.log('script.js 로드 완료!');
+// ========== How It Works 모달 함수들 ==========
+function openValuesAssessmentStepModal() {
+  console.log('📊 가치관 진단 단계 모달 열기');
+  showWidgetModal('가치관 진단', 'values-assessment-step', {
+    icon: '🧠',
+    title: '1단계: 당신의 가치관을 알아가는 시간',
+    content: `
+      <div class="widget-modal-content">
+        <div class="modal-section">
+          <h4>🔍 진단 과정 상세</h4>
+          <div class="assessment-stages">
+            <div class="stage-item">
+              <div class="stage-icon">📝</div>
+              <div class="stage-info">
+                <h5>개인 기본 정보</h5>
+                <p>연령, 직업, 거주지역 등 기본 정보 입력 (5분)</p>
+              </div>
+            </div>
+            <div class="stage-item">
+              <div class="stage-icon">❤️</div>
+              <div class="stage-info">
+                <h5>가치관 설문 1부</h5>
+                <p>가족, 직업, 인간관계에 대한 핵심 가치관 (10분)</p>
+              </div>
+            </div>
+            <div class="stage-item">
+              <div class="stage-icon">🎆</div>
+              <div class="stage-info">
+                <h5>가치관 설문 2부</h5>
+                <p>라이프스타일, 취미, 미래 계획에 대한 선호도 (10분)</p>
+              </div>
+            </div>
+            <div class="stage-item">
+              <div class="stage-icon">📊</div>
+              <div class="stage-info">
+                <h5>심층 성격 분석</h5>
+                <p>의사결정 스타일, 소통 방식 등 성격 영역 (5분)</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-section">
+          <h4>📈 진단 결과 샘플</h4>
+          <div class="assessment-results">
+            <div class="result-preview">
+              <h5>🎯 가치관 프로필 예시</h5>
+              <div class="value-chart">
+                <div class="value-bar-item">
+                  <span>가족 중심</span>
+                  <div class="progress-bar"><div class="progress" style="width: 85%"></div></div>
+                  <span>85%</span>
+                </div>
+                <div class="value-bar-item">
+                  <span>안정 추구</span>
+                  <div class="progress-bar"><div class="progress" style="width: 78%"></div></div>
+                  <span>78%</span>
+                </div>
+                <div class="value-bar-item">
+                  <span>사회 참여</span>
+                  <div class="progress-bar"><div class="progress" style="width: 65%"></div></div>
+                  <span>65%</span>
+                </div>
+                <div class="value-bar-item">
+                  <span>성장 지향</span>
+                  <div class="progress-bar"><div class="progress" style="width: 72%"></div></div>
+                  <span>72%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-section">
+          <h4>⚡ 진단의 특징</h4>
+          <div class="assessment-features">
+            <div class="feature-item">
+              <div class="feature-icon">📝</div>
+              <div class="feature-text">
+                <strong>중장년층 맞춤 설계</strong>
+                <p>인생 경험과 현실을 반영한 전문적 질문</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon">🧠</div>
+              <div class="feature-text">
+                <strong>AI 기반 예측</strong>
+                <p>답변 패턴을 분석하여 숨겨진 성향까지 파악</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon">🔄</div>
+              <div class="feature-text">
+                <strong>업데이트 가능</strong>
+                <p>시간이 지나면서 변화하는 가치관을 재진단</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="analysis-summary">
+          <strong>💖 진단의 가치:</strong> 단순한 취향 조사가 아닌, 인생의 깊이와 
+          지혜를 반영한 진정한 가치관 분석을 통해 더 의미 있는 인연을 만들어갑니다.
+        </div>
+      </div>
+    `,
+    actions: [
+      {
+        text: '가치관 진단 시작하기',
+        class: 'primary',
+        action: () => {
+          closeAllModals();
+          window.location.href = 'values-assessment.html';
+        }
+      },
+      {
+        text: '진단 예시 보기',
+        class: 'secondary',
+        action: () => {
+          closeAllModals();
+          setTimeout(() => openValuesAnalysisModal(), 300);
+        }
+      }
+    ]
+  });
+}
+
+function openSmartMatchingStepModal() {
+  console.log('🤖 스마트 매칭 단계 모달 열기');
+  showWidgetModal('스마트 매칭', 'smart-matching-step', {
+    icon: '🤖',
+    title: '2단계: AI가 찾아주는 운명의 인연',
+    content: `
+      <div class="widget-modal-content">
+        <div class="modal-section">
+          <h4>📈 매칭 알고리즘 단계</h4>
+          <div class="matching-process">
+            <div class="process-stage">
+              <div class="stage-number">1</div>
+              <div class="stage-content">
+                <h5>프로필 비교 분석</h5>
+                <p>당신의 가치관 프로필과 다른 회원들의 프로필을 AI가 비교 분석</p>
+              </div>
+            </div>
+            <div class="process-stage">
+              <div class="stage-number">2</div>
+              <div class="stage-content">
+                <h5>호환성 점수 계산</h5>
+                <p>50개 이상의 변수를 고려한 정밀한 호환성 점수 산출</p>
+              </div>
+            </div>
+            <div class="process-stage">
+              <div class="stage-number">3</div>
+              <div class="stage-content">
+                <h5>조건 필터링</h5>
+                <p>나이, 지역, 교육수준 등 기본 조건을 만족하는 후보군 선별</p>
+              </div>
+            </div>
+            <div class="process-stage">
+              <div class="stage-number">4</div>
+              <div class="stage-content">
+                <h5>최종 매칭 추천</h5>
+                <p>최고 호환성 순으로 정렬하여 가장 적합한 상대 3-5명 추천</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-section">
+          <h4>🎯 매칭 기준</h4>
+          <div class="matching-criteria">
+            <div class="criteria-weights">
+              <div class="weight-item">
+                <span class="criteria-name">가치관 일치도</span>
+                <div class="weight-bar">
+                  <div class="weight-fill" style="width: 40%"></div>
+                </div>
+                <span class="weight-percent">40%</span>
+              </div>
+              <div class="weight-item">
+                <span class="criteria-name">라이프스타일 유사도</span>
+                <div class="weight-bar">
+                  <div class="weight-fill" style="width: 25%"></div>
+                </div>
+                <span class="weight-percent">25%</span>
+              </div>
+              <div class="weight-item">
+                <span class="criteria-name">성격 호환성</span>
+                <div class="weight-bar">
+                  <div class="weight-fill" style="width: 20%"></div>
+                </div>
+                <span class="weight-percent">20%</span>
+              </div>
+              <div class="weight-item">
+                <span class="criteria-name">관심사 공통점</span>
+                <div class="weight-bar">
+                  <div class="weight-fill" style="width: 10%"></div>
+                </div>
+                <span class="weight-percent">10%</span>
+              </div>
+              <div class="weight-item">
+                <span class="criteria-name">지역적 근접성</span>
+                <div class="weight-bar">
+                  <div class="weight-fill" style="width: 5%"></div>
+                </div>
+                <span class="weight-percent">5%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-section">
+          <h4>🎆 매칭 예시</h4>
+          <div class="match-example">
+            <div class="example-match">
+              <div class="match-header">
+                <span class="match-score">92%</span>
+                <span class="match-label">호환성</span>
+              </div>
+              <div class="match-details">
+                <h5>김청수님 (54세, 서울 강남)</h5>
+                <div class="match-reasons">
+                  <span class="reason-tag">가족 중심 95% 일치</span>
+                  <span class="reason-tag">안정 추구 88% 일치</span>
+                  <span class="reason-tag">취미 3개 공통</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="analysis-summary">
+          <strong>🤖 AI의 역할:</strong> 단순한 조건 매칭이 아닌, 심리학과 데이터 과학을 기반으로 
+          장기적으로 행복한 관계를 만들 수 있는 상대를 찾아드립니다.
+        </div>
+      </div>
+    `,
+    actions: [
+      {
+        text: '매칭 예시 보기',
+        class: 'primary',
+        action: () => {
+          closeAllModals();
+          setTimeout(() => openMatchingModal(), 300);
+        }
+      },
+      {
+        text: '매칭 기준 자세히',
+        class: 'secondary',
+        action: () => {
+          closeAllModals();
+          setTimeout(() => openAIMatchingModal(), 300);
+        }
+      }
+    ]
+  });
+}
+
+function openMeaningfulMeetingStepModal() {
+  console.log('💕 의미 있는 만남 단계 모달 열기');
+  showWidgetModal('의미 있는 만남', 'meaningful-meeting-step', {
+    icon: '💕',
+    title: '3단계: 진정한 연결의 시작',
+    content: `
+      <div class="widget-modal-content">
+        <div class="modal-section">
+          <h4>🎆 만남의 단계별 가이드</h4>
+          <div class="meeting-stages">
+            <div class="meeting-stage">
+              <div class="stage-icon">💬</div>
+              <div class="stage-info">
+                <h5>첫 대화 시작</h5>
+                <p>AI가 두 분의 공통점을 분석하여 자연스러운 대화 주제 제안</p>
+              </div>
+            </div>
+            <div class="meeting-stage">
+              <div class="stage-icon">☕</div>
+              <div class="stage-info">
+                <h5>첫 만남 준비</h5>
+                <p>안전하고 편안한 장소 추천 및 대화 가이드 제공</p>
+              </div>
+            </div>
+            <div class="meeting-stage">
+              <div class="stage-icon">💖</div>
+              <div class="stage-info">
+                <h5>관계 발전 지원</h5>
+                <p>만남 후 피드백을 바탕으로 다음 단계 조언 제공</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-section">
+          <h4>💬 대화 가이드 예시</h4>
+          <div class="conversation-examples">
+            <div class="conversation-card">
+              <div class="conv-header">
+                <span class="conv-topic">첫 대화 주제</span>
+                <span class="conv-time">5-10분</span>
+              </div>
+              <div class="conv-content">
+                <p><strong>"여행을 좋아하신다고 하셨는데, 가장 기억에 남는 여행이 있으신가요?"</strong></p>
+                <small>공통 관심사를 통한 자연스러운 시작</small>
+              </div>
+            </div>
+            <div class="conversation-card">
+              <div class="conv-header">
+                <span class="conv-topic">심화 대화</span>
+                <span class="conv-time">15-20분</span>
+              </div>
+              <div class="conv-content">
+                <p><strong>"인생에서 가장 소중히 여기는 것은 무엇인가요?"</strong></p>
+                <small>가치관 일치도가 높은 두 분이니 자연스럽게 연결</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-section">
+          <h4>🎯 만남 성공 도구</h4>
+          <div class="meeting-tools">
+            <div class="tool-feature">
+              <div class="tool-icon">📏</div>
+              <div class="tool-info">
+                <h5>만남 체크리스트</h5>
+                <p>첫 만남 전에 확인할 사항들을 체크리스트로 제공</p>
+              </div>
+            </div>
+            <div class="tool-feature">
+              <div class="tool-icon">📍</div>
+              <div class="tool-info">
+                <h5>장소 추천</h5>
+                <p>두 분의 위치와 선호도를 고려한 최적의 만남 장소 추천</p>
+              </div>
+            </div>
+            <div class="tool-feature">
+              <div class="tool-icon">🕰️</div>
+              <div class="tool-info">
+                <h5>시간 가이드</h5>
+                <p>첫 만남 적정 시간과 대화 페이스 조절 팁</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-section">
+          <h4>📈 만남 성공 통계</h4>
+          <div class="meeting-stats">
+            <div class="stat-box">
+              <div class="stat-number">89%</div>
+              <div class="stat-label">첫 만남 만족도</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-number">76%</div>
+              <div class="stat-label">두 번째 만남 성사율</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-number">68%</div>
+              <div class="stat-label">3개월 이상 관계 지속</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="analysis-summary">
+          <strong>🎆 만남의 의미:</strong> 단순한 소개팅을 넘어서, 어색함 없이 자연스럽게 
+          시작되는 진정한 관계를 만들어갑니다. AI가 두 분의 막힐 때를 없애드립니다.
+        </div>
+      </div>
+    `,
+    actions: [
+      {
+        text: '대화 가이드 체험',
+        class: 'primary',
+        action: () => {
+          closeAllModals();
+          setTimeout(() => openChatGuideModal(), 300);
+        }
+      },
+      {
+        text: '만남 준비 팁',
+        class: 'secondary',
+        action: () => {
+          closeAllModals();
+          showModal('만남 준비 가이드', '☕ 성공적인 첫 만남을 위한 팁\n\n1. 첫 만남은 카페나 레스토랑에서\n2. 1-2시간 정도의 적당한 시간\n3. 청결한 옵장과 자연스러운 모습\n4. 핸드폰은 매너모드로\n5. 과도한 기대보다 여유로운 마음\n\n자연스러운 만남이 최고입니다!');
+        }
+      }
+    ]
+  });
+}
+
+// ========== About 카드 클릭 기능 ==========
+function handleAboutCardClick(cardType) {
+  console.log(`📋 About 카드 클릭: ${cardType}`);
+  
+  // 카드별 액션 분기
+  switch(cardType) {
+    case 'values':
+      openValuesAnalysisDetailModal();
+      break;
+    case 'matching':
+      openMatchingDetailModal();
+      break;
+    case 'senior':
+      openSeniorSpecializedModal();
+      break;
+    default:
+      console.warn('알 수 없는 카드 타입:', cardType);
+  }
+}
+
+function handleAboutCardKeydown(event, cardType) {
+  // 키보드 접근성: Enter 또는 Space 키 처리
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault();
+    handleAboutCardClick(cardType);
+  }
+}
+
+// ========== About 카드 상세 모달들 ==========
+function openValuesAnalysisDetailModal() {
+  console.log('💎 가치관 분석 상세 모달 열기');
+  showWidgetModal('AI 가치관 분석', 'values-detail', {
+    icon: '🧠',
+    title: 'AI 기반 가치관 분석 시스템',
+    content: `
+      <div class="widget-modal-content">
+        <div class="modal-section">
+          <h4>🎯 분석 과정</h4>
+          <div class="process-steps">
+            <div class="step-item">
+              <div class="step-number">1</div>
+              <div class="step-content">
+                <h5>심층 질문 100개</h5>
+                <p>인생관, 가족관, 사회관, 연애관 등 다각도 질문</p>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-number">2</div>
+              <div class="step-content">
+                <h5>AI 패턴 분석</h5>
+                <p>머신러닝 알고리즘으로 가치관 패턴 도출</p>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-number">3</div>
+              <div class="step-content">
+                <h5>개인화된 리포트</h5>
+                <p>상세한 분석 결과와 개선 방향 제시</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-section">
+          <h4>📊 분석 항목</h4>
+          <div class="analysis-categories">
+            <div class="category-tag">가족 중시도</div>
+            <div class="category-tag">안정 추구성</div>
+            <div class="category-tag">성장 지향성</div>
+            <div class="category-tag">사회 기여도</div>
+            <div class="category-tag">소통 스타일</div>
+            <div class="category-tag">라이프스타일</div>
+            <div class="category-tag">미래 계획성</div>
+            <div class="category-tag">감정 표현</div>
+          </div>
+        </div>
+        
+        <div class="analysis-summary">
+          <strong>🎯 분석의 특별함:</strong> 단순한 성격 테스트를 넘어 중장년층의 
+          인생 경험과 현재 상황을 반영한 깊이 있는 가치관 분석을 제공합니다.
+        </div>
+      </div>
+    `,
+    actions: [
+      {
+        text: '가치관 분석 시작하기',
+        class: 'primary',
+        action: () => {
+          closeAllModals();
+          window.location.href = 'values-assessment.html';
+        }
+      },
+      {
+        text: '샘플 결과 보기',
+        class: 'secondary',
+        action: () => {
+          closeAllModals();
+          setTimeout(() => openValuesAnalysisModal(), 300);
+        }
+      }
+    ]
+  });
+}
+
+function openMatchingDetailModal() {
+  console.log('💕 매칭 상세 모달 열기');
+  showWidgetModal('의미 있는 매칭', 'matching-detail', {
+    icon: '❤️',
+    title: '가치관 기반 매칭 시스템',
+    content: `
+      <div class="widget-modal-content">
+        <div class="modal-section">
+          <h4>🎯 매칭 알고리즘</h4>
+          <div class="matching-algorithm">
+            <div class="algorithm-step">
+              <div class="algorithm-icon">🧮</div>
+              <div class="algorithm-content">
+                <h5>가중치 기반 계산</h5>
+                <div class="weight-breakdown">
+                  <div class="weight-item">
+                    <span>가치관 일치도</span>
+                    <div class="weight-bar">
+                      <div class="weight-fill" style="width: 40%"></div>
+                    </div>
+                    <span>40%</span>
+                  </div>
+                  <div class="weight-item">
+                    <span>라이프스타일</span>
+                    <div class="weight-bar">
+                      <div class="weight-fill" style="width: 30%"></div>
+                    </div>
+                    <span>30%</span>
+                  </div>
+                  <div class="weight-item">
+                    <span>관심사 유사도</span>
+                    <div class="weight-bar">
+                      <div class="weight-fill" style="width: 20%"></div>
+                    </div>
+                    <span>20%</span>
+                  </div>
+                  <div class="weight-item">
+                    <span>지역적 근접성</span>
+                    <div class="weight-bar">
+                      <div class="weight-fill" style="width: 10%"></div>
+                    </div>
+                    <span>10%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-section">
+          <h4>✨ 매칭 성공률</h4>
+          <div class="success-stats">
+            <div class="stat-box">
+              <div class="stat-number">87%</div>
+              <div class="stat-label">전체 매칭 성공률</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-number">73%</div>
+              <div class="stat-label">3개월 이상 지속</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-number">94%</div>
+              <div class="stat-label">사용자 만족도</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="matching-summary">
+          <strong>💡 매칭의 차별점:</strong> 외모나 나이가 아닌 진정한 내면의 
+          가치관 일치를 통해 오래 지속되는 의미 있는 관계를 만들어갑니다.
+        </div>
+      </div>
+    `,
+    actions: [
+      {
+        text: '매칭 시작하기',
+        class: 'primary',
+        action: () => {
+          closeAllModals();
+          setTimeout(() => openMatchingModal(), 300);
+        }
+      },
+      {
+        text: '성공 사례 보기',
+        class: 'secondary',
+        action: () => {
+          closeAllModals();
+          showModal('성공 사례', '실제 CHARM_INYEON을 통해 만난 커플들의 감동적인 이야기들을 곧 공개할 예정입니다!\n\n지금까지 200여 쌍의 성공적인 매칭이 이루어졌습니다.');
+        }
+      }
+    ]
+  });
+}
+
+function openSeniorSpecializedModal() {
+  console.log('🌟 4060 특화 모달 열기');
+  showWidgetModal('4060 특화 플랫폼', 'senior-detail', {
+    icon: '👥',
+    title: '중장년층 맞춤형 서비스',
+    content: `
+      <div class="widget-modal-content">
+        <div class="modal-section">
+          <h4>🎯 4060세대 특화 기능</h4>
+          <div class="senior-features">
+            <div class="feature-row">
+              <div class="feature-icon">👁️</div>
+              <div class="feature-info">
+                <h5>큰 글씨와 간편한 UI</h5>
+                <p>시각적 편의성을 고려한 직관적인 인터페이스</p>
+              </div>
+            </div>
+            <div class="feature-row">
+              <div class="feature-icon">🛡️</div>
+              <div class="feature-info">
+                <h5>안전성 강화</h5>
+                <p>철저한 본인 인증과 사기 방지 시스템</p>
+              </div>
+            </div>
+            <div class="feature-row">
+              <div class="feature-icon">💼</div>
+              <div class="feature-info">
+                <h5>재혼 및 황혼 연애 지원</h5>
+                <p>인생 2막을 위한 전문적인 매칭 서비스</p>
+              </div>
+            </div>
+            <div class="feature-row">
+              <div class="feature-icon">🏥</div>
+              <div class="feature-info">
+                <h5>건강 상태 고려</h5>
+                <p>건강 정보를 반영한 현실적인 매칭</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-section">
+          <h4>📊 4060세대 매칭 현황</h4>
+          <div class="senior-stats">
+            <div class="senior-stat">
+              <div class="stat-circle">
+                <div class="stat-value">1,247</div>
+              </div>
+              <div class="stat-desc">활성 회원 수</div>
+            </div>
+            <div class="senior-stat">
+              <div class="stat-circle">
+                <div class="stat-value">156</div>
+              </div>
+              <div class="stat-desc">이번 달 매칭</div>
+            </div>
+            <div class="senior-stat">
+              <div class="stat-circle">
+                <div class="stat-value">92%</div>
+              </div>
+              <div class="stat-desc">재가입률</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="connections-summary">
+          <strong>🌟 4060세대의 특별함:</strong> 풍부한 인생 경험과 성숙한 가치관을 
+          바탕으로 한 진정성 있는 만남을 추구하는 분들을 위한 전문 플랫폼입니다.
+        </div>
+      </div>
+    `,
+    actions: [
+      {
+        text: '지금 가입하기',
+        class: 'primary',
+        action: () => {
+          closeAllModals();
+          window.location.href = 'signup.html';
+        }
+      },
+      {
+        text: '연령대별 통계 보기',
+        class: 'secondary',
+        action: () => {
+          closeAllModals();
+          showModal('연령대별 통계', '📊 연령대별 상세 통계\n\n• 40-45세: 32%\n• 46-50세: 28%\n• 51-55세: 23%\n• 56-60세: 17%\n\n가장 활발한 연령대는 46-50세입니다!');
+        }
+      }
+    ]
+  });
+}
+
+// ========== Feature 카드 클릭 기능 ==========
+function handleFeatureClick(featureType) {
+  console.log(`🎯 Feature 카드 클릭: ${featureType}`);
+  
+  // 기능별 액션 분기
+  switch(featureType) {
+    case 'deepAnalysis':
+      openDeepAnalysisModal();
+      break;
+    case 'aiMatching':
+      openAIMatchingModal();
+      break;
+    case 'chatGuide':
+      openChatGuideModal();
+      break;
+    case 'safeEnvironment':
+      openSafeEnvironmentModal();
+      break;
+    default:
+      console.warn('알 수 없는 기능 타입:', featureType);
+  }
+}
+
+function handleFeatureKeydown(event, featureType) {
+  // 키보드 접근성: Enter 또는 Space 키 처리
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault();
+    handleFeatureClick(featureType);
+  }
+}
+
+// ========== Feature 상세 모달들 ==========
+function openDeepAnalysisModal() {
+  console.log('📊 심층 가치관 분석 모달 열기');
+  showWidgetModal('심층 가치관 분석', 'deep-analysis', {
+    icon: '📊',
+    title: '100개 질문으로 완성하는 가치관 프로필',
+    content: `
+      <div class="widget-modal-content">
+        <div class="modal-section">
+          <h4>🎯 분석 깊이의 차별점</h4>
+          <div class="analysis-depth">
+            <div class="depth-comparison">
+              <div class="comparison-item">
+                <div class="comparison-label">일반 성격테스트</div>
+                <div class="comparison-bar">
+                  <div class="comparison-fill" style="width: 30%; background: #e5e7eb;"></div>
+                </div>
+                <span>20-30개 질문</span>
+              </div>
+              <div class="comparison-item">
+                <div class="comparison-label">CHARM_INYEON</div>
+                <div class="comparison-bar">
+                  <div class="comparison-fill" style="width: 100%; background: var(--gradient-primary);"></div>
+                </div>
+                <span>100개+ 질문</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-section">
+          <h4>🧠 AI 분석 과정</h4>
+          <div class="ai-process">
+            <div class="process-flow">
+              <div class="flow-step">
+                <div class="flow-number">1</div>
+                <div class="flow-content">
+                  <h5>질문 응답</h5>
+                  <p>인생관, 가족관, 연애관 등 8개 영역 100개 질문</p>
+                </div>
+              </div>
+              <div class="flow-arrow">→</div>
+              <div class="flow-step">
+                <div class="flow-number">2</div>
+                <div class="flow-content">
+                  <h5>패턴 인식</h5>
+                  <p>AI가 응답 패턴을 분석하여 숨겨진 성향 발견</p>
+                </div>
+              </div>
+              <div class="flow-arrow">→</div>
+              <div class="flow-step">
+                <div class="flow-number">3</div>
+                <div class="flow-content">
+                  <h5>가치관 도출</h5>
+                  <p>개인만의 독특한 가치관 프로필 완성</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-section">
+          <h4>📈 분석 정확도</h4>
+          <div class="accuracy-stats">
+            <div class="accuracy-item">
+              <div class="accuracy-circle">94%</div>
+              <div class="accuracy-label">예측 정확도</div>
+            </div>
+            <div class="accuracy-item">
+              <div class="accuracy-circle">96%</div>
+              <div class="accuracy-label">사용자 만족도</div>
+            </div>
+            <div class="accuracy-item">
+              <div class="accuracy-circle">89%</div>
+              <div class="accuracy-label">매칭 성공률</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="analysis-summary">
+          <strong>🎯 왜 100개 질문인가?</strong> 간단한 테스트로는 알 수 없는 
+          깊은 내면의 가치관을 정확하게 파악하기 위해 심리학 전문가와 
+          AI 연구진이 공동 개발한 특별한 분석 시스템입니다.
+        </div>
+      </div>
+    `,
+    actions: [
+      {
+        text: '가치관 분석 시작하기',
+        class: 'primary',
+        action: () => {
+          closeAllModals();
+          window.location.href = 'values-assessment.html';
+        }
+      },
+      {
+        text: '샘플 결과 미리보기',
+        class: 'secondary',
+        action: () => {
+          closeAllModals();
+          setTimeout(() => openValuesAnalysisModal(), 300);
+        }
+      }
+    ]
+  });
+}
+
+function openAIMatchingModal() {
+  console.log('🤖 스마트 AI 매칭 모달 열기');
+  showWidgetModal('스마트 AI 매칭', 'ai-matching', {
+    icon: '🤖',
+    title: '머신러닝이 찾아주는 완벽한 상대',
+    content: `
+      <div class="widget-modal-content">
+        <div class="modal-section">
+          <h4>🧮 AI 매칭 알고리즘</h4>
+          <div class="algorithm-breakdown">
+            <div class="algorithm-item">
+              <div class="algorithm-icon">🎯</div>
+              <div class="algorithm-info">
+                <h5>다차원 벡터 분석</h5>
+                <p>100개 질문 답변을 다차원 공간의 점으로 변환</p>
+              </div>
+            </div>
+            <div class="algorithm-item">
+              <div class="algorithm-icon">📐</div>
+              <div class="algorithm-info">
+                <h5>유사도 계산</h5>
+                <p>코사인 유사도로 가치관 일치도 정밀 측정</p>
+              </div>
+            </div>
+            <div class="algorithm-item">
+              <div class="algorithm-icon">🎲</div>
+              <div class="algorithm-info">
+                <h5>가중치 적용</h5>
+                <p>연령대별, 상황별 중요도에 따른 스마트 매칭</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-section">
+          <h4>📊 실시간 매칭 현황</h4>
+          <div class="live-stats">
+            <div class="live-stat">
+              <div class="live-number">1,247</div>
+              <div class="live-label">활성 회원</div>
+              <div class="live-change">+23 today</div>
+            </div>
+            <div class="live-stat">
+              <div class="live-number">342</div>
+              <div class="live-label">이번 주 매칭</div>
+              <div class="live-change">+156%</div>
+            </div>
+            <div class="live-stat">
+              <div class="live-number">89%</div>
+              <div class="live-label">매칭 만족도</div>
+              <div class="live-change">High Quality</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-section">
+          <h4>⚡ 매칭 속도 & 정확도</h4>
+          <div class="performance-metrics">
+            <div class="metric-item">
+              <div class="metric-value">0.3초</div>
+              <div class="metric-desc">평균 매칭 시간</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-value">94.7%</div>
+              <div class="metric-desc">첫 매칭 만족도</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-value">73%</div>
+              <div class="metric-desc">3개월 지속률</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="matching-summary">
+          <strong>🚀 AI의 힘:</strong> 수천 명의 데이터를 학습한 AI가 
+          사람이 놓칠 수 있는 미묘한 가치관 패턴까지 분석하여 
+          정말 잘 맞는 상대를 찾아드립니다.
+        </div>
+      </div>
+    `,
+    actions: [
+      {
+        text: 'AI 매칭 체험하기',
+        class: 'primary',
+        action: () => {
+          closeAllModals();
+          setTimeout(() => openMatchingModal(), 300);
+        }
+      },
+      {
+        text: '매칭 알고리즘 더보기',
+        class: 'secondary',
+        action: () => {
+          closeAllModals();
+          showModal('매칭 알고리즘', '🔬 CHARM_INYEON 매칭 시스템\n\n• 벡터 공간 분석\n• 코사인 유사도 계산\n• 가중치 기반 점수화\n• 실시간 학습 업데이트\n\n지속적으로 개선되는 AI 매칭 엔진입니다!');
+        }
+      }
+    ]
+  });
+}
+
+function openChatGuideModal() {
+  console.log('💬 대화 가이드 모달 열기');
+  showWidgetModal('AI 대화 가이드', 'chat-guide', {
+    icon: '💬',
+    title: '자연스러운 첫 대화를 위한 AI 어시스턴트',
+    content: `
+      <div class="widget-modal-content">
+        <div class="modal-section">
+          <h4>🎯 개인 맞춤 대화 주제</h4>
+          <div class="chat-topics">
+            <div class="topic-category">
+              <h5>💡 공통 관심사 기반</h5>
+              <div class="topic-examples">
+                <div class="topic-bubble">"독서를 좋아하신다니, 요즘 어떤 책 읽고 계세요?"</div>
+                <div class="topic-bubble">"여행을 즐기시는군요! 가장 인상 깊었던 곳이 어디인가요?"</div>
+              </div>
+            </div>
+            <div class="topic-category">
+              <h5>🏡 라이프스타일 연결</h5>
+              <div class="topic-examples">
+                <div class="topic-bubble">"가족과 시간 보내는 걸 중시하시는 것 같아요"</div>
+                <div class="topic-bubble">"건강 관리에 관심이 많으시군요, 어떤 운동 하세요?"</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-section">
+          <h4>🚀 실시간 대화 도움</h4>
+          <div class="chat-assistance">
+            <div class="assistance-feature">
+              <div class="assistance-icon">📝</div>
+              <div class="assistance-content">
+                <h5>메시지 개선 제안</h5>
+                <p>작성한 메시지를 더 따뜻하고 자연스럽게 다듬어줍니다</p>
+              </div>
+            </div>
+            <div class="assistance-feature">
+              <div class="assistance-icon">🎭</div>
+              <div class="assistance-content">
+                <h5>상황별 답변 가이드</h5>
+                <p>상대방의 메시지에 어떻게 응답할지 상황별 예시 제공</p>
+              </div>
+            </div>
+            <div class="assistance-feature">
+              <div class="assistance-icon">⚡</div>
+              <div class="assistance-content">
+                <h5>대화 온도 측정</h5>
+                <p>대화 분위기를 분석하여 적절한 다음 단계 제안</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-section">
+          <h4>📈 대화 성공 통계</h4>
+          <div class="conversation-stats">
+            <div class="conv-stat">
+              <div class="stat-icon">💬</div>
+              <div class="stat-info">
+                <div class="stat-number">87%</div>
+                <div class="stat-text">첫 대화 성공률</div>
+              </div>
+            </div>
+            <div class="conv-stat">
+              <div class="stat-icon">📞</div>
+              <div class="stat-info">
+                <div class="stat-number">73%</div>
+                <div class="stat-text">전화통화 전환율</div>
+              </div>
+            </div>
+            <div class="conv-stat">
+              <div class="stat-icon">☕</div>
+              <div class="stat-info">
+                <div class="stat-number">64%</div>
+                <div class="stat-text">오프라인 만남 성사</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="connections-summary">
+          <strong>💡 대화의 비밀:</strong> 40-60세 연령대는 진정성 있는 대화를 
+          가장 중요하게 생각합니다. AI가 각자의 성격과 상황에 맞는 
+          자연스러운 대화법을 안내해드립니다.
+        </div>
+      </div>
+    `,
+    actions: [
+      {
+        text: '대화 가이드 체험하기',
+        class: 'primary',
+        action: () => {
+          closeAllModals();
+          showModal('대화 가이드 체험', '💬 AI 대화 가이드 체험판\n\n실제 대화 상황에서 AI가 어떻게 도움을 주는지\n체험해볼 수 있는 기능이 곧 추가됩니다!\n\n현재는 매칭 완료 후 이용 가능합니다.');
+        }
+      },
+      {
+        text: '대화 팁 모음 보기',
+        class: 'secondary',
+        action: () => {
+          closeAllModals();
+          showModal('중장년층 대화 팁', '💡 성공적인 첫 대화를 위한 팁\n\n1. 진정성 있게 접근하기\n2. 공통 관심사부터 시작\n3. 상대방 이야기에 집중\n4. 자연스러운 질문하기\n5. 너무 개인적인 질문은 피하기\n\n경험과 지혜가 있는 만큼 여유롭게!');
+        }
+      }
+    ]
+  });
+}
+
+function openSafeEnvironmentModal() {
+  console.log('🔒 안전한 환경 모달 열기');
+  showWidgetModal('안전한 환경', 'safe-environment', {
+    icon: '🛡️',
+    title: '신뢰할 수 있는 안전한 만남의 공간',
+    content: `
+      <div class="widget-modal-content">
+        <div class="modal-section">
+          <h4>🔐 다단계 보안 시스템</h4>
+          <div class="security-layers">
+            <div class="security-item">
+              <div class="security-icon">📱</div>
+              <div class="security-info">
+                <h5>휴대폰 본인 인증</h5>
+                <p>SMS 인증으로 가짜 계정 원천 차단</p>
+                <div class="security-status">✅ 필수</div>
+              </div>
+            </div>
+            <div class="security-item">
+              <div class="security-icon">🆔</div>
+              <div class="security-info">
+                <h5>신분증 확인</h5>
+                <p>AI 기반 신분증 진위 여부 자동 검증</p>
+                <div class="security-status">✅ 권장</div>
+              </div>
+            </div>
+            <div class="security-item">
+              <div class="security-icon">🤖</div>
+              <div class="security-info">
+                <h5>AI 행동 패턴 분석</h5>
+                <p>의심스러운 활동 실시간 모니터링</p>
+                <div class="security-status">🔄 자동</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-section">
+          <h4>🚨 사기 방지 시스템</h4>
+          <div class="fraud-prevention">
+            <div class="prevention-feature">
+              <div class="prevention-icon">🔍</div>
+              <div class="prevention-content">
+                <h5>프로필 사진 검증</h5>
+                <p>역방향 이미지 검색으로 도용 사진 탐지</p>
+              </div>
+            </div>
+            <div class="prevention-feature">
+              <div class="prevention-icon">💰</div>
+              <div class="prevention-content">
+                <h5>금전 요구 차단</h5>
+                <p>돈 관련 키워드 자동 감지 및 경고</p>
+              </div>
+            </div>
+            <div class="prevention-feature">
+              <div class="prevention-icon">📍</div>
+              <div class="prevention-content">
+                <h5>안전한 첫 만남 장소</h5>
+                <p>공공장소 위주 만남 장소 추천</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-section">
+          <h4>📊 안전 통계</h4>
+          <div class="safety-stats">
+            <div class="safety-metric">
+              <div class="metric-value">99.7%</div>
+              <div class="metric-label">검증된 회원 비율</div>
+            </div>
+            <div class="safety-metric">
+              <div class="metric-value">0.1%</div>
+              <div class="metric-label">신고 사례 비율</div>
+            </div>
+            <div class="safety-metric">
+              <div class="metric-value">24시간</div>
+              <div class="metric-label">신고 처리 시간</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-section">
+          <h4>🛟 안전 가이드라인</h4>
+          <div class="safety-guidelines">
+            <div class="guideline-item">✅ 첫 만남은 카페, 레스토랑 등 공공장소에서</div>
+            <div class="guideline-item">✅ 개인정보(주소, 직장) 공유는 신중하게</div>
+            <div class="guideline-item">✅ 의심스러운 행동은 즉시 신고</div>
+            <div class="guideline-item">✅ 금전 관련 요구 시 즉시 차단</div>
+          </div>
+        </div>
+        
+        <div class="connections-summary">
+          <strong>🛡️ 안전 약속:</strong> CHARM_INYEON은 중장년층의 소중한 
+          만남이 안전하고 신뢰할 수 있는 환경에서 이루어질 수 있도록 
+          최선을 다하고 있습니다.
+        </div>
+      </div>
+    `,
+    actions: [
+      {
+        text: '안전 신고하기',
+        class: 'primary',
+        action: () => {
+          closeAllModals();
+          showModal('안전 신고', '🚨 의심스러운 활동을 발견하셨나요?\n\n• 신고 이메일: safety@charm-inyeon.com\n• 신고 전화: 1588-0000 (24시간)\n• 앱 내 신고 버튼 이용\n\n모든 신고는 24시간 내 처리됩니다.');
+        }
+      },
+      {
+        text: '안전 가이드 전체보기',
+        class: 'secondary',
+        action: () => {
+          closeAllModals();
+          showModal('안전 가이드', '📋 CHARM_INYEON 안전 가이드\n\n1. 계정 보안 관리\n2. 첫 만남 안전 수칙\n3. 개인정보 보호 방법\n4. 의심스러운 상황 대처법\n5. 신고 및 차단 방법\n\n자세한 가이드는 곧 업데이트됩니다!');
+        }
+      }
+    ]
+  });
+}
+
+console.log('📜 CHARM_INYEON 스크립트 로드 완료');
