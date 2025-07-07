@@ -746,6 +746,125 @@ router.put('/deactivate', authenticate, verifyPassword, async (req, res) => {
  *       400:
  *         description: 잘못된 인증 정보
  */
+/**
+ * @swagger
+ * /api/auth/resend-verification:
+ *   post:
+ *     summary: 이메일 인증 코드 재발송
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *     responses:
+ *       200:
+ *         description: 인증 코드 재발송 성공
+ *       400:
+ *         description: 이미 인증된 사용자 또는 유효하지 않은 이메일
+ *       429:
+ *         description: 요청 제한 초과
+ */
+router.post('/resend-verification', security.emailLimiter, async (req, res) => {
+  try {
+    const { email } = req.body;
+    
+    // 이메일 유효성 검사
+    if (!email || !email.includes('@')) {
+      return res.status(400).json({
+        success: false,
+        error: '유효한 이메일 주소를 입력해주세요.'
+      });
+    }
+    
+    // 사용자 찾기
+    const user = await User.findOne({ email: email.toLowerCase() });
+    
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        error: '해당 이메일로 가입된 계정이 없습니다.'
+      });
+    }
+    
+    // 이미 인증된 사용자 확인
+    if (user.isVerified) {
+      return res.status(400).json({
+        success: false,
+        error: '이미 인증이 완료된 계정입니다.'
+      });
+    }
+    
+    // 새 인증 코드 생성
+    const verificationCode = emailService.generateVerificationCode();
+    const verificationToken = emailService.generateVerificationToken();
+    
+    // 사용자 정보 업데이트
+    user.emailVerificationCode = verificationCode;
+    user.emailVerificationToken = crypto
+      .createHash('sha256')
+      .update(verificationToken)
+      .digest('hex');
+    user.emailVerificationExpires = Date.now() + 10 * 60 * 1000; // 10분
+    
+    await user.save({ validateBeforeSave: false });
+    
+    // 이메일 발송 시도
+    try {
+      const emailResult = await emailService.sendVerificationEmail(
+        user.email,
+        user.name,
+        verificationCode,
+        verificationToken
+      );
+      
+      // Mock 환경에서는 인증 코드를 응답에 포함 (개발용)
+      const responseData = {
+        success: true,
+        message: '인증 코드가 재발송되었습니다. 이메일을 확인해주세요.',
+      };
+      
+      // 개발 환경에서만 코드 노출
+      if (process.env.NODE_ENV === 'development' && emailResult.mock) {
+        responseData.developmentInfo = {
+          verificationCode: verificationCode,
+          note: '개발 환경: 이메일 발송이 비활성화되어 있습니다. 위 코드를 사용하세요.'
+        };
+      }
+      
+      res.json(responseData);
+      
+    } catch (emailError) {
+      console.error('Email send failed:', emailError.message);
+      
+      // 이메일 발송 실패해도 코드는 생성됨을 안내
+      res.json({
+        success: true,
+        message: '인증 코드가 생성되었습니다.',
+        warning: '이메일 발송에 실패했지만, 기존 이메일의 코드를 사용하거나 잠시 후 다시 시도해주세요.',
+        developmentInfo: process.env.NODE_ENV === 'development' ? {
+          verificationCode: verificationCode,
+          note: '개발 환경: 위 코드를 직접 사용하세요.'
+        } : undefined
+      });
+    }
+    
+  } catch (error) {
+    console.error('Resend verification error:', error);
+    res.status(500).json({
+      success: false,
+      error: '인증 코드 재발송 중 오류가 발생했습니다.'
+    });
+  }
+});
+
 router.post('/verify-email', security.emailLimiter, security.validateEmailVerification, async (req, res) => {
   try {
     const { email, verificationCode, verificationToken } = req.body;

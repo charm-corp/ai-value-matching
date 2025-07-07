@@ -244,7 +244,7 @@ function openSignupModal() {
   }
 }
 
-function handleLoginSubmit(e) {
+async function handleLoginSubmit(e) {
   e.preventDefault();
   console.log('🔐 로그인 시도');
   
@@ -252,19 +252,45 @@ function handleLoginSubmit(e) {
   const email = formData.get('email');
   const password = formData.get('password');
   
-  // 임시 로그인 처리 (실제로는 백엔드 API 호출)
-  if (email && password) {
-    showModal('로그인 성공', `환영합니다! ${email}님\n\n현재는 프론트엔드 테스트 모드입니다.\n백엔드 연동 후 실제 로그인 기능이 활성화됩니다.`);
-    closeModal('loginModal');
-    
-    // 폼 초기화
-    e.target.reset();
-  } else {
+  // 기본 검증
+  if (!email || !password) {
     showModal('입력 오류', '이메일과 비밀번호를 모두 입력해주세요.');
+    return;
+  }
+  
+  try {
+    // 로딩 표시
+    const submitButton = e.target.querySelector('button[type="submit"]');
+    const originalText = submitButton.textContent;
+    submitButton.textContent = '로그인 중...';
+    submitButton.disabled = true;
+    
+    // 백엔드 API 호출
+    const response = await window.apiClient.login(email, password);
+    
+    if (response.success) {
+      showModal('로그인 성공', `환영합니다! ${response.user.name}님\n\n로그인이 완료되었습니다.`);
+      closeModal('loginModal');
+      
+      // 폼 초기화
+      e.target.reset();
+      
+      console.log('✅ 로그인 성공:', response.user);
+    } else {
+      showModal('로그인 실패', response.message || '로그인에 실패했습니다.');
+    }
+  } catch (error) {
+    console.error('❌ 로그인 오류:', error);
+    showModal('로그인 오류', '로그인 중 오류가 발생했습니다. 다시 시도해주세요.');
+  } finally {
+    // 로딩 해제
+    const submitButton = e.target.querySelector('button[type="submit"]');
+    submitButton.textContent = '로그인';
+    submitButton.disabled = false;
   }
 }
 
-function handleSignupSubmit(e) {
+async function handleSignupSubmit(e) {
   e.preventDefault();
   console.log('📝 회원가입 시도');
   
@@ -285,12 +311,40 @@ function handleSignupSubmit(e) {
     return;
   }
   
-  // 임시 회원가입 처리
-  showModal('회원가입 완료', `환영합니다, ${name}님!\n\n회원가입이 완료되었습니다.\n현재는 프론트엔드 테스트 모드입니다.`);
-  closeModal('signupModal');
-  
-  // 폼 초기화
-  e.target.reset();
+  try {
+    // 로딩 표시
+    const submitButton = e.target.querySelector('button[type="submit"]');
+    const originalText = submitButton.textContent;
+    submitButton.textContent = '회원가입 중...';
+    submitButton.disabled = true;
+    
+    // 백엔드 API 호출
+    const response = await window.apiClient.register({
+      name,
+      email,
+      password
+    });
+    
+    if (response.success) {
+      showModal('회원가입 완료', `환영합니다, ${response.user.name}님!\n\n회원가입이 완료되었습니다.`);
+      closeModal('signupModal');
+      
+      // 폼 초기화
+      e.target.reset();
+      
+      console.log('✅ 회원가입 성공:', response.user);
+    } else {
+      showModal('회원가입 실패', response.message || '회원가입에 실패했습니다.');
+    }
+  } catch (error) {
+    console.error('❌ 회원가입 오류:', error);
+    showModal('회원가입 오류', '회원가입 중 오류가 발생했습니다. 다시 시도해주세요.');
+  } finally {
+    // 로딩 해제
+    const submitButton = e.target.querySelector('button[type="submit"]');
+    submitButton.textContent = '회원가입';
+    submitButton.disabled = false;
+  }
 }
 
 // ========== 모달 기능 ==========

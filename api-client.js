@@ -126,8 +126,17 @@ class APIClient {
     });
         
     if (response.success) {
-      this.setTokens(response.data.token, response.data.refreshToken);
-      this.setCurrentUser(response.data.user);
+      // 테스트 서버와 실제 서버 모두 지원
+      const token = response.token || response.data?.token;
+      const refreshToken = response.refreshToken || response.data?.refreshToken;
+      const user = response.user || response.data?.user;
+      
+      if (token) {
+        this.setTokens(token, refreshToken);
+      }
+      if (user) {
+        this.setCurrentUser(user);
+      }
     }
         
     return response;
@@ -140,8 +149,17 @@ class APIClient {
     });
         
     if (response.success) {
-      this.setTokens(response.data.token, response.data.refreshToken);
-      this.setCurrentUser(response.data.user);
+      // 테스트 서버와 실제 서버 모두 지원
+      const token = response.token || response.data?.token;
+      const refreshToken = response.refreshToken || response.data?.refreshToken;
+      const user = response.user || response.data?.user;
+      
+      if (token) {
+        this.setTokens(token, refreshToken);
+      }
+      if (user) {
+        this.setCurrentUser(user);
+      }
     }
         
     return response;
@@ -164,7 +182,7 @@ class APIClient {
   }
 
   async submitValuesAssessment(answers) {
-    return await this.request('/values/assessment', {
+    return await this.request('/values/submit', {
       method: 'POST',
       body: JSON.stringify({ answers })
     });

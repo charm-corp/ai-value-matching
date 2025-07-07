@@ -5,6 +5,7 @@ const fs = require('fs').promises;
 const User = require('../models/User');
 const ValuesAssessment = require('../models/ValuesAssessment');
 const imageService = require('../services/imageService');
+const avatarService = require('../services/avatarService');
 const { authenticate, requireVerified } = require('../middleware/auth');
 const { validateFileUpload } = require('../middleware/validation');
 
@@ -553,6 +554,311 @@ router.delete('/delete-image', authenticate, async (req, res) => {
     res.status(500).json({
       success: false,
       error: '프로필 이미지 삭제 중 오류가 발생했습니다.'
+    });
+  }
+});
+
+/**
+ * @swagger
+ * /api/profile/avatar-options:
+ *   get:
+ *     summary: 기본 아바타 옵션 조회 (4060세대 맞춤)
+ *     tags: [Profile]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: 아바타 옵션 조회 성공
+ */
+router.get('/avatar-options', authenticate, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    
+    // 사용자 맞춤 추천 아바타
+    const recommendedAvatar = avatarService.getRecommendedAvatar(user);
+    
+    // 성별별 아바타 목록
+    const avatarsByGender = avatarService.getAvatarsByGender(user.gender || 'neutral');
+    
+    // 모든 아바타 옵션
+    const allAvatars = avatarService.getAllAvatars();
+    
+    // 현재 이미지 상태
+    const imageStatus = avatarService.getUserImageStatus(user);
+    
+    res.json({
+      success: true,
+      message: '아바타 옵션을 조회했습니다.',
+      data: {
+        currentStatus: imageStatus,
+        recommended: recommendedAvatar,
+        byGender: avatarsByGender,
+        allOptions: allAvatars,
+        tips: [
+          '프로필 사진이 있으면 매칭 확률이 3배 증가해요!',
+          '밝고 자연스러운 표정의 사진이 좋은 인상을 줍니다.',
+          '얼굴이 잘 보이는 근거리 사진을 추천해요.',
+          '배경이 깔끔한 사진이 더 전문적으로 보입니다.'
+        ]
+      }
+    });
+    
+  } catch (error) {
+    console.error('Avatar options error:', error);
+    res.status(500).json({
+      success: false,
+      error: '아바타 옵션 조회 중 오류가 발생했습니다.'
+    });
+  }
+});
+
+/**
+ * @swagger
+ * /api/profile/upload-guide:
+ *   get:
+ *     summary: 이미지 업로드 가이드 (4060세대 친화적)
+ *     tags: [Profile]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: 업로드 가이드 조회 성공
+ */
+router.get('/upload-guide', authenticate, async (req, res) => {
+  try {
+    const uploadGuide = {
+      title: '프로필 사진 업로드 가이드',
+      subtitle: '좋은 첫인상을 위한 사진 팁',
+      
+      requirements: {
+        title: '📋 업로드 조건',
+        items: [
+          '파일 크기: 최대 5MB',
+          '지원 형식: JPEG, PNG, WebP',
+          '권장 크기: 800x800 픽셀 이상',
+          '파일명: 한글, 영문, 숫자 가능'
+        ]
+      },
+      
+      tips: {
+        title: '📸 좋은 사진 촬영 팁',
+        good: [
+          '✅ 밝은 곳에서 촬영하세요',
+          '✅ 얼굴이 선명하게 나오도록 해주세요',
+          '✅ 자연스러운 미소를 지어보세요',
+          '✅ 깔끔한 배경을 선택하세요',
+          '✅ 정면을 바라보는 각도가 좋아요'
+        ],
+        avoid: [
+          '❌ 너무 어둡거나 밝은 곳 피하기',
+          '❌ 흐리거나 화질이 낮은 사진',
+          '❌ 과도한 필터나 보정',
+          '❌ 여러 명이 함께 나온 사진',
+          '❌ 얼굴이 가려진 사진'
+        ]
+      },
+      
+      benefits: {
+        title: '🎯 프로필 사진의 효과',
+        items: [
+          '매칭 확률 3배 증가',
+          '신뢰도 향상',
+          '진정성 있는 첫인상',
+          '더 많은 관심 받기'
+        ]
+      },
+      
+      process: {
+        title: '📱 업로드 과정',
+        steps: [
+          '1. 사진 선택하기',
+          '2. 미리보기 확인',
+          '3. 업로드 완료',
+          '4. 자동 최적화 처리'
+        ]
+      },
+      
+      safety: {
+        title: '🔒 안전한 업로드',
+        items: [
+          '개인정보가 포함된 배경 제거',
+          '위치 정보 노출 주의',
+          '타인의 사진 사용 금지',
+          '저작권 준수'
+        ]
+      }
+    };
+    
+    res.json({
+      success: true,
+      message: '업로드 가이드를 조회했습니다.',
+      data: uploadGuide
+    });
+    
+  } catch (error) {
+    console.error('Upload guide error:', error);
+    res.status(500).json({
+      success: false,
+      error: '업로드 가이드 조회 중 오류가 발생했습니다.'
+    });
+  }
+});
+
+/**
+ * @swagger
+ * /api/profile/image-status:
+ *   get:
+ *     summary: 현재 프로필 이미지 상태 조회
+ *     tags: [Profile]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: 이미지 상태 조회 성공
+ */
+router.get('/image-status', authenticate, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    const imageStatus = avatarService.getUserImageStatus(user);
+    
+    // 추가 통계 정보
+    const stats = {
+      profileCompleteness: 0,
+      viewsIncrease: imageStatus.hasCustomImage ? '300%' : '0%',
+      lastUpdated: user.updatedAt,
+      recommendations: []
+    };
+    
+    // 프로필 완성도 계산
+    let completeness = 0;
+    if (user.name) completeness += 20;
+    if (user.age) completeness += 20;
+    if (user.gender) completeness += 10;
+    if (user.profileImage) completeness += 30;
+    if (user.bio) completeness += 20;
+    
+    stats.profileCompleteness = completeness;
+    
+    // 맞춤 추천사항
+    if (!imageStatus.hasCustomImage) {
+      stats.recommendations.push({
+        type: 'upload',
+        title: '프로필 사진 업로드',
+        description: '프로필 사진을 업로드하면 매칭 확률이 크게 향상됩니다.',
+        priority: 'high'
+      });
+    }
+    
+    if (completeness < 80) {
+      stats.recommendations.push({
+        type: 'complete',
+        title: '프로필 완성하기',
+        description: '프로필을 더 자세히 작성해보세요.',
+        priority: 'medium'
+      });
+    }
+    
+    res.json({
+      success: true,
+      message: '프로필 이미지 상태를 조회했습니다.',
+      data: {
+        ...imageStatus,
+        statistics: stats,
+        nextActions: [
+          {
+            action: 'upload_photo',
+            title: '사진 업로드하기',
+            description: '새로운 프로필 사진을 업로드합니다.',
+            enabled: true
+          },
+          {
+            action: 'view_guide',
+            title: '촬영 가이드 보기',
+            description: '좋은 프로필 사진 촬영 팁을 확인합니다.',
+            enabled: true
+          },
+          {
+            action: 'choose_avatar',
+            title: '기본 아바타 선택',
+            description: '임시로 기본 아바타를 선택합니다.',
+            enabled: !imageStatus.hasCustomImage
+          }
+        ]
+      }
+    });
+    
+  } catch (error) {
+    console.error('Image status error:', error);
+    res.status(500).json({
+      success: false,
+      error: '이미지 상태 조회 중 오류가 발생했습니다.'
+    });
+  }
+});
+
+/**
+ * @swagger
+ * /api/profile/set-avatar:
+ *   post:
+ *     summary: 기본 아바타 설정
+ *     tags: [Profile]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - avatarPath
+ *             properties:
+ *               avatarPath:
+ *                 type: string
+ *                 description: 선택한 아바타 경로
+ *     responses:
+ *       200:
+ *         description: 아바타 설정 성공
+ */
+router.post('/set-avatar', authenticate, async (req, res) => {
+  try {
+    const { avatarPath } = req.body;
+    
+    if (!avatarPath) {
+      return res.status(400).json({
+        success: false,
+        error: '아바타 경로를 선택해주세요.'
+      });
+    }
+    
+    const user = await User.findById(req.user._id);
+    
+    // 기본 아바타 정보 설정 (실제 파일 업로드가 아닌 경우)
+    user.profileImage = avatarPath; // 단일 경로로 설정
+    user.profileImages = {
+      thumbnail: { path: avatarPath },
+      medium: { path: avatarPath },
+      large: { path: avatarPath }
+    };
+    
+    user.isProfileComplete = true; // 아바타 설정으로 프로필 완성도 향상
+    await user.save();
+    
+    res.json({
+      success: true,
+      message: '기본 아바타가 설정되었습니다. 나중에 실제 사진으로 변경하실 수 있어요!',
+      data: {
+        profileImage: user.profileImage,
+        profileImages: user.profileImages,
+        suggestion: '실제 프로필 사진을 업로드하면 매칭 확률이 더욱 향상됩니다.'
+      }
+    });
+    
+  } catch (error) {
+    console.error('Set avatar error:', error);
+    res.status(500).json({
+      success: false,
+      error: '아바타 설정 중 오류가 발생했습니다.'
     });
   }
 });
