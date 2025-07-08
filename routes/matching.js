@@ -3,6 +3,9 @@ const Match = require('../models/Match');
 const User = require('../models/User');
 const ValuesAssessment = require('../models/ValuesAssessment');
 const advancedMatchingService = require('../services/advancedMatchingService');
+const valuesAnalysisEngine = require('../services/valuesAnalysisEngine');
+const intelligentMatchingEngine = require('../services/intelligentMatchingEngine');
+const matchingVisualizationService = require('../services/matchingVisualizationService');
 const { authenticate, requireVerified, requireMatchParticipant } = require('../middleware/auth');
 const { validateMatchResponse, validatePagination, validateObjectId } = require('../middleware/validation');
 
@@ -669,6 +672,514 @@ function formatMatchForResponse(match, currentUserId) {
     conversationStarted: match.conversationStarted,
     conversationId: match.conversationId
   };
+}
+
+// ============ Phase 3: 고도화된 매칭 시스템 ============
+
+/**
+ * @swagger
+ * /api/matching/analyze-values:
+ *   post:
+ *     summary: 사용자 가치관 심층 분석 (Phase 3)
+ *     tags: [Matching]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: 가치관 분석 성공
+ *       400:
+ *         description: 설문 미완료 또는 데이터 오류
+ */
+router.post('/analyze-values', authenticate, requireVerified, async (req, res) => {
+  try {
+    const userId = req.user._id;
+    
+    console.log(`🎯 Phase 3 가치관 분석 요청 - 사용자: ${userId}`);
+    
+    // 1. 사용자의 완료된 설문 조회
+    const assessment = await ValuesAssessment.findOne({ 
+      userId, 
+      isCompleted: true 
+    }).sort({ completedAt: -1 });
+    
+    if (!assessment) {
+      return res.status(400).json({
+        success: false,
+        error: '완료된 가치관 설문이 없습니다.',
+        code: 'ASSESSMENT_NOT_FOUND'
+      });
+    }
+    
+    // 2. Phase 3 고도화된 가치관 분석 실행
+    const analysisResult = await valuesAnalysisEngine.analyzeUserValues(
+      userId, 
+      assessment.answers
+    );
+    
+    // 3. 분석 결과를 설문에 저장 (Phase 3 버전)
+    assessment.aiAnalysis = {
+      ...assessment.aiAnalysis,
+      phase3Analysis: {
+        primaryPersonalityType: analysisResult.valueProfile.profileSummary,
+        topValues: analysisResult.valueProfile.primaryValues.map(v => ({
+          value: v.name,
+          score: Math.round(v.score)
+        })),
+        compatibilityFactors: analysisResult.compatibilityFactors,
+        strengthsAndChallenges: analysisResult.analysisResult.strengthsAndChallenges,
+        relationshipInsights: analysisResult.analysisResult.relationshipInsights,
+        analyzedAt: new Date(),
+        version: '3.0'
+      }
+    };
+    
+    await assessment.save();
+    
+    console.log(`✅ Phase 3 가치관 분석 완료 - 사용자: ${userId}`);
+    
+    res.json({
+      success: true,
+      message: '심층 가치관 분석이 완료되었습니다.',
+      data: {
+        analysisId: assessment._id,
+        valueProfile: analysisResult.valueProfile,
+        analysisResult: analysisResult.analysisResult,
+        confidence: analysisResult.confidence,
+        coreMessage: analysisResult.analysisResult.coreMessage,
+        analyzedAt: new Date()
+      }
+    });
+    
+  } catch (error) {
+    console.error('Phase 3 가치관 분석 오류:', error);
+    res.status(500).json({
+      success: false,
+      error: '가치관 분석 중 오류가 발생했습니다.',
+      code: 'ANALYSIS_ERROR'
+    });
+  }
+});
+
+/**
+ * @swagger
+ * /api/matching/intelligent-compatibility/{targetUserId}:
+ *   get:
+ *     summary: 지능형 호환성 분석 (Phase 3)
+ *     tags: [Matching]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: targetUserId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: 지능형 호환성 분석 성공
+ *       404:
+ *         description: 사용자 또는 설문 없음
+ */
+router.get('/intelligent-compatibility/:targetUserId', 
+  authenticate, 
+  requireVerified, 
+  validateObjectId('targetUserId'),
+  async (req, res) => {
+    try {
+      const currentUserId = req.user._id;
+      const targetUserId = req.params.targetUserId;
+      
+      console.log(`🎯 Phase 3 지능형 호환성 분석: ${currentUserId} ↔ ${targetUserId}`);
+      
+      // 1. 두 사용자의 설문 데이터 조회
+      const [currentAssessment, targetAssessment] = await Promise.all([
+        ValuesAssessment.findOne({ 
+          userId: currentUserId, 
+          isCompleted: true 
+        }).sort({ completedAt: -1 }),
+        ValuesAssessment.findOne({ 
+          userId: targetUserId, 
+          isCompleted: true 
+        }).sort({ completedAt: -1 })
+      ]);
+      
+      if (!currentAssessment) {
+        return res.status(400).json({
+          success: false,
+          error: '회원님의 가치관 설문이 완료되지 않았습니다.',
+          code: 'CURRENT_USER_ASSESSMENT_MISSING'
+        });
+      }
+      
+      if (!targetAssessment) {
+        return res.status(404).json({
+          success: false,
+          error: '상대방의 가치관 설문이 완료되지 않았습니다.',
+          code: 'TARGET_USER_ASSESSMENT_MISSING'
+        });
+      }
+      
+      // 2. Phase 3 지능형 매칭 분석 실행
+      const matchingResult = await intelligentMatchingEngine.calculateComprehensiveMatch(
+        currentAssessment,
+        targetAssessment
+      );
+      
+      // 3. 중장년층 특화 시각화 데이터 생성
+      const visualizationData = matchingVisualizationService.generateComprehensiveVisualization(
+        matchingResult
+      );
+      
+      console.log(`✅ Phase 3 지능형 호환성 분석 완료: ${matchingResult.overallScore}점`);
+      
+      res.json({
+        success: true,
+        message: '지능형 호환성 분석이 완료되었습니다.',
+        data: {
+          overallScore: matchingResult.overallScore,
+          compatibility: matchingResult.compatibility,
+          matchingReasons: matchingResult.matchingReasons,
+          meetingGuide: matchingResult.meetingGuide,
+          relationshipRoadmap: matchingResult.relationshipRoadmap,
+          challengesAndSolutions: matchingResult.challengesAndSolutions,
+          visualization: visualizationData,
+          confidenceLevel: matchingResult.confidenceLevel,
+          analyzedAt: matchingResult.timestamp,
+          version: '3.0'
+        }
+      });
+      
+    } catch (error) {
+      console.error('Phase 3 지능형 호환성 분석 오류:', error);
+      res.status(500).json({
+        success: false,
+        error: '지능형 호환성 분석 중 오류가 발생했습니다.',
+        code: 'INTELLIGENT_COMPATIBILITY_ERROR'
+      });
+    }
+  }
+);
+
+/**
+ * @swagger
+ * /api/matching/conversation-guide/{targetUserId}:
+ *   get:
+ *     summary: 4060세대 맞춤 대화 가이드 (Phase 3)
+ *     tags: [Matching]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: targetUserId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: 대화 가이드 생성 성공
+ */
+router.get('/conversation-guide/:targetUserId',
+  authenticate,
+  requireVerified,
+  validateObjectId('targetUserId'),
+  async (req, res) => {
+    try {
+      const currentUserId = req.user._id;
+      const targetUserId = req.params.targetUserId;
+      
+      console.log(`🎯 Phase 3 대화 가이드 요청: ${currentUserId} → ${targetUserId}`);
+      
+      // 1. 두 사용자의 설문 데이터 조회
+      const [currentAssessment, targetAssessment] = await Promise.all([
+        ValuesAssessment.findOne({ 
+          userId: currentUserId, 
+          isCompleted: true 
+        }).sort({ completedAt: -1 }),
+        ValuesAssessment.findOne({ 
+          userId: targetUserId, 
+          isCompleted: true 
+        }).sort({ completedAt: -1 })
+      ]);
+      
+      if (!currentAssessment || !targetAssessment) {
+        return res.status(400).json({
+          success: false,
+          error: '완료된 가치관 설문이 필요합니다.',
+          code: 'ASSESSMENT_REQUIRED'
+        });
+      }
+      
+      // 2. 매칭 분석 (대화 가이드 생성을 위해)
+      const matchingResult = await intelligentMatchingEngine.calculateComprehensiveMatch(
+        currentAssessment,
+        targetAssessment
+      );
+      
+      // 3. 4060세대 특화 대화 가이드 생성
+      const enhancedGuide = {
+        ...matchingResult.meetingGuide,
+        
+        // 4060세대 특화 대화 팁
+        ageSpecificTips: [
+          '서두르지 않고 천천히 대화를 나누세요',
+          '인생 경험과 지혜를 나누는 시간을 가져보세요', 
+          '진정성 있는 관심과 경청의 자세를 보여주세요',
+          '가벼운 주제부터 시작해서 점차 깊어지게 하세요'
+        ],
+        
+        // 상황별 대화 가이드
+        situationalGuides: {
+          firstMeeting: {
+            atmosphere: '편안하고 조용한 카페나 레스토랑',
+            duration: '1-2시간',
+            topics: matchingResult.meetingGuide.conversationStarters?.slice(0, 5) || [],
+            avoidTopics: ['개인적인 과거 관계', '재정 상황', '건강 문제']
+          },
+          
+          followUpMeeting: {
+            atmosphere: '좀 더 개인적인 공간이나 활동적인 장소',
+            duration: '2-3시간',
+            topics: ['공통 관심사 깊이 탐구', '가족과 친구들 이야기', '미래 계획'],
+            activities: matchingResult.meetingGuide.recommendedActivities?.slice(0, 3) || []
+          }
+        },
+        
+        // 호환성 기반 맞춤 조언
+        compatibilityBasedAdvice: generateCompatibilityBasedAdvice(matchingResult.overallScore),
+        
+        // 주의사항과 대처법
+        precautions: matchingResult.challengesAndSolutions?.challenges || []
+      };
+      
+      console.log(`✅ Phase 3 대화 가이드 생성 완료`);
+      
+      res.json({
+        success: true,
+        message: '4060세대 맞춤 대화 가이드가 생성되었습니다.',
+        data: {
+          guide: enhancedGuide,
+          compatibilityScore: matchingResult.overallScore,
+          confidence: matchingResult.confidenceLevel,
+          generatedAt: new Date(),
+          version: '3.0'
+        }
+      });
+      
+    } catch (error) {
+      console.error('Phase 3 대화 가이드 생성 오류:', error);
+      res.status(500).json({
+        success: false,
+        error: '대화 가이드 생성 중 오류가 발생했습니다.',
+        code: 'CONVERSATION_GUIDE_ERROR'
+      });
+    }
+  }
+);
+
+/**
+ * @swagger
+ * /api/matching/smart-recommendations:
+ *   get:
+ *     summary: AI 기반 스마트 추천 (Phase 3)
+ *     tags: [Matching]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: limit
+ *         in: query
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: 추천 사용자 수
+ *       - name: minScore
+ *         in: query
+ *         schema:
+ *           type: integer
+ *           default: 60
+ *         description: 최소 호환성 점수
+ *     responses:
+ *       200:
+ *         description: 스마트 추천 목록 조회 성공
+ */
+router.get('/smart-recommendations', authenticate, requireVerified, async (req, res) => {
+  try {
+    const currentUserId = req.user._id;
+    const limit = parseInt(req.query.limit) || 10;
+    const minScore = parseInt(req.query.minScore) || 60;
+    
+    console.log(`🎯 Phase 3 스마트 추천 요청 - 사용자: ${currentUserId}, 제한: ${limit}개`);
+    
+    // 1. 현재 사용자의 설문 조회
+    const currentAssessment = await ValuesAssessment.findOne({ 
+      userId: currentUserId, 
+      isCompleted: true 
+    }).sort({ completedAt: -1 });
+    
+    if (!currentAssessment) {
+      return res.status(400).json({
+        success: false,
+        error: '가치관 설문을 먼저 완료해주세요.',
+        code: 'ASSESSMENT_REQUIRED'
+      });
+    }
+    
+    // 2. 현재 사용자 정보 조회
+    const currentUser = await User.findById(currentUserId);
+    
+    // 3. 이미 매칭된 사용자들 제외
+    const existingMatches = await Match.find({
+      $or: [{ user1: currentUserId }, { user2: currentUserId }]
+    }).distinct('user1 user2');
+    
+    const excludeUserIds = [...new Set([
+      ...existingMatches.map(id => id.toString()),
+      currentUserId.toString()
+    ])];
+    
+    // 4. 잠재적 매치 후보 조회 (4060세대 필터링 포함)
+    const candidates = await User.find({
+      _id: { $nin: excludeUserIds },
+      isActive: true,
+      isVerified: true,
+      'preferences.privacy.allowSearch': { $ne: false },
+      // 4060세대 연령 필터
+      age: { $in: ['40-45', '46-50', '51-55', '56-60', '60+'] }
+    }).limit(30); // 성능을 위해 30명으로 제한
+    
+    // 5. 각 후보와의 지능형 호환성 계산
+    const recommendations = [];
+    
+    for (const candidate of candidates) {
+      const candidateAssessment = await ValuesAssessment.findOne({ 
+        userId: candidate._id, 
+        isCompleted: true 
+      }).sort({ completedAt: -1 });
+      
+      if (!candidateAssessment) continue;
+      
+      try {
+        const matchingResult = await intelligentMatchingEngine.calculateComprehensiveMatch(
+          currentAssessment,
+          candidateAssessment
+        );
+        
+        if (matchingResult.overallScore >= minScore) {
+          recommendations.push({
+            userId: candidate._id,
+            userInfo: {
+              name: candidate.name,
+              age: candidate.age,
+              gender: candidate.gender,
+              profileImage: candidate.profileImage,
+              location: candidate.location
+            },
+            compatibility: {
+              overallScore: matchingResult.overallScore,
+              topReasons: matchingResult.matchingReasons?.slice(0, 3) || [],
+              confidenceLevel: matchingResult.confidenceLevel,
+              breakdown: matchingResult.compatibility.breakdown
+            },
+            preview: {
+              summary: generateCompatibilitySummary(matchingResult.overallScore),
+              keyStrengths: extractKeyStrengths(matchingResult.matchingReasons),
+              meetingTips: matchingResult.meetingGuide?.conversationStarters?.slice(0, 2) || []
+            },
+            phase3Features: {
+              hasDeepAnalysis: true,
+              visualizationReady: true,
+              conversationGuideAvailable: true
+            }
+          });
+        }
+      } catch (matchError) {
+        console.warn(`Phase 3 매칭 분석 실패 - 사용자: ${candidate._id}`, matchError.message);
+        continue;
+      }
+    }
+    
+    // 6. 호환성 점수와 신뢰도를 종합하여 정렬
+    const sortedRecommendations = recommendations
+      .sort((a, b) => {
+        // 점수와 신뢰도를 종합한 최종 점수로 정렬
+        const scoreA = a.compatibility.overallScore * (a.compatibility.confidenceLevel / 100);
+        const scoreB = b.compatibility.overallScore * (b.compatibility.confidenceLevel / 100);
+        return scoreB - scoreA;
+      })
+      .slice(0, limit);
+    
+    console.log(`✅ Phase 3 스마트 추천 완료: ${sortedRecommendations.length}명`);
+    
+    res.json({
+      success: true,
+      message: `AI 기반 스마트 추천으로 ${sortedRecommendations.length}명을 찾았습니다.`,
+      data: {
+        recommendations: sortedRecommendations,
+        totalAnalyzed: candidates.length,
+        qualityFiltered: recommendations.length,
+        finalRecommendations: sortedRecommendations.length,
+        criteria: {
+          minScore,
+          limit,
+          ageGroup: '4060세대',
+          analysisVersion: '3.0'
+        },
+        generatedAt: new Date()
+      }
+    });
+    
+  } catch (error) {
+    console.error('Phase 3 스마트 추천 오류:', error);
+    res.status(500).json({
+      success: false,
+      error: '스마트 추천 생성 중 오류가 발생했습니다.',
+      code: 'SMART_RECOMMENDATIONS_ERROR'
+    });
+  }
+});
+
+// Phase 3 유틸리티 함수들
+
+/**
+ * 호환성 기반 조언 생성
+ */
+function generateCompatibilityBasedAdvice(score) {
+  if (score >= 80) {
+    return [
+      '높은 호환성을 보이니 자연스럽게 대화하세요',
+      '공통점이 많으니 편안한 분위기를 만들기 쉬울 것입니다',
+      '서로의 차이점도 발견하며 새로운 면을 알아가세요'
+    ];
+  } else if (score >= 65) {
+    return [
+      '좋은 호환성이니 서로에게 관심을 보이며 대화하세요',
+      '공통 관심사를 중심으로 대화를 시작해보세요',
+      '차이점은 새로운 배움의 기회로 접근하세요'
+    ];
+  } else {
+    return [
+      '서로 다른 점이 많을 수 있으니 열린 마음으로 접근하세요',
+      '상대방의 관점을 이해하려고 노력해보세요',
+      '서두르지 말고 천천히 서로를 알아가세요'
+    ];
+  }
+}
+
+/**
+ * 호환성 요약 생성
+ */
+function generateCompatibilitySummary(score) {
+  if (score >= 85) return '최상의 궁합';
+  if (score >= 75) return '매우 좋은 궁합';
+  if (score >= 65) return '좋은 궁합';
+  if (score >= 55) return '괜찮은 궁합';
+  return '도전적인 관계';
+}
+
+/**
+ * 핵심 강점 추출
+ */
+function extractKeyStrengths(reasons) {
+  return reasons?.slice(0, 2).map(reason => reason.title) || [];
 }
 
 module.exports = router;
