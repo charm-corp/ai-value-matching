@@ -212,6 +212,168 @@
             text-align: center;
         }
         
+        /* ========== 로딩 상태 개선 스타일 ========== */
+        .loading-container {
+            position: relative;
+            padding: 2rem;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            margin: 1rem 0;
+            border: 2px solid #667eea;
+            display: none;
+        }
+        
+        .loading-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .loading-title {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .loading-subtitle {
+            color: #666;
+            font-size: 1rem;
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 1rem 0;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
+            background-size: 200% 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            animation: shimmer 2s infinite linear;
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        
+        .loading-steps {
+            margin: 1.5rem 0;
+        }
+        
+        .loading-step {
+            display: flex;
+            align-items: center;
+            margin: 0.8rem 0;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .loading-step.active {
+            background: rgba(102, 126, 234, 0.1);
+            border-left: 4px solid #667eea;
+        }
+        
+        .loading-step.completed {
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid #10b981;
+        }
+        
+        .step-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+        
+        .step-icon.pending {
+            background: #e9ecef;
+            color: #6c757d;
+        }
+        
+        .step-icon.active {
+            background: #667eea;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+        
+        .step-icon.completed {
+            background: #10b981;
+            color: white;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .step-text {
+            flex: 1;
+        }
+        
+        .step-title {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .step-description {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .step-time {
+            font-size: 0.8rem;
+            color: #999;
+            margin-left: auto;
+        }
+        
+        .processing-animation {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 1rem 0;
+        }
+        
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #667eea;
+            margin: 0 4px;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+        
+        .dot:nth-child(1) { animation-delay: -0.32s; }
+        .dot:nth-child(2) { animation-delay: -0.16s; }
+        .dot:nth-child(3) { animation-delay: 0s; }
+        
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+        
+        .estimated-time {
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            font-style: italic;
+        }
+        
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -231,6 +393,30 @@
         
         <div class="status" id="status">
             🚀 Phase 3 매칭 시스템 준비 완료! 실제 테스트를 시작해보세요.
+        </div>
+
+        <!-- ========== 로딩 상태 개선 컨테이너 ========== -->
+        <div class="loading-container" id="loadingContainer">
+            <div class="loading-header">
+                <div class="loading-title" id="loadingTitle">매칭 분석 진행 중</div>
+                <div class="loading-subtitle" id="loadingSubtitle">잠시만 기다려주세요...</div>
+            </div>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+            </div>
+            
+            <div class="loading-steps" id="loadingSteps">
+                <!-- 단계별 진행 상황이 여기에 동적으로 추가됩니다 -->
+            </div>
+            
+            <div class="processing-animation">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+            
+            <div class="estimated-time" id="estimatedTime">예상 완료 시간: 약 2-3초</div>
         </div>
 
         <div class="test-section">
@@ -292,6 +478,152 @@
             element.className = `result ${isSuccess ? 'success' : 'error'} fade-in`;
             element.style.display = 'block';
         }
+
+        // ========== 로딩 상태 개선 시스템 ==========
+        
+        class LoadingManager {
+            constructor() {
+                this.container = document.getElementById('loadingContainer');
+                this.title = document.getElementById('loadingTitle');
+                this.subtitle = document.getElementById('loadingSubtitle');
+                this.progressBar = document.getElementById('progressBar');
+                this.stepsContainer = document.getElementById('loadingSteps');
+                this.estimatedTime = document.getElementById('estimatedTime');
+                this.currentStep = 0;
+                this.totalSteps = 0;
+                this.startTime = null;
+            }
+            
+            show(title, subtitle, steps, estimatedTime = '2-3초') {
+                this.title.textContent = title;
+                this.subtitle.textContent = subtitle;
+                this.estimatedTime.textContent = `예상 완료 시간: 약 ${estimatedTime}`;
+                this.setupSteps(steps);
+                this.container.style.display = 'block';
+                this.container.classList.add('fade-in');
+                this.startTime = Date.now();
+                log(`🔄 ${title} 시작`);
+            }
+            
+            hide() {
+                this.container.style.display = 'none';
+                this.reset();
+            }
+            
+            setupSteps(steps) {
+                this.totalSteps = steps.length;
+                this.currentStep = 0;
+                this.stepsContainer.innerHTML = '';
+                
+                steps.forEach((step, index) => {
+                    const stepElement = document.createElement('div');
+                    stepElement.className = 'loading-step';
+                    stepElement.id = `step-${index}`;
+                    
+                    stepElement.innerHTML = `
+                        <div class="step-icon pending" id="icon-${index}">${index + 1}</div>
+                        <div class="step-text">
+                            <div class="step-title">${step.title}</div>
+                            <div class="step-description">${step.description}</div>
+                        </div>
+                        <div class="step-time" id="time-${index}">대기 중</div>
+                    `;
+                    
+                    this.stepsContainer.appendChild(stepElement);
+                });
+            }
+            
+            nextStep(customMessage = null) {
+                if (this.currentStep > 0) {
+                    // 이전 단계 완료 처리
+                    const prevStep = document.getElementById(`step-${this.currentStep - 1}`);
+                    const prevIcon = document.getElementById(`icon-${this.currentStep - 1}`);
+                    const prevTime = document.getElementById(`time-${this.currentStep - 1}`);
+                    
+                    prevStep.className = 'loading-step completed';
+                    prevIcon.className = 'step-icon completed';
+                    prevIcon.textContent = '✓';
+                    prevTime.textContent = '완료';
+                }
+                
+                if (this.currentStep < this.totalSteps) {
+                    // 현재 단계 활성화
+                    const currentStep = document.getElementById(`step-${this.currentStep}`);
+                    const currentIcon = document.getElementById(`icon-${this.currentStep}`);
+                    const currentTime = document.getElementById(`time-${this.currentStep}`);
+                    
+                    currentStep.className = 'loading-step active';
+                    currentIcon.className = 'step-icon active';
+                    currentTime.textContent = '진행 중...';
+                    
+                    // 진행률 업데이트
+                    const progress = ((this.currentStep + 1) / this.totalSteps) * 100;
+                    this.updateProgress(progress);
+                    
+                    // 사용자 정의 메시지가 있으면 로그에 출력
+                    if (customMessage) {
+                        log(`📋 ${customMessage}`);
+                    }
+                    
+                    this.currentStep++;
+                }
+            }
+            
+            complete(message = '분석이 완료되었습니다!') {
+                // 마지막 단계 완료
+                if (this.currentStep > 0) {
+                    const lastStep = document.getElementById(`step-${this.currentStep - 1}`);
+                    const lastIcon = document.getElementById(`icon-${this.currentStep - 1}`);
+                    const lastTime = document.getElementById(`time-${this.currentStep - 1}`);
+                    
+                    lastStep.className = 'loading-step completed';
+                    lastIcon.className = 'step-icon completed';
+                    lastIcon.textContent = '✓';
+                    lastTime.textContent = '완료';
+                }
+                
+                this.updateProgress(100);
+                this.subtitle.textContent = message;
+                
+                const totalTime = Date.now() - this.startTime;
+                log(`✅ 완료! 총 처리 시간: ${totalTime}ms`);
+                
+                // 2초 후 로딩창 숨김
+                setTimeout(() => this.hide(), 2000);
+            }
+            
+            updateProgress(percentage) {
+                this.progressBar.style.width = `${percentage}%`;
+            }
+            
+            reset() {
+                this.currentStep = 0;
+                this.totalSteps = 0;
+                this.updateProgress(0);
+            }
+            
+            setError(message) {
+                this.subtitle.textContent = `오류: ${message}`;
+                this.subtitle.style.color = '#dc3545';
+                
+                // 현재 단계를 에러 상태로 표시
+                if (this.currentStep > 0) {
+                    const currentStep = document.getElementById(`step-${this.currentStep - 1}`);
+                    const currentIcon = document.getElementById(`icon-${this.currentStep - 1}`);
+                    
+                    if (currentStep && currentIcon) {
+                        currentStep.style.borderLeftColor = '#dc3545';
+                        currentIcon.style.background = '#dc3545';
+                        currentIcon.textContent = '!';
+                    }
+                }
+                
+                setTimeout(() => this.hide(), 3000);
+            }
+        }
+        
+        // 로딩 매니저 인스턴스 생성
+        const loadingManager = new LoadingManager();
         
         // 1. 서버 연결 테스트
         async function testServerConnection() {
@@ -325,8 +657,23 @@
         
         // 2. Phase 3 매칭 엔진 테스트  
         async function testPhase3Matching() {
-            log('🎯 Phase 3 매칭 엔진 테스트 시작...');
-            updateStatus('🎯 Phase 3 매칭 알고리즘 실행 중...');
+            // 로딩 단계 정의
+            const steps = [
+                { title: '데이터 검증', description: '사용자 가치관 데이터 유효성 검사' },
+                { title: '기본 호환성 계산', description: '핵심 가치관 및 성격 호환성 분석' },
+                { title: '4060세대 조정', description: '중장년층 특성 반영 점수 조정' },
+                { title: '매칭 이유 분석', description: '구체적인 매칭 근거 생성' },
+                { title: '관계 가이드 생성', description: '만남 가이드 및 로드맵 작성' }
+            ];
+            
+            loadingManager.show(
+                'Phase 3 매칭 분석', 
+                '고도화된 AI 매칭 알고리즘을 실행합니다', 
+                steps, 
+                '2-3초'
+            );
+            
+            await new Promise(resolve => setTimeout(resolve, 500)); // UI 업데이트 대기
             
             const startTime = performance.now();
             
@@ -385,11 +732,30 @@
                     }
                 };
                 
+                // 단계별 진행 시뮬레이션
+                loadingManager.nextStep('가치관 데이터 검증 중...');
+                await new Promise(resolve => setTimeout(resolve, 300));
+                
+                loadingManager.nextStep('핵심 호환성 계산 중...');
+                await new Promise(resolve => setTimeout(resolve, 400));
+                
+                loadingManager.nextStep('4060세대 특성 적용 중...');
+                await new Promise(resolve => setTimeout(resolve, 300));
+                
+                loadingManager.nextStep('매칭 근거 분석 중...');
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                loadingManager.nextStep('만남 가이드 생성 중...');
+                
                 // 로컬에서 매칭 엔진 직접 실행 (서버 API 없이)
                 const matchingResult = await simulateMatching(testData.user1, testData.user2);
                 
+                await new Promise(resolve => setTimeout(resolve, 300));
+                
                 const endTime = performance.now();
                 const processingTime = endTime - startTime;
+                
+                loadingManager.complete(`매칭 분석 완료! ${matchingResult.overallScore}점`);
                 
                 log(`✅ 매칭 분석 완료! 점수: ${matchingResult.overallScore}점`);
                 log(`⚡ 처리 시간: ${processingTime.toFixed(2)}ms`);
@@ -444,6 +810,7 @@
                 updateStatus(`✅ Phase 3 매칭 완료! ${matchingResult.overallScore}점 (${processingTime.toFixed(2)}ms)`);
                 
             } catch (error) {
+                loadingManager.setError(`매칭 분석 실패: ${error.message}`);
                 log(`❌ 매칭 테스트 실패: ${error.message}`);
                 showResult('matchingResult', `❌ 매칭 테스트 실패: ${error.message}`, false);
                 updateStatus('❌ 매칭 테스트 실패!');
@@ -642,13 +1009,34 @@
         
         // 3. 다중 매칭 테스트
         async function testMultipleMatches() {
-            log('🔄 다중 매칭 테스트 시작 (10회)...');
-            updateStatus('🔄 10회 연속 매칭 테스트 실행 중...');
+            const steps = [
+                { title: '테스트 초기화', description: '10회 연속 매칭 테스트 준비' },
+                { title: '1-3회 테스트', description: '초기 매칭 성능 확인' },
+                { title: '4-6회 테스트', description: '일관성 검증' },
+                { title: '7-10회 테스트', description: '최종 성능 측정' },
+                { title: '결과 분석', description: '통계 및 성능 지표 계산' }
+            ];
+            
+            loadingManager.show(
+                '다중 매칭 성능 테스트', 
+                '10회 연속 매칭으로 시스템 안정성을 검증합니다', 
+                steps, 
+                '8-10초'
+            );
+            
+            await new Promise(resolve => setTimeout(resolve, 500));
             
             const results = [];
             const startTime = performance.now();
             
+            loadingManager.nextStep('테스트 환경 설정 중...');
+            
             for (let i = 0; i < 10; i++) {
+                // 단계별 진행률 업데이트
+                if (i === 0) loadingManager.nextStep('1-3회 테스트 진행 중...');
+                else if (i === 3) loadingManager.nextStep('4-6회 테스트 진행 중...');
+                else if (i === 6) loadingManager.nextStep('7-10회 테스트 진행 중...');
+                
                 const result = await simulateMatching({
                     userId: 'user1',
                     valueCategories: { family: 85, security: 75, health: 80, relationships: 90, spirituality: 65, growth: 70 },
@@ -663,7 +1051,12 @@
                 
                 results.push(result.overallScore);
                 log(`✅ 테스트 ${i + 1}: ${result.overallScore}점`);
+                
+                // 짧은 대기 시간 (UI 업데이트용)
+                await new Promise(resolve => setTimeout(resolve, 100));
             }
+            
+            loadingManager.nextStep('결과 분석 및 통계 계산 중...');
             
             const endTime = performance.now();
             const totalTime = endTime - startTime;
@@ -686,6 +1079,10 @@
                 <p><strong>모든 테스트 결과:</strong> ${results.join(', ')}점</p>
                 <p><strong>성능 목표 달성:</strong> ${avgTime < 1 ? '✅ 0.5ms 목표 달성!' : '⚠️ 목표 시간 초과'}</p>
             `;
+            
+            await new Promise(resolve => setTimeout(resolve, 300));
+            
+            loadingManager.complete(`다중 테스트 완료! 평균 ${avgScore.toFixed(1)}점`);
             
             showResult('matchingResult', resultHTML, true);
             updateStatus(`✅ 다중 테스트 완료! 평균 ${avgScore.toFixed(1)}점 (${avgTime.toFixed(2)}ms)`);

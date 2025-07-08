@@ -62,46 +62,76 @@ class IntelligentMatchingEngine {
    * 두 사용자 간 종합 매칭 분석
    */
   async calculateComprehensiveMatch(user1Assessment, user2Assessment) {
+    const startTime = Date.now();
+    
     try {
       console.log(`🎯 매칭 분석 시작: ${user1Assessment.userId} ↔ ${user2Assessment.userId}`);
 
-      // 1. 기본 호환성 점수 계산
-      const basicCompatibility = this.calculateBasicCompatibility(user1Assessment, user2Assessment);
-      
-      // 2. 4060세대 특성 반영 조정
-      const adjustedCompatibility = this.adjustForAgeGroup(basicCompatibility, user1Assessment, user2Assessment);
-      
-      // 3. 매칭 이유 상세 분석
-      const matchingReasons = this.generateMatchingReasons(user1Assessment, user2Assessment, adjustedCompatibility);
-      
-      // 4. 잠재적 도전점과 해결책
-      const challengesAndSolutions = this.analyzeChallengesAndSolutions(user1Assessment, user2Assessment);
-      
-      // 5. 만남 가이드 생성
-      const meetingGuide = this.generateMeetingGuide(user1Assessment, user2Assessment, adjustedCompatibility);
-      
-      // 6. 관계 발전 로드맵
-      const relationshipRoadmap = this.createRelationshipRoadmap(user1Assessment, user2Assessment);
+      // 입력 데이터 검증
+      const validationResult = this.validateAssessmentData(user1Assessment, user2Assessment);
+      if (!validationResult.isValid) {
+        throw new Error(`데이터 검증 실패: ${validationResult.errors.join(', ')}`);
+      }
 
-      const finalScore = Math.round(adjustedCompatibility.overallScore);
+      // 1. 기본 호환성 점수 계산 (안전 래퍼)
+      const basicCompatibility = await this.safeCalculateBasicCompatibility(user1Assessment, user2Assessment);
+      
+      // 2. 4060세대 특성 반영 조정 (안전 래퍼)
+      const adjustedCompatibility = await this.safeAdjustForAgeGroup(basicCompatibility, user1Assessment, user2Assessment);
+      
+      // 3. 매칭 이유 상세 분석 (안전 래퍼)
+      const matchingReasons = await this.safeGenerateMatchingReasons(user1Assessment, user2Assessment, adjustedCompatibility);
+      
+      // 4. 잠재적 도전점과 해결책 (안전 래퍼)
+      const challengesAndSolutions = await this.safeAnalyzeChallengesAndSolutions(user1Assessment, user2Assessment);
+      
+      // 5. 만남 가이드 생성 (안전 래퍼)
+      const meetingGuide = await this.safeGenerateMeetingGuide(user1Assessment, user2Assessment, adjustedCompatibility);
+      
+      // 6. 관계 발전 로드맵 (안전 래퍼)
+      const relationshipRoadmap = await this.safeCreateRelationshipRoadmap(user1Assessment, user2Assessment);
 
-      console.log(`✅ 매칭 분석 완료: ${finalScore}점`);
+      // 최종 점수 검증
+      const finalScore = this.validateAndAdjustScore(adjustedCompatibility.overallScore);
+      const processingTime = Date.now() - startTime;
+
+      console.log(`✅ 매칭 분석 완료: ${finalScore}점 (처리시간: ${processingTime}ms)`);
 
       return {
         overallScore: finalScore,
         compatibility: adjustedCompatibility,
-        matchingReasons,
-        challengesAndSolutions,
-        meetingGuide,
-        relationshipRoadmap,
+        matchingReasons: matchingReasons || [],
+        challengesAndSolutions: challengesAndSolutions || { challenges: [], solutions: [] },
+        meetingGuide: meetingGuide || this.getDefaultMeetingGuide(),
+        relationshipRoadmap: relationshipRoadmap || this.getDefaultRoadmap(),
         confidenceLevel: this.calculateMatchConfidence(user1Assessment, user2Assessment),
+        processingTime,
         timestamp: new Date(),
-        version: '3.0'
+        version: '3.0',
+        fallbacksUsed: this.getActiveFallbacks(),
+        
+        // ========== 결과 설명 보강 ========== 
+        scoreInterpretation: this.generateScoreInterpretation(finalScore),
+        detailedBreakdown: this.generateDetailedBreakdown(adjustedCompatibility),
+        relationshipPotential: this.assessRelationshipPotential(finalScore, adjustedCompatibility),
+        improvementSuggestions: this.generateImprovementSuggestions(finalScore, challengesAndSolutions),
+        compatibilityInsights: this.generateCompatibilityInsights(user1Assessment, user2Assessment, adjustedCompatibility)
       };
 
     } catch (error) {
+      const processingTime = Date.now() - startTime;
       console.error('매칭 분석 오류:', error);
-      throw new Error(`매칭 분석 실패: ${error.message}`);
+      
+      // 상세 에러 로깅
+      this.logDetailedError(error, {
+        user1: user1Assessment?.userId,
+        user2: user2Assessment?.userId,
+        processingTime,
+        errorType: this.categorizeError(error)
+      });
+
+      // 사용자 친화적 에러 메시지와 함께 fallback 결과 제공
+      return this.generateFallbackResult(user1Assessment, user2Assessment, error);
     }
   }
 
@@ -1378,40 +1408,182 @@ class IntelligentMatchingEngine {
   }
 
   /**
-   * 가치관 공명 설명 생성
+   * 가치관 공명 설명 생성 (강화된 버전)
    */
   generateValueAlignmentDescription(category, score1, score2) {
     const categoryName = this.getValueCategoryName(category);
     const avgScore = Math.round((score1 + score2) / 2);
+    const similarity = 100 - Math.abs(score1 - score2);
     
-    const descriptions = {
-      family: `가족과의 유대를 매우 중시하시는 공통점이 있어, 따뜻하고 안정적인 관계를 만들어갈 수 있을 것 같습니다`,
-      security: `안정과 평화를 추구하는 가치관이 일치하여, 서로에게 든든한 지지대가 될 수 있습니다`,
-      health: `건강한 삶을 중시하는 마음이 통해, 함께 건강한 생활을 만들어갈 수 있습니다`,
-      relationships: `좋은 인간관계의 중요성을 공감하시어, 서로를 이해하고 배려하는 관계가 가능합니다`,
-      spirituality: `영성과 철학적 사고를 중시하는 점이 비슷하여, 깊이 있는 대화를 나눌 수 있습니다`,
-      growth: `지속적인 성장과 발전을 추구하는 마음이 일치하여, 함께 발전해나갈 수 있습니다`
+    // 점수 수준별 강도 표현
+    const intensityLevels = {
+      high: avgScore >= 80,
+      medium: avgScore >= 60,
+      low: avgScore < 60
     };
     
-    return descriptions[category] || `${categoryName} 영역에서 높은 호환성을 보이며, 서로의 가치관을 이해하고 공감할 수 있습니다`;
+    // 유사도별 표현
+    const similarityLevel = similarity >= 90 ? 'perfect' : similarity >= 80 ? 'high' : 'good';
+    
+    const descriptions = {
+      family: {
+        perfect: `가족과의 유대를 거의 동일한 수준으로 매우 중시하시어, 가족 중심적인 따뜻한 관계를 자연스럽게 만들어갈 수 있습니다`,
+        high: `가족과의 유대를 매우 중시하시는 공통점이 있어, 따뜻하고 안정적인 관계를 만들어갈 수 있을 것 같습니다`,
+        good: `가족의 소중함을 함께 인식하고 계셔서, 가정적인 가치를 공유하며 관계를 발전시킬 수 있습니다`
+      },
+      security: {
+        perfect: `안정과 평화에 대한 갈망이 거의 일치하여, 서로에게 완벽한 안식처가 될 수 있는 관계입니다`,
+        high: `안정과 평화를 추구하는 가치관이 일치하여, 서로에게 든든한 지지대가 될 수 있습니다`,
+        good: `삶의 안정성을 중시하는 마음이 통해, 예측 가능하고 편안한 관계를 만들어갈 수 있습니다`
+      },
+      health: {
+        perfect: `건강한 삶에 대한 철학이 거의 동일하여, 함께 웰빙 라이프스타일을 완벽하게 구현할 수 있습니다`,
+        high: `건강한 삶을 중시하는 마음이 통해, 함께 건강한 생활을 만들어갈 수 있습니다`,
+        good: `건강의 중요성을 공감하시어, 서로의 웰빙을 챙기며 성장할 수 있는 관계입니다`
+      },
+      relationships: {
+        perfect: `인간관계에 대한 철학과 접근 방식이 거의 완벽하게 일치하여, 조화로운 사회적 관계를 함께 만들어갈 수 있습니다`,
+        high: `좋은 인간관계의 중요성을 공감하시어, 서로를 이해하고 배려하는 관계가 가능합니다`,
+        good: `인간관계의 가치를 소중히 여기시어, 서로의 사회적 관계에서도 조화를 이룰 수 있습니다`
+      },
+      spirituality: {
+        perfect: `영성과 철학적 깊이가 매우 유사하여, 삶의 의미에 대해 깊고 통찰력 있는 대화를 나눌 수 있습니다`,
+        high: `영성과 철학적 사고를 중시하는 점이 비슷하여, 깊이 있는 대화를 나눌 수 있습니다`,
+        good: `내면의 성장과 의미 추구에 관심이 있으시어, 서로의 정신적 발전을 도울 수 있습니다`
+      },
+      growth: {
+        perfect: `지속적인 성장과 발전에 대한 열망이 거의 일치하여, 함께 끊임없이 발전하는 관계를 만들어갈 수 있습니다`,
+        high: `지속적인 성장과 발전을 추구하는 마음이 일치하여, 함께 발전해나갈 수 있습니다`,
+        good: `개인적 성장에 관심이 있으시어, 서로의 발전을 격려하고 지지하는 관계가 가능합니다`
+      }
+    };
+    
+    const categoryDescriptions = descriptions[category];
+    if (categoryDescriptions) {
+      const description = categoryDescriptions[similarityLevel] || categoryDescriptions.good;
+      
+      // 점수 정보 추가
+      const scoreInfo = intensityLevels.high ? 
+        ` (두 분 모두 이 영역에서 매우 높은 점수를 보이십니다: ${score1}점, ${score2}점)` :
+        intensityLevels.medium ?
+        ` (두 분 모두 이 영역을 중요하게 생각하십니다: ${score1}점, ${score2}점)` :
+        ` (이 영역에서 공통된 관심을 보이십니다: ${score1}점, ${score2}점)`;
+      
+      return description + scoreInfo;
+    }
+    
+    return `${categoryName} 영역에서 높은 호환성(${similarity.toFixed(0)}%)을 보이며, 서로의 가치관을 이해하고 공감할 수 있습니다`;
   }
 
   /**
-   * 성격 유사성 설명 생성
+   * 성격 유사성 설명 생성 (강화된 버전)
    */
   generatePersonalitySimilarityDescription(trait, score1, score2) {
     const traitName = this.getPersonalityTraitName(trait);
     const avgScore = Math.round((score1 + score2) / 2);
+    const similarity = 100 - Math.abs(score1 - score2);
+    
+    // 점수 수준별 분류
+    const scoreLevel = avgScore >= 80 ? 'high' : avgScore >= 65 ? 'medium' : 'low';
+    const similarityLevel = similarity >= 95 ? 'perfect' : similarity >= 85 ? 'high' : 'good';
     
     const descriptions = {
-      agreeableness: '두 분 모두 다른 사람을 배려하고 이해하려는 마음이 크시어, 조화로운 관계를 만들어갈 수 있습니다',
-      conscientiousness: '책임감 있고 신뢰할 수 있는 성격으로, 서로에게 든든한 파트너가 될 수 있습니다',
-      emotionalStability: '감정적으로 안정되어 있어, 어려운 상황에서도 서로를 지지하며 극복할 수 있습니다',
-      optimism: '긍정적이고 밝은 성격으로, 함께 있으면 즐겁고 희망적인 시간을 보낼 수 있습니다',
-      empathy: '상대방의 마음을 잘 이해하고 공감하는 능력이 뛰어나, 깊은 소통이 가능합니다'
+      agreeableness: {
+        perfect: {
+          high: `두 분 모두 매우 높은 수준의 친화성과 배려심을 가지고 계시며, 거의 동일한 성향으로 자연스럽게 조화로운 관계를 만들어갈 수 있습니다`,
+          medium: `친화적이고 배려심이 깊으신 두 분이 매우 유사한 성향을 보이시어, 갈등 없는 편안한 관계가 가능합니다`,
+          low: `온화하고 이해심이 있으신 공통점으로, 서로를 존중하며 점진적으로 발전하는 관계를 만들 수 있습니다`
+        },
+        high: {
+          high: `두 분 모두 다른 사람을 배려하고 이해하려는 마음이 크시어, 조화로운 관계를 만들어갈 수 있습니다`,
+          medium: `친화적인 성향이 비슷하시어, 서로에게 편안함을 주는 관계가 될 것 같습니다`,
+          low: `배려하는 마음이 있으시어, 서로를 이해하며 성장하는 관계가 가능합니다`
+        },
+        good: {
+          high: `친화성이 높으신 두 분이 좋은 궁합을 보이시어, 따뜻한 관계를 발전시킬 수 있습니다`,
+          medium: `서로를 배려하는 마음이 통하여, 안정적인 관계를 만들어갈 수 있습니다`,
+          low: `상대를 이해하려는 노력이 비슷하시어, 점차 깊어지는 관계가 가능합니다`
+        }
+      },
+      conscientiousness: {
+        perfect: {
+          high: `두 분 모두 극도로 높은 책임감과 성실함을 보이시며, 거의 동일한 수준의 신뢰성으로 완벽한 파트너십을 만들 수 있습니다`,
+          medium: `성실하고 책임감 있는 성향이 매우 유사하여, 서로에게 완전히 의지할 수 있는 관계입니다`,
+          low: `기본적인 책임감을 공유하시어, 믿을 수 있는 관계의 기초를 만들 수 있습니다`
+        },
+        high: {
+          high: `책임감 있고 신뢰할 수 있는 성격으로, 서로에게 든든한 파트너가 될 수 있습니다`,
+          medium: `성실한 성향이 비슷하시어, 안정적이고 예측 가능한 관계가 가능합니다`,
+          low: `책임감을 중시하는 마음이 통하여, 신뢰를 쌓아가는 관계가 될 수 있습니다`
+        },
+        good: {
+          high: `높은 성실성을 가지신 두 분이 좋은 궁합을 보이시어, 믿음직한 관계를 만들 수 있습니다`,
+          medium: `성실함에 대한 가치관이 비슷하시어, 서로를 신뢰하는 관계가 가능합니다`,
+          low: `기본적인 책임감을 공유하시어, 차근차근 신뢰를 쌓아갈 수 있습니다`
+        }
+      },
+      emotionalStability: {
+        perfect: {
+          high: `두 분 모두 뛰어난 정서적 안정성을 가지고 계시며, 거의 동일한 감정 조절 능력으로 매우 안정적인 관계를 만들 수 있습니다`,
+          medium: `정서적으로 안정된 성향이 매우 유사하여, 평온하고 조화로운 관계가 가능합니다`,
+          low: `기본적인 정서적 안정성을 공유하시어, 차분한 관계를 발전시킬 수 있습니다`
+        },
+        high: {
+          high: `감정적으로 안정되어 있어, 어려운 상황에서도 서로를 지지하며 극복할 수 있습니다`,
+          medium: `정서적 안정성이 비슷하시어, 갈등 상황에서도 냉정함을 유지할 수 있습니다`,
+          low: `감정 조절을 중시하는 성향이 통하여, 안정적인 관계를 만들 수 있습니다`
+        },
+        good: {
+          high: `높은 정서적 안정성을 가지신 두 분이 좋은 균형을 이루어, 평화로운 관계가 가능합니다`,
+          medium: `감정적 안정성이 유사하시어, 서로에게 안정감을 주는 관계가 될 수 있습니다`,
+          low: `정서적 균형을 추구하는 마음이 비슷하시어, 평온한 관계를 만들어갈 수 있습니다`
+        }
+      },
+      optimism: {
+        perfect: {
+          high: `두 분 모두 매우 밝고 긍정적인 성향이 거의 동일하여, 함께 있으면 끊임없이 즐겁고 희망적인 에너지를 만들어낼 수 있습니다`,
+          medium: `긍정적인 마인드가 매우 유사하시어, 서로에게 활력을 주는 밝은 관계가 가능합니다`,
+          low: `기본적으로 긍정적인 성향을 공유하시어, 서로를 격려하는 관계를 만들 수 있습니다`
+        },
+        high: {
+          high: `긍정적이고 밝은 성격으로, 함께 있으면 즐겁고 희망적인 시간을 보낼 수 있습니다`,
+          medium: `낙관적인 성향이 비슷하시어, 어려운 상황도 함께 극복해 나갈 수 있습니다`,
+          low: `긍정적인 마음가짐이 통하여, 서로를 응원하는 관계가 될 수 있습니다`
+        },
+        good: {
+          high: `높은 낙관성을 가지신 두 분이 좋은 시너지를 만들어, 밝은 관계를 발전시킬 수 있습니다`,
+          medium: `긍정적인 성향이 유사하시어, 서로에게 희망을 주는 관계가 가능합니다`,
+          low: `낙관적인 면이 비슷하시어, 함께 성장하는 긍정적 관계를 만들 수 있습니다`
+        }
+      },
+      empathy: {
+        perfect: {
+          high: `두 분 모두 뛰어난 공감 능력을 가지고 계시며, 거의 동일한 수준의 이해력으로 매우 깊고 의미있는 소통이 가능합니다`,
+          medium: `공감 능력이 매우 유사하시어, 서로의 마음을 완전히 이해하는 관계가 가능합니다`,
+          low: `기본적인 공감 능력을 공유하시어, 서로를 이해하려는 노력이 통하는 관계입니다`
+        },
+        high: {
+          high: `상대방의 마음을 잘 이해하고 공감하는 능력이 뛰어나, 깊은 소통이 가능합니다`,
+          medium: `공감하는 능력이 비슷하시어, 서로의 감정을 잘 이해할 수 있는 관계입니다`,
+          low: `상대방을 이해하려는 마음이 있으시어, 점차 깊어지는 소통이 가능합니다`
+        },
+        good: {
+          high: `높은 공감 능력을 가지신 두 분이 좋은 조화를 이루어, 깊이 있는 관계를 만들 수 있습니다`,
+          medium: `공감적 성향이 유사하시어, 서로의 마음을 헤아리는 관계가 가능합니다`,
+          low: `상대방을 이해하는 능력이 비슷하시어, 서로를 배려하는 관계를 발전시킬 수 있습니다`
+        }
+      }
     };
     
-    return descriptions[trait] || `${traitName} 특성이 비슷하여 서로를 잘 이해할 수 있습니다`;
+    const traitDescriptions = descriptions[trait];
+    if (traitDescriptions && traitDescriptions[similarityLevel] && traitDescriptions[similarityLevel][scoreLevel]) {
+      const description = traitDescriptions[similarityLevel][scoreLevel];
+      const detailInfo = ` (${traitName}: 나-${score1}점, 상대방-${score2}점, 유사도 ${similarity.toFixed(0)}%)`;
+      return description + detailInfo;
+    }
+    
+    // fallback
+    return `${traitName} 특성이 비슷하여(유사도 ${similarity.toFixed(0)}%) 서로를 잘 이해할 수 있습니다`;
   }
 
   /**
@@ -1671,6 +1843,611 @@ class IntelligentMatchingEngine {
     };
     
     return categoryMappings[category]?.includes(key) || false;
+  }
+
+  // ========== 에러 처리 강화 메서드들 ==========
+
+  /**
+   * 입력 데이터 검증
+   */
+  validateAssessmentData(assessment1, assessment2) {
+    const errors = [];
+    
+    // 필수 필드 검증
+    if (!assessment1 || !assessment2) {
+      errors.push('매칭 분석에 필요한 데이터가 누락되었습니다');
+      return { isValid: false, errors };
+    }
+    
+    if (!assessment1.userId || !assessment2.userId) {
+      errors.push('사용자 ID가 누락되었습니다');
+    }
+    
+    if (!assessment1.valueCategories || !assessment2.valueCategories) {
+      errors.push('가치관 데이터가 누락되었습니다');
+    }
+    
+    if (!assessment1.personalityScores || !assessment2.personalityScores) {
+      errors.push('성격 점수 데이터가 누락되었습니다');
+    }
+    
+    // 데이터 품질 검증
+    if (assessment1.valueCategories && Object.keys(assessment1.valueCategories).length < 3) {
+      errors.push('가치관 데이터가 불완전합니다');
+    }
+    
+    if (assessment2.valueCategories && Object.keys(assessment2.valueCategories).length < 3) {
+      errors.push('상대방의 가치관 데이터가 불완전합니다');
+    }
+    
+    return {
+      isValid: errors.length === 0,
+      errors
+    };
+  }
+
+  /**
+   * 안전한 기본 호환성 계산
+   */
+  async safeCalculateBasicCompatibility(assessment1, assessment2) {
+    try {
+      return this.calculateBasicCompatibility(assessment1, assessment2);
+    } catch (error) {
+      console.warn('기본 호환성 계산 실패, fallback 사용:', error.message);
+      return this.getFallbackCompatibility(assessment1, assessment2);
+    }
+  }
+
+  /**
+   * 안전한 연령대 조정
+   */
+  async safeAdjustForAgeGroup(compatibility, assessment1, assessment2) {
+    try {
+      return this.adjustForAgeGroup(compatibility, assessment1, assessment2);
+    } catch (error) {
+      console.warn('연령대 조정 실패, 기본값 사용:', error.message);
+      return compatibility; // 조정 없이 기본 호환성 반환
+    }
+  }
+
+  /**
+   * 안전한 매칭 이유 생성
+   */
+  async safeGenerateMatchingReasons(assessment1, assessment2, compatibility) {
+    try {
+      return this.generateMatchingReasons(assessment1, assessment2, compatibility);
+    } catch (error) {
+      console.warn('매칭 이유 생성 실패, 기본 이유 사용:', error.message);
+      return this.getDefaultMatchingReasons(compatibility.overallScore);
+    }
+  }
+
+  /**
+   * 안전한 도전점 분석
+   */
+  async safeAnalyzeChallengesAndSolutions(assessment1, assessment2) {
+    try {
+      return this.analyzeChallengesAndSolutions(assessment1, assessment2);
+    } catch (error) {
+      console.warn('도전점 분석 실패, 기본값 사용:', error.message);
+      return { challenges: [], solutions: [] };
+    }
+  }
+
+  /**
+   * 안전한 만남 가이드 생성
+   */
+  async safeGenerateMeetingGuide(assessment1, assessment2, compatibility) {
+    try {
+      return this.generateMeetingGuide(assessment1, assessment2, compatibility);
+    } catch (error) {
+      console.warn('만남 가이드 생성 실패, 기본 가이드 사용:', error.message);
+      return this.getDefaultMeetingGuide();
+    }
+  }
+
+  /**
+   * 안전한 관계 로드맵 생성
+   */
+  async safeCreateRelationshipRoadmap(assessment1, assessment2) {
+    try {
+      return this.createRelationshipRoadmap(assessment1, assessment2);
+    } catch (error) {
+      console.warn('관계 로드맵 생성 실패, 기본 로드맵 사용:', error.message);
+      return this.getDefaultRoadmap();
+    }
+  }
+
+  /**
+   * 점수 검증 및 조정
+   */
+  validateAndAdjustScore(score) {
+    if (typeof score !== 'number' || isNaN(score)) {
+      console.warn('유효하지 않은 점수, 기본값 사용:', score);
+      return 65; // 중간값 기본 점수
+    }
+    
+    // 점수를 0-100 범위로 제한
+    return Math.max(0, Math.min(100, Math.round(score)));
+  }
+
+  /**
+   * 에러 분류
+   */
+  categorizeError(error) {
+    const message = error.message.toLowerCase();
+    
+    if (message.includes('데이터') || message.includes('누락')) {
+      return 'DATA_ERROR';
+    } else if (message.includes('계산') || message.includes('분석')) {
+      return 'CALCULATION_ERROR';
+    } else if (message.includes('timeout') || message.includes('시간')) {
+      return 'TIMEOUT_ERROR';
+    } else {
+      return 'UNKNOWN_ERROR';
+    }
+  }
+
+  /**
+   * 상세 에러 로깅
+   */
+  logDetailedError(error, context) {
+    const errorLog = {
+      timestamp: new Date().toISOString(),
+      error: {
+        message: error.message,
+        stack: error.stack,
+        type: context.errorType
+      },
+      context: {
+        user1: context.user1,
+        user2: context.user2,
+        processingTime: context.processingTime,
+        sessionId: Math.random().toString(36).substring(7)
+      },
+      severity: this.determineErrorSeverity(error)
+    };
+    
+    console.error('🚨 매칭 엔진 에러:', JSON.stringify(errorLog, null, 2));
+  }
+
+  /**
+   * 에러 심각도 결정
+   */
+  determineErrorSeverity(error) {
+    const message = error.message.toLowerCase();
+    
+    if (message.includes('검증') || message.includes('데이터')) {
+      return 'HIGH'; // 데이터 문제는 심각
+    } else if (message.includes('계산')) {
+      return 'MEDIUM'; // 계산 오류는 중간
+    } else {
+      return 'LOW'; // 기타는 낮음
+    }
+  }
+
+  /**
+   * Fallback 결과 생성
+   */
+  generateFallbackResult(assessment1, assessment2, originalError) {
+    console.log('🔄 Fallback 매칭 결과 생성 중...');
+    
+    const errorType = this.categorizeError(originalError);
+    const fallbackScore = this.calculateSimpleFallbackScore(assessment1, assessment2);
+    
+    return {
+      overallScore: fallbackScore,
+      compatibility: this.getFallbackCompatibility(assessment1, assessment2),
+      matchingReasons: this.getDefaultMatchingReasons(fallbackScore),
+      challengesAndSolutions: { challenges: [], solutions: [] },
+      meetingGuide: this.getDefaultMeetingGuide(),
+      relationshipRoadmap: this.getDefaultRoadmap(),
+      confidenceLevel: 40, // Fallback의 경우 낮은 신뢰도
+      timestamp: new Date(),
+      version: '3.0-fallback',
+      fallbacksUsed: ['COMPREHENSIVE_ANALYSIS'],
+      errorInfo: {
+        type: errorType,
+        fallbackReason: '매칭 분석 중 오류가 발생하여 기본 분석을 제공합니다',
+        userMessage: this.getUserFriendlyErrorMessage(errorType)
+      }
+    };
+  }
+
+  /**
+   * 간단한 fallback 점수 계산
+   */
+  calculateSimpleFallbackScore(assessment1, assessment2) {
+    try {
+      if (!assessment1?.valueCategories || !assessment2?.valueCategories) {
+        return 65; // 기본 중간 점수
+      }
+      
+      // 간단한 가치관 유사도만 계산
+      const values1 = assessment1.valueCategories;
+      const values2 = assessment2.valueCategories;
+      
+      let totalDiff = 0;
+      let count = 0;
+      
+      Object.keys(values1).forEach(key => {
+        if (values2[key] !== undefined) {
+          totalDiff += Math.abs(values1[key] - values2[key]);
+          count++;
+        }
+      });
+      
+      const avgDifference = count > 0 ? totalDiff / count : 35;
+      return Math.max(30, Math.min(85, 100 - avgDifference));
+      
+    } catch (error) {
+      console.warn('Fallback 점수 계산도 실패, 기본값 사용');
+      return 65;
+    }
+  }
+
+  /**
+   * Fallback 호환성 데이터
+   */
+  getFallbackCompatibility(assessment1, assessment2) {
+    return {
+      overallScore: this.calculateSimpleFallbackScore(assessment1, assessment2),
+      breakdown: {
+        coreValues: 60,
+        personalityFit: 60,
+        lifestyleCompat: 60,
+        communicationSync: 60,
+        growthPotential: 60
+      },
+      details: {
+        fallbackMode: true,
+        limitedAnalysis: true
+      }
+    };
+  }
+
+  /**
+   * 기본 매칭 이유
+   */
+  getDefaultMatchingReasons(score) {
+    if (score >= 70) {
+      return [
+        {
+          type: 'general_compatibility',
+          title: '전반적인 궁합',
+          description: '두 분의 전반적인 가치관과 성향이 잘 어울립니다',
+          importance: 75,
+          rank: 1
+        }
+      ];
+    } else {
+      return [
+        {
+          type: 'potential_growth',
+          title: '성장 가능성',
+          description: '서로 다른 점들을 통해 새로운 배움의 기회가 있습니다',
+          importance: 60,
+          rank: 1
+        }
+      ];
+    }
+  }
+
+  /**
+   * 기본 만남 가이드
+   */
+  getDefaultMeetingGuide() {
+    return {
+      recommendedActivities: [
+        {
+          type: 'safe_default',
+          activity: '편안한 카페에서 대화',
+          description: '조용하고 편안한 분위기에서 서로를 알아가는 시간',
+          location: '카페',
+          timeEstimate: '1-2시간'
+        }
+      ],
+      conversationStarters: [
+        {
+          type: 'general',
+          topic: 'life_experiences',
+          question: '최근에 어떤 일로 시간을 보내고 계신가요?',
+          context: '일상적인 대화로 시작'
+        }
+      ],
+      attentionPoints: [],
+      relationshipTips: [
+        {
+          type: 'general',
+          title: '편안한 분위기 만들기',
+          tip: '서두르지 않고 자연스럽게 대화를 나누어보세요',
+          priority: 'high'
+        }
+      ]
+    };
+  }
+
+  /**
+   * 기본 관계 로드맵
+   */
+  getDefaultRoadmap() {
+    return {
+      phase1: {
+        title: '첫 만남과 인상',
+        duration: '1-2주',
+        activities: ['편안한 카페에서 대화', '가벼운 산책'],
+        goals: ['서로의 기본적인 모습 파악', '편안한 분위기 조성']
+      },
+      phase2: {
+        title: '신뢰 관계 구축',
+        duration: '1-2개월',
+        activities: ['정기적인 만남', '공통 관심사 탐색'],
+        goals: ['서로에 대한 이해 증진', '신뢰 관계 형성']
+      },
+      phase3: {
+        title: '깊은 관계 발전',
+        duration: '3-6개월',
+        activities: ['의미있는 활동 공유', '미래 계획 논의'],
+        goals: ['장기적 관점에서의 관계 발전']
+      }
+    };
+  }
+
+  /**
+   * 활성화된 fallback 목록
+   */
+  getActiveFallbacks() {
+    return this.activeFallbacks || [];
+  }
+
+  /**
+   * 사용자 친화적 에러 메시지
+   */
+  getUserFriendlyErrorMessage(errorType) {
+    const messages = {
+      'DATA_ERROR': '일시적으로 데이터 처리에 문제가 있어 기본 분석을 제공합니다. 잠시 후 다시 시도해주세요.',
+      'CALCULATION_ERROR': '복합적인 분석에 일시적 문제가 있어 간소화된 결과를 제공합니다.',
+      'TIMEOUT_ERROR': '분석 시간이 초과되어 빠른 결과를 제공합니다.',
+      'UNKNOWN_ERROR': '예상치 못한 문제가 발생하여 기본 분석을 제공합니다.'
+    };
+    
+    return messages[errorType] || messages['UNKNOWN_ERROR'];
+  }
+
+  // ========== 결과 설명 보강 메서드들 ==========
+
+  /**
+   * 점수별 해석 생성
+   */
+  generateScoreInterpretation(score) {
+    if (score >= 90) {
+      return {
+        level: 'exceptional',
+        title: '환상적인 궁합',
+        description: '매우 드문 최상의 호환성을 보입니다. 두 분은 가치관, 성격, 생활방식에서 탁월한 조화를 이루며, 깊고 의미있는 관계로 발전할 가능성이 매우 높습니다.',
+        percentage: '상위 5%',
+        recommendation: '이런 기회는 흔하지 않습니다. 적극적으로 관계를 발전시켜 보시기를 강력히 추천합니다.'
+      };
+    } else if (score >= 80) {
+      return {
+        level: 'excellent',
+        title: '뛰어난 궁합',
+        description: '매우 높은 호환성을 보이며, 4060세대에게 이상적인 매칭입니다. 서로의 가치관과 성격이 잘 맞아 안정적이고 행복한 관계를 만들어갈 수 있습니다.',
+        percentage: '상위 15%',
+        recommendation: '훌륭한 매칭입니다. 첫 만남에서 편안함을 느끼실 가능성이 높으니 자신감을 가지고 만나보세요.'
+      };
+    } else if (score >= 70) {
+      return {
+        level: 'very_good',
+        title: '매우 좋은 궁합',
+        description: '좋은 호환성을 보이는 매칭입니다. 몇 가지 차이점이 있을 수 있지만, 이는 오히려 서로를 보완하며 성장할 수 있는 기회가 될 것입니다.',
+        percentage: '상위 30%',
+        recommendation: '긍정적인 결과를 기대해도 좋습니다. 열린 마음으로 서로를 알아가며 관계를 발전시켜 보세요.'
+      };
+    } else if (score >= 60) {
+      return {
+        level: 'good',
+        title: '좋은 궁합',
+        description: '기본적인 호환성을 바탕으로 좋은 관계를 만들어갈 수 있습니다. 서로 다른 점들이 있지만, 이해와 소통을 통해 조화를 이룰 수 있습니다.',
+        percentage: '상위 50%',
+        recommendation: '시간을 두고 서로를 알아가며 관계를 천천히 발전시켜 보세요. 인내심을 가지면 좋은 결과를 얻을 수 있습니다.'
+      };
+    } else {
+      return {
+        level: 'challenging',
+        title: '도전적인 관계',
+        description: '상당한 차이점들이 있어 관계 발전에 노력이 필요합니다. 하지만 서로 다른 점들을 인정하고 존중한다면, 새로운 관점을 배우며 성장할 수 있는 기회가 될 수 있습니다.',
+        percentage: '하위 50%',
+        recommendation: '신중하게 접근하시되, 열린 마음으로 상대방의 다른 점들을 이해하려 노력해보세요. 시간이 걸리더라도 의미있는 관계로 발전할 수 있습니다.'
+      };
+    }
+  }
+
+  /**
+   * 상세 점수 분석
+   */
+  generateDetailedBreakdown(compatibility) {
+    const breakdown = compatibility.breakdown;
+    const analysis = [];
+
+    Object.keys(breakdown).forEach(category => {
+      const score = breakdown[category];
+      const categoryAnalysis = this.analyzeCategoryScore(category, score);
+      analysis.push(categoryAnalysis);
+    });
+
+    // 가장 강한 영역과 약한 영역 식별
+    const sortedCategories = analysis.sort((a, b) => b.score - a.score);
+    const strongest = sortedCategories[0];
+    const weakest = sortedCategories[sortedCategories.length - 1];
+
+    return {
+      categoryAnalysis: analysis,
+      strongest: {
+        category: strongest.category,
+        score: strongest.score,
+        insight: `두 분의 가장 강한 호환 영역은 ${strongest.displayName}입니다. 이 부분에서 자연스러운 조화를 이루실 것입니다.`
+      },
+      weakest: {
+        category: weakest.category,
+        score: weakest.score,
+        insight: weakest.score < 60 ? 
+          `${weakest.displayName} 영역에서 차이가 있지만, 이는 서로를 보완할 수 있는 기회가 될 수 있습니다.` :
+          `전체적으로 균형잡힌 호환성을 보이고 있습니다.`
+      },
+      overallBalance: this.assessOverallBalance(analysis)
+    };
+  }
+
+  /**
+   * 관계 발전 가능성 평가
+   */
+  assessRelationshipPotential(score, compatibility) {
+    const potential = {
+      shortTerm: this.assessShortTermPotential(score, compatibility),
+      longTerm: this.assessLongTermPotential(score, compatibility),
+      successFactors: this.identifySuccessFactors(compatibility),
+      growthAreas: this.identifyGrowthAreas(compatibility)
+    };
+
+    return potential;
+  }
+
+  /**
+   * 개선 제안 생성
+   */
+  generateImprovementSuggestions(score, challengesAndSolutions) {
+    const suggestions = [];
+
+    // 점수별 일반적인 제안
+    if (score >= 80) {
+      suggestions.push({
+        type: 'maintenance',
+        title: '높은 호환성 유지하기',
+        suggestion: '이미 훌륭한 호환성을 보이고 계시니, 이를 유지하며 더욱 깊이 있는 관계로 발전시켜 나가세요.',
+        priority: 'medium'
+      });
+    } else if (score >= 60) {
+      suggestions.push({
+        type: 'enhancement',
+        title: '호환성 향상 방법',
+        suggestion: '공통점을 더 깊이 탐구하고, 차이점에 대해서는 열린 마음으로 이해하려 노력해보세요.',
+        priority: 'high'
+      });
+    } else {
+      suggestions.push({
+        type: 'foundation',
+        title: '관계 기초 다지기',
+        suggestion: '서두르지 마시고 서로를 이해하는 데 충분한 시간을 투자하세요. 작은 공통점부터 찾아나가세요.',
+        priority: 'high'
+      });
+    }
+
+    // 도전점 기반 제안
+    if (challengesAndSolutions.solutions && challengesAndSolutions.solutions.length > 0) {
+      challengesAndSolutions.solutions.forEach(solution => {
+        suggestions.push({
+          type: 'challenge_specific',
+          title: `${solution.challenge} 영역 개선`,
+          suggestion: solution.suggestion,
+          priority: solution.priority || 'medium'
+        });
+      });
+    }
+
+    return suggestions.slice(0, 4); // 최대 4개 제안
+  }
+
+  /**
+   * 호환성 인사이트 생성
+   */
+  generateCompatibilityInsights(user1Assessment, user2Assessment, compatibility) {
+    const insights = [];
+
+    // 4060세대 특화 인사이트
+    insights.push({
+      type: 'age_group_specific',
+      title: '4060세대 매칭 특성',
+      insight: this.generate4060Insight(user1Assessment, user2Assessment, compatibility.overallScore)
+    });
+
+    // 가치관 기반 인사이트
+    const valueInsight = this.generateValueBasedInsight(user1Assessment, user2Assessment);
+    if (valueInsight) insights.push(valueInsight);
+
+    // 성격 기반 인사이트
+    const personalityInsight = this.generatePersonalityBasedInsight(user1Assessment, user2Assessment);
+    if (personalityInsight) insights.push(personalityInsight);
+
+    // 성장 잠재력 인사이트
+    const growthInsight = this.generateGrowthPotentialInsight(user1Assessment, user2Assessment);
+    if (growthInsight) insights.push(growthInsight);
+
+    return insights;
+  }
+
+  /**
+   * 카테고리별 점수 분석
+   */
+  analyzeCategoryScore(category, score) {
+    const categoryNames = {
+      coreValues: '핵심 가치관',
+      personalityFit: '성격 궁합',
+      lifestyleCompat: '라이프스타일',
+      communicationSync: '소통 방식',
+      growthPotential: '성장 가능성'
+    };
+
+    const analysis = {
+      category,
+      displayName: categoryNames[category] || category,
+      score: Math.round(score),
+      level: score >= 80 ? 'excellent' : score >= 65 ? 'good' : score >= 50 ? 'fair' : 'challenging',
+      interpretation: this.getCategoryInterpretation(category, score)
+    };
+
+    return analysis;
+  }
+
+  /**
+   * 카테고리별 해석
+   */
+  getCategoryInterpretation(category, score) {
+    const interpretations = {
+      coreValues: {
+        excellent: '인생에서 추구하는 가치와 목표가 매우 잘 맞습니다',
+        good: '기본적인 가치관에서 좋은 호환성을 보입니다',
+        fair: '일부 가치관에서 차이가 있지만 이해할 수 있는 수준입니다',
+        challenging: '가치관에서 상당한 차이가 있어 서로 이해하는 노력이 필요합니다'
+      },
+      personalityFit: {
+        excellent: '성격적으로 매우 잘 어울리며 자연스러운 조화를 이룹니다',
+        good: '성격적으로 좋은 궁합을 보이며 편안한 관계가 가능합니다',
+        fair: '성격적 차이가 있지만 서로 보완할 수 있습니다',
+        challenging: '성격적 차이가 커서 서로 이해하는 시간이 필요합니다'
+      },
+      lifestyleCompat: {
+        excellent: '생활 패턴과 방식이 매우 잘 맞아 조화로운 일상이 가능합니다',
+        good: '생활 방식에서 좋은 호환성을 보입니다',
+        fair: '생활 패턴에서 일부 차이가 있지만 조율 가능합니다',
+        challenging: '생활 방식에서 상당한 차이가 있어 조율이 필요합니다'
+      },
+      communicationSync: {
+        excellent: '소통 방식이 매우 잘 맞아 깊이 있는 대화가 가능합니다',
+        good: '소통에서 좋은 호환성을 보이며 이해가 잘 됩니다',
+        fair: '소통 방식에서 약간의 차이가 있지만 조화 가능합니다',
+        challenging: '소통 방식에서 차이가 있어 서로 이해하는 노력이 필요합니다'
+      },
+      growthPotential: {
+        excellent: '함께 성장하고 발전할 수 있는 뛰어난 잠재력을 가지고 있습니다',
+        good: '서로의 성장을 도울 수 있는 좋은 가능성이 있습니다',
+        fair: '점진적으로 함께 발전해 나갈 수 있습니다',
+        challenging: '성장 방향에서 차이가 있지만 새로운 관점을 배울 수 있습니다'
+      }
+    };
+
+    const level = score >= 80 ? 'excellent' : score >= 65 ? 'good' : score >= 50 ? 'fair' : 'challenging';
+    return interpretations[category]?.[level] || '이 영역에서의 호환성을 평가 중입니다';
   }
 
   // 추가 유틸리티 메서드들...

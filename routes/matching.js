@@ -851,10 +851,30 @@ router.get('/intelligent-compatibility/:targetUserId',
       
     } catch (error) {
       console.error('Phase 3 지능형 호환성 분석 오류:', error);
-      res.status(500).json({
+      
+      // 에러 유형에 따른 사용자 친화적 메시지
+      let userMessage = '지능형 호환성 분석 중 오류가 발생했습니다.';
+      let statusCode = 500;
+      
+      if (error.message.includes('데이터 검증')) {
+        userMessage = '분석에 필요한 데이터가 부족합니다. 가치관 설문을 다시 확인해주세요.';
+        statusCode = 400;
+      } else if (error.message.includes('timeout') || error.message.includes('시간')) {
+        userMessage = '분석이 예상보다 오래 걸리고 있습니다. 잠시 후 다시 시도해주세요.';
+        statusCode = 503;
+      }
+      
+      res.status(statusCode).json({
         success: false,
-        error: '지능형 호환성 분석 중 오류가 발생했습니다.',
-        code: 'INTELLIGENT_COMPATIBILITY_ERROR'
+        error: userMessage,
+        code: 'INTELLIGENT_COMPATIBILITY_ERROR',
+        details: {
+          canRetry: statusCode !== 400,
+          suggestedAction: statusCode === 400 ? 
+            '가치관 설문을 다시 완료해주세요' : 
+            '잠시 후 다시 시도해주세요',
+          supportMessage: '문제가 지속되면 고객지원팀에 문의해주세요'
+        }
       });
     }
   }
@@ -1129,11 +1149,57 @@ router.get('/smart-recommendations', authenticate, requireVerified, async (req, 
     
   } catch (error) {
     console.error('Phase 3 스마트 추천 오류:', error);
-    res.status(500).json({
-      success: false,
-      error: '스마트 추천 생성 중 오류가 발생했습니다.',
-      code: 'SMART_RECOMMENDATIONS_ERROR'
-    });
+    
+    // 부분적 결과가 있는 경우 제공
+    if (error.partialResults && error.partialResults.length > 0) {
+      console.log('부분적 결과 제공 중...');
+      res.json({
+        success: true,
+        message: `일부 분석에 문제가 있어 ${error.partialResults.length}개의 추천을 제공합니다.`,
+        data: {
+          recommendations: error.partialResults,
+          totalAnalyzed: error.partialResults.length,
+          qualityFiltered: error.partialResults.length,
+          finalRecommendations: error.partialResults.length,
+          criteria: {
+            minScore: parseInt(req.query.minScore) || 60,
+            limit: parseInt(req.query.limit) || 10,
+            ageGroup: '4060세대',
+            analysisVersion: '3.0-partial'
+          },
+          generatedAt: new Date(),
+          warning: '일부 사용자의 분석이 제한되었습니다'
+        }
+      });
+    } else {
+      // 완전한 에러인 경우
+      let userMessage = '스마트 추천 생성 중 오류가 발생했습니다.';
+      let statusCode = 500;
+      
+      if (error.message.includes('설문')) {
+        userMessage = '가치관 설문을 먼저 완료해주세요.';
+        statusCode = 400;
+      } else if (error.message.includes('사용자')) {
+        userMessage = '현재 추천 가능한 사용자가 없습니다. 나중에 다시 시도해주세요.';
+        statusCode = 404;
+      }
+      
+      res.status(statusCode).json({
+        success: false,
+        error: userMessage,
+        code: 'SMART_RECOMMENDATIONS_ERROR',
+        details: {
+          canRetry: statusCode !== 400,
+          suggestedAction: statusCode === 400 ? 
+            '가치관 설문을 완료해주세요' : 
+            '잠시 후 다시 시도해주세요',
+          alternatives: [
+            '일반 사용자 목록을 확인해보세요',
+            '검색 조건을 조정해보세요'
+          ]
+        }
+      });
+    }
   }
 });
 
