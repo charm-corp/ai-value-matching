@@ -1,0 +1,13 @@
+{
+  "status": "OK",
+  "server": "정적 파일 서버",
+  "port": 3001,
+  "message": "서버가 정상적으로 실행중입니다",
+  "timestamp": "2025-07-10",
+  "version": "v2.1",
+  "features": [
+    "정적 파일 서빙",
+    "HTML/CSS/JS 지원", 
+    "캐시 무력화 지원"
+  ]
+}
