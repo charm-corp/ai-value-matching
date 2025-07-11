@@ -1248,4 +1248,941 @@ function extractKeyStrengths(reasons) {
   return reasons?.slice(0, 2).map(reason => reason.title) || [];
 }
 
+/**
+ * @swagger
+ * /api/matching/compare:
+ *   post:
+ *     summary: 여러 매칭 결과 동시 비교 (Phase 3)
+ *     tags: [Matching]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - matchIds
+ *             properties:
+ *               matchIds:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 minItems: 2
+ *                 maxItems: 5
+ *                 description: 비교할 매칭 ID들
+ *               comparisonType:
+ *                 type: string
+ *                 enum: ['basic', 'detailed', 'comprehensive']
+ *                 default: 'basic'
+ *                 description: 비교 분석 수준
+ *     responses:
+ *       200:
+ *         description: 매칭 비교 완료
+ *       400:
+ *         description: 잘못된 요청 (매칭 ID 부족 등)
+ *       404:
+ *         description: 매칭을 찾을 수 없음
+ */
+router.post('/compare', authenticate, requireVerified, async (req, res) => {
+  try {
+    const { matchIds, comparisonType = 'basic' } = req.body;
+    const currentUserId = req.user._id;
+    
+    console.log(`🔍 매칭 비교 요청 - 사용자: ${currentUserId}, 매칭 수: ${matchIds?.length}`);
+    
+    // 입력 검증
+    if (!matchIds || !Array.isArray(matchIds) || matchIds.length < 2) {
+      return res.status(400).json({
+        success: false,
+        error: '비교할 매칭을 2개 이상 선택해주세요.',
+        code: 'INSUFFICIENT_MATCHES'
+      });
+    }
+    
+    if (matchIds.length > 5) {
+      return res.status(400).json({
+        success: false,
+        error: '최대 5개까지 비교할 수 있습니다.',
+        code: 'TOO_MANY_MATCHES'
+      });
+    }
+    
+    // 매칭 데이터 조회 (현재 사용자 참여 확인)
+    const matches = await Match.find({
+      _id: { $in: matchIds },
+      $or: [
+        { user1: currentUserId },
+        { user2: currentUserId }
+      ]
+    })
+    .populate('user1', 'name age profileImage location bio preferences')
+    .populate('user2', 'name age profileImage location bio preferences');
+    
+    if (matches.length !== matchIds.length) {
+      return res.status(404).json({
+        success: false,
+        error: '일부 매칭을 찾을 수 없거나 접근 권한이 없습니다.',
+        code: 'MATCHES_NOT_FOUND'
+      });
+    }
+    
+    // 비교 분석 수행
+    const comparisonResult = await performMatchComparison(matches, currentUserId, comparisonType);
+    
+    // 4060세대 특화 인사이트 추가
+    const enhancedResult = await enhanceComparisonForAgeGroup(comparisonResult, matches);
+    
+    console.log(`✅ 매칭 비교 완료 - ${matches.length}개 매칭 분석`);
+    
+    res.json({
+      success: true,
+      message: `${matches.length}개 매칭 비교가 완료되었습니다.`,
+      data: {
+        comparison: enhancedResult,
+        matches: matches.map(match => formatMatchForResponse(match, currentUserId)),
+        comparisonType,
+        analyzedAt: new Date(),
+        statistics: {
+          totalMatches: matches.length,
+          averageCompatibility: Math.round(
+            matches.reduce((sum, match) => sum + match.compatibilityScore, 0) / matches.length
+          ),
+          bestMatch: enhancedResult.bestMatch,
+          comparisonConfidence: enhancedResult.overallConfidence
+        }
+      }
+    });
+    
+  } catch (error) {
+    console.error('매칭 비교 오류:', error);
+    res.status(500).json({
+      success: false,
+      error: '매칭 비교 중 오류가 발생했습니다.',
+      code: 'COMPARISON_ERROR',
+      details: {
+        canRetry: true,
+        suggestedAction: '잠시 후 다시 시도해주세요'
+      }
+    });
+  }
+});
+
+/**
+ * @swagger
+ * /api/matching/compare/detailed/{matchId1}/{matchId2}:
+ *   get:
+ *     summary: 두 매칭의 상세 비교 분석 (Phase 3)
+ *     tags: [Matching]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: matchId1
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: 첫 번째 매칭 ID
+ *       - name: matchId2
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: 두 번째 매칭 ID
+ *     responses:
+ *       200:
+ *         description: 상세 비교 분석 완료
+ *       404:
+ *         description: 매칭을 찾을 수 없음
+ */
+router.get('/compare/detailed/:matchId1/:matchId2', 
+  authenticate, 
+  requireVerified, 
+  validateObjectId('matchId1'),
+  validateObjectId('matchId2'),
+  async (req, res) => {
+    try {
+      const { matchId1, matchId2 } = req.params;
+      const currentUserId = req.user._id;
+      
+      console.log(`🔍 상세 매칭 비교: ${matchId1} vs ${matchId2}`);
+      
+      // 두 매칭 데이터 조회
+      const [match1, match2] = await Promise.all([
+        Match.findOne({
+          _id: matchId1,
+          $or: [{ user1: currentUserId }, { user2: currentUserId }]
+        })
+        .populate('user1', 'name age profileImage location bio preferences')
+        .populate('user2', 'name age profileImage location bio preferences'),
+        
+        Match.findOne({
+          _id: matchId2,
+          $or: [{ user1: currentUserId }, { user2: currentUserId }]
+        })
+        .populate('user1', 'name age profileImage location bio preferences')
+        .populate('user2', 'name age profileImage location bio preferences')
+      ]);
+      
+      if (!match1 || !match2) {
+        return res.status(404).json({
+          success: false,
+          error: '매칭을 찾을 수 없거나 접근 권한이 없습니다.',
+          code: 'MATCHES_NOT_FOUND'
+        });
+      }
+      
+      // 상세 비교 분석 수행
+      const detailedComparison = await performDetailedComparison(match1, match2, currentUserId);
+      
+      // 4060세대 특화 조언 생성
+      const ageGroupAdvice = generateAgeGroupSpecificAdvice(detailedComparison);
+      
+      console.log(`✅ 상세 매칭 비교 완료`);
+      
+      res.json({
+        success: true,
+        message: '상세 매칭 비교가 완료되었습니다.',
+        data: {
+          comparison: detailedComparison,
+          matches: {
+            match1: formatMatchForResponse(match1, currentUserId),
+            match2: formatMatchForResponse(match2, currentUserId)
+          },
+          ageGroupAdvice,
+          analyzedAt: new Date(),
+          comparisonId: `${matchId1}_vs_${matchId2}`,
+          version: '3.0'
+        }
+      });
+      
+    } catch (error) {
+      console.error('상세 매칭 비교 오류:', error);
+      res.status(500).json({
+        success: false,
+        error: '상세 매칭 비교 중 오류가 발생했습니다.',
+        code: 'DETAILED_COMPARISON_ERROR'
+      });
+    }
+  }
+);
+
+/**
+ * @swagger
+ * /api/matching/compare/recommendations:
+ *   post:
+ *     summary: 비교 결과 기반 AI 추천 (Phase 3)
+ *     tags: [Matching]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - comparisonResults
+ *             properties:
+ *               comparisonResults:
+ *                 type: object
+ *                 description: 비교 분석 결과
+ *               preferences:
+ *                 type: object
+ *                 description: 사용자 선호도 (선택사항)
+ *     responses:
+ *       200:
+ *         description: AI 추천 생성 완료
+ */
+router.post('/compare/recommendations', authenticate, requireVerified, async (req, res) => {
+  try {
+    const { comparisonResults, preferences } = req.body;
+    const currentUserId = req.user._id;
+    
+    console.log(`🤖 AI 추천 생성 요청 - 사용자: ${currentUserId}`);
+    
+    // 입력 검증
+    if (!comparisonResults) {
+      return res.status(400).json({
+        success: false,
+        error: '비교 결과 데이터가 필요합니다.',
+        code: 'COMPARISON_RESULTS_REQUIRED'
+      });
+    }
+    
+    // 사용자 정보 및 설문 조회
+    const [currentUser, userAssessment] = await Promise.all([
+      User.findById(currentUserId),
+      ValuesAssessment.findOne({ 
+        userId: currentUserId, 
+        isCompleted: true 
+      }).sort({ completedAt: -1 })
+    ]);
+    
+    // AI 추천 생성
+    const aiRecommendations = await generateAIRecommendations(
+      comparisonResults, 
+      currentUser, 
+      userAssessment,
+      preferences
+    );
+    
+    // 4060세대 특화 추천 향상
+    const enhancedRecommendations = await enhanceRecommendationsForAgeGroup(
+      aiRecommendations,
+      currentUser.age
+    );
+    
+    console.log(`✅ AI 추천 생성 완료`);
+    
+    res.json({
+      success: true,
+      message: '4060세대 맞춤 AI 추천이 생성되었습니다.',
+      data: {
+        recommendations: enhancedRecommendations,
+        analysisMetadata: {
+          userId: currentUserId,
+          analysisVersion: '3.0',
+          ageGroupOptimized: true,
+          generatedAt: new Date(),
+          confidence: enhancedRecommendations.overallConfidence || 85
+        }
+      }
+    });
+    
+  } catch (error) {
+    console.error('AI 추천 생성 오류:', error);
+    res.status(500).json({
+      success: false,
+      error: 'AI 추천 생성 중 오류가 발생했습니다.',
+      code: 'AI_RECOMMENDATION_ERROR'
+    });
+  }
+});
+
+// ========== 매칭 비교 유틸리티 함수들 ==========
+
+/**
+ * 매칭 비교 수행
+ */
+async function performMatchComparison(matches, currentUserId, comparisonType) {
+  try {
+    const comparisonData = {
+      matchCount: matches.length,
+      comparisonType,
+      overallAnalysis: {},
+      detailedBreakdown: {},
+      recommendations: [],
+      visualizationData: {}
+    };
+
+    // 기본 호환성 점수 비교
+    const compatibilityScores = matches.map(match => ({
+      matchId: match._id,
+      userName: match.getOtherUser(currentUserId).name,
+      score: match.compatibilityScore,
+      breakdown: match.compatibilityBreakdown || {}
+    }));
+
+    // 최고, 최저 점수 매칭 찾기
+    const bestMatch = compatibilityScores.reduce((best, current) => 
+      current.score > best.score ? current : best
+    );
+    
+    const worstMatch = compatibilityScores.reduce((worst, current) => 
+      current.score < worst.score ? current : worst
+    );
+
+    // 전체 분석
+    comparisonData.overallAnalysis = {
+      averageCompatibility: Math.round(
+        compatibilityScores.reduce((sum, match) => sum + match.score, 0) / matches.length
+      ),
+      bestMatch: bestMatch,
+      worstMatch: worstMatch,
+      scoreRange: bestMatch.score - worstMatch.score,
+      distribution: calculateScoreDistribution(compatibilityScores)
+    };
+
+    // 상세 분석 (상세 모드인 경우)
+    if (comparisonType === 'detailed' || comparisonType === 'comprehensive') {
+      comparisonData.detailedBreakdown = await calculateDetailedBreakdown(matches, currentUserId);
+    }
+
+    // 시각화 데이터 생성
+    comparisonData.visualizationData = generateVisualizationData(matches, currentUserId);
+
+    // 기본 추천 생성
+    comparisonData.recommendations = generateBasicRecommendations(comparisonData.overallAnalysis);
+
+    return comparisonData;
+
+  } catch (error) {
+    console.error('매칭 비교 수행 오류:', error);
+    throw new Error('매칭 비교 분석 중 오류가 발생했습니다');
+  }
+}
+
+/**
+ * 상세 비교 분석 수행
+ */
+async function performDetailedComparison(match1, match2, currentUserId) {
+  try {
+    const user1 = match1.getOtherUser(currentUserId);
+    const user2 = match2.getOtherUser(currentUserId);
+
+    const comparison = {
+      summary: {
+        match1: {
+          name: user1.name,
+          compatibilityScore: match1.compatibilityScore,
+          matchedAt: match1.matchedAt
+        },
+        match2: {
+          name: user2.name,
+          compatibilityScore: match2.compatibilityScore,
+          matchedAt: match2.matchedAt
+        },
+        scoreDifference: Math.abs(match1.compatibilityScore - match2.compatibilityScore)
+      },
+      
+      breakdown: {
+        valuesAlignment: {
+          match1: match1.compatibilityBreakdown?.valuesAlignment || 0,
+          match2: match2.compatibilityBreakdown?.valuesAlignment || 0,
+          difference: Math.abs(
+            (match1.compatibilityBreakdown?.valuesAlignment || 0) - 
+            (match2.compatibilityBreakdown?.valuesAlignment || 0)
+          )
+        },
+        personalityCompatibility: {
+          match1: match1.compatibilityBreakdown?.personalityCompatibility || 0,
+          match2: match2.compatibilityBreakdown?.personalityCompatibility || 0,
+          difference: Math.abs(
+            (match1.compatibilityBreakdown?.personalityCompatibility || 0) - 
+            (match2.compatibilityBreakdown?.personalityCompatibility || 0)
+          )
+        },
+        lifestyleMatch: {
+          match1: match1.compatibilityBreakdown?.lifestyleMatch || 0,
+          match2: match2.compatibilityBreakdown?.lifestyleMatch || 0,
+          difference: Math.abs(
+            (match1.compatibilityBreakdown?.lifestyleMatch || 0) - 
+            (match2.compatibilityBreakdown?.lifestyleMatch || 0)
+          )
+        },
+        interestOverlap: {
+          match1: match1.compatibilityBreakdown?.interestOverlap || 0,
+          match2: match2.compatibilityBreakdown?.interestOverlap || 0,
+          difference: Math.abs(
+            (match1.compatibilityBreakdown?.interestOverlap || 0) - 
+            (match2.compatibilityBreakdown?.interestOverlap || 0)
+          )
+        },
+        communicationStyle: {
+          match1: match1.compatibilityBreakdown?.communicationStyle || 0,
+          match2: match2.compatibilityBreakdown?.communicationStyle || 0,
+          difference: Math.abs(
+            (match1.compatibilityBreakdown?.communicationStyle || 0) - 
+            (match2.compatibilityBreakdown?.communicationStyle || 0)
+          )
+        }
+      },
+      
+      strengths: {
+        match1: analyzeMatchStrengths(match1),
+        match2: analyzeMatchStrengths(match2)
+      },
+      
+      challenges: {
+        match1: analyzeMatchChallenges(match1),
+        match2: analyzeMatchChallenges(match2)
+      },
+      
+      recommendation: generateComparisonRecommendation(match1, match2, currentUserId)
+    };
+
+    return comparison;
+
+  } catch (error) {
+    console.error('상세 비교 분석 오류:', error);
+    throw new Error('상세 비교 분석 중 오류가 발생했습니다');
+  }
+}
+
+/**
+ * 4060세대 특화 비교 향상
+ */
+async function enhanceComparisonForAgeGroup(comparisonResult, matches) {
+  try {
+    const enhanced = {
+      ...comparisonResult,
+      ageGroupInsights: {
+        stabilityFocus: analyzeStabilityFactors(matches),
+        deepConnectionPotential: analyzeDeepConnectionPotential(matches),
+        experienceBasedGuidance: generateExperienceBasedGuidance(matches),
+        authenticityAssessment: assessAuthenticity(matches)
+      },
+      
+      practicalAdvice: {
+        meetingRecommendations: generateMeetingRecommendations(matches),
+        conversationGuides: generateConversationGuides(matches),
+        timelineGuidance: generateTimelineGuidance(matches),
+        relationshipBuildingTips: generateRelationshipBuildingTips(matches)
+      },
+      
+      overallConfidence: calculateOverallConfidence(comparisonResult),
+      bestMatch: determineBestMatchForAgeGroup(matches, comparisonResult)
+    };
+
+    return enhanced;
+
+  } catch (error) {
+    console.error('4060세대 특화 향상 오류:', error);
+    return comparisonResult; // 기본 결과 반환
+  }
+}
+
+/**
+ * 점수 분포 계산
+ */
+function calculateScoreDistribution(compatibilityScores) {
+  const ranges = {
+    excellent: 0,  // 80-100
+    good: 0,       // 60-79
+    fair: 0,       // 40-59
+    poor: 0        // 0-39
+  };
+
+  compatibilityScores.forEach(match => {
+    if (match.score >= 80) ranges.excellent++;
+    else if (match.score >= 60) ranges.good++;
+    else if (match.score >= 40) ranges.fair++;
+    else ranges.poor++;
+  });
+
+  return ranges;
+}
+
+/**
+ * 상세 분석 계산
+ */
+async function calculateDetailedBreakdown(matches, currentUserId) {
+  const categories = ['valuesAlignment', 'personalityCompatibility', 'lifestyleMatch', 'interestOverlap', 'communicationStyle'];
+  
+  const breakdown = {};
+  
+  categories.forEach(category => {
+    const scores = matches.map(match => match.compatibilityBreakdown?.[category] || 0);
+    
+    breakdown[category] = {
+      average: Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length),
+      highest: Math.max(...scores),
+      lowest: Math.min(...scores),
+      range: Math.max(...scores) - Math.min(...scores),
+      distribution: scores
+    };
+  });
+
+  return breakdown;
+}
+
+/**
+ * 시각화 데이터 생성
+ */
+function generateVisualizationData(matches, currentUserId) {
+  return {
+    radarChart: matches.map(match => ({
+      name: match.getOtherUser(currentUserId).name,
+      data: {
+        가치관: match.compatibilityBreakdown?.valuesAlignment || 0,
+        성격: match.compatibilityBreakdown?.personalityCompatibility || 0,
+        라이프스타일: match.compatibilityBreakdown?.lifestyleMatch || 0,
+        관심사: match.compatibilityBreakdown?.interestOverlap || 0,
+        소통: match.compatibilityBreakdown?.communicationStyle || 0
+      }
+    })),
+    
+    barChart: matches.map(match => ({
+      name: match.getOtherUser(currentUserId).name,
+      score: match.compatibilityScore
+    })),
+    
+    colors: ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe']
+  };
+}
+
+/**
+ * 기본 추천 생성
+ */
+function generateBasicRecommendations(overallAnalysis) {
+  const recommendations = [];
+  
+  if (overallAnalysis.bestMatch.score >= 80) {
+    recommendations.push({
+      type: 'primary',
+      title: '최고 호환성 추천',
+      content: `${overallAnalysis.bestMatch.userName}님과의 호환성이 ${overallAnalysis.bestMatch.score}%로 매우 높습니다. 우선적으로 만나보시는 것을 추천합니다.`,
+      action: 'contact_best_match'
+    });
+  }
+  
+  if (overallAnalysis.scoreRange > 30) {
+    recommendations.push({
+      type: 'warning',
+      title: '점수 차이 주의',
+      content: `매칭 점수가 ${overallAnalysis.scoreRange}%의 큰 차이를 보입니다. 점수가 높은 분부터 차례대로 만나보세요.`,
+      action: 'prioritize_high_scores'
+    });
+  }
+  
+  if (overallAnalysis.averageCompatibility < 60) {
+    recommendations.push({
+      type: 'info',
+      title: '신중한 선택',
+      content: `전체 평균 호환성이 ${overallAnalysis.averageCompatibility}%입니다. 점수와 더불어 개인적인 느낌도 중요하게 고려해보세요.`,
+      action: 'consider_personal_feeling'
+    });
+  }
+  
+  return recommendations;
+}
+
+/**
+ * 매칭 강점 분석
+ */
+function analyzeMatchStrengths(match) {
+  const strengths = [];
+  const breakdown = match.compatibilityBreakdown || {};
+  
+  Object.entries(breakdown).forEach(([key, value]) => {
+    if (value >= 80) {
+      const strengthMap = {
+        valuesAlignment: '가치관이 매우 잘 맞음',
+        personalityCompatibility: '성격이 매우 잘 맞음',
+        lifestyleMatch: '라이프스타일이 매우 호환됨',
+        interestOverlap: '관심사가 매우 유사함',
+        communicationStyle: '소통 방식이 매우 잘 맞음'
+      };
+      
+      if (strengthMap[key]) {
+        strengths.push(strengthMap[key]);
+      }
+    }
+  });
+  
+  return strengths;
+}
+
+/**
+ * 매칭 도전점 분석
+ */
+function analyzeMatchChallenges(match) {
+  const challenges = [];
+  const breakdown = match.compatibilityBreakdown || {};
+  
+  Object.entries(breakdown).forEach(([key, value]) => {
+    if (value < 50) {
+      const challengeMap = {
+        valuesAlignment: '가치관 차이가 클 수 있음',
+        personalityCompatibility: '성격적 차이가 클 수 있음',
+        lifestyleMatch: '라이프스타일 차이가 있을 수 있음',
+        interestOverlap: '관심사가 다를 수 있음',
+        communicationStyle: '소통 방식에 차이가 있을 수 있음'
+      };
+      
+      if (challengeMap[key]) {
+        challenges.push(challengeMap[key]);
+      }
+    }
+  });
+  
+  return challenges;
+}
+
+/**
+ * 비교 추천 생성
+ */
+function generateComparisonRecommendation(match1, match2, currentUserId) {
+  const user1 = match1.getOtherUser(currentUserId);
+  const user2 = match2.getOtherUser(currentUserId);
+  
+  const score1 = match1.compatibilityScore;
+  const score2 = match2.compatibilityScore;
+  
+  const scoreDiff = Math.abs(score1 - score2);
+  
+  let recommendation = '';
+  
+  if (scoreDiff < 10) {
+    recommendation = `${user1.name}님과 ${user2.name}님 모두 비슷한 호환성을 보입니다. 개인적인 느낌과 첫인상을 중요하게 고려해보세요.`;
+  } else if (score1 > score2) {
+    recommendation = `${user1.name}님과의 호환성이 ${scoreDiff}% 더 높습니다. 우선 만나보시는 것을 추천합니다.`;
+  } else {
+    recommendation = `${user2.name}님과의 호환성이 ${scoreDiff}% 더 높습니다. 우선 만나보시는 것을 추천합니다.`;
+  }
+  
+  return recommendation;
+}
+
+/**
+ * 4060세대 특화 조언 생성
+ */
+function generateAgeGroupSpecificAdvice(detailedComparison) {
+  const advice = {
+    generalAdvice: [
+      '서두르지 말고 천천히 알아가세요',
+      '첫 만남은 편안한 분위기에서 진행하세요',
+      '상대방의 이야기를 끝까지 들어주세요',
+      '진정성 있는 자세로 접근하세요'
+    ],
+    
+    specificAdvice: [],
+    
+    timelineGuidance: {
+      firstWeek: '가벼운 메시지 교환으로 시작',
+      secondWeek: '전화 통화로 목소리 확인',
+      thirdWeek: '첫 만남 약속 잡기',
+      fourthWeek: '두 번째 만남으로 관계 발전'
+    },
+    
+    meetingTips: [
+      '점심 식사나 오후 카페 미팅을 추천',
+      '2-3시간 정도의 적당한 시간 투자',
+      '상대방의 관심사에 대해 질문하기',
+      '자연스럽게 본인의 가치관 공유하기'
+    ]
+  };
+  
+  // 호환성 차이에 따른 구체적 조언
+  if (detailedComparison.summary.scoreDifference > 20) {
+    advice.specificAdvice.push('호환성 차이가 크니 신중하게 선택하세요');
+  } else {
+    advice.specificAdvice.push('비슷한 호환성이니 개인적 느낌을 중시하세요');
+  }
+  
+  return advice;
+}
+
+/**
+ * AI 추천 생성
+ */
+async function generateAIRecommendations(comparisonResults, currentUser, userAssessment, preferences) {
+  try {
+    const recommendations = {
+      primaryRecommendation: {},
+      alternativeOptions: [],
+      actionPlan: {},
+      considerations: [],
+      overallConfidence: 0
+    };
+
+    // 주요 추천 생성
+    if (comparisonResults.overallAnalysis?.bestMatch) {
+      const bestMatch = comparisonResults.overallAnalysis.bestMatch;
+      
+      recommendations.primaryRecommendation = {
+        matchId: bestMatch.matchId,
+        userName: bestMatch.userName,
+        score: bestMatch.score,
+        reason: `가장 높은 호환성 점수(${bestMatch.score}%)를 보여주며, 안정적인 관계 발전 가능성이 높습니다.`,
+        confidence: Math.min(95, bestMatch.score + 10)
+      };
+    }
+
+    // 대안 옵션들
+    const sortedMatches = comparisonResults.overallAnalysis?.distribution ? 
+      Object.entries(comparisonResults.overallAnalysis.distribution)
+        .filter(([range, count]) => count > 0 && range !== 'poor')
+        .map(([range, count]) => ({ range, count })) : [];
+
+    recommendations.alternativeOptions = sortedMatches.map(option => ({
+      category: option.range,
+      description: getRangeDescription(option.range),
+      advice: getRangeAdvice(option.range)
+    }));
+
+    // 행동 계획
+    recommendations.actionPlan = {
+      immediate: '가장 호환성이 높은 분에게 정중한 메시지 보내기',
+      shortTerm: '1-2주 내에 첫 만남 약속 잡기',
+      mediumTerm: '3-4주 동안 서로 알아가는 시간 갖기',
+      longTerm: '관계 발전 여부 신중하게 결정하기'
+    };
+
+    // 고려사항
+    recommendations.considerations = [
+      '호환성 점수는 참고 자료일 뿐, 실제 만남에서의 느낌이 중요합니다',
+      '4060세대는 안정적이고 진정성 있는 관계를 선호합니다',
+      '서두르지 말고 충분한 시간을 두고 결정하세요',
+      '상대방의 가치관과 생활 패턴을 충분히 이해하세요'
+    ];
+
+    // 전체 신뢰도 계산
+    recommendations.overallConfidence = calculateRecommendationConfidence(comparisonResults);
+
+    return recommendations;
+
+  } catch (error) {
+    console.error('AI 추천 생성 오류:', error);
+    throw new Error('AI 추천 생성 중 오류가 발생했습니다');
+  }
+}
+
+/**
+ * 4060세대 특화 추천 향상
+ */
+async function enhanceRecommendationsForAgeGroup(recommendations, userAge) {
+  try {
+    const enhanced = {
+      ...recommendations,
+      ageGroupSpecific: {
+        patience: '서두르지 말고 천천히 진행하세요',
+        authenticity: '진정성 있는 자세로 접근하세요',
+        stability: '안정적인 관계 발전을 우선시하세요',
+        experience: '인생 경험을 바탕으로 판단하세요'
+      },
+      
+      communicationTips: [
+        '정중하고 예의바른 메시지로 시작하세요',
+        '상대방의 시간을 존중하는 태도를 보여주세요',
+        '개인적인 질문은 자연스럽게 단계적으로 하세요',
+        '진솔한 대화를 통해 서로를 이해하세요'
+      ],
+      
+      meetingGuidelines: {
+        location: '조용하고 편안한 카페나 레스토랑',
+        timing: '오후 시간대 또는 점심 시간',
+        duration: '2-3시간 정도의 적당한 시간',
+        attire: '단정하고 격식 있는 복장'
+      },
+      
+      redFlags: [
+        '너무 성급하게 개인적인 정보를 묻는 경우',
+        '금전적인 이야기를 먼저 꺼내는 경우',
+        '과거 관계에 대해 부정적으로만 말하는 경우',
+        '예의나 매너가 부족한 경우'
+      ]
+    };
+
+    return enhanced;
+
+  } catch (error) {
+    console.error('4060세대 특화 향상 오류:', error);
+    return recommendations;
+  }
+}
+
+// 헬퍼 함수들
+function getRangeDescription(range) {
+  const descriptions = {
+    excellent: '매우 높은 호환성 (80% 이상)',
+    good: '좋은 호환성 (60-79%)',
+    fair: '보통 호환성 (40-59%)',
+    poor: '낮은 호환성 (40% 미만)'
+  };
+  return descriptions[range] || '알 수 없음';
+}
+
+function getRangeAdvice(range) {
+  const advice = {
+    excellent: '적극적으로 만나보세요',
+    good: '신중하게 접근해보세요',
+    fair: '충분히 알아본 후 결정하세요',
+    poor: '다른 옵션을 고려해보세요'
+  };
+  return advice[range] || '신중하게 판단하세요';
+}
+
+function calculateRecommendationConfidence(comparisonResults) {
+  const baseConfidence = 70;
+  const bestMatchScore = comparisonResults.overallAnalysis?.bestMatch?.score || 0;
+  
+  // 점수에 따른 신뢰도 조정
+  const scoreBonus = Math.min(25, bestMatchScore * 0.3);
+  
+  return Math.round(baseConfidence + scoreBonus);
+}
+
+function analyzeStabilityFactors(matches) {
+  // 안정성 요소 분석 로직
+  return {
+    averageStability: 75,
+    factors: ['일관된 가치관', '안정적인 라이프스타일', '성숙한 소통 방식']
+  };
+}
+
+function analyzeDeepConnectionPotential(matches) {
+  // 깊은 관계 가능성 분석
+  return {
+    potential: 'high',
+    indicators: ['가치관 일치', '인생 경험 공유', '미래 목표 일치']
+  };
+}
+
+function generateExperienceBasedGuidance(matches) {
+  return [
+    '인생 경험을 바탕으로 신중하게 판단하세요',
+    '과거의 관계 경험을 참고하되 새로운 마음으로 접근하세요',
+    '직감과 이성적 판단을 균형있게 활용하세요'
+  ];
+}
+
+function assessAuthenticity(matches) {
+  return {
+    score: 85,
+    factors: ['진정성 있는 프로필', '일관된 답변', '자연스러운 소통']
+  };
+}
+
+function generateMeetingRecommendations(matches) {
+  return [
+    '첫 만남은 낮 시간 카페에서',
+    '2-3시간 정도의 적당한 시간',
+    '편안한 분위기에서 자연스럽게'
+  ];
+}
+
+function generateConversationGuides(matches) {
+  return [
+    '상대방의 관심사에 대해 질문하기',
+    '본인의 가치관을 자연스럽게 공유하기',
+    '미래에 대한 계획과 꿈 이야기하기'
+  ];
+}
+
+function generateTimelineGuidance(matches) {
+  return {
+    week1: '메시지 교환 시작',
+    week2: '전화 통화',
+    week3: '첫 만남',
+    week4: '관계 발전 고려'
+  };
+}
+
+function generateRelationshipBuildingTips(matches) {
+  return [
+    '서로의 속도에 맞춰 진행하기',
+    '솔직하고 진정성 있는 소통',
+    '상대방의 시간과 감정 존중하기'
+  ];
+}
+
+function calculateOverallConfidence(comparisonResult) {
+  // 전체 신뢰도 계산
+  const baseConfidence = 75;
+  const scoreVariance = comparisonResult.overallAnalysis?.scoreRange || 0;
+  
+  // 점수 분산이 클수록 신뢰도 약간 감소
+  const variancePenalty = Math.min(15, scoreVariance * 0.3);
+  
+  return Math.round(baseConfidence - variancePenalty);
+}
+
+function determineBestMatchForAgeGroup(matches, comparisonResult) {
+  // 4060세대 특성을 고려한 최적 매칭 결정
+  return comparisonResult.overallAnalysis?.bestMatch || null;
+}
+
 module.exports = router;

@@ -1,0 +1,2364 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>매칭 비교 시스템 | CHARM_INYEON</title>
+    <style>
+        /* 4060세대 특화 스타일링 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', 'Malgun Gothic', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-size: 18px; /* 4060세대 가독성 향상 */
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 헤더 영역 */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 32px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* 비교 모드 선택 */
+        .comparison-mode {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .mode-btn {
+            padding: 15px 30px;
+            border: 3px solid #667eea;
+            border-radius: 50px;
+            background: white;
+            color: #667eea;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 150px;
+        }
+
+        .mode-btn:hover,
+        .mode-btn.active {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        /* 매칭 선택 영역 */
+        .match-selection {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .match-selection h2 {
+            color: #667eea;
+            font-size: 26px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .match-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .match-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .match-card:hover {
+            border-color: #667eea;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
+        }
+
+        .match-card.selected {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .match-card .select-indicator {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #667eea;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .match-card.selected .select-indicator {
+            opacity: 1;
+        }
+
+        .match-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .match-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .match-info h3 {
+            color: #333;
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .match-info p {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 3px;
+        }
+
+        .compatibility-score {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .score-circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: conic-gradient(#667eea 0deg, #764ba2 180deg, #e0e0e0 360deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            position: relative;
+        }
+
+        .score-circle::after {
+            content: '';
+            position: absolute;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: white;
+            z-index: 1;
+        }
+
+        .score-text {
+            position: relative;
+            z-index: 2;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .score-label {
+            color: #333;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        /* 비교 버튼 */
+        .compare-button {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .compare-btn {
+            padding: 20px 50px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .compare-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .compare-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* 비교 결과 영역 */
+        .comparison-results {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        .comparison-results.active {
+            display: block;
+        }
+
+        .comparison-results h2 {
+            color: #667eea;
+            font-size: 28px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        /* 호환성 레이더 차트 */
+        .radar-chart-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .radar-chart-container h3 {
+            color: #333;
+            font-size: 22px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .radar-chart {
+            width: 100%;
+            height: 400px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f8f9ff;
+            border-radius: 10px;
+            font-size: 18px;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        /* 상세 비교 테이블 */
+        .detailed-comparison {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .detailed-comparison h3 {
+            color: #333;
+            font-size: 22px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+            font-size: 16px;
+        }
+
+        .comparison-table th {
+            background: #f8f9ff;
+            color: #667eea;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .comparison-table tr:hover {
+            background: #f8f9ff;
+        }
+
+        .score-bar {
+            width: 100px;
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .score-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        /* AI 추천 가이드 */
+        .ai-recommendations {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .ai-recommendations h3 {
+            color: #333;
+            font-size: 22px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .recommendation-card {
+            background: #f8f9ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 5px solid #667eea;
+        }
+
+        .recommendation-card h4 {
+            color: #667eea;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .recommendation-card p {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        /* 모바일 최적화 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .header h1 {
+                font-size: 26px;
+            }
+
+            .header p {
+                font-size: 18px;
+            }
+
+            .comparison-mode {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .mode-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .match-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .match-profile {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .comparison-table {
+                font-size: 14px;
+            }
+
+            .comparison-table th,
+            .comparison-table td {
+                padding: 10px;
+            }
+
+            .compare-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+
+        /* 로딩 애니메이션 */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 50px;
+            font-size: 18px;
+            color: #667eea;
+        }
+
+        .spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid #e0e0e0;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 성공 메시지 */
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        /* AI 추천 시스템 스타일 */
+        .ai-recommendations-container {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .primary-recommendation {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .primary-recommendation h4 {
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+
+        .best-match-card {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .match-avatar-small {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .match-summary h5 {
+            margin-bottom: 5px;
+            font-size: 20px;
+        }
+
+        .compatibility-score {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .recommendation-reason {
+            font-size: 16px;
+            opacity: 0.9;
+            line-height: 1.4;
+        }
+
+        .detailed-recommendations {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .recommendation-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #667eea;
+        }
+
+        .recommendation-card.high {
+            border-left-color: #f5576c;
+            background: #fef9f9;
+        }
+
+        .recommendation-card.medium {
+            border-left-color: #f093fb;
+            background: #fefafe;
+        }
+
+        .recommendation-card.low {
+            border-left-color: #4facfe;
+            background: #f8fbff;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .card-header h4 {
+            margin: 0;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .priority-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .priority-badge.high {
+            background: #f5576c;
+        }
+
+        .priority-badge.medium {
+            background: #f093fb;
+        }
+
+        .priority-badge.low {
+            background: #4facfe;
+        }
+
+        .card-content p {
+            margin-bottom: 15px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .action-items {
+            background: #f8f9ff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .action-items h6 {
+            margin-bottom: 10px;
+            color: #667eea;
+            font-size: 14px;
+        }
+
+        .action-items ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .action-items li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 5px;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .action-items li:before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .age-group-advice {
+            background: #f8f9ff;
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid #e0e5ff;
+        }
+
+        .age-group-advice h4 {
+            margin-bottom: 20px;
+            color: #667eea;
+            font-size: 20px;
+        }
+
+        .advice-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .advice-item {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .advice-item h6 {
+            margin-bottom: 10px;
+            color: #667eea;
+            font-size: 16px;
+        }
+
+        .advice-item p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .action-plan {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .action-plan h4 {
+            margin-bottom: 25px;
+            color: #333;
+            font-size: 20px;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline:before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #667eea;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .timeline-marker {
+            position: absolute;
+            left: -22px;
+            top: 5px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #667eea;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .timeline-content {
+            background: #f8f9ff;
+            border-radius: 10px;
+            padding: 15px;
+            margin-left: 15px;
+        }
+
+        .timeline-content h6 {
+            margin-bottom: 8px;
+            color: #667eea;
+            font-size: 16px;
+        }
+
+        .timeline-content p {
+            margin: 0;
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* 모바일 최적화 - AI 추천 */
+        @media (max-width: 768px) {
+            .ai-recommendations-container {
+                gap: 20px;
+            }
+
+            .primary-recommendation {
+                padding: 20px;
+            }
+
+            .best-match-card {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .advice-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .timeline {
+                padding-left: 25px;
+            }
+
+            .timeline-marker {
+                left: -20px;
+                width: 25px;
+                height: 25px;
+                font-size: 12px;
+            }
+
+            .timeline-content {
+                margin-left: 10px;
+            }
+        }
+
+        /* 장단점 분석 스타일 */
+        .pros-cons-analysis {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .pros-cons-analysis h3 {
+            color: #333;
+            font-size: 22px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .pros-cons-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .comparative-summary {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .comparative-summary h4 {
+            color: #333;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .summary-card {
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .summary-card.best {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .summary-card.concern {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+        }
+
+        .summary-card.balanced {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+        }
+
+        .summary-card h5 {
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .summary-card p {
+            margin-bottom: 15px;
+            font-size: 16px;
+            line-height: 1.4;
+        }
+
+        .match-name {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .individual-analysis {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .individual-analysis h4 {
+            color: #333;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .match-analysis-card {
+            background: #f8f9ff;
+            border-radius: 12px;
+            padding: 20px;
+            border: 2px solid #e0e5ff;
+            transition: transform 0.2s ease;
+        }
+
+        .match-analysis-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .match-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e0e5ff;
+        }
+
+        .match-avatar-tiny {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .match-title h5 {
+            margin-bottom: 5px;
+            color: #333;
+            font-size: 18px;
+        }
+
+        .compatibility-badge {
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .pros-cons-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .pros-section, .cons-section {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .pros-section h6 {
+            color: #28a745;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .cons-section h6 {
+            color: #dc3545;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .pros-list, .cons-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .pros-list li, .cons-list li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .pros-list li:before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .cons-list li:before {
+            content: '✗';
+            position: absolute;
+            left: 0;
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .reality-check {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .reality-check h6 {
+            color: #856404;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .reality-check p {
+            color: #856404;
+            font-size: 14px;
+            line-height: 1.4;
+            margin: 0;
+        }
+
+        .success-factors {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .success-factors h6 {
+            color: #155724;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .factors-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .factor-tag {
+            background: #28a745;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .reality-advice {
+            background: #f8f9ff;
+            border: 2px solid #e0e5ff;
+            border-radius: 15px;
+            padding: 25px;
+        }
+
+        .reality-advice h4 {
+            color: #667eea;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .advice-sections {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .advice-section {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .advice-section h5 {
+            color: #667eea;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .advice-section ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .advice-section li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            line-height: 1.4;
+            color: #333;
+        }
+
+        .advice-section li:before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .final-conclusion {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .final-conclusion h4 {
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+
+        .conclusion-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .conclusion-text {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .next-steps {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: left;
+        }
+
+        .next-steps h5 {
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .next-steps ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .next-steps li {
+            margin-bottom: 10px;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        /* 모바일 최적화 - 장단점 분석 */
+        @media (max-width: 768px) {
+            .pros-cons-analysis {
+                padding: 20px;
+            }
+
+            .summary-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .analysis-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .match-analysis-card {
+                padding: 15px;
+            }
+
+            .match-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .advice-sections {
+                grid-template-columns: 1fr;
+            }
+
+            .final-conclusion {
+                padding: 20px;
+            }
+
+            .conclusion-content {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 헤더 -->
+        <div class="header">
+            <h1>💕 매칭 비교 시스템</h1>
+            <p>여러 매칭 결과를 한눈에 비교하고 신중하게 선택하세요</p>
+            
+            <!-- 비교 모드 선택 -->
+            <div class="comparison-mode">
+                <button class="mode-btn active" onclick="setComparisonMode('multiple')">
+                    🔄 다중 비교
+                </button>
+                <button class="mode-btn" onclick="setComparisonMode('detailed')">
+                    📊 상세 분석
+                </button>
+                <button class="mode-btn" onclick="setComparisonMode('visual')">
+                    📈 시각화
+                </button>
+            </div>
+        </div>
+
+        <!-- 매칭 선택 영역 -->
+        <div class="match-selection">
+            <h2>🎯 비교할 매칭을 선택하세요</h2>
+            
+            <!-- 매칭 목록 -->
+            <div class="match-grid" id="matchGrid">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    매칭 목록을 불러오는 중...
+                </div>
+            </div>
+
+            <!-- 비교 버튼 -->
+            <div class="compare-button">
+                <button class="compare-btn" id="compareBtn" onclick="compareMatches()" disabled>
+                    🔍 선택한 매칭 비교하기
+                </button>
+            </div>
+        </div>
+
+        <!-- 비교 결과 영역 -->
+        <div class="comparison-results" id="comparisonResults">
+            <h2>📊 매칭 비교 결과</h2>
+            
+            <!-- 호환성 레이더 차트 -->
+            <div class="radar-chart-container">
+                <h3>🎯 호환성 레이더 차트</h3>
+                <div class="radar-chart" id="radarChart">
+                    레이더 차트가 여기에 표시됩니다
+                </div>
+            </div>
+
+            <!-- 상세 비교 테이블 -->
+            <div class="detailed-comparison">
+                <h3>📋 상세 비교 분석</h3>
+                <div id="comparisonTableContainer">
+                    <table class="comparison-table" id="comparisonTable">
+                        <thead>
+                            <tr>
+                                <th>항목</th>
+                                <th>매칭 1</th>
+                                <th>매칭 2</th>
+                                <th>차이</th>
+                            </tr>
+                        </thead>
+                        <tbody id="comparisonTableBody">
+                            <!-- 비교 데이터가 여기에 표시 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- AI 추천 가이드 -->
+            <div class="ai-recommendations">
+                <h3>🤖 AI 추천 가이드</h3>
+                <div id="aiRecommendations">
+                    <!-- AI 추천 내용이 여기에 표시 -->
+                </div>
+            </div>
+
+            <!-- 장단점 분석 -->
+            <div class="pros-cons-analysis">
+                <h3>⚖️ 솔직한 장단점 분석</h3>
+                <div id="prosConsAnalysis">
+                    <!-- 장단점 분석 내용이 여기에 표시 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 전역 변수
+        let selectedMatches = [];
+        let allMatches = [];
+        let currentMode = 'multiple';
+
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            loadMatches();
+        });
+
+        // 비교 모드 설정
+        function setComparisonMode(mode) {
+            currentMode = mode;
+            
+            // 모든 모드 버튼 비활성화
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // 선택된 모드 버튼 활성화
+            event.target.classList.add('active');
+            
+            // 선택된 매칭 초기화
+            selectedMatches = [];
+            updateCompareButton();
+            hideComparisonResults();
+        }
+
+        // 매칭 목록 로드
+        async function loadMatches() {
+            try {
+                const response = await fetch('/api/matching/my-matches', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('매칭 목록을 불러올 수 없습니다');
+                }
+
+                const data = await response.json();
+                allMatches = data.data.matches;
+                
+                displayMatches(allMatches);
+                
+            } catch (error) {
+                console.error('매칭 로드 오류:', error);
+                showError('매칭 목록을 불러오는데 실패했습니다: ' + error.message);
+            }
+        }
+
+        // 매칭 목록 표시
+        function displayMatches(matches) {
+            const matchGrid = document.getElementById('matchGrid');
+            
+            if (matches.length === 0) {
+                matchGrid.innerHTML = `
+                    <div class="error-message">
+                        아직 매칭 결과가 없습니다. 먼저 매칭을 생성해보세요!
+                    </div>
+                `;
+                return;
+            }
+
+            matchGrid.innerHTML = matches.map(match => `
+                <div class="match-card" onclick="selectMatch('${match.id}')">
+                    <div class="select-indicator">✓</div>
+                    <div class="match-profile">
+                        <div class="match-avatar">
+                            ${match.user.name.charAt(0)}
+                        </div>
+                        <div class="match-info">
+                            <h3>${match.user.name}</h3>
+                            <p>${match.user.age || '나이 비공개'}</p>
+                            <p>${match.user.location?.city || '지역 비공개'}</p>
+                            <p>매칭일: ${new Date(match.matchedAt).toLocaleDateString()}</p>
+                        </div>
+                    </div>
+                    <div class="compatibility-score">
+                        <div class="score-circle">
+                            <div class="score-text">${match.compatibilityScore}%</div>
+                        </div>
+                        <div class="score-label">호환성 점수</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 매칭 선택/해제
+        function selectMatch(matchId) {
+            const matchCard = document.querySelector(`[onclick="selectMatch('${matchId}')"]`);
+            
+            if (selectedMatches.includes(matchId)) {
+                // 선택 해제
+                selectedMatches = selectedMatches.filter(id => id !== matchId);
+                matchCard.classList.remove('selected');
+            } else {
+                // 모드에 따른 선택 제한
+                if (currentMode === 'multiple' && selectedMatches.length >= 3) {
+                    showError('최대 3개의 매칭만 비교할 수 있습니다');
+                    return;
+                } else if (currentMode === 'detailed' && selectedMatches.length >= 2) {
+                    showError('상세 분석 모드에서는 최대 2개의 매칭만 비교할 수 있습니다');
+                    return;
+                }
+                
+                // 선택 추가
+                selectedMatches.push(matchId);
+                matchCard.classList.add('selected');
+            }
+            
+            updateCompareButton();
+        }
+
+        // 비교 버튼 업데이트
+        function updateCompareButton() {
+            const compareBtn = document.getElementById('compareBtn');
+            const minRequired = currentMode === 'visual' ? 1 : 2;
+            
+            if (selectedMatches.length >= minRequired) {
+                compareBtn.disabled = false;
+                compareBtn.textContent = `🔍 선택한 ${selectedMatches.length}개 매칭 비교하기`;
+            } else {
+                compareBtn.disabled = true;
+                compareBtn.textContent = `🔍 ${minRequired}개 이상의 매칭을 선택하세요`;
+            }
+        }
+
+        // 매칭 비교 실행
+        async function compareMatches() {
+            if (selectedMatches.length < 2) {
+                showError('비교할 매칭을 2개 이상 선택해주세요');
+                return;
+            }
+
+            try {
+                showLoading();
+                
+                // 선택된 매칭들의 상세 정보 가져오기
+                const matchDetails = await Promise.all(
+                    selectedMatches.map(matchId => fetchMatchDetails(matchId))
+                );
+
+                // 비교 결과 생성
+                generateComparisonResults(matchDetails);
+                
+                // 결과 표시
+                showComparisonResults();
+                
+                showSuccess('매칭 비교가 완료되었습니다!');
+                
+            } catch (error) {
+                console.error('매칭 비교 오류:', error);
+                showError('매칭 비교 중 오류가 발생했습니다: ' + error.message);
+            }
+        }
+
+        // 매칭 상세 정보 가져오기
+        async function fetchMatchDetails(matchId) {
+            const response = await fetch(`/api/matching/matches/${matchId}`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`매칭 상세 정보를 불러올 수 없습니다: ${matchId}`);
+            }
+
+            const data = await response.json();
+            return data.data.match;
+        }
+
+        // 비교 결과 생성
+        function generateComparisonResults(matchDetails) {
+            // 상세 비교 테이블 생성
+            generateComparisonTable(matchDetails);
+            
+            // 레이더 차트 생성
+            generateRadarChart(matchDetails);
+            
+            // AI 추천 가이드 생성
+            generateAIRecommendations(matchDetails);
+            
+            // 장단점 분석 생성
+            generateProsConsAnalysis(matchDetails);
+        }
+
+        // 상세 비교 테이블 생성
+        function generateComparisonTable(matchDetails) {
+            const tbody = document.getElementById('comparisonTableBody');
+            const thead = document.querySelector('.comparison-table thead tr');
+            
+            // 테이블 헤더 업데이트
+            thead.innerHTML = `
+                <th>항목</th>
+                ${matchDetails.map((match, index) => `<th>${match.user.name}</th>`).join('')}
+                <th>차이</th>
+            `;
+
+            // 비교 항목들
+            const comparisonItems = [
+                {
+                    label: '전체 호환성',
+                    getValue: (match) => match.compatibilityScore,
+                    format: (value) => `${value}%`
+                },
+                {
+                    label: '가치관 일치도',
+                    getValue: (match) => match.compatibilityBreakdown?.valuesAlignment || 0,
+                    format: (value) => `${value}%`
+                },
+                {
+                    label: '성격 호환성',
+                    getValue: (match) => match.compatibilityBreakdown?.personalityCompatibility || 0,
+                    format: (value) => `${value}%`
+                },
+                {
+                    label: '라이프스타일 일치도',
+                    getValue: (match) => match.compatibilityBreakdown?.lifestyleMatch || 0,
+                    format: (value) => `${value}%`
+                },
+                {
+                    label: '관심사 중복도',
+                    getValue: (match) => match.compatibilityBreakdown?.interestOverlap || 0,
+                    format: (value) => `${value}%`
+                },
+                {
+                    label: '소통 스타일',
+                    getValue: (match) => match.compatibilityBreakdown?.communicationStyle || 0,
+                    format: (value) => `${value}%`
+                },
+                {
+                    label: '매칭 신뢰도',
+                    getValue: (match) => match.matchReason?.confidenceLevel || 0,
+                    format: (value) => `${value}%`
+                },
+                {
+                    label: '연령대',
+                    getValue: (match) => match.user.age || '비공개',
+                    format: (value) => value
+                },
+                {
+                    label: '지역',
+                    getValue: (match) => match.user.location?.city || '비공개',
+                    format: (value) => value
+                }
+            ];
+
+            // 테이블 바디 생성
+            tbody.innerHTML = comparisonItems.map(item => {
+                const values = matchDetails.map(match => item.getValue(match));
+                const formattedValues = values.map(val => item.format(val));
+                
+                // 숫자 값들의 차이 계산
+                const numericValues = values.filter(val => typeof val === 'number');
+                const difference = numericValues.length > 1 ? 
+                    (Math.max(...numericValues) - Math.min(...numericValues)) : 0;
+                
+                return `
+                    <tr>
+                        <td><strong>${item.label}</strong></td>
+                        ${formattedValues.map(val => `<td>${val}</td>`).join('')}
+                        <td>${typeof difference === 'number' ? `${difference}%` : '-'}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // 레이더 차트 생성 (실제 캔버스 차트)
+        function generateRadarChart(matchDetails) {
+            const radarChart = document.getElementById('radarChart');
+            
+            // 차트 데이터 준비
+            const chartData = matchDetails.map((match, index) => ({
+                name: match.user.name,
+                scores: {
+                    '가치관': match.compatibilityBreakdown?.valuesAlignment || 0,
+                    '성격': match.compatibilityBreakdown?.personalityCompatibility || 0,
+                    '라이프스타일': match.compatibilityBreakdown?.lifestyleMatch || 0,
+                    '관심사': match.compatibilityBreakdown?.interestOverlap || 0,
+                    '소통': match.compatibilityBreakdown?.communicationStyle || 0
+                },
+                color: ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe'][index % 5]
+            }));
+
+            // 캔버스 생성
+            radarChart.innerHTML = `
+                <div style="text-align: center; width: 100%;">
+                    <h4 style="margin-bottom: 20px;">호환성 비교 레이더 차트</h4>
+                    <div style="display: flex; justify-content: center; margin-bottom: 20px;">
+                        <canvas id="radarCanvas" width="400" height="400" style="border: 1px solid #e0e0e0; border-radius: 10px;"></canvas>
+                    </div>
+                    <div id="chartLegend" style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+                        ${chartData.map(person => `
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="width: 16px; height: 16px; background: ${person.color}; border-radius: 50%;"></div>
+                                <span style="font-size: 16px; font-weight: 600;">${person.name}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            // 캔버스 차트 그리기
+            setTimeout(() => {
+                drawRadarChart(chartData);
+            }, 100);
+        }
+
+        // 실제 레이더 차트 그리기 함수
+        function drawRadarChart(chartData) {
+            const canvas = document.getElementById('radarCanvas');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = 150;
+            
+            // 캔버스 클리어
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 배경 그리드 그리기
+            drawRadarGrid(ctx, centerX, centerY, radius);
+            
+            // 각 매칭 데이터 그리기
+            chartData.forEach((person, index) => {
+                drawRadarData(ctx, person, centerX, centerY, radius, index);
+            });
+        }
+
+        // 레이더 차트 그리드 그리기
+        function drawRadarGrid(ctx, centerX, centerY, radius) {
+            const categories = ['가치관', '성격', '라이프스타일', '관심사', '소통'];
+            const numCategories = categories.length;
+            const angleStep = (2 * Math.PI) / numCategories;
+
+            // 동심원 그리기
+            ctx.strokeStyle = '#e0e0e0';
+            ctx.lineWidth = 1;
+            
+            for (let i = 1; i <= 5; i++) {
+                const r = (radius * i) / 5;
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, r, 0, 2 * Math.PI);
+                ctx.stroke();
+                
+                // 점수 레이블
+                ctx.fillStyle = '#999';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText((i * 20).toString(), centerX + r, centerY - 5);
+            }
+
+            // 축 라인과 카테고리 레이블 그리기
+            ctx.strokeStyle = '#e0e0e0';
+            ctx.lineWidth = 1;
+            
+            categories.forEach((category, index) => {
+                const angle = -Math.PI / 2 + index * angleStep;
+                const x = centerX + radius * Math.cos(angle);
+                const y = centerY + radius * Math.sin(angle);
+                
+                // 축 라인
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+                
+                // 카테고리 레이블
+                ctx.fillStyle = '#333';
+                ctx.font = 'bold 14px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                
+                const labelX = centerX + (radius + 25) * Math.cos(angle);
+                const labelY = centerY + (radius + 25) * Math.sin(angle);
+                
+                ctx.fillText(category, labelX, labelY);
+            });
+        }
+
+        // 레이더 차트 데이터 그리기
+        function drawRadarData(ctx, person, centerX, centerY, radius, index) {
+            const categories = ['가치관', '성격', '라이프스타일', '관심사', '소통'];
+            const numCategories = categories.length;
+            const angleStep = (2 * Math.PI) / numCategories;
+            
+            // 데이터 점들 계산
+            const points = categories.map((category, i) => {
+                const angle = -Math.PI / 2 + i * angleStep;
+                const score = person.scores[category] || 0;
+                const distance = (radius * score) / 100;
+                
+                return {
+                    x: centerX + distance * Math.cos(angle),
+                    y: centerY + distance * Math.sin(angle),
+                    score: score
+                };
+            });
+
+            // 영역 채우기
+            ctx.fillStyle = person.color + '30'; // 30% 투명도
+            ctx.strokeStyle = person.color;
+            ctx.lineWidth = 2;
+            
+            ctx.beginPath();
+            points.forEach((point, i) => {
+                if (i === 0) {
+                    ctx.moveTo(point.x, point.y);
+                } else {
+                    ctx.lineTo(point.x, point.y);
+                }
+            });
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // 데이터 점 그리기
+            ctx.fillStyle = person.color;
+            points.forEach(point => {
+                ctx.beginPath();
+                ctx.arc(point.x, point.y, 4, 0, 2 * Math.PI);
+                ctx.fill();
+                
+                // 점수 텍스트
+                ctx.fillStyle = '#333';
+                ctx.font = '11px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(point.score.toString(), point.x, point.y - 15);
+            });
+        }
+
+        // AI 추천 가이드 생성 (4060세대 특화)
+        function generateAIRecommendations(matchDetails) {
+            const aiRecommendations = document.getElementById('aiRecommendations');
+            
+            // 최고 점수 매칭 찾기
+            const bestMatch = matchDetails.reduce((best, current) => 
+                current.compatibilityScore > best.compatibilityScore ? current : best
+            );
+
+            // 점수 분포 분석
+            const scoreDistribution = analyzeScoreDistribution(matchDetails);
+            
+            // 호환성 영역별 강점 분석
+            const strengthAnalysis = analyzeCompatibilityStrengths(matchDetails);
+            
+            // 4060세대 맞춤 추천 생성
+            const recommendations = generateAgeGroupRecommendations(matchDetails, bestMatch, scoreDistribution, strengthAnalysis);
+
+            // 추천 카드 렌더링
+            aiRecommendations.innerHTML = `
+                <div class="ai-recommendations-container">
+                    <!-- 주요 추천 -->
+                    <div class="primary-recommendation">
+                        <h4>🎯 AI 분석 결과</h4>
+                        <div class="recommendation-summary">
+                            <div class="best-match-card">
+                                <div class="match-avatar-small">
+                                    ${bestMatch.user.name.charAt(0)}
+                                </div>
+                                <div class="match-summary">
+                                    <h5>${bestMatch.user.name}님</h5>
+                                    <p class="compatibility-score">${bestMatch.compatibilityScore}% 호환성</p>
+                                    <p class="recommendation-reason">${generatePersonalizedReason(bestMatch)}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 세부 추천 -->
+                    <div class="detailed-recommendations">
+                        ${recommendations.map(rec => `
+                            <div class="recommendation-card ${rec.priority}">
+                                <div class="card-header">
+                                    <h4>${rec.title}</h4>
+                                    <span class="priority-badge ${rec.priority}">${rec.priorityLabel}</span>
+                                </div>
+                                <div class="card-content">
+                                    <p>${rec.content}</p>
+                                    ${rec.actionItems ? `
+                                        <div class="action-items">
+                                            <h6>실행 가이드:</h6>
+                                            <ul>
+                                                ${rec.actionItems.map(item => `<li>${item}</li>`).join('')}
+                                            </ul>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <!-- 4060세대 특화 조언 -->
+                    <div class="age-group-advice">
+                        <h4>🌟 4060세대 특화 조언</h4>
+                        <div class="advice-grid">
+                            <div class="advice-item">
+                                <h6>⏰ 시간 관리</h6>
+                                <p>서두르지 말고 충분한 시간을 두고 알아가세요. 4-6주 정도의 여유를 두고 관계를 발전시켜보세요.</p>
+                            </div>
+                            <div class="advice-item">
+                                <h6>💬 소통 방식</h6>
+                                <p>직접 만나서 대화하는 것을 선호하는 연령대입니다. 메시지보다는 전화나 만남을 통한 소통을 추천합니다.</p>
+                            </div>
+                            <div class="advice-item">
+                                <h6>🎯 관계 목표</h6>
+                                <p>장기적이고 안정적인 관계를 추구하는 경향이 있습니다. 진정성 있는 마음으로 접근하세요.</p>
+                            </div>
+                            <div class="advice-item">
+                                <h6>🤝 만남 장소</h6>
+                                <p>조용하고 격식 있는 장소를 선호합니다. 고급 카페나 레스토랑에서의 점심 또는 저녁 식사를 추천합니다.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 실행 계획 -->
+                    <div class="action-plan">
+                        <h4>📋 단계별 실행 계획</h4>
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-marker">1</div>
+                                <div class="timeline-content">
+                                    <h6>1주차: 첫 연락</h6>
+                                    <p>정중하고 진정성 있는 메시지로 첫 인사를 나누세요. 상대방의 프로필을 자세히 읽고 공통점을 언급해보세요.</p>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-marker">2</div>
+                                <div class="timeline-content">
+                                    <h6>2주차: 전화 통화</h6>
+                                    <p>메시지로 어느 정도 친해지면 전화 통화를 제안해보세요. 목소리를 들으며 더 깊은 소통을 시도해보세요.</p>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-marker">3</div>
+                                <div class="timeline-content">
+                                    <h6>3주차: 첫 만남</h6>
+                                    <p>점심 식사나 오후 카페에서 2-3시간 정도의 첫 만남을 계획하세요. 편안한 분위기에서 서로를 알아가세요.</p>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-marker">4</div>
+                                <div class="timeline-content">
+                                    <h6>4주차: 관계 발전</h6>
+                                    <p>첫 만남이 좋았다면 두 번째 만남을 계획하세요. 좀 더 개인적인 이야기를 나누며 관계를 발전시켜보세요.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 점수 분포 분석
+        function analyzeScoreDistribution(matchDetails) {
+            const scores = matchDetails.map(m => m.compatibilityScore);
+            const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
+            const max = Math.max(...scores);
+            const min = Math.min(...scores);
+            
+            return {
+                average: Math.round(avg),
+                highest: max,
+                lowest: min,
+                range: max - min,
+                distribution: {
+                    excellent: scores.filter(s => s >= 80).length,
+                    good: scores.filter(s => s >= 60 && s < 80).length,
+                    fair: scores.filter(s => s >= 40 && s < 60).length,
+                    poor: scores.filter(s => s < 40).length
+                }
+            };
+        }
+
+        // 호환성 영역별 강점 분석
+        function analyzeCompatibilityStrengths(matchDetails) {
+            const categories = ['valuesAlignment', 'personalityCompatibility', 'lifestyleMatch', 'interestOverlap', 'communicationStyle'];
+            const categoryNames = {
+                'valuesAlignment': '가치관 일치',
+                'personalityCompatibility': '성격 호환',
+                'lifestyleMatch': '라이프스타일 일치',
+                'interestOverlap': '관심사 중복',
+                'communicationStyle': '소통 방식'
+            };
+            
+            const strengths = {};
+            
+            categories.forEach(category => {
+                const scores = matchDetails.map(m => m.compatibilityBreakdown?.[category] || 0);
+                const avgScore = scores.reduce((a, b) => a + b, 0) / scores.length;
+                
+                strengths[category] = {
+                    name: categoryNames[category],
+                    average: Math.round(avgScore),
+                    highest: Math.max(...scores),
+                    bestMatch: matchDetails.find(m => 
+                        (m.compatibilityBreakdown?.[category] || 0) === Math.max(...scores)
+                    )
+                };
+            });
+            
+            return strengths;
+        }
+
+        // 4060세대 맞춤 추천 생성
+        function generateAgeGroupRecommendations(matchDetails, bestMatch, scoreDistribution, strengthAnalysis) {
+            const recommendations = [];
+            
+            // 최고 호환성 추천
+            if (bestMatch.compatibilityScore >= 80) {
+                recommendations.push({
+                    title: '🏆 최우선 추천',
+                    content: `${bestMatch.user.name}님과의 호환성이 ${bestMatch.compatibilityScore}%로 매우 높습니다. 4060세대에게 중요한 안정성과 가치관 일치도가 우수합니다.`,
+                    priority: 'high',
+                    priorityLabel: '높음',
+                    actionItems: [
+                        '정중한 첫 메시지 보내기',
+                        '공통 관심사 언급하기',
+                        '1-2주 후 전화 통화 제안'
+                    ]
+                });
+            } else if (bestMatch.compatibilityScore >= 65) {
+                recommendations.push({
+                    title: '⭐ 추천',
+                    content: `${bestMatch.user.name}님과의 호환성이 ${bestMatch.compatibilityScore}%로 좋습니다. 신중하게 접근하면 좋은 관계로 발전할 수 있습니다.`,
+                    priority: 'medium',
+                    priorityLabel: '보통',
+                    actionItems: [
+                        '천천히 알아가기',
+                        '충분한 대화 시간 확보',
+                        '서로의 가치관 확인'
+                    ]
+                });
+            }
+            
+            // 점수 분포에 따른 조언
+            if (scoreDistribution.range > 30) {
+                recommendations.push({
+                    title: '📊 선택 가이드',
+                    content: `매칭 점수가 ${scoreDistribution.range}%의 큰 차이를 보입니다. 점수가 높은 분부터 우선적으로 연락해보세요.`,
+                    priority: 'medium',
+                    priorityLabel: '중요',
+                    actionItems: [
+                        '점수 순으로 우선순위 정하기',
+                        '동시에 너무 많은 분과 연락하지 않기',
+                        '2-3명에게 집중하기'
+                    ]
+                });
+            }
+            
+            // 강점 영역 분석
+            const topStrength = Object.values(strengthAnalysis).reduce((best, current) => 
+                current.average > best.average ? current : best
+            );
+            
+            if (topStrength.average >= 70) {
+                recommendations.push({
+                    title: '💪 강점 활용',
+                    content: `전체적으로 ${topStrength.name} 영역에서 높은 호환성을 보입니다. 이 부분을 대화의 시작점으로 활용하세요.`,
+                    priority: 'low',
+                    priorityLabel: '참고',
+                    actionItems: [
+                        `${topStrength.name} 관련 이야기 나누기`,
+                        '공통점 찾아서 대화 이어가기',
+                        '자연스러운 만남 주제로 활용'
+                    ]
+                });
+            }
+            
+            // 4060세대 특화 조언
+            recommendations.push({
+                title: '🌟 4060세대 특별 조언',
+                content: '이 연령대는 진정성과 안정성을 중시합니다. 서두르지 말고 충분한 시간을 두고 서로를 알아가는 것이 중요합니다.',
+                priority: 'high',
+                priorityLabel: '필수',
+                actionItems: [
+                    '진정성 있는 태도로 접근',
+                    '예의와 매너 중시',
+                    '장기적 관점에서 접근',
+                    '상대방 시간 존중'
+                ]
+            });
+            
+            return recommendations;
+        }
+
+        // 개인화된 추천 이유 생성
+        function generatePersonalizedReason(bestMatch) {
+            const score = bestMatch.compatibilityScore;
+            const breakdown = bestMatch.compatibilityBreakdown || {};
+            
+            // 가장 높은 점수 영역 찾기
+            const categories = {
+                'valuesAlignment': '가치관이 잘 맞고',
+                'personalityCompatibility': '성격이 잘 맞고',
+                'lifestyleMatch': '라이프스타일이 호환되고',
+                'interestOverlap': '관심사가 유사하고',
+                'communicationStyle': '소통 방식이 잘 맞습니다'
+            };
+            
+            const topCategory = Object.entries(breakdown).reduce((best, [key, value]) => 
+                value > best.value ? { key, value } : best
+            , { key: '', value: 0 });
+            
+            const reason = categories[topCategory.key] || '전반적으로 잘 맞습니다';
+            
+            if (score >= 85) {
+                return `매우 높은 호환성으로 ${reason}. 안정적인 관계 발전이 기대됩니다.`;
+            } else if (score >= 75) {
+                return `좋은 호환성으로 ${reason}. 서로를 더 알아가면 좋은 관계가 될 수 있습니다.`;
+            } else {
+                return `적당한 호환성으로 ${reason}. 신중하게 접근해보세요.`;
+            }
+        }
+
+        // 장단점 분석 생성 (4060세대 특화)
+        function generateProsConsAnalysis(matchDetails) {
+            const prosConsAnalysis = document.getElementById('prosConsAnalysis');
+            
+            // 각 매칭별 장단점 분석
+            const analysisResults = matchDetails.map(match => analyzeSingleMatch(match));
+            
+            // 종합 비교 분석
+            const comparativeAnalysis = generateComparativeAnalysis(analysisResults);
+            
+            // 장단점 분석 렌더링
+            prosConsAnalysis.innerHTML = `
+                <div class="pros-cons-container">
+                    <!-- 종합 분석 -->
+                    <div class="comparative-summary">
+                        <h4>📊 종합 비교 분석</h4>
+                        <div class="summary-cards">
+                            <div class="summary-card best">
+                                <h5>🏆 최고 강점</h5>
+                                <p>${comparativeAnalysis.bestStrength.description}</p>
+                                <span class="match-name">${comparativeAnalysis.bestStrength.matchName}</span>
+                            </div>
+                            <div class="summary-card concern">
+                                <h5>⚠️ 주의점</h5>
+                                <p>${comparativeAnalysis.mainConcern.description}</p>
+                                <span class="match-name">${comparativeAnalysis.mainConcern.matchName}</span>
+                            </div>
+                            <div class="summary-card balanced">
+                                <h5>⚖️ 균형점</h5>
+                                <p>${comparativeAnalysis.balancedView}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 개별 매칭 분석 -->
+                    <div class="individual-analysis">
+                        <h4>🔍 개별 매칭 분석</h4>
+                        <div class="analysis-grid">
+                            ${analysisResults.map(analysis => `
+                                <div class="match-analysis-card">
+                                    <div class="match-header">
+                                        <div class="match-avatar-tiny">
+                                            ${analysis.name.charAt(0)}
+                                        </div>
+                                        <div class="match-title">
+                                            <h5>${analysis.name}</h5>
+                                            <span class="compatibility-badge">${analysis.score}% 호환</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="pros-cons-content">
+                                        <div class="pros-section">
+                                            <h6>✅ 장점</h6>
+                                            <ul class="pros-list">
+                                                ${analysis.pros.map(pro => `<li>${pro}</li>`).join('')}
+                                            </ul>
+                                        </div>
+                                        
+                                        <div class="cons-section">
+                                            <h6>❌ 단점</h6>
+                                            <ul class="cons-list">
+                                                ${analysis.cons.map(con => `<li>${con}</li>`).join('')}
+                                            </ul>
+                                        </div>
+                                        
+                                        <div class="reality-check">
+                                            <h6>💭 현실적 조언</h6>
+                                            <p>${analysis.realityCheck}</p>
+                                        </div>
+                                        
+                                        <div class="success-factors">
+                                            <h6>🎯 성공 요인</h6>
+                                            <div class="factors-tags">
+                                                ${analysis.successFactors.map(factor => `
+                                                    <span class="factor-tag">${factor}</span>
+                                                `).join('')}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- 4060세대 특화 현실 조언 -->
+                    <div class="reality-advice">
+                        <h4>🌟 4060세대 현실 조언</h4>
+                        <div class="advice-sections">
+                            <div class="advice-section">
+                                <h5>💡 선택 기준</h5>
+                                <ul>
+                                    <li>점수보다 내 마음의 편안함이 더 중요</li>
+                                    <li>첫 통화나 만남에서의 자연스러움 확인</li>
+                                    <li>서로의 인생 경험을 존중하는 태도</li>
+                                    <li>미래에 대한 비슷한 관점과 가치관</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="advice-section">
+                                <h5>⚠️ 주의사항</h5>
+                                <ul>
+                                    <li>완벽한 사람은 없다는 것을 인정하기</li>
+                                    <li>과거의 아픔을 새로운 관계에 투영하지 않기</li>
+                                    <li>너무 이상적인 기대는 금물</li>
+                                    <li>상대방의 단점도 포용할 수 있는지 생각해보기</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="advice-section">
+                                <h5>🚀 성공 전략</h5>
+                                <ul>
+                                    <li>3개월 정도의 충분한 시간을 두고 알아가기</li>
+                                    <li>서로의 생활 패턴과 가치관 점검</li>
+                                    <li>가족, 친구들과의 관계 양상 확인</li>
+                                    <li>건강 관리와 미래 계획에 대한 이야기</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 최종 결론 -->
+                    <div class="final-conclusion">
+                        <h4>🎯 최종 결론</h4>
+                        <div class="conclusion-content">
+                            <p class="conclusion-text">${generateFinalConclusion(analysisResults)}</p>
+                            <div class="next-steps">
+                                <h5>다음 단계:</h5>
+                                <ol>
+                                    <li>가장 마음에 드는 1-2명과 먼저 연락해보기</li>
+                                    <li>전화 통화로 목소리와 대화 스타일 확인</li>
+                                    <li>첫 만남에서 자연스러운 분위기 확인</li>
+                                    <li>서두르지 말고 천천히 관계 발전시키기</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 개별 매칭 분석
+        function analyzeSingleMatch(match) {
+            const breakdown = match.compatibilityBreakdown || {};
+            const score = match.compatibilityScore;
+            
+            const analysis = {
+                name: match.user.name,
+                score: score,
+                pros: [],
+                cons: [],
+                realityCheck: '',
+                successFactors: []
+            };
+            
+            // 장점 분석
+            if (breakdown.valuesAlignment >= 80) {
+                analysis.pros.push('가치관이 매우 잘 맞아 깊은 대화가 가능');
+            } else if (breakdown.valuesAlignment >= 60) {
+                analysis.pros.push('기본적인 가치관이 비슷해 이해하기 쉬움');
+            }
+            
+            if (breakdown.personalityCompatibility >= 80) {
+                analysis.pros.push('성격이 잘 맞아 편안한 관계 형성 가능');
+            } else if (breakdown.personalityCompatibility >= 60) {
+                analysis.pros.push('성격적으로 큰 충돌 없이 지낼 수 있음');
+            }
+            
+            if (breakdown.lifestyleMatch >= 80) {
+                analysis.pros.push('생활 패턴이 비슷해 일상 공유가 쉬움');
+            } else if (breakdown.lifestyleMatch >= 60) {
+                analysis.pros.push('라이프스타일이 크게 다르지 않음');
+            }
+            
+            if (breakdown.interestOverlap >= 80) {
+                analysis.pros.push('공통 관심사가 많아 즐거운 시간 보낼 수 있음');
+            } else if (breakdown.interestOverlap >= 60) {
+                analysis.pros.push('함께 즐길 수 있는 활동이 있음');
+            }
+            
+            if (breakdown.communicationStyle >= 80) {
+                analysis.pros.push('소통 방식이 잘 맞아 오해 적을 것');
+            } else if (breakdown.communicationStyle >= 60) {
+                analysis.pros.push('의사소통에서 큰 어려움 없을 것');
+            }
+            
+            // 단점 분석
+            if (breakdown.valuesAlignment < 50) {
+                analysis.cons.push('가치관 차이로 인한 갈등 가능성');
+            }
+            
+            if (breakdown.personalityCompatibility < 50) {
+                analysis.cons.push('성격 차이로 인한 스트레스 가능성');
+            }
+            
+            if (breakdown.lifestyleMatch < 50) {
+                analysis.cons.push('생활 패턴 차이로 인한 불편함');
+            }
+            
+            if (breakdown.interestOverlap < 50) {
+                analysis.cons.push('공통 관심사 부족으로 심심할 수 있음');
+            }
+            
+            if (breakdown.communicationStyle < 50) {
+                analysis.cons.push('소통 방식 차이로 오해 발생 가능');
+            }
+            
+            // 장단점이 없는 경우 기본값 설정
+            if (analysis.pros.length === 0) {
+                analysis.pros.push('전반적으로 무난한 관계 형성 가능');
+            }
+            
+            if (analysis.cons.length === 0) {
+                analysis.cons.push('특별한 문제점은 보이지 않음');
+            }
+            
+            // 현실적 조언
+            if (score >= 85) {
+                analysis.realityCheck = '매우 좋은 상대입니다. 적극적으로 만나보세요.';
+            } else if (score >= 70) {
+                analysis.realityCheck = '좋은 관계로 발전할 가능성이 높습니다. 시간을 두고 알아가보세요.';
+            } else if (score >= 60) {
+                analysis.realityCheck = '나쁘지 않은 상대입니다. 실제 만나서 느낌을 확인해보세요.';
+            } else {
+                analysis.realityCheck = '신중하게 접근하세요. 서로를 더 깊이 이해하는 시간이 필요합니다.';
+            }
+            
+            // 성공 요인
+            const topCategory = Object.entries(breakdown).reduce((best, [key, value]) => 
+                value > best.value ? { key, value } : best
+            , { key: '', value: 0 });
+            
+            const factorMap = {
+                'valuesAlignment': '가치관 일치',
+                'personalityCompatibility': '성격 궁합',
+                'lifestyleMatch': '생활 패턴',
+                'interestOverlap': '공통 관심사',
+                'communicationStyle': '소통 방식'
+            };
+            
+            if (topCategory.key && topCategory.value >= 70) {
+                analysis.successFactors.push(factorMap[topCategory.key]);
+            }
+            
+            analysis.successFactors.push('시간 투자', '진정성', '이해심');
+            
+            return analysis;
+        }
+
+        // 종합 비교 분석 생성
+        function generateComparativeAnalysis(analysisResults) {
+            const bestScore = Math.max(...analysisResults.map(a => a.score));
+            const bestMatch = analysisResults.find(a => a.score === bestScore);
+            
+            const worstScore = Math.min(...analysisResults.map(a => a.score));
+            const worstMatch = analysisResults.find(a => a.score === worstScore);
+            
+            const avgScore = Math.round(
+                analysisResults.reduce((sum, a) => sum + a.score, 0) / analysisResults.length
+            );
+            
+            return {
+                bestStrength: {
+                    matchName: bestMatch.name,
+                    description: `${bestMatch.score}%의 높은 호환성으로 가장 안정적인 관계 예상`
+                },
+                mainConcern: {
+                    matchName: worstMatch.name,
+                    description: `${worstMatch.score}%의 호환성으로 더 신중한 접근 필요`
+                },
+                balancedView: `전체 평균 ${avgScore}%의 호환성으로 나쁘지 않은 선택지들입니다. 점수와 함께 개인적 느낌도 중요하게 고려하세요.`
+            };
+        }
+
+        // 최종 결론 생성
+        function generateFinalConclusion(analysisResults) {
+            const avgScore = Math.round(
+                analysisResults.reduce((sum, a) => sum + a.score, 0) / analysisResults.length
+            );
+            
+            const highScoreCount = analysisResults.filter(a => a.score >= 75).length;
+            const mediumScoreCount = analysisResults.filter(a => a.score >= 60 && a.score < 75).length;
+            
+            if (highScoreCount > 0) {
+                return `전체적으로 좋은 매칭 결과입니다. 특히 ${highScoreCount}명과는 높은 호환성을 보여주어 좋은 관계로 발전할 가능성이 높습니다. 4060세대의 특성상 서두르지 말고 충분한 시간을 두고 서로를 알아가는 것이 중요합니다.`;
+            } else if (mediumScoreCount > 0) {
+                return `적당한 수준의 매칭 결과입니다. ${mediumScoreCount}명과는 무난한 관계를 형성할 수 있을 것으로 보입니다. 실제 만남을 통해 점수로 드러나지 않는 케미스트리를 확인해보세요.`;
+            } else {
+                return `현재 매칭 결과는 다소 아쉽습니다. 하지만 호환성 점수가 모든 것을 결정하는 것은 아닙니다. 시간을 두고 서로를 이해하며 관계를 발전시켜보세요.`;
+            }
+        }
+
+        // 비교 결과 표시
+        function showComparisonResults() {
+            const results = document.getElementById('comparisonResults');
+            results.classList.add('active');
+            
+            // 부드럽게 스크롤
+            results.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 비교 결과 숨기기
+        function hideComparisonResults() {
+            const results = document.getElementById('comparisonResults');
+            results.classList.remove('active');
+        }
+
+        // 유틸리티 함수들
+        function showLoading() {
+            const compareBtn = document.getElementById('compareBtn');
+            compareBtn.innerHTML = '<div class="spinner"></div>비교 분석 중...';
+            compareBtn.disabled = true;
+        }
+
+        function showSuccess(message) {
+            const matchSelection = document.querySelector('.match-selection');
+            const successMsg = document.createElement('div');
+            successMsg.className = 'success-message';
+            successMsg.textContent = message;
+            matchSelection.insertBefore(successMsg, matchSelection.firstChild);
+            
+            setTimeout(() => {
+                successMsg.remove();
+                updateCompareButton(); // 버튼 상태 복원
+            }, 3000);
+        }
+
+        function showError(message) {
+            const matchSelection = document.querySelector('.match-selection');
+            const errorMsg = document.createElement('div');
+            errorMsg.className = 'error-message';
+            errorMsg.textContent = message;
+            matchSelection.insertBefore(errorMsg, matchSelection.firstChild);
+            
+            setTimeout(() => {
+                errorMsg.remove();
+                updateCompareButton(); // 버튼 상태 복원
+            }, 5000);
+        }
+
+        // 토큰 확인 함수
+        function checkAuthToken() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/login.html';
+                return false;
+            }
+            return true;
+        }
+
+        // 페이지 로드 시 토큰 확인
+        if (!checkAuthToken()) {
+            document.body.innerHTML = '<div class="container"><div class="error-message">로그인이 필요합니다. 로그인 페이지로 이동합니다...</div></div>';
+        }
+    </script>
+</body>
+</html>
