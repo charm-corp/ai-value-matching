@@ -107,16 +107,16 @@ function initializeMobileMenu() {
 function initializeButtons() {
   console.log('🔘 버튼 초기화 시작');
   
-  // 1. 무료로 시작하기 버튼 → 가치관 테스트
+  // 1. 새로운 인연 시작하기 버튼 → 가치관 테스트
   const startButtons = document.querySelectorAll('.primary-button');
   startButtons.forEach(button => {
-    if (button.textContent.includes('무료로 시작하기')) {
+    if (button.textContent.includes('새로운 인연 시작하기')) {
       button.addEventListener('click', function(e) {
         e.preventDefault();
         console.log('🎯 가치관 테스트로 이동');
         window.location.href = 'values-assessment.html';
       });
-      console.log('✅ 무료로 시작하기 버튼 연결됨');
+      console.log('✅ 새로운 인연 시작하기 버튼 연결됨');
     }
   });
   
