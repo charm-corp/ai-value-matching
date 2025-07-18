@@ -1,3 +1,8 @@
+/**
+ * CHARM_INYEON 서버 - MongoDB Atlas 준비 버전
+ * Week 3 베타 테스트용 프로덕션 준비 서버
+ */
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -7,44 +12,77 @@ const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const http = require('http');
 const socketIo = require('socket.io');
+const { MongoMemoryServer } = require('mongodb-memory-server');
+const bcrypt = require('bcryptjs');
 const security = require('./middleware/security');
 require('dotenv').config();
 
 const app = express();
 const server = http.createServer(app);
+
+// Socket.IO 설정
 const io = socketIo(server, {
   cors: {
-    origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'],
-    methods: ['GET', 'POST']
+    origin: process.env.ALLOWED_ORIGINS?.split(',') || [
+      'http://localhost:3000',
+      'http://localhost:8080',
+      'http://127.0.0.1:5500'
+    ],
+    methods: ['GET', 'POST'],
+    credentials: true
   }
 });
 
 const PORT = process.env.PORT || 3000;
 
-// Rate limiting
+// 환경 변수 로깅
+console.log('🔧 서버 구성 정보:');
+console.log(`📡 환경: ${process.env.NODE_ENV || 'development'}`);
+console.log(`🚀 포트: ${PORT}`);
+console.log(`🌐 허용 도메인: ${process.env.ALLOWED_ORIGINS || 'localhost'}`);
+
+// Rate limiting 설정
 const limiter = rateLimit({
-  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW || '15') * 60 * 1000, // 15 minutes
-  max: parseInt(process.env.RATE_LIMIT_MAX || '100'), // limit each IP to 100 requests per windowMs
+  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW || '15') * 60 * 1000,
+  max: parseInt(process.env.RATE_LIMIT_MAX || '100'),
   message: {
-    error: 'Too many requests from this IP, please try again later.'
-  }
+    success: false,
+    error: '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.',
+    code: 'RATE_LIMIT_EXCEEDED'
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 
-// Security middleware
+// 보안 미들웨어
 app.use(helmet({
   crossOriginEmbedderPolicy: false,
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:", "https:"],
+    },
+  }
 }));
 app.use(compression());
 app.use(limiter);
 
-// CORS configuration
+// CORS 설정
 const corsOptions = {
   origin: function (origin, callback) {
-    const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'];
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+    const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [
+      'http://localhost:3000',
+      'http://localhost:8080',
+      'http://127.0.0.1:5500'
+    ];
+    
+    if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      console.log(`🚫 CORS 차단: ${origin}`);
+      callback(new Error('CORS 정책에 의해 차단됨'), false);
     }
   },
   credentials: true,
@@ -53,24 +91,30 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-// Security middleware
+// 추가 보안 미들웨어
 app.use(security.checkBlockedIP);
 app.use(security.detectSuspiciousActivity);
 app.use(security.sanitizeInput);
 app.use(security.preventInjection);
 
-// Body parsing middleware
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+// 바디 파싱 미들웨어
+app.use(express.json({ 
+  limit: '10mb',
+  strict: true
+}));
+app.use(express.urlencoded({ 
+  extended: true, 
+  limit: '10mb' 
+}));
 
-// Logging
+// 로깅 설정
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 } else {
   app.use(morgan('combined'));
 }
 
-// Serve static files with security headers
+// 정적 파일 서비스
 app.use('/uploads', express.static('uploads', {
   setHeaders: (res, path) => {
     res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -78,8 +122,7 @@ app.use('/uploads', express.static('uploads', {
   }
 }));
 
-// Database connection with In-Memory fallback
-const { MongoMemoryServer } = require('mongodb-memory-server');
+// 데이터베이스 연결 함수
 let mongoServer;
 
 const connectDB = async () => {
@@ -108,6 +151,7 @@ const connectDB = async () => {
       serverSelectionTimeoutMS: 5000,
       socketTimeoutMS: 45000,
       bufferCommands: false,
+      bufferMaxEntries: 0,
       maxPoolSize: 10,
       minPoolSize: 5,
       maxIdleTimeMS: 30000,
@@ -117,9 +161,19 @@ const connectDB = async () => {
     console.log(`✅ MongoDB 연결 성공: ${conn.connection.host}`);
     console.log(`📊 데이터베이스: ${conn.connection.name}`);
     
-    // 초기 데이터 생성
-    await initializeTestData();
+    // 연결 상태 모니터링
+    mongoose.connection.on('error', (err) => {
+      console.error('❌ MongoDB 연결 오류:', err);
+    });
     
+    mongoose.connection.on('disconnected', () => {
+      console.log('📡 MongoDB 연결 끊김');
+    });
+    
+    mongoose.connection.on('reconnected', () => {
+      console.log('🔄 MongoDB 재연결 성공');
+    });
+
   } catch (error) {
     console.error('❌ 데이터베이스 연결 실패:', error.message);
     
@@ -131,7 +185,6 @@ const connectDB = async () => {
         const mongoUri = mongoServer.getUri();
         await mongoose.connect(mongoUri);
         console.log('✅ In-Memory MongoDB 연결 성공');
-        await initializeTestData();
       } catch (fallbackError) {
         console.error('❌ In-Memory MongoDB 연결도 실패:', fallbackError);
         process.exit(1);
@@ -140,11 +193,10 @@ const connectDB = async () => {
   }
 };
 
-// 모델 import
+// 모델 import 및 초기 데이터 생성
 const User = require('./models/User');
 const ValuesAssessment = require('./models/ValuesAssessment');
 const Match = require('./models/Match');
-const bcrypt = require('bcryptjs');
 
 // 초기 데이터 생성 함수
 const initializeTestData = async () => {
@@ -200,48 +252,40 @@ const initializeTestData = async () => {
       await maeryukUser.save();
       
       console.log('✅ 테스트 사용자 생성 완료');
-      console.log('👤 김세렌 (' + serenUser._id + ')');
-      console.log('👤 이매력 (' + maeryukUser._id + ')');
+      console.log('👤 김세렌 (test-user-1)');
+      console.log('👤 이매력 (test-user-2)');
       
       // 가치관 평가 데이터
-      const serenAssessmentData = new Map();
-      serenAssessmentData.set('q1', { questionId: 1, value: '5', text: '매우 동의', category: 'values' });
-      serenAssessmentData.set('q2', { questionId: 2, value: '4', text: '동의', category: 'values' });
-      serenAssessmentData.set('q3', { questionId: 3, value: '5', text: '매우 동의', category: 'personality' });
-      serenAssessmentData.set('q4', { questionId: 4, value: '3', text: '보통', category: 'personality' });
-      serenAssessmentData.set('q5', { questionId: 5, value: '4', text: '동의', category: 'lifestyle' });
-      
       const serenAssessment = new ValuesAssessment({
         userId: serenUser._id,
-        answers: serenAssessmentData,
+        responses: {
+          q1: 5, q2: 4, q3: 5, q4: 3, q5: 4,
+          q6: 5, q7: 4, q8: 3, q9: 5, q10: 4,
+          q11: 3, q12: 5, q13: 4, q14: 3, q15: 5,
+          q16: 4, q17: 5, q18: 3, q19: 4, q20: 5
+        },
         analysis: {
           personalityType: 'HARMONIOUS_SAGE',
           confidenceLevel: 0.88,
           summary: '조화로운 지혜로운 성격으로 안정적인 관계를 선호합니다.'
         },
-        isCompleted: true,
-        completedAt: new Date(),
         createdAt: new Date(),
         updatedAt: new Date()
       });
       
-      const maeryukAssessmentData = new Map();
-      maeryukAssessmentData.set('q1', { questionId: 1, value: '4', text: '동의', category: 'values' });
-      maeryukAssessmentData.set('q2', { questionId: 2, value: '5', text: '매우 동의', category: 'values' });
-      maeryukAssessmentData.set('q3', { questionId: 3, value: '4', text: '동의', category: 'personality' });
-      maeryukAssessmentData.set('q4', { questionId: 4, value: '5', text: '매우 동의', category: 'personality' });
-      maeryukAssessmentData.set('q5', { questionId: 5, value: '3', text: '보통', category: 'lifestyle' });
-      
       const maeryukAssessment = new ValuesAssessment({
         userId: maeryukUser._id,
-        answers: maeryukAssessmentData,
+        responses: {
+          q1: 4, q2: 5, q3: 4, q4: 5, q5: 3,
+          q6: 4, q7: 5, q8: 4, q9: 3, q10: 5,
+          q11: 4, q12: 3, q13: 5, q14: 4, q15: 3,
+          q16: 5, q17: 4, q18: 5, q19: 3, q20: 4
+        },
         analysis: {
           personalityType: 'WARM_COMPANION',
           confidenceLevel: 0.92,
           summary: '따뜻한 동반자형으로 깊은 감정적 유대를 중요시합니다.'
         },
-        isCompleted: true,
-        completedAt: new Date(),
         createdAt: new Date(),
         updatedAt: new Date()
       });
@@ -283,177 +327,169 @@ const initializeTestData = async () => {
   }
 };
 
-// Import routes
+// 라우트 import
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
 const valuesRoutes = require('./routes/values');
 const matchingRoutes = require('./routes/matching');
 const advancedMatchingRoutes = require('./routes/advancedMatching');
 const privacyRoutes = require('./routes/privacy');
-const chatRoutes = require('./routes/chat');
 const profileRoutes = require('./routes/profile');
+const chatRoutes = require('./routes/chat');
+const demoRoutes = require('./routes/demo');
 
-// API routes
+// API 라우트 등록
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/values', valuesRoutes);
 app.use('/api/matching', matchingRoutes);
 app.use('/api/advanced-matching', advancedMatchingRoutes);
-app.use('/api/chat', chatRoutes);
-app.use('/api/profile', profileRoutes);
 app.use('/api/privacy', privacyRoutes);
+app.use('/api/profile', profileRoutes);
+app.use('/api/chat', chatRoutes);
+app.use('/api/demo', demoRoutes);
 
-// Swagger documentation
+// Swagger 문서
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 
-const options = {
+const swaggerOptions = {
   definition: {
     openapi: '3.0.0',
     info: {
       title: 'CHARM_INYEON API',
       version: '1.0.0',
-      description: 'AI 기반 가치관 매칭 플랫폼 API',
+      description: 'AI 기반 4060세대 가치관 매칭 플랫폼 API',
     },
     servers: [
       {
-        url: `http://localhost:${PORT}`,
-        description: 'Development server',
+        url: process.env.NODE_ENV === 'production' 
+          ? 'https://charm-inyeon.com/api' 
+          : `http://localhost:${PORT}/api`,
+        description: process.env.NODE_ENV === 'production' ? '프로덕션 서버' : '개발 서버',
       },
     ],
-    components: {
-      securitySchemes: {
-        bearerAuth: {
-          type: 'http',
-          scheme: 'bearer',
-          bearerFormat: 'JWT',
-        },
-      },
-    },
   },
-  apis: ['./routes/*.js', './models/*.js'],
+  apis: ['./routes/*.js'],
 };
 
-const specs = swaggerJsdoc(options);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-// Health check endpoint
-app.get('/health', (req, res) => {
-  res.status(200).json({
-    status: 'OK',
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
-    environment: process.env.NODE_ENV || 'development'
+// Socket.IO 채팅 핸들러
+io.on('connection', (socket) => {
+  console.log('👤 사용자 연결됨:', socket.id);
+  
+  socket.on('join-room', (roomId) => {
+    socket.join(roomId);
+    console.log(`🏠 사용자 ${socket.id}가 방 ${roomId}에 입장`);
+  });
+  
+  socket.on('send-message', (data) => {
+    socket.to(data.roomId).emit('receive-message', data);
+  });
+  
+  socket.on('disconnect', () => {
+    console.log('👋 사용자 연결 해제:', socket.id);
   });
 });
 
-// Root endpoint
+// 헬스 체크 엔드포인트
+app.get('/health', (req, res) => {
+  const uptime = process.uptime();
+  const uptimeHours = (uptime / 3600).toFixed(5);
+  
+  res.json({
+    status: 'OK',
+    timestamp: new Date().toISOString(),
+    uptime: `${uptimeHours} hours`,
+    database: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected',
+    environment: process.env.NODE_ENV || 'development',
+    version: '1.0.0'
+  });
+});
+
+// 루트 엔드포인트
 app.get('/', (req, res) => {
   res.json({
-    message: 'CHARM_INYEON API Server',
+    message: 'CHARM_INYEON API Server - Atlas Ready Edition',
     version: '1.0.0',
-    documentation: '/api-docs',
+    status: 'running',
+    docs: '/api-docs',
     health: '/health'
   });
 });
 
-// 404 handler
-app.use('*', (req, res) => {
+// 404 핸들러
+app.use((req, res) => {
   res.status(404).json({
-    error: 'Route not found',
-    message: `Cannot ${req.method} ${req.originalUrl}`
+    success: false,
+    error: '요청한 엔드포인트를 찾을 수 없습니다.',
+    path: req.path
   });
 });
 
-// Global error handler
+// 에러 핸들러
 app.use((err, req, res, next) => {
-  console.error('Error:', err);
-
-  // Mongoose validation error
-  if (err.name === 'ValidationError') {
-    const errors = Object.values(err.errors).map(e => e.message);
-    return res.status(400).json({
-      error: 'Validation Error',
-      details: errors
-    });
-  }
-
-  // JWT errors
-  if (err.name === 'JsonWebTokenError') {
-    return res.status(401).json({
-      error: 'Invalid token'
-    });
-  }
-
-  if (err.name === 'TokenExpiredError') {
-    return res.status(401).json({
-      error: 'Token expired'
-    });
-  }
-
-  // Mongoose duplicate key error
-  if (err.code === 11000) {
-    const field = Object.keys(err.keyValue)[0];
-    return res.status(400).json({
-      error: 'Duplicate value',
-      message: `${field} already exists`
-    });
-  }
-
-  // Default error
-  res.status(err.status || 500).json({
-    error: err.message || 'Internal Server Error',
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+  console.error('서버 에러:', err.stack);
+  res.status(500).json({
+    success: false,
+    error: '서버 내부 오류가 발생했습니다.',
+    message: process.env.NODE_ENV === 'development' ? err.message : '서버 오류'
   });
 });
 
-// Initialize Chat Service with Socket.IO
-const ChatService = require('./services/chatService');
-const chatService = new ChatService(io);
-
-// Make chat service available globally
-app.set('chatService', chatService);
-
-// Start server
+// 서버 시작
 const startServer = async () => {
   try {
     await connectDB();
+    await initializeTestData();
     
     server.listen(PORT, () => {
-      console.log(`🚀 Server running on port ${PORT}`);
-      console.log(`📚 API Documentation: http://localhost:${PORT}/api-docs`);
-      console.log('💝 CHARM_INYEON Backend Ready!');
-      console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log('\n🎊 CHARM_INYEON 서버 시작 완료! 🎊');
+      console.log(`🌐 서버 주소: http://localhost:${PORT}`);
+      console.log(`📚 API 문서: http://localhost:${PORT}/api-docs`);
+      console.log(`💚 상태 확인: http://localhost:${PORT}/health`);
+      console.log(`🎯 체험 모드: http://localhost:${PORT}/api/demo/status`);
+      console.log('\n✨ Week 3 베타 테스트 준비 완료! ✨');
+      console.log('🚀 창우님의 "정말 대단해~" 감동을 실제 사용자에게 전파할 준비 완료!');
     });
   } catch (error) {
-    console.error('Failed to start server:', error);
+    console.error('❌ 서버 시작 실패:', error);
     process.exit(1);
   }
 };
 
-// Graceful shutdown
-process.on('SIGTERM', () => {
-  console.log('SIGTERM received. Shutting down gracefully...');
+// 우아한 종료
+process.on('SIGTERM', async () => {
+  console.log('🛑 SIGTERM 신호 받음. 서버 종료 중...');
   server.close(() => {
-    console.log('Server closed');
+    console.log('🔒 HTTP 서버 종료됨');
     mongoose.connection.close(false, () => {
-      console.log('MongoDB connection closed');
+      console.log('📡 MongoDB 연결 종료됨');
+      if (mongoServer) {
+        mongoServer.stop();
+      }
       process.exit(0);
     });
   });
 });
 
-process.on('SIGINT', () => {
-  console.log('SIGINT received. Shutting down gracefully...');
+process.on('SIGINT', async () => {
+  console.log('🛑 SIGINT 신호 받음. 서버 종료 중...');
   server.close(() => {
-    console.log('Server closed');
+    console.log('🔒 HTTP 서버 종료됨');
     mongoose.connection.close(false, () => {
-      console.log('MongoDB connection closed');
+      console.log('📡 MongoDB 연결 종료됨');
+      if (mongoServer) {
+        mongoServer.stop();
+      }
       process.exit(0);
     });
   });
 });
 
+// 서버 시작
 startServer();
 
-module.exports = { app, io };
+module.exports = app;
