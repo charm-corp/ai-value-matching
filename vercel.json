@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "ai-value-matching-charm",
+  "name": "ai-matching-charm",
   "builds": [
     {
       "src": "server.js",
