@@ -292,8 +292,11 @@ const advancedMatchingRoutes = require('./routes/advancedMatching');
 const privacyRoutes = require('./routes/privacy');
 const chatRoutes = require('./routes/chat');
 const profileRoutes = require('./routes/profile');
+const demoRoutes = require('./routes/demo');
 
 // API routes
+// 창우님 체험용 Demo 라우트 (인증 불필요) - 다른 라우트보다 먼저 등록
+app.use('/api', demoRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/values', valuesRoutes);
@@ -337,13 +340,21 @@ const options = {
 const specs = swaggerJsdoc(options);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
-// Health check endpoint
+// Health check endpoint with accurate uptime tracking
+let serverStartTime = Date.now();
+
 app.get('/health', (req, res) => {
+  const actualUptime = (Date.now() - serverStartTime) / 1000; // seconds
+  const uptimeHours = (actualUptime / 3600).toFixed(5);
+  
   res.status(200).json({
     status: 'OK',
     timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
-    environment: process.env.NODE_ENV || 'development'
+    uptime: `${uptimeHours} hours`,
+    uptimeSeconds: actualUptime,
+    database: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected',
+    environment: process.env.NODE_ENV || 'development',
+    version: '1.0.0'
   });
 });
 
