@@ -7,6 +7,7 @@ const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const http = require('http');
 const socketIo = require('socket.io');
+const path = require('path');
 const security = require('./middleware/security');
 require('dotenv').config();
 
@@ -358,20 +359,25 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Root endpoint
-app.get('/', (req, res) => {
-  res.json({
-    message: 'CHARM_INYEON API Server',
-    version: '1.0.0',
-    documentation: '/api-docs',
-    health: '/health'
-  });
+// Serve static files (프론트엔드)
+app.use(express.static(__dirname, {
+  index: 'index.html'
+}));
+
+// API 라우트가 아닌 경우 index.html 서빙 (SPA 지원)
+app.get('*', (req, res, next) => {
+  // API 경로가 아닌 경우만 index.html 서빙
+  if (req.path.startsWith('/api') || req.path.startsWith('/health') || req.path.startsWith('/uploads')) {
+    next(); // API 라우트는 다음 미들웨어로 전달
+  } else {
+    res.sendFile(path.join(__dirname, 'index.html'));
+  }
 });
 
-// 404 handler
-app.use('*', (req, res) => {
+// 404 handler for API routes only
+app.use('/api/*', (req, res) => {
   res.status(404).json({
-    error: 'Route not found',
+    error: 'API Route not found',
     message: `Cannot ${req.method} ${req.originalUrl}`
   });
 });
