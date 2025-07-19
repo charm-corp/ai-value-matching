@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "charm-inyeon",
+  "name": "ai-value-matching-charm",
   "builds": [
     {
       "src": "server.js",
@@ -15,10 +15,5 @@
   ],
   "env": {
     "NODE_ENV": "production"
-  },
-  "functions": {
-    "server.js": {
-      "maxDuration": 30
-    }
   }
 }
