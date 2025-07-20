@@ -96,6 +96,17 @@ app.get('/api-client.js', (req, res) => {
   res.sendFile(path.join(__dirname, '../api-client.js'));
 });
 
+// Serve HTML files
+app.get('/signup.html', (req, res) => {
+  res.setHeader('Content-Type', 'text/html');
+  res.sendFile(path.join(__dirname, '../signup.html'));
+});
+
+app.get('/values-assessment.html', (req, res) => {
+  res.setHeader('Content-Type', 'text/html');
+  res.sendFile(path.join(__dirname, '../values-assessment.html'));
+});
+
 // Database connection
 let isConnected = false;
 
