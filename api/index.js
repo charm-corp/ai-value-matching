@@ -20,19 +20,10 @@ const limiter = rateLimit({
   }
 });
 
-// Security middleware
+// Security middleware (CSP 완전 비활성화로 디버깅)
 app.use(helmet({
   crossOriginEmbedderPolicy: false,
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-      fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      imgSrc: ["'self'", "data:", "https:"],
-      connectSrc: ["'self'", "https:"]
-    }
-  }
+  contentSecurityPolicy: false  // CSP 완전 비활성화
 }));
 app.use(compression());
 app.use(limiter);

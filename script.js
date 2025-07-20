@@ -107,20 +107,18 @@ function initializeMobileMenu() {
 function initializeButtons() {
   console.log('🔘 버튼 초기화 시작');
   
-  // 1. 새로운 인연 시작하기 버튼 → 가치관 테스트
-  const startButtons = document.querySelectorAll('.primary-button');
-  startButtons.forEach(button => {
-    if (button.textContent.includes('새로운 인연 시작하기')) {
-      button.addEventListener('click', function(e) {
-        e.preventDefault();
-        console.log('🎯 가치관 테스트 시작');
-        startValuesAssessment();
-      });
-      console.log('✅ 새로운 인연 시작하기 버튼 연결됨');
-    }
-  });
+  // 1. 새로운 인연 시작하기 버튼 → 3단계 회원가입 페이지 (ID로 정확히 선택)
+  const startButton = document.getElementById('signup-btn');
+  if (startButton && startButton.textContent.includes('새로운 인연 시작하기')) {
+    startButton.addEventListener('click', function(e) {
+      e.preventDefault();
+      console.log('💝 새로운 인연 시작 - 회원가입 페이지로 이동');
+      window.location.href = '/signup.html';
+    });
+    console.log('✅ 새로운 인연 시작하기 버튼 연결됨');
+  }
   
-  // 2. 회원가입 버튼들 → 회원가입 모달
+  // 2. 회원가입 버튼들 → 회원가입 모달 (단, #signup-btn은 제외)
   const signupButtons = document.querySelectorAll('.signup-btn, #signup-btn-2, .cta-large-button, #showSignup');
   signupButtons.forEach(button => {
     button.addEventListener('click', function(e) {
@@ -896,7 +894,9 @@ function handleWidgetKeydown(event, widgetType) {
 
 // ========== 위젯 모달 함수들 ==========
 function openValuesAnalysisModal() {
-  console.log('💎 가치관 분석 모달 열기');
+  console.log('💎 가치관 분석 시작 - 테스트 페이지로 이동');
+  startValuesAssessment();
+  return; // 모달 코드 실행 중단
   showWidgetModal('가치관 분석', 'values', {
     icon: '📊',
     title: '당신의 가치관 분석 결과',
