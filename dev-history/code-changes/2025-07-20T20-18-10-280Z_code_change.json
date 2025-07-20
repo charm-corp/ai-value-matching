@@ -1,0 +1,12 @@
+{
+  "timestamp": "2025-07-20T20:18:10.280Z",
+  "description": "🚀 Vercel 정적 파일 서빙 강화: HTML 직접 라우트 추가",
+  "command": "",
+  "files": [
+    "api/index.js",
+    "dev-history/code-changes/2025-07-20T20-09-13-096Z_code_change.json",
+    "dev-history/daily-logs/2025-07-20.md"
+  ],
+  "workingDirectory": "/mnt/d/AI Projects/AI_matching platform",
+  "note": "Git 정보 없음"
+}

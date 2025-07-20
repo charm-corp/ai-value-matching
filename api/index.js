@@ -85,7 +85,7 @@ app.use('/js', express.static(path.join(__dirname, '../js'), {
   }
 }));
 
-// Serve root-level JS files (script.js, api-client.js)
+// Serve root-level JS files (script.js, api-client.js, signup.js)
 app.get('/script.js', (req, res) => {
   res.setHeader('Content-Type', 'application/javascript');
   res.sendFile(path.join(__dirname, '../script.js'));
@@ -94,6 +94,16 @@ app.get('/script.js', (req, res) => {
 app.get('/api-client.js', (req, res) => {
   res.setHeader('Content-Type', 'application/javascript');
   res.sendFile(path.join(__dirname, '../api-client.js'));
+});
+
+app.get('/signup.js', (req, res) => {
+  res.setHeader('Content-Type', 'application/javascript');
+  res.sendFile(path.join(__dirname, '../signup.js'));
+});
+
+app.get('/values-assessment.js', (req, res) => {
+  res.setHeader('Content-Type', 'application/javascript');
+  res.sendFile(path.join(__dirname, '../values-assessment.js'));
 });
 
 // Serve HTML files
