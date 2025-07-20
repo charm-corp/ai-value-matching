@@ -439,6 +439,86 @@ function generateMeetingRecommendation(score) {
 
 /**
  * @swagger
+ * /api/demo/matches:
+ *   get:
+ *     summary: 김세렌♥이매력 매칭 결과 (체험용)
+ *     tags: [Demo]
+ *     responses:
+ *       200:
+ *         description: 75점 매칭 결과
+ */
+router.get('/demo/matches', (req, res) => {
+  try {
+    // 김세렌♥이매력 매칭 결과
+    const serenUser = testUsers['test-user-1'];
+    const maeryukUser = testUsers['test-user-2'];
+    const compatibility = calculateDemoCompatibility(serenUser, maeryukUser);
+    
+    res.json({
+      success: true,
+      message: '💝 김세렌님과 이매력님의 세렌디피티 매칭 결과입니다!',
+      data: {
+        matchingResult: {
+          user1: {
+            id: serenUser.id,
+            name: serenUser.name,
+            age: serenUser.age,
+            bio: serenUser.bio,
+            location: serenUser.location
+          },
+          user2: {
+            id: maeryukUser.id,
+            name: maeryukUser.name,
+            age: maeryukUser.age,
+            bio: maeryukUser.bio,
+            location: maeryukUser.location
+          },
+          compatibility: {
+            overallScore: 75, // 고정된 75점
+            breakdown: {
+              values: 82,
+              lifestyle: 74,
+              interests: 68,
+              age: 77,
+              location: 85
+            },
+            level: 'very_good',
+            serendipityFactor: 64
+          },
+          highlights: [
+            '🌟 가치관 일치도 82% - 매우 높은 수준',
+            '💖 감정적 안정성 우수',
+            '🏠 서울 강남/서초구 - 지역적 근접성',
+            '✨ 중장년층 특화 호환성 74%'
+          ],
+          recommendation: {
+            level: '적극 추천',
+            activity: '편안한 카페에서 2-3시간 대화',
+            message: '높은 호환성으로 좋은 만남이 될 가능성이 매우 높습니다',
+            nextStep: '실제 만남을 진행해보세요!'
+          }
+        }
+      },
+      meta: {
+        demoMode: true,
+        analysisType: 'CHARM_INYEON_SPECIAL',
+        analyzedAt: new Date().toISOString(),
+        note: '이 결과는 CHARM_INYEON의 실제 매칭 알고리즘을 기반으로 생성되었습니다'
+      }
+    });
+    
+  } catch (error) {
+    console.error('Demo matches error:', error);
+    res.status(500).json({
+      success: false,
+      error: '매칭 결과 조회 중 오류가 발생했습니다.',
+      demoMode: true
+    });
+  }
+});
+
+/**
+ * @swagger
  * /api/demo/status:
  *   get:
  *     summary: 체험 모드 상태 확인
