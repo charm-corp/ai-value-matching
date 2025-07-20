@@ -1,0 +1,11 @@
+{
+  "timestamp": "2025-07-19T19:27:22.524Z",
+  "description": "🎯✨ 완벽한 프로젝트명 확정: ai-matching-charm! 드디어 세상으로! ✨🎯",
+  "command": "",
+  "files": [
+    "vercel.json"
+  ],
+  "gitDiff": "diff --git a/vercel.json b/vercel.json\nindex 8aae10f..24a2a4d 100644\n--- a/vercel.json\n+++ b/vercel.json\n@@ -1,6 +1,6 @@\n {\n   \"version\": 2,\n-  \"name\": \"ai-value-matching-charm\",\n+  \"name\": \"ai-matching-charm\",\n   \"builds\": [\n     {\n       \"src\": \"server.js\",\n",
+  "gitLog": "089632f - 🎯✨ 완벽한 프로젝트명 확정: ai-matching-charm! 드디어 세상으로! ✨🎯 (ChangWoo, 1 second ago)",
+  "workingDirectory": "/mnt/d/AI Projects/AI_matching platform"
+}

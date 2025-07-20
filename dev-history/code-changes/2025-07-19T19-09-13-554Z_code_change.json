@@ -1,0 +1,11 @@
+{
+  "timestamp": "2025-07-19T19:09:13.554Z",
+  "description": "🔧 Vercel 설정 수정: functions 제거 & ai-value-matching-charm 네임 적용!",
+  "command": "",
+  "files": [
+    "vercel.json"
+  ],
+  "gitDiff": "diff --git a/vercel.json b/vercel.json\nindex 08c2158..8aae10f 100644\n--- a/vercel.json\n+++ b/vercel.json\n@@ -1,6 +1,6 @@\n {\n   \"version\": 2,\n-  \"name\": \"charm-inyeon\",\n+  \"name\": \"ai-value-matching-charm\",\n   \"builds\": [\n     {\n       \"src\": \"server.js\",\n@@ -15,10 +15,5 @@\n   ],\n   \"env\": {\n     \"NODE_ENV\": \"production\"\n-  },\n-  \"functions\": {\n-    \"server.js\": {\n-      \"maxDuration\": 30\n-    }\n   }\n }\n\\ No newline at end of file\n",
+  "gitLog": "4594a15 - 🔧 Vercel 설정 수정: functions 제거 & ai-value-matching-charm 네임 적용! (ChangWoo, 1 second ago)",
+  "workingDirectory": "/mnt/d/AI Projects/AI_matching platform"
+}
