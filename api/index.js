@@ -23,6 +23,16 @@ const limiter = rateLimit({
 // Security middleware
 app.use(helmet({
   crossOriginEmbedderPolicy: false,
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      imgSrc: ["'self'", "data:", "https:"],
+      connectSrc: ["'self'", "https:"]
+    }
+  }
 }));
 app.use(compression());
 app.use(limiter);
@@ -67,6 +77,33 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads'), {
     res.setHeader('Cache-Control', 'public, max-age=31536000');
   }
 }));
+
+// Serve CSS files
+app.use('/styles', express.static(path.join(__dirname, '../styles'), {
+  setHeaders: (res, path) => {
+    res.setHeader('Content-Type', 'text/css');
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+  }
+}));
+
+// Serve JavaScript files
+app.use('/js', express.static(path.join(__dirname, '../js'), {
+  setHeaders: (res, path) => {
+    res.setHeader('Content-Type', 'application/javascript');
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+  }
+}));
+
+// Serve root-level JS files (script.js, api-client.js)
+app.get('/script.js', (req, res) => {
+  res.setHeader('Content-Type', 'application/javascript');
+  res.sendFile(path.join(__dirname, '../script.js'));
+});
+
+app.get('/api-client.js', (req, res) => {
+  res.setHeader('Content-Type', 'application/javascript');
+  res.sendFile(path.join(__dirname, '../api-client.js'));
+});
 
 // Database connection
 let isConnected = false;
