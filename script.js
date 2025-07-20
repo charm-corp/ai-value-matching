@@ -113,20 +113,20 @@ function initializeButtons() {
     if (button.textContent.includes('새로운 인연 시작하기')) {
       button.addEventListener('click', function(e) {
         e.preventDefault();
-        console.log('🎯 가치관 테스트로 이동');
-        window.location.href = 'values-assessment.html';
+        console.log('🎯 가치관 테스트 시작');
+        startValuesAssessment();
       });
       console.log('✅ 새로운 인연 시작하기 버튼 연결됨');
     }
   });
   
-  // 2. 회원가입 버튼들 → 회원가입 페이지
-  const signupButtons = document.querySelectorAll('.signup-btn, #signup-btn-2, .cta-large-button');
+  // 2. 회원가입 버튼들 → 회원가입 모달
+  const signupButtons = document.querySelectorAll('.signup-btn, #signup-btn-2, .cta-large-button, #showSignup');
   signupButtons.forEach(button => {
     button.addEventListener('click', function(e) {
       e.preventDefault();
-      console.log('📝 회원가입 페이지로 이동');
-      window.location.href = 'signup.html';
+      console.log('📝 회원가입 모달 열기');
+      openSignupModal();
     });
   });
   console.log('✅ 회원가입 버튼들 연결됨');
@@ -436,6 +436,14 @@ function openLoginModal() {
     console.error('로그인 모달을 찾을 수 없습니다.');
     showModal('로그인', '로그인 기능은 곧 추가될 예정입니다!');
   }
+}
+
+// ========== 가치관 평가 시작 ==========
+function startValuesAssessment() {
+  console.log('🌟 가치관 평가 시작!');
+  
+  // 가치관 평가 페이지로 이동
+  window.location.href = '/values-assessment.html';
 }
 
 // ========== 소개 애니메이션 ==========
