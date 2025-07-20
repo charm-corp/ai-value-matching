@@ -1,0 +1,12 @@
+{
+  "timestamp": "2025-07-20T20:33:58.280Z",
+  "description": "🔧 JavaScript 파일 서빙 에러 완전 해결!",
+  "command": "",
+  "files": [
+    "api/index.js",
+    "dev-history/code-changes/2025-07-20T20-18-10-280Z_code_change.json"
+  ],
+  "gitDiff": "diff --git a/api/index.js b/api/index.js\nindex c805756..b27e5eb 100644\n--- a/api/index.js\n+++ b/api/index.js\n@@ -85,7 +85,7 @@ app.use('/js', express.static(path.join(__dirname, '../js'), {\n   }\n }));\n \n-// Serve root-level JS files (script.js, api-client.js)\n+// Serve root-level JS files (script.js, api-client.js, signup.js)\n app.get('/script.js', (req, res) => {\n   res.setHeader('Content-Type', 'application/javascript');\n   res.sendFile(path.join(__dirname, '../script.js'));\n@@ -96,6 +96,16 @@ app.get('/api-client.js', (req, res) => {\n   res.sendFile(path.join(__dirname, '../api-client.js'));\n });\n \n+app.get('/signup.js', (req, res) => {\n+  res.setHeader('Content-Type', 'application/javascript');\n+  res.sendFile(path.join(__dirname, '../signup.js'));\n+});\n+\n+app.get('/values-assessment.js', (req, res) => {\n+  res.setHeader('Content-Type', 'application/javascript');\n+  res.sendFile(path.join(__dirname, '../values-assessment.js'));\n+});\n+\n // Serve HTML files\n app.get('/signup.html', (req, res) => {\n   res.setHeader('Content-Type', 'text/html');\ndiff --git a/dev-history/code-changes/2025-07-20T20-18-10-280Z_code_change.json b/dev-history/code-changes/2025-07-20T20-18-10-280Z_code_change.json\nnew file mode 100644\nindex 0000000..4410d5c\n--- /dev/null\n+++ b/dev-history/code-changes/2025-07-20T20-18-10-280Z_code_change.json\n@@ -0,0 +1,12 @@\n+{\n+  \"timestamp\": \"2025-07-20T20:18:10.280Z\",\n+  \"description\": \"🚀 Vercel 정적 파일 서빙 강화: HTML 직접 라우트 추가\",\n+  \"command\": \"\",\n+  \"files\": [\n+    \"api/index.js\",\n+    \"dev-history/code-changes/2025-07-20T20-09-13-096Z_code_change.json\",\n+    \"dev-history/daily-logs/2025-07-20.md\"\n+  ],\n+  \"workingDirectory\": \"/mnt/d/AI Projects/AI_matching platform\",\n+  \"note\": \"Git 정보 없음\"\n+}\n\\ No newline at end of file\n",
+  "gitLog": "21cd5fe - 🔧 JavaScript 파일 서빙 에러 완전 해결! (ChangWoo, 1 second ago)",
+  "workingDirectory": "/mnt/d/AI Projects/AI_matching platform"
+}

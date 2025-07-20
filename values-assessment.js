@@ -515,6 +515,23 @@ function selectOption(optionIndex) {
 function nextQuestion() {
     if (answers[currentQuestion] === undefined) return;
     
+    // 마지막 질문인 경우 바로 결과 보기
+    if (currentQuestion === questions.length - 1) {
+        console.log('🎉 테스트 완료! 결과 보기 시작');
+        
+        // 점수 계산
+        const question = questions[currentQuestion];
+        const selectedOption = question.options[answers[currentQuestion]];
+        
+        Object.keys(selectedOption.values).forEach(key => {
+            scores[key] = (scores[key] || 0) + selectedOption.values[key];
+        });
+        
+        showResults();
+        return;
+    }
+    
+    // 일반적인 다음 질문 진행
     // 점수 계산
     const question = questions[currentQuestion];
     const selectedOption = question.options[answers[currentQuestion]];
@@ -524,12 +541,7 @@ function nextQuestion() {
     });
     
     currentQuestion++;
-    
-    if (currentQuestion >= questions.length) {
-        showResults();
-    } else {
-        showQuestion(currentQuestion);
-    }
+    showQuestion(currentQuestion);
 }
 
 function prevQuestion() {
