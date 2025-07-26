@@ -132,7 +132,8 @@ const connectDB = async () => {
       console.log('🌍 MongoDB Atlas 연결 시도...');
       mongoUri = process.env.MONGODB_ATLAS_URI;
     } else {
-      throw new Error('MONGODB_ATLAS_URI 환경변수가 필요합니다.');
+      console.warn('⚠️ MONGODB_ATLAS_URI 환경변수가 없습니다. 로컬 MongoDB를 시도합니다.');
+      mongoUri = 'mongodb://localhost:27017/charm_inyeon';
     }
 
     const conn = await mongoose.connect(mongoUri, {
@@ -148,11 +149,18 @@ const connectDB = async () => {
     isConnected = true;
     console.log(`✅ MongoDB 연결 성공: ${conn.connection.host}`);
     
-    // 초기 데이터 생성
-    await initializeTestData();
+    // 초기 데이터 생성 (개발/테스트 환경에서만)
+    if (process.env.NODE_ENV !== 'production') {
+      await initializeTestData();
+    }
     
   } catch (error) {
     console.error('❌ 데이터베이스 연결 실패:', error.message);
+    // 데이터베이스 연결 실패해도 서버는 시작되도록 함
+    if (process.env.NODE_ENV === 'production') {
+      console.log('⚠️ 프로덕션 환경에서 DB 연결 실패, 계속 진행합니다.');
+      return;
+    }
     throw error;
   }
 };
@@ -311,13 +319,25 @@ const demoRoutes = require('../routes/demo');
 
 // Health check endpoint
 app.get('/health', (req, res) => {
-  res.status(200).json({
-    status: 'OK',
-    timestamp: new Date().toISOString(),
-    database: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected',
-    environment: process.env.NODE_ENV || 'development',
-    version: '1.0.0'
-  });
+  try {
+    res.status(200).json({
+      status: 'OK',
+      timestamp: new Date().toISOString(),
+      database: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected',
+      environment: process.env.NODE_ENV || 'development',
+      version: '1.0.0'
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'ERROR',
+      message: error.message
+    });
+  }
+});
+
+// Simple ping endpoint
+app.get('/ping', (req, res) => {
+  res.status(200).json({ message: 'pong' });
 });
 
 // API routes
@@ -391,8 +411,26 @@ app.use((err, req, res, next) => {
   });
 });
 
+// Start server for local development
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 3000;
+  connectDB().then(() => {
+    app.listen(PORT, () => {
+      console.log(`🚀 서버 시작: http://localhost:${PORT}`);
+    });
+  });
+}
+
 // Serverless function handler
 module.exports = async (req, res) => {
-  await connectDB();
-  return app(req, res);
+  try {
+    await connectDB();
+    return app(req, res);
+  } catch (error) {
+    console.error('Serverless function error:', error);
+    return res.status(500).json({
+      error: 'Server initialization failed',
+      message: error.message
+    });
+  }
 };
