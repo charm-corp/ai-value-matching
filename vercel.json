@@ -3,14 +3,14 @@
   "name": "ai-matching-charm",
   "builds": [
     {
-      "src": "api/index.js",
+      "src": "api/minimal.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/api/index.js"
+      "dest": "/api/minimal.js"
     }
   ],
   "env": {

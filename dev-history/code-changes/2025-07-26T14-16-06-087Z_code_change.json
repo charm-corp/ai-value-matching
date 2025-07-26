@@ -1,0 +1,14 @@
+{
+  "timestamp": "2025-07-26T14:16:06.087Z",
+  "description": "🔧 CommonJS 방식으로 변환 - 서버리스 함수 크래시 해결",
+  "command": "",
+  "files": [
+    "api/debug.js",
+    "api/index.js",
+    "api/test.js",
+    "dev-history/code-changes/2025-07-26T14-06-05-013Z_code_change.json"
+  ],
+  "gitDiff": "diff --git a/api/debug.js b/api/debug.js\nindex 6522740..98acb68 100644\n--- a/api/debug.js\n+++ b/api/debug.js\n@@ -1,4 +1,4 @@\n-export default function handler(req, res) {\n+module.exports = (req, res) => {\n   try {\n     console.log('🔍 DEBUG API 호출됨');\n     console.log('Method:', req.method);\n@@ -42,4 +42,4 @@ export default function handler(req, res) {\n       timestamp: new Date().toISOString()\n     });\n   }\n-}\n\\ No newline at end of file\n+};\n\\ No newline at end of file\ndiff --git a/api/index.js b/api/index.js\nindex ca4bff9..9fa19f0 100644\n--- a/api/index.js\n+++ b/api/index.js\n@@ -1,5 +1,5 @@\n // Vercel 서버리스 함수 - 메인 엔트리포인트\n-export default function handler(req, res) {\n+module.exports = (req, res) => {\n   res.status(200).json({\n     success: true,\n     message: 'CHARM_INYEON API 작동 중! 🎯',\n@@ -8,4 +8,4 @@ export default function handler(req, res) {\n     url: req.url,\n     environment: 'vercel-serverless'\n   });\n-}\n\\ No newline at end of file\n+};\n\\ No newline at end of file\ndiff --git a/api/test.js b/api/test.js\nindex 0289892..847fd40 100644\n--- a/api/test.js\n+++ b/api/test.js\n@@ -1,4 +1,4 @@\n-export default function handler(req, res) {\n+module.exports = (req, res) => {\n   const response = {\n     success: true,\n     message: '🧪 CHARM_INYEON 테스트 성공!',\n@@ -7,4 +7,4 @@ export default function handler(req, res) {\n   };\n   \n   res.status(200).json(response);\n-}\n\\ No newline at end of file\n+};\n\\ No newline at end of file\ndiff --git a/dev-history/code-changes/2025-07-26T14-06-05-013Z_code_change.json b/dev-history/code-changes/2025-07-26T14-06-05-013Z_code_change.json\nnew file mode 100644\nindex 0000000..c00c434\n--- /dev/null\n+++ b/dev-history/code-changes/2025-07-26T14-06-05-013Z_code_change.json\n@@ -0,0 +1,14 @@\n+{\n+  \"timestamp\": \"2025-07-26T14:06:05.013Z\",\n+  \"description\": \"🔍 Vercel 디버깅 API 추가 - 환경변수 문제 파악용\",\n+  \"command\": \"\",\n+  \"files\": [\n+    \"api/debug.js\",\n+    \"api/test.js\",\n+    \"dev-history/code-changes/2025-07-26T13-56-08-120Z_code_change.json\",\n+    \"dev-history/daily-logs/2025-07-26.md\",\n+    \"vercel.json\"\n+  ],\n+  \"workingDirectory\": \"/mnt/d/AI Projects/AI_matching platform\",\n+  \"note\": \"Git 정보 없음\"\n+}\n\\ No newline at end of file\n",
+  "gitLog": "c6c3b91 - 🔧 CommonJS 방식으로 변환 - 서버리스 함수 크래시 해결 (ChangWoo, 1 second ago)",
+  "workingDirectory": "/mnt/d/AI Projects/AI_matching platform"
+}
