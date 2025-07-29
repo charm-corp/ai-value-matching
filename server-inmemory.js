@@ -71,7 +71,7 @@ const connectInMemoryDB = async () => {
     const mongod = await MongoMemoryServer.create({
       instance: {
         port: 27018, // 다른 포트 사용
-        dbName: 'charm_inyeon_inmemory',
+        dbName: 'charm_inyeon',
       },
     });
 
