@@ -1,3 +1,63 @@
+// 🚀 실제 백엔드 API 연결 클라이언트
+class MatchingAPIClient {
+  constructor() {
+    this.baseURL = '/api';
+    this.authToken = this.getAuthToken();
+  }
+
+  // 로컬 스토리지에서 인증 토큰 가져오기
+  getAuthToken() {
+    return localStorage.getItem('authToken') || null;
+  }
+
+  // API 요청 헬퍼 함수
+  async makeRequest(endpoint, options = {}) {
+    const url = `${this.baseURL}${endpoint}`;
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(this.authToken && { Authorization: `Bearer ${this.authToken}` }),
+        ...options.headers,
+      },
+      ...options,
+    };
+
+    try {
+      const response = await fetch(url, config);
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || `HTTP ${response.status}`);
+      }
+      
+      return data;
+    } catch (error) {
+      console.error(`API 요청 실패 [${endpoint}]:`, error);
+      throw error;
+    }
+  }
+
+  // 🧭 지능형 호환성 분석 (하트 나침반용)
+  async getIntelligentCompatibility(targetUserId) {
+    return await this.makeRequest(`/matching/intelligent-compatibility/${targetUserId}`);
+  }
+
+  // 👥 사용자 프로필 정보 가져오기
+  async getUserProfile(userId) {
+    return await this.makeRequest(`/users/${userId}`);
+  }
+
+  // 🎯 매칭 결과 생성
+  async generateMatches() {
+    return await this.makeRequest('/matching/generate', { method: 'POST' });
+  }
+
+  // 📊 가치관 평가 결과 가져오기
+  async getValuesAssessment(userId) {
+    return await this.makeRequest(`/values/assessment/${userId}`);
+  }
+}
+
 // 중장년층 친화적 UI/UX JavaScript
 class SeniorUI {
   constructor() {
@@ -6,6 +66,9 @@ class SeniorUI {
     this.speechSynthesis = window.speechSynthesis;
     this.currentVoice = null;
     this.currentFontSize = 'normal';
+    
+    // 🚀 실제 API 클라이언트 초기화
+    this.apiClient = new MatchingAPIClient();
 
     this.init();
   }
@@ -907,60 +970,160 @@ class SeniorUI {
     });
   }
 
-  // 🔌 백엔드 API 연동 기능
-  async fetchMatchingData(userId, targetId) {
+  // 🚀 실제 백엔드 API와 연동하여 매칭 데이터 가져오기
+  async fetchRealMatchingData(targetUserId) {
     try {
-      const response = await fetch(`/api/matching/${userId}/${targetId}`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      console.log(`🎯 실제 API 호출: /api/matching/intelligent-compatibility/${targetUserId}`);
+      
+      // 실제 IntelligentMatchingEngine 사용
+      const result = await this.apiClient.getIntelligentCompatibility(targetUserId);
+      
+      if (result.success && result.data) {
+        const { overallScore, compatibility, matchingReasons } = result.data;
+        
+        return {
+          compatibility: overallScore,
+          breakdown: compatibility.breakdown,
+          reasons: matchingReasons,
+          message: this.getMatchingMessage(overallScore),
+          isRealData: true
+        };
       }
-      const data = await response.json();
-      return data;
+      
+      throw new Error('API 응답 데이터 형식 오류');
+      
     } catch (error) {
-      console.error('매칭 데이터를 불러오는데 실패했습니다:', error);
-      // 폴백 데이터 반환
-      return {
-        compatibility: 75,
-        needleAngle: 45,
-        message: "매칭 분석 중입니다. 잠시 후 다시 시도해주세요."
-      };
+      console.error('실제 매칭 데이터 로드 실패:', error);
+      
+      // 인증 필요 시 데모 데이터 사용
+      if (error.message.includes('401') || error.message.includes('토큰')) {
+        this.speak && this.speak('로그인이 필요합니다. 데모 모드로 진행합니다.');
+        return this.getDemoMatchingData(targetUserId);
+      }
+      
+      // 기타 오류 시 데모 데이터 사용
+      return this.getDemoMatchingData(targetUserId);
     }
   }
 
-  // 실제 API 데이터로 나침반 업데이트
+  // 🎯 호환성 레벨 텍스트 반환
+  getCompatibilityLevel(score) {
+    if (score >= 90) return "완벽한 궁합!";
+    if (score >= 80) return "매우 좋은 호환성!";
+    if (score >= 70) return "좋은 궁합!";
+    if (score >= 60) return "흥미로운 만남!";
+    return "탐색이 필요한 인연";
+  }
+
+  // 📊 데모 매칭 데이터 (백엔드 없을 때 사용)
+  getDemoMatchingData(targetUserId) {
+    const demoProfiles = {
+      'kim-chulsoo': { compatibility: 92, name: '김철수님' },
+      'lee-younghee': { compatibility: 87, name: '이영희님' },
+      'park-minsu': { compatibility: 84, name: '박민수님' }
+    };
+    
+    const profile = demoProfiles[targetUserId] || { compatibility: 75, name: '새로운 인연' };
+    
+    return {
+      compatibility: profile.compatibility,
+      breakdown: {
+        coreValues: profile.compatibility - 5,
+        personalityFit: profile.compatibility - 3,
+        lifestyleCompat: profile.compatibility + 2,
+        communicationSync: profile.compatibility - 8,
+        growthPotential: profile.compatibility - 10
+      },
+      reasons: [
+        `${profile.name}과(와) 가치관이 잘 맞습니다`,
+        '소통 스타일이 조화롭습니다',
+        '인생 목표가 비슷합니다'
+      ],
+      message: this.getMatchingMessage(profile.compatibility),
+      isRealData: false
+    };
+  }
+
+  // 🚀 실제 API 데이터로 나침반 업데이트 (v2.1 백엔드 연동)
   async updateCompassWithRealData(compassElement, userId, targetId) {
+    console.log(`🧭 하트 나침반 실제 API 연동 시작: ${userId} → ${targetId}`);
+    
     // 로딩 상태 표시
     const needle = compassElement.querySelector('.heart-needle');
-    needle.style.animation = 'spin 2s linear infinite';
+    if (needle) {
+      needle.style.animation = 'spin 2s linear infinite';
+    }
     
+    // 음성 안내 (v2.1)
     if (this.isVoiceEnabled) {
-      this.speak('매칭 분석 중입니다. 잠시만 기다려주세요.');
+      this.speak('지능형 매칭 엔진이 분석 중입니다. 잠시만 기다려주세요.');
     }
 
     try {
-      const matchingData = await this.fetchMatchingData(userId, targetId);
+      // 🎯 실제 IntelligentMatchingEngine API 호출
+      const matchingData = await this.fetchRealMatchingData(targetId);
+      
+      console.log('🎉 실제 매칭 데이터 수신:', matchingData);
       
       // 로딩 애니메이션 중지
-      needle.style.animation = '';
+      if (needle) {
+        needle.style.animation = '';
+      }
       
-      // 실제 데이터로 나침반 업데이트
+      // 🧭 실제 데이터로 하트 나침반 업데이트
       this.showMatchingResult(compassElement, matchingData.compatibility);
       
-      // 하단 메시지 업데이트
+      // 💬 상세 메시지 업데이트
       const messageElement = compassElement.parentElement.querySelector('[data-message]');
       if (messageElement) {
-        messageElement.textContent = matchingData.message || this.getMatchingMessage(matchingData.compatibility);
+        const dataSource = matchingData.isRealData ? '🎯 실제 분석 결과' : '📊 데모 모드';
+        messageElement.innerHTML = `
+          <div style="margin-bottom: 8px;">${matchingData.message}</div>
+          <div style="font-size: 0.8em; opacity: 0.8; color: #666;">
+            <span style="color: ${matchingData.isRealData ? '#4CAF50' : '#FF9800'};">
+              ${dataSource}
+            </span>
+          </div>
+        `;
+      }
+
+      // 🎵 성공 음성 피드백 (v2.1)
+      if (this.isVoiceEnabled) {
+        const feedback = matchingData.isRealData 
+          ? `실제 분석 완료! ${matchingData.compatibility}퍼센트 호환성입니다.`
+          : `데모 모드 결과: ${matchingData.compatibility}퍼센트 호환성입니다.`;
+        
+        setTimeout(() => this.speak(feedback), 1500);
+      }
+
+      // 📊 상세 분석 버튼에 실제 데이터 연결
+      const detailBtn = compassElement.querySelector('.compass-detail-btn');
+      if (detailBtn && matchingData.breakdown) {
+        detailBtn.onclick = () => this.showDetailedAnalysis(compassElement, matchingData);
       }
 
     } catch (error) {
-      console.error('매칭 데이터 업데이트 실패:', error);
+      console.error('🚨 매칭 데이터 업데이트 실패:', error);
       
       // 에러 시 기본 데모 표시
-      needle.style.animation = '';
-      this.showMatchingResult(compassElement, 75);
+      if (needle) {
+        needle.style.animation = '';
+      }
+      
+      const fallbackData = this.getDemoMatchingData(targetId);
+      this.showMatchingResult(compassElement, fallbackData.compatibility);
+      
+      // 에러 메시지 표시
+      const messageElement = compassElement.parentElement.querySelector('[data-message]');
+      if (messageElement) {
+        messageElement.innerHTML = `
+          <div style="color: #FF5722;">⚠️ 연결 오류 - 데모 모드로 진행</div>
+          <div style="font-size: 0.8em; opacity: 0.8;">${fallbackData.message}</div>
+        `;
+      }
       
       if (this.isVoiceEnabled) {
-        this.speak('매칭 분석에 문제가 발생했습니다. 기본 결과를 표시합니다.');
+        this.speak('연결에 문제가 발생했습니다. 데모 모드로 진행합니다.');
       }
     }
   }
@@ -1023,9 +1186,11 @@ class SeniorUI {
     }, 6000);
   }
 
-  // 🧠 상세 매칭 분석 모달창 표시
-  showDetailedAnalysis(compassElement) {
+  // 🧠 상세 매칭 분석 모달창 표시 (v2.1 실제 백엔드 데이터)
+  showDetailedAnalysis(compassElement, realMatchingData = null) {
     const matchingScore = parseInt(compassElement.getAttribute('data-matching-score')) || 92;
+    
+    console.log('📊 상세 분석 모달 열기:', { matchingScore, realMatchingData });
     
     // 매칭도별 상세 분석 데이터 (프리미엄 v1.0 업그레이드)
     const analysisData = {
@@ -1067,7 +1232,61 @@ class SeniorUI {
       }
     };
 
-    const data = analysisData[matchingScore] || analysisData[92];
+    // 🚀 실제 백엔드 데이터 사용 또는 기본 데이터 (v2.1)
+    let data;
+    
+    if (realMatchingData && realMatchingData.breakdown && realMatchingData.isRealData) {
+      console.log('📊 실제 백엔드 데이터로 상세 분석 생성');
+      
+      // 실제 IntelligentMatchingEngine 결과를 사용
+      const breakdown = realMatchingData.breakdown;
+      const reasons = realMatchingData.reasons || [];
+      
+      data = {
+        title: `${matchingScore}% ${this.getCompatibilityLevel(matchingScore)} 🎯`,
+        subtitle: "IntelligentMatchingEngine 실제 분석 결과",
+        details: [
+          { 
+            category: "핵심 가치관", 
+            score: Math.round(breakdown.coreValues || matchingScore - 5), 
+            description: "인생에서 중요하게 생각하는 가치관이 얼마나 일치하는지" 
+          },
+          { 
+            category: "성격 호환성", 
+            score: Math.round(breakdown.personalityFit || matchingScore - 3), 
+            description: "성격적 특성이 서로 얼마나 잘 맞는지" 
+          },
+          { 
+            category: "라이프스타일", 
+            score: Math.round(breakdown.lifestyleCompat || matchingScore + 2), 
+            description: "생활 방식과 일상 패턴의 조화 정도" 
+          },
+          { 
+            category: "소통 방식", 
+            score: Math.round(breakdown.communicationSync || matchingScore - 8), 
+            description: "의사소통 스타일과 대화 방식의 궁합" 
+          },
+          { 
+            category: "성장 가능성", 
+            score: Math.round(breakdown.growthPotential || matchingScore - 10), 
+            description: "함께 발전하고 성장할 수 있는 잠재력" 
+          }
+        ],
+        conclusion: reasons.length > 0 
+          ? `💡 매칭 이유: ${reasons.slice(0, 2).join(', ')}. 실제 분석 결과입니다!`
+          : `${matchingScore}% 호환성으로 좋은 인연이 될 것 같습니다! (실제 분석 완료)`,
+        isRealData: true
+      };
+    } else {
+      console.log('📊 데모 데이터로 상세 분석 생성');
+      data = analysisData[matchingScore] || analysisData[92];
+      data.isRealData = false;
+    }
+    
+    // 호환성 레벨 표시 추가
+    const dataSourceIndicator = data.isRealData 
+      ? '<span style="color: #4CAF50; font-size: 0.9em;">🎯 실제 분석</span>'
+      : '<span style="color: #FF9800; font-size: 0.9em;">📊 데모 모드</span>';
     
     // 기존 모달 제거
     const existingModal = document.querySelector('.detailed-analysis-modal');
@@ -1078,7 +1297,10 @@ class SeniorUI {
       <div class="detailed-analysis-modal">
         <div class="analysis-content">
           <div class="analysis-header">
-            <h2 style="color: var(--heart-red); margin-bottom: var(--spacing-sm);">${data.title}</h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-sm);">
+              <h2 style="color: var(--heart-red); margin: 0;">${data.title}</h2>
+              ${dataSourceIndicator}
+            </div>
             <p style="color: var(--text-secondary);">${data.subtitle}</p>
           </div>
           
