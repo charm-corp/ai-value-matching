@@ -3,17 +3,25 @@
   "name": "ai-matching-charm",
   "builds": [
     {
-      "src": "api/minimal.js",
+      "src": "server.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
+      "src": "/api/(.*)",
+      "dest": "/server.js"
+    },
+    {
       "src": "/(.*)",
-      "dest": "/api/minimal.js"
+      "dest": "/server.js"
     }
   ],
   "env": {
-    "NODE_ENV": "production"
+    "NODE_ENV": "production",
+    "ENCRYPTION_KEY": "c0a8d9b7e6f5a4b3c2d1e0f9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b9",
+    "ENCRYPTION_IV": "a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6",
+    "JWT_SECRET": "super_secure_jwt_secret_key_for_charm_inyeon_2024_serendipity_matching_platform",
+    "JWT_REFRESH_SECRET": "ultra_secure_refresh_token_secret_for_charm_inyeon_long_term_sessions"
   }
 }
