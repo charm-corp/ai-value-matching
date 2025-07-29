@@ -84,6 +84,40 @@ class SeniorUI {
     this.initHeartCompass(); // 🧭💕 하트 나침반 초기화
     this.addLoadingAnimation(); // 로딩 애니메이션 스타일 추가
     this.announcePageLoad();
+    
+    // 🚨 긴급 추가: 페이지 로드 시 연결 상태 자동 체크
+    setTimeout(() => this.performInitialConnectionCheck(), 1000);
+  }
+
+  // 🚨 긴급 추가: 초기 연결 상태 체크
+  async performInitialConnectionCheck() {
+    console.log('🔍 초기 연결 상태 체크 시작');
+    
+    try {
+      // 간단한 API 가용성 체크
+      const response = await fetch('/api/matching/health', { 
+        method: 'GET', 
+        timeout: 3000 
+      });
+      
+      if (response.ok) {
+        this.updateConnectionStatus('connected', '백엔드 서버 연결 확인! 실제 매칭 데이터를 사용할 수 있습니다.');
+        if (this.isVoiceEnabled) {
+          this.speak('백엔드 서버와 정상적으로 연결되었습니다.');
+        }
+      } else {
+        throw new Error('서버 응답 오류');
+      }
+    } catch (error) {
+      console.log('🔄 백엔드 연결 불가 - 데모 모드 활성화');
+      this.updateConnectionStatus('demo', '백엔드 서버에 연결할 수 없습니다. 고품질 데모 모드로 모든 기능을 체험하세요!');
+      
+      if (this.isVoiceEnabled) {
+        setTimeout(() => {
+          this.speak('현재 데모 모드입니다. 모든 기능을 완벽하게 체험하실 수 있습니다.');
+        }, 2000);
+      }
+    }
   }
 
   // 음성 안내 시스템
@@ -970,16 +1004,31 @@ class SeniorUI {
     });
   }
 
-  // 🚀 실제 백엔드 API와 연동하여 매칭 데이터 가져오기
+  // 🚨 긴급 수정: 강화된 API 연결 + 폴백 시스템
   async fetchRealMatchingData(targetUserId) {
+    // 🔧 상태 배지 업데이트
+    this.updateConnectionStatus('checking', '백엔드 API 연결 시도 중...');
+    
     try {
       console.log(`🎯 실제 API 호출: /api/matching/intelligent-compatibility/${targetUserId}`);
+      
+      // 🚨 targetUserId 검증 추가
+      if (!targetUserId || targetUserId === 'undefined') {
+        throw new Error('잘못된 사용자 ID');
+      }
       
       // 실제 IntelligentMatchingEngine 사용
       const result = await this.apiClient.getIntelligentCompatibility(targetUserId);
       
       if (result.success && result.data) {
         const { overallScore, compatibility, matchingReasons } = result.data;
+        
+        // ✅ API 연결 성공
+        this.updateConnectionStatus('connected', '실제 백엔드 API 연결 성공!');
+        
+        if (this.isVoiceEnabled) {
+          this.speak('백엔드 API 연결에 성공했습니다! 실제 분석 결과를 보여드립니다.');
+        }
         
         return {
           compatibility: overallScore,
@@ -993,17 +1042,69 @@ class SeniorUI {
       throw new Error('API 응답 데이터 형식 오류');
       
     } catch (error) {
-      console.error('실제 매칭 데이터 로드 실패:', error);
+      console.error('🚨 실제 매칭 데이터 로드 실패:', error);
       
-      // 인증 필요 시 데모 데이터 사용
-      if (error.message.includes('401') || error.message.includes('토큰')) {
-        this.speak && this.speak('로그인이 필요합니다. 데모 모드로 진행합니다.');
-        return this.getDemoMatchingData(targetUserId);
+      // 🚨 상태 배지를 데모 모드로 업데이트
+      this.updateConnectionStatus('demo', '백엔드 연결 실패 - 데모 모드로 진행');
+      
+      // 사용자 친화적 안내
+      if (this.isVoiceEnabled) {
+        if (error.message.includes('401') || error.message.includes('토큰')) {
+          this.speak('로그인이 필요합니다. 지금은 데모 모드로 체험해보세요.');
+        } else if (error.message.includes('404')) {
+          this.speak('백엔드 서버에 연결할 수 없습니다. 데모 모드로 완벽한 기능을 체험해보세요.');
+        } else {
+          this.speak('일시적인 연결 문제가 발생했습니다. 데모 모드로 진행합니다.');
+        }
       }
       
-      // 기타 오류 시 데모 데이터 사용
+      // 🎯 고품질 데모 데이터 반환
       return this.getDemoMatchingData(targetUserId);
     }
+  }
+
+  // 🚨 연결 상태 배지 업데이트 (창우님을 위한 긴급 추가)
+  updateConnectionStatus(status, message) {
+    const badge = document.getElementById('connection-status-badge');
+    const description = document.getElementById('status-description');
+    
+    if (!badge || !description) return;
+    
+    // 상태별 스타일 설정
+    const statusStyles = {
+      checking: {
+        background: 'linear-gradient(135deg, #2196F3 0%, #1976D2 100%)',
+        icon: '🔄',
+        text: '연결 확인 중'
+      },
+      connected: {
+        background: 'linear-gradient(135deg, #4CAF50 0%, #388E3C 100%)',
+        icon: '🎯',
+        text: '실제 API 연결'
+      },
+      demo: {
+        background: 'linear-gradient(135deg, #FF9800 0%, #F57C00 100%)',
+        icon: '📊',
+        text: '데모 모드'
+      }
+    };
+    
+    const style = statusStyles[status] || statusStyles.demo;
+    
+    // 배지 업데이트
+    badge.style.background = style.background;
+    badge.innerHTML = `${style.icon} ${style.text}`;
+    
+    // 설명 업데이트
+    description.textContent = message;
+    
+    // 부드러운 애니메이션 효과
+    badge.style.transform = 'scale(1.05)';
+    setTimeout(() => {
+      badge.style.transform = 'scale(1)';
+    }, 200);
+    
+    console.log(`🔔 상태 업데이트: ${status} - ${message}`);
   }
 
   // 🎯 호환성 레벨 텍스트 반환
@@ -1042,6 +1143,33 @@ class SeniorUI {
       message: this.getMatchingMessage(profile.compatibility),
       isRealData: false
     };
+  }
+
+  // 🚨 긴급 추가: API 연결 테스트 전용 함수 (창우님용)
+  async testAPIConnection(targetId, compassElement) {
+    console.log('🔌 API 연결 테스트 시작:', { targetId, compassElement });
+    
+    // 버튼 상태 변경
+    const button = event?.target?.closest('button');
+    if (button) {
+      const originalText = button.innerHTML;
+      button.innerHTML = '<span>🔄 테스트 중...</span>';
+      button.disabled = true;
+      
+      // 3초 후 원복
+      setTimeout(() => {
+        button.innerHTML = originalText;
+        button.disabled = false;
+      }, 3000);
+    }
+    
+    // 음성 안내
+    if (this.isVoiceEnabled) {
+      this.speak('API 연결 테스트를 시작합니다. 백엔드 서버와의 연결을 확인하고 있습니다.');
+    }
+    
+    // 실제 API 연결 시도
+    await this.updateCompassWithRealData(compassElement, 'demo-user', targetId);
   }
 
   // 🚀 실제 API 데이터로 나침반 업데이트 (v2.1 백엔드 연동)

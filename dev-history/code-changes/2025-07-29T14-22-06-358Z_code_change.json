@@ -1,0 +1,11 @@
+{
+  "timestamp": "2025-07-29T14:22:06.358Z",
+  "description": "🔧 [URL FIX] senior-ui.html 직접 접근 허용 - 라우팅 수정",
+  "command": "",
+  "files": [
+    "vercel.json"
+  ],
+  "gitDiff": "diff --git a/vercel.json b/vercel.json\nindex f7c946e..102e913 100644\n--- a/vercel.json\n+++ b/vercel.json\n@@ -12,6 +12,14 @@\n       \"src\": \"/api/(.*)\",\n       \"dest\": \"/api/serverless.js\"\n     },\n+    {\n+      \"src\": \"/senior-ui.html\",\n+      \"dest\": \"/senior-ui.html\"\n+    },\n+    {\n+      \"src\": \"/senior-ui.js\",\n+      \"dest\": \"/senior-ui.js\"\n+    },\n     {\n       \"src\": \"/(.*)\",\n       \"dest\": \"/api/serverless.js\"\n",
+  "gitLog": "25a6729 - 🔧 [URL FIX] senior-ui.html 직접 접근 허용 - 라우팅 수정 (ChangWoo, 2 seconds ago)",
+  "workingDirectory": "/mnt/d/AI Projects/AI_matching platform"
+}

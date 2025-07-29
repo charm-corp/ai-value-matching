@@ -1,0 +1,11 @@
+{
+  "timestamp": "2025-07-29T18:56:45.779Z",
+  "description": "🔧🚀 [STATIC FILES] senior-ui.html 정적 파일 빌드 설정 추가 - @vercel/static 빌더로 정적 파일 직접 서빙 설정 - senior-ui.html & senior-ui.js 404 에러 완전 해결 - 라이브 URL 직접 접근 가능하도록 Vercel 설정 최적화",
+  "command": "",
+  "files": [
+    "vercel.json"
+  ],
+  "gitDiff": "diff --git a/vercel.json b/vercel.json\nindex 102e913..f0e8f12 100644\n--- a/vercel.json\n+++ b/vercel.json\n@@ -5,6 +5,14 @@\n     {\n       \"src\": \"api/serverless.js\",\n       \"use\": \"@vercel/node\"\n+    },\n+    {\n+      \"src\": \"senior-ui.html\",\n+      \"use\": \"@vercel/static\"\n+    },\n+    {\n+      \"src\": \"senior-ui.js\", \n+      \"use\": \"@vercel/static\"\n     }\n   ],\n   \"routes\": [\n",
+  "gitLog": "8e7f04b - 🔧🚀 [STATIC FILES] senior-ui.html 정적 파일 빌드 설정 추가 - @vercel/static 빌더로 정적 파일 직접 서빙 설정 - senior-ui.html & senior-ui.js 404 에러 완전 해결 - 라이브 URL 직접 접근 가능하도록 Vercel 설정 최적화 (ChangWoo, 0 seconds ago)",
+  "workingDirectory": "/mnt/d/AI Projects/AI_matching platform"
+}

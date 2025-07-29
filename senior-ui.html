@@ -1350,11 +1350,31 @@
       >
         <div class="container" style="max-width: 1000px; margin: 0 auto">
           <h2
-            style="text-align: center; margin-bottom: var(--spacing-xl)"
+            style="text-align: center; margin-bottom: var(--spacing-md)"
             data-voice="매칭 결과 예시 보기"
           >
             이런 분들을 만날 수 있어요
           </h2>
+
+          <!-- 🚨 모드 표시 배지 (창우님을 위한 긴급 추가) -->
+          <div style="text-align: center; margin-bottom: var(--spacing-xl);">
+            <div id="connection-status-badge" style="
+              display: inline-block;
+              padding: 8px 16px;
+              border-radius: 20px;
+              font-size: 0.9rem;
+              font-weight: 600;
+              background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+              color: white;
+              box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+              margin-bottom: 8px;
+            ">
+              📊 데모 모드 - 백엔드 연결 확인 중...
+            </div>
+            <div style="font-size: 0.8rem; color: var(--text-secondary); opacity: 0.8;">
+              <span id="status-description">시스템 연결 상태를 확인하고 있습니다</span>
+            </div>
+          </div>
 
           <div
             class="matching-preview"
@@ -1529,7 +1549,7 @@
                 <button
                   class="btn btn-secondary"
                   style="flex: 1;"
-                  onclick="window.seniorUI?.updateCompassWithRealData(this.closest('.match-card').querySelector('.heart-compass'), 'user1', 'kim-chulsoo')"
+                  onclick="if(window.seniorUI) { window.seniorUI.testAPIConnection('kim-chulsoo', this.closest('.match-card').querySelector('.heart-compass')); } else { alert('⚠️ 시스템 로딩 중입니다. 잠시 후 다시 시도해주세요.'); }"
                   data-voice="실제 API 연동 테스트"
                 >
                   <span>🔌 API 테스트</span>
