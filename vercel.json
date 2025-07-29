@@ -5,6 +5,14 @@
     {
       "src": "api/serverless.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "senior-ui.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "senior-ui.js", 
+      "use": "@vercel/static"
     }
   ],
   "routes": [
