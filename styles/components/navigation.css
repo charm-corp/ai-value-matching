@@ -363,42 +363,43 @@
     padding: var(--spacing-md);
     gap: var(--spacing-md);
   }
-  
+
   .nav-links {
     display: none;
   }
-  
+
   .mobile-nav-toggle {
     display: block;
   }
-  
+
   .auth-buttons {
     gap: var(--spacing-sm);
   }
-  
-  .login-btn, .signup-btn {
+
+  .login-btn,
+  .signup-btn {
     padding: var(--spacing-sm) var(--spacing-md);
     font-size: var(--font-sm);
   }
-  
+
   .senior-nav .nav-menu {
     flex-direction: column;
     gap: var(--spacing-sm);
   }
-  
+
   .breadcrumb {
     font-size: var(--font-xs);
     gap: var(--spacing-xs);
   }
-  
+
   .tab-nav {
     flex-direction: column;
   }
-  
+
   .pagination {
     gap: var(--spacing-xs);
   }
-  
+
   .pagination-btn {
     width: 40px;
     height: 40px;
@@ -430,7 +431,7 @@
     background: rgba(26, 32, 44, 0.95);
     border-bottom-color: rgba(255, 255, 255, 0.1);
   }
-  
+
   .mobile-nav {
     background: var(--bg-primary);
   }

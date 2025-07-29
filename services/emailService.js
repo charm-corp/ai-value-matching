@@ -15,12 +15,12 @@ class EmailService {
         service: 'gmail',
         auth: {
           user: process.env.SMTP_USER,
-          pass: process.env.SMTP_PASS // Use App Password for Gmail
-        }
+          pass: process.env.SMTP_PASS, // Use App Password for Gmail
+        },
       });
 
       this.isConfigured = !!(process.env.SMTP_USER && process.env.SMTP_PASS);
-      
+
       if (this.isConfigured) {
         console.log('✅ Email service configured successfully');
       } else {
@@ -119,7 +119,7 @@ class EmailService {
           </div>
         </body>
         </html>
-      `
+      `,
     };
   }
 
@@ -199,7 +199,7 @@ class EmailService {
           </div>
         </body>
         </html>
-      `
+      `,
     };
   }
 
@@ -286,7 +286,7 @@ class EmailService {
           </div>
         </body>
         </html>
-      `
+      `,
     };
   }
 
@@ -298,24 +298,27 @@ class EmailService {
 
     try {
       const verificationLink = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/verify-email?token=${verificationToken}&code=${verificationCode}`;
-      const emailTemplate = this.getVerificationEmailTemplate(userName, verificationCode, verificationLink);
+      const emailTemplate = this.getVerificationEmailTemplate(
+        userName,
+        verificationCode,
+        verificationLink
+      );
 
       const mailOptions = {
         from: `"CHARM_INYEON" <${process.env.SMTP_USER}>`,
         to: userEmail,
         subject: emailTemplate.subject,
-        html: emailTemplate.html
+        html: emailTemplate.html,
       };
 
       const result = await this.transporter.sendMail(mailOptions);
-      
-      console.log('✅ Verification email sent successfully:', result.messageId);
-      return { 
-        success: true, 
-        messageId: result.messageId,
-        code: verificationCode 
-      };
 
+      console.log('✅ Verification email sent successfully:', result.messageId);
+      return {
+        success: true,
+        messageId: result.messageId,
+        code: verificationCode,
+      };
     } catch (error) {
       console.error('❌ Failed to send verification email:', error.message);
       throw new Error('이메일 발송에 실패했습니다.');
@@ -336,18 +339,17 @@ class EmailService {
         from: `"CHARM_INYEON" <${process.env.SMTP_USER}>`,
         to: userEmail,
         subject: emailTemplate.subject,
-        html: emailTemplate.html
+        html: emailTemplate.html,
       };
 
       const result = await this.transporter.sendMail(mailOptions);
-      
-      console.log('✅ Password reset email sent successfully:', result.messageId);
-      return { 
-        success: true, 
-        messageId: result.messageId,
-        code: resetCode 
-      };
 
+      console.log('✅ Password reset email sent successfully:', result.messageId);
+      return {
+        success: true,
+        messageId: result.messageId,
+        code: resetCode,
+      };
     } catch (error) {
       console.error('❌ Failed to send password reset email:', error.message);
       throw new Error('비밀번호 재설정 이메일 발송에 실패했습니다.');
@@ -367,17 +369,16 @@ class EmailService {
         from: `"CHARM_INYEON" <${process.env.SMTP_USER}>`,
         to: userEmail,
         subject: emailTemplate.subject,
-        html: emailTemplate.html
+        html: emailTemplate.html,
       };
 
       const result = await this.transporter.sendMail(mailOptions);
-      
-      console.log('✅ Welcome email sent successfully:', result.messageId);
-      return { 
-        success: true, 
-        messageId: result.messageId 
-      };
 
+      console.log('✅ Welcome email sent successfully:', result.messageId);
+      return {
+        success: true,
+        messageId: result.messageId,
+      };
     } catch (error) {
       console.error('❌ Failed to send welcome email:', error.message);
       // Don't throw error for welcome email - it's not critical

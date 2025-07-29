@@ -12,14 +12,14 @@ class ChatService {
   }
 
   setupSocketHandlers() {
-    this.io.on('connection', (socket) => {
+    this.io.on('connection', socket => {
       console.log(`🔌 New socket connection: ${socket.id}`);
 
       // 사용자 인증 및 연결
-      socket.on('authenticate', async (data) => {
+      socket.on('authenticate', async data => {
         try {
           const { userId, token } = data;
-          
+
           // 토큰 검증 로직 (실제로는 JWT 검증)
           if (!userId || !token) {
             socket.emit('auth_error', { message: '인증 정보가 필요합니다.' });
@@ -29,21 +29,20 @@ class ChatService {
           // 사용자 연결 정보 저장
           this.connectedUsers.set(userId, socket.id);
           this.userSockets.set(socket.id, userId);
-          
+
           console.log(`👤 User ${userId} authenticated on socket ${socket.id}`);
-          
+
           // 사용자 온라인 상태 업데이트
           await this.updateUserOnlineStatus(userId, true);
-          
+
           // 사용자의 활성 대화방들에 참여
           await this.joinUserConversations(socket, userId);
-          
-          socket.emit('authenticated', { 
-            success: true, 
-            userId,
-            message: '실시간 채팅에 연결되었습니다.'
-          });
 
+          socket.emit('authenticated', {
+            success: true,
+            userId,
+            message: '실시간 채팅에 연결되었습니다.',
+          });
         } catch (error) {
           console.error('Authentication error:', error);
           socket.emit('auth_error', { message: '인증 중 오류가 발생했습니다.' });
@@ -51,11 +50,11 @@ class ChatService {
       });
 
       // 대화방 참여
-      socket.on('join_conversation', async (data) => {
+      socket.on('join_conversation', async data => {
         try {
           const { conversationId } = data;
           const userId = this.userSockets.get(socket.id);
-          
+
           if (!userId) {
             socket.emit('error', { message: '인증이 필요합니다.' });
             return;
@@ -70,12 +69,11 @@ class ChatService {
 
           socket.join(conversationId);
           console.log(`👥 User ${userId} joined conversation ${conversationId}`);
-          
+
           // 읽음 상태 업데이트
           await this.markMessagesAsRead(conversationId, userId);
-          
-          socket.emit('joined_conversation', { conversationId });
 
+          socket.emit('joined_conversation', { conversationId });
         } catch (error) {
           console.error('Join conversation error:', error);
           socket.emit('error', { message: '대화방 참여 중 오류가 발생했습니다.' });
@@ -83,11 +81,11 @@ class ChatService {
       });
 
       // 메시지 전송
-      socket.on('send_message', async (data) => {
+      socket.on('send_message', async data => {
         try {
           const { conversationId, content, type = 'text', replyTo } = data;
           const userId = this.userSockets.get(socket.id);
-          
+
           if (!userId) {
             socket.emit('error', { message: '인증이 필요합니다.' });
             return;
@@ -106,7 +104,7 @@ class ChatService {
             senderId: userId,
             content: content.trim(),
             type,
-            replyTo
+            replyTo,
           });
 
           await message.save();
@@ -132,15 +130,14 @@ class ChatService {
               type: message.type,
               replyTo: message.replyTo,
               createdAt: message.createdAt,
-              readBy: message.readBy
-            }
+              readBy: message.readBy,
+            },
           });
 
           // 상대방에게 알림 전송 (오프라인 사용자)
           await this.sendNotificationToParticipants(conversation, message, userId);
 
           console.log(`💬 Message sent in conversation ${conversationId} by user ${userId}`);
-
         } catch (error) {
           console.error('Send message error:', error);
           socket.emit('error', { message: '메시지 전송 중 오류가 발생했습니다.' });
@@ -148,44 +145,46 @@ class ChatService {
       });
 
       // 타이핑 상태
-      socket.on('typing_start', (data) => {
+      socket.on('typing_start', data => {
         const { conversationId } = data;
         const userId = this.userSockets.get(socket.id);
-        
+
         if (userId && conversationId) {
-          socket.to(conversationId).emit('user_typing', { 
-            userId, 
+          socket.to(conversationId).emit('user_typing', {
+            userId,
             conversationId,
-            typing: true 
+            typing: true,
           });
         }
       });
 
-      socket.on('typing_stop', (data) => {
+      socket.on('typing_stop', data => {
         const { conversationId } = data;
         const userId = this.userSockets.get(socket.id);
-        
+
         if (userId && conversationId) {
-          socket.to(conversationId).emit('user_typing', { 
-            userId, 
+          socket.to(conversationId).emit('user_typing', {
+            userId,
             conversationId,
-            typing: false 
+            typing: false,
           });
         }
       });
 
       // 메시지 읽음 처리
-      socket.on('mark_as_read', async (data) => {
+      socket.on('mark_as_read', async data => {
         try {
           const { conversationId, messageId } = data;
           const userId = this.userSockets.get(socket.id);
-          
-          if (!userId) {return;}
+
+          if (!userId) {
+            return;
+          }
 
           if (messageId) {
             // 특정 메시지 읽음 처리
             await Message.findByIdAndUpdate(messageId, {
-              $addToSet: { readBy: { userId, readAt: new Date() } }
+              $addToSet: { readBy: { userId, readAt: new Date() } },
             });
           } else {
             // 대화방의 모든 메시지 읽음 처리
@@ -196,9 +195,8 @@ class ChatService {
           socket.to(conversationId).emit('message_read', {
             conversationId,
             messageId,
-            readBy: userId
+            readBy: userId,
           });
-
         } catch (error) {
           console.error('Mark as read error:', error);
         }
@@ -207,14 +205,14 @@ class ChatService {
       // 연결 해제
       socket.on('disconnect', async () => {
         const userId = this.userSockets.get(socket.id);
-        
+
         if (userId) {
           console.log(`👋 User ${userId} disconnected from socket ${socket.id}`);
-          
+
           // 연결 정보 제거
           this.connectedUsers.delete(userId);
           this.userSockets.delete(socket.id);
-          
+
           // 사용자 오프라인 상태 업데이트
           await this.updateUserOnlineStatus(userId, false);
         }
@@ -227,7 +225,7 @@ class ChatService {
     try {
       await User.findByIdAndUpdate(userId, {
         isOnline,
-        lastActive: new Date()
+        lastActive: new Date(),
       });
     } catch (error) {
       console.error('Update online status error:', error);
@@ -239,7 +237,7 @@ class ChatService {
     try {
       const conversations = await Conversation.find({
         participants: userId,
-        status: 'active'
+        status: 'active',
       }).select('_id');
 
       conversations.forEach(conv => {
@@ -259,10 +257,10 @@ class ChatService {
         {
           conversationId,
           senderId: { $ne: userId },
-          'readBy.userId': { $ne: userId }
+          'readBy.userId': { $ne: userId },
         },
         {
-          $push: { readBy: { userId, readAt: new Date() } }
+          $push: { readBy: { userId, readAt: new Date() } },
         }
       );
     } catch (error) {
@@ -279,7 +277,7 @@ class ChatService {
 
       for (const participantId of participants) {
         const socketId = this.connectedUsers.get(participantId.toString());
-        
+
         if (socketId) {
           // 온라인 사용자에게 실시간 알림
           this.io.to(socketId).emit('conversation_notification', {
@@ -287,8 +285,8 @@ class ChatService {
             message: {
               senderId: message.senderId,
               content: message.content,
-              createdAt: message.createdAt
-            }
+              createdAt: message.createdAt,
+            },
           });
         } else {
           // 오프라인 사용자에게는 이메일 알림 등 (나중에 구현)
@@ -306,7 +304,7 @@ class ChatService {
       // 기존 대화방 확인
       let conversation = await Conversation.findOne({
         matchId,
-        participants: { $all: participants }
+        participants: { $all: participants },
       });
 
       if (!conversation) {
@@ -315,7 +313,7 @@ class ChatService {
           matchId,
           participants,
           status: 'active',
-          startedAt: new Date()
+          startedAt: new Date(),
         });
 
         await conversation.save();
@@ -328,7 +326,7 @@ class ChatService {
           conversationId: conversation._id,
           senderId: participants[0], // 첫 번째 참가자가 보낸 것으로 가정
           content: initialMessage.trim(),
-          type: 'text'
+          type: 'text',
         });
 
         await message.save();
@@ -340,12 +338,11 @@ class ChatService {
 
         // 실시간으로 메시지 전송
         this.io.to(conversation._id.toString()).emit('new_message', {
-          message
+          message,
         });
       }
 
       return conversation;
-
     } catch (error) {
       console.error('Start conversation error:', error);
       throw error;
@@ -370,7 +367,7 @@ class ChatService {
         conversationId,
         senderId: null, // 시스템 메시지
         content,
-        type
+        type,
       });
 
       await message.save();
@@ -383,12 +380,11 @@ class ChatService {
           content: message.content,
           type: message.type,
           createdAt: message.createdAt,
-          isSystem: true
-        }
+          isSystem: true,
+        },
       });
 
       console.log(`🤖 System message sent to conversation ${conversationId}`);
-
     } catch (error) {
       console.error('Send system message error:', error);
     }

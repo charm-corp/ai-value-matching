@@ -6,7 +6,8 @@ beforeAll(async () => {
   process.env.NODE_ENV = 'test';
   process.env.JWT_SECRET = 'test-secret-key-for-jwt';
   process.env.ENCRYPTION_MASTER_KEY = 'test-master-key-for-encryption-32bytes';
-  process.env.MONGODB_URI = process.env.MONGODB_TEST_URI || 'mongodb://localhost:27017/charm_inyeon_test';
+  process.env.MONGODB_URI =
+    process.env.MONGODB_TEST_URI || 'mongodb://localhost:27017/charm_inyeon_test';
 });
 
 // 각 테스트 후 정리
@@ -24,7 +25,7 @@ afterAll(async () => {
     if (mongoose.connection.readyState !== 0) {
       await mongoose.connection.close();
     }
-    
+
     // 추가적인 정리 작업
     await new Promise(resolve => setTimeout(resolve, 100));
   } catch (error) {
@@ -37,7 +38,7 @@ process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
-process.on('uncaughtException', (error) => {
+process.on('uncaughtException', error => {
   console.error('Uncaught Exception:', error);
   process.exit(1);
 });

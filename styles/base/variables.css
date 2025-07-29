@@ -7,11 +7,11 @@
   --secondary-color: #764ba2;
   --secondary-light: #8b65b8;
   --secondary-dark: #6b4190;
-  
+
   /* 그라데이션 */
   --gradient-primary: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
   --gradient-light: linear-gradient(135deg, var(--primary-light) 0%, var(--secondary-light) 100%);
-  
+
   /* 액센트 색상 */
   --accent-warm: #ffd89b;
   --accent-warm-dark: #19547b;
@@ -19,32 +19,32 @@
   --accent-red: #ff6b6b;
   --accent-green: #4ecdc4;
   --accent-blue: #44a08d;
-  
+
   /* 텍스트 색상 */
   --text-primary: #333333;
   --text-secondary: #666666;
   --text-muted: #999999;
   --text-light: #cccccc;
   --text-white: #ffffff;
-  
+
   /* 배경색 */
   --bg-primary: #ffffff;
   --bg-secondary: #f8fafc;
   --bg-tertiary: #e2e8f0;
   --bg-dark: #2c3e50;
-  
+
   /* 상태 색상 */
   --success: #10b981;
   --warning: #f59e0b;
   --error: #ef4444;
   --info: var(--primary-color);
-  
+
   /* 그림자 */
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
   --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.16);
   --shadow-xl: 0 15px 50px rgba(0, 0, 0, 0.2);
-  
+
   /* 테두리 반지름 */
   --radius-sm: 8px;
   --radius-md: 12px;
@@ -53,51 +53,51 @@
   --radius-2xl: 24px;
   --radius-3xl: 30px;
   --radius-full: 50%;
-  
+
   /* 여백 */
-  --spacing-xs: 0.25rem;  /* 4px */
-  --spacing-sm: 0.5rem;   /* 8px */
-  --spacing-md: 1rem;     /* 16px */
-  --spacing-lg: 1.5rem;   /* 24px */
-  --spacing-xl: 2rem;     /* 32px */
-  --spacing-2xl: 2.5rem;  /* 40px */
-  --spacing-3xl: 3rem;    /* 48px */
-  --spacing-4xl: 4rem;    /* 64px */
-  
+  --spacing-xs: 0.25rem; /* 4px */
+  --spacing-sm: 0.5rem; /* 8px */
+  --spacing-md: 1rem; /* 16px */
+  --spacing-lg: 1.5rem; /* 24px */
+  --spacing-xl: 2rem; /* 32px */
+  --spacing-2xl: 2.5rem; /* 40px */
+  --spacing-3xl: 3rem; /* 48px */
+  --spacing-4xl: 4rem; /* 64px */
+
   /* 폰트 크기 */
-  --font-xs: 0.75rem;     /* 12px */
-  --font-sm: 0.875rem;    /* 14px */
-  --font-base: 1rem;      /* 16px */
-  --font-lg: 1.125rem;    /* 18px */
-  --font-xl: 1.25rem;     /* 20px */
-  --font-2xl: 1.5rem;     /* 24px */
-  --font-3xl: 1.875rem;   /* 30px */
-  --font-4xl: 2.25rem;    /* 36px */
-  --font-5xl: 3rem;       /* 48px */
-  
+  --font-xs: 0.75rem; /* 12px */
+  --font-sm: 0.875rem; /* 14px */
+  --font-base: 1rem; /* 16px */
+  --font-lg: 1.125rem; /* 18px */
+  --font-xl: 1.25rem; /* 20px */
+  --font-2xl: 1.5rem; /* 24px */
+  --font-3xl: 1.875rem; /* 30px */
+  --font-4xl: 2.25rem; /* 36px */
+  --font-5xl: 3rem; /* 48px */
+
   /* 폰트 굵기 */
   --font-normal: 400;
   --font-medium: 500;
   --font-semibold: 600;
   --font-bold: 700;
-  
+
   /* 줄 높이 */
   --leading-tight: 1.2;
   --leading-normal: 1.6;
   --leading-relaxed: 1.8;
-  
+
   /* 애니메이션 */
   --transition-fast: 0.2s ease;
   --transition-normal: 0.3s ease;
   --transition-slow: 0.5s ease;
-  
+
   /* 반응형 브레이크포인트 */
   --screen-sm: 640px;
   --screen-md: 768px;
   --screen-lg: 1024px;
   --screen-xl: 1280px;
   --screen-2xl: 1536px;
-  
+
   /* Z-index 레이어 */
   --z-dropdown: 1000;
   --z-sticky: 1020;

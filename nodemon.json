@@ -1,0 +1,36 @@
+{
+  "watch": [
+    "server.js",
+    "routes/",
+    "models/",
+    "middleware/",
+    "services/",
+    "utils/"
+  ],
+  "ignore": [
+    "node_modules/",
+    "uploads/",
+    "logs/",
+    "*.log",
+    "test-*.js",
+    "dev-history/",
+    "*.md",
+    ".git/",
+    "*.json"
+  ],
+  "ext": "js,json",
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "delay": 1000,
+  "verbose": true,
+  "restartable": "rs",
+  "colours": true,
+  "legacyWatch": false,
+  "pollingInterval": 100,
+  "events": {
+    "restart": "echo '🔄 서버 재시작 중...'",
+    "start": "echo '🚀 서버 시작됨'",
+    "crash": "echo '❌ 서버 크래시 발생'"
+  }
+}

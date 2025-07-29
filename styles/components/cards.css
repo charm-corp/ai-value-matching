@@ -210,8 +210,13 @@
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-20px); }
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
 }
 
 .card-1 {
@@ -327,22 +332,22 @@
   .about-card {
     padding: var(--spacing-xl) var(--spacing-lg);
   }
-  
+
   .about-icon {
     width: 60px;
     height: 60px;
   }
-  
+
   .about-icon svg {
     width: 28px;
     height: 28px;
   }
-  
+
   .floating-card {
     position: relative;
     margin: var(--spacing-md);
   }
-  
+
   .connection-card {
     flex-direction: column;
     text-align: center;

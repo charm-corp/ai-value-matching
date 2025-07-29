@@ -6,11 +6,11 @@ AI 기반 가치관 매칭 플랫폼 (CHARM_INYEON) - Node.js/Express 백엔드
 
 ## Development Commands
 
-- `npm run dev` - 개발 서버 실행 (nodemon)
-- `npm start` - 프로덕션 서버 실행
-- `npm test` - Jest 테스트 실행
-- `npm run lint` - ESLint 코드 검사
-- `npm run format` - Prettier 코드 포맷팅
+- `pnpm run dev` - 개발 서버 실행 (nodemon)
+- `pnpm start` - 프로덕션 서버 실행
+- `pnpm test` - Jest 테스트 실행
+- `pnpm run lint` - ESLint 코드 검사
+- `pnpm run format` - Prettier 코드 포맷팅
 
 ## Key Technologies(핵심 기술 스택)
 
@@ -41,7 +41,7 @@ AI 기반 가치관 매칭 플랫폼 (CHARM_INYEON) - Node.js/Express 백엔드
 
 ## Testing Strategy
 
-- `npm test` 명령어로 Jest 테스트 실행
+- `pnpm test` 명령어로 Jest 테스트 실행
 - 통합 테스트: test-integration.html 파일 존재
 
 ## 개발 히스토리 추적 시스템
@@ -175,10 +175,10 @@ const user = await this.userRepository
 
 ```javascript
 // 모르는 경우 정직하게 표현
-"이 부분은 기존 코드를 확인한 후 정확히 답변드리겠습니다.";
+'이 부분은 기존 코드를 확인한 후 정확히 답변드리겠습니다.';
 
 // 추정하는 경우 명시적 표현
-"일반적인 패턴으로는 다음과 같지만, 프로젝트 특성상 다를 수 있습니다.";
+'일반적인 패턴으로는 다음과 같지만, 프로젝트 특성상 다를 수 있습니다.';
 ```
 
 ### 검증 우선 개발

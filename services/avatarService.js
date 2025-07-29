@@ -4,24 +4,24 @@ const fs = require('fs').promises;
 class AvatarService {
   constructor() {
     this.avatarsDir = path.join(__dirname, '..', 'uploads', 'avatars');
-    
+
     // 4060세대를 위한 기본 아바타 설정
     this.defaultAvatars = {
       male: {
         modern: '/uploads/avatars/male-modern.svg',
         classic: '/uploads/avatars/male-classic.svg',
-        friendly: '/uploads/avatars/male-friendly.svg'
+        friendly: '/uploads/avatars/male-friendly.svg',
       },
       female: {
         modern: '/uploads/avatars/female-modern.svg',
         classic: '/uploads/avatars/female-classic.svg',
-        friendly: '/uploads/avatars/female-friendly.svg'
+        friendly: '/uploads/avatars/female-friendly.svg',
       },
       neutral: {
         modern: '/uploads/avatars/neutral-modern.svg',
         classic: '/uploads/avatars/neutral-classic.svg',
-        friendly: '/uploads/avatars/neutral-friendly.svg'
-      }
+        friendly: '/uploads/avatars/neutral-friendly.svg',
+      },
     };
   }
 
@@ -29,22 +29,22 @@ class AvatarService {
   getRecommendedAvatar(user) {
     const gender = user.gender || 'neutral';
     const style = this.getStyleByAge(user.age);
-    
+
     if (this.defaultAvatars[gender] && this.defaultAvatars[gender][style]) {
       return {
         path: this.defaultAvatars[gender][style],
         style: style,
         gender: gender,
-        description: this.getAvatarDescription(gender, style)
+        description: this.getAvatarDescription(gender, style),
       };
     }
-    
+
     // 기본값: 중성적인 친근한 스타일
     return {
       path: this.defaultAvatars.neutral.friendly,
       style: 'friendly',
       gender: 'neutral',
-      description: '친근한 기본 프로필'
+      description: '친근한 기본 프로필',
     };
   }
 
@@ -71,22 +71,22 @@ class AvatarService {
     const genderNames = {
       male: '남성',
       female: '여성',
-      neutral: '중성'
+      neutral: '중성',
     };
-    
+
     const styleNames = {
       modern: '모던',
       classic: '클래식',
-      friendly: '친근한'
+      friendly: '친근한',
     };
-    
+
     return `${styleNames[style]} ${genderNames[gender]} 프로필`;
   }
 
   // 모든 사용 가능한 아바타 목록
   getAllAvatars() {
     const avatars = [];
-    
+
     for (const [gender, styles] of Object.entries(this.defaultAvatars)) {
       for (const [style, path] of Object.entries(styles)) {
         avatars.push({
@@ -94,11 +94,11 @@ class AvatarService {
           gender: gender,
           style: style,
           description: this.getAvatarDescription(gender, style),
-          category: `${gender}_${style}`
+          category: `${gender}_${style}`,
         });
       }
     }
-    
+
     return avatars;
   }
 
@@ -107,12 +107,12 @@ class AvatarService {
     if (!this.defaultAvatars[gender]) {
       return this.defaultAvatars.neutral;
     }
-    
+
     return Object.entries(this.defaultAvatars[gender]).map(([style, path]) => ({
       path: path,
       gender: gender,
       style: style,
-      description: this.getAvatarDescription(gender, style)
+      description: this.getAvatarDescription(gender, style),
     }));
   }
 
@@ -120,7 +120,7 @@ class AvatarService {
   async generateSVGAvatar(gender, style, options = {}) {
     const colors = this.getColorScheme(gender, style);
     const size = options.size || 200;
-    
+
     const svg = `
       <svg width="${size}" height="${size}" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
         <defs>
@@ -156,7 +156,7 @@ class AvatarService {
         <text x="100" y="190" text-anchor="middle" class="avatar-text">${this.getAvatarDescription(gender, style)}</text>
       </svg>
     `;
-    
+
     return svg;
   }
 
@@ -168,63 +168,63 @@ class AvatarService {
           background: '#E3F2FD',
           skin: '#FFDBCF',
           hair: '#8D6E63',
-          clothing: '#1976D2'
+          clothing: '#1976D2',
         },
         classic: {
           background: '#F3E5F5',
           skin: '#FFDBCF',
           hair: '#5D4037',
-          clothing: '#7B1FA2'
+          clothing: '#7B1FA2',
         },
         friendly: {
           background: '#E8F5E8',
           skin: '#FFDBCF',
           hair: '#6D4C41',
-          clothing: '#388E3C'
-        }
+          clothing: '#388E3C',
+        },
       },
       female: {
         modern: {
           background: '#FCE4EC',
           skin: '#FFDBCF',
           hair: '#D7CCC8',
-          clothing: '#E91E63'
+          clothing: '#E91E63',
         },
         classic: {
           background: '#F1F8E9',
           skin: '#FFDBCF',
           hair: '#8D6E63',
-          clothing: '#689F38'
+          clothing: '#689F38',
         },
         friendly: {
           background: '#FFF3E0',
           skin: '#FFDBCF',
           hair: '#A1887F',
-          clothing: '#FF9800'
-        }
+          clothing: '#FF9800',
+        },
       },
       neutral: {
         modern: {
           background: '#F5F5F5',
           skin: '#FFDBCF',
           hair: '#9E9E9E',
-          clothing: '#607D8B'
+          clothing: '#607D8B',
         },
         classic: {
           background: '#FAFAFA',
           skin: '#FFDBCF',
           hair: '#795548',
-          clothing: '#5D4037'
+          clothing: '#5D4037',
         },
         friendly: {
           background: '#E0F7FA',
           skin: '#FFDBCF',
           hair: '#78909C',
-          clothing: '#00ACC1'
-        }
-      }
+          clothing: '#00ACC1',
+        },
+      },
     };
-    
+
     return schemes[gender]?.[style] || schemes.neutral.friendly;
   }
 
@@ -232,12 +232,12 @@ class AvatarService {
   async createDefaultAvatars() {
     try {
       await fs.mkdir(this.avatarsDir, { recursive: true });
-      
+
       for (const [gender, styles] of Object.entries(this.defaultAvatars)) {
         for (const [style, relativePath] of Object.entries(styles)) {
           const filename = path.basename(relativePath);
           const filePath = path.join(this.avatarsDir, filename);
-          
+
           // 파일이 없을 때만 생성
           try {
             await fs.access(filePath);
@@ -248,7 +248,7 @@ class AvatarService {
           }
         }
       }
-      
+
       console.log('🎨 Default avatars system ready!');
       return true;
     } catch (error) {
@@ -261,13 +261,15 @@ class AvatarService {
   getUserImageStatus(user) {
     const hasCustomImage = !!(user.profileImages && user.profileImages.medium);
     const recommendedAvatar = this.getRecommendedAvatar(user);
-    
+
     return {
       hasCustomImage: hasCustomImage,
       currentImage: hasCustomImage ? user.profileImages.medium.path : recommendedAvatar.path,
       recommendedAvatar: recommendedAvatar,
       isDefault: !hasCustomImage,
-      uploadSuggestion: !hasCustomImage ? '프로필 사진을 업로드하면 매칭 확률이 3배 증가합니다!' : null
+      uploadSuggestion: !hasCustomImage
+        ? '프로필 사진을 업로드하면 매칭 확률이 3배 증가합니다!'
+        : null,
     };
   }
 }

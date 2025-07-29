@@ -1,768 +1,885 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>회원가입 - CHARM_INYEON | 세렌디피티가 만든 특별한 인연</title>
-    
+
     <!-- SEO 메타데이터 -->
-    <meta name="description" content="CHARM_INYEON 회원가입. 세렌디피티로 시작되는 운명 같은 인연을 경험해보세요. 4060세대 매칭 플랫폼에서 새로운 인연을 시작하세요." />
-    <meta name="keywords" content="회원가입, 세렌디피티, 인연, 4060세대, 매칭, 가치관, 중년 연애, CHARM_INYEON" />
+    <meta
+      name="description"
+      content="CHARM_INYEON 회원가입. 세렌디피티로 시작되는 운명 같은 인연을 경험해보세요. 4060세대 매칭 플랫폼에서 새로운 인연을 시작하세요."
+    />
+    <meta
+      name="keywords"
+      content="회원가입, 세렌디피티, 인연, 4060세대, 매칭, 가치관, 중년 연애, CHARM_INYEON"
+    />
     <style>
-        :root {
-            --primary-color: #667eea;
-            --secondary-color: #764ba2;
-            --text-primary: #333;
-            --text-secondary: #666;
-            --text-white: #fff;
-            --bg-primary: #fff;
-            --bg-secondary: #f8fafc;
-            --success-color: #10b981;
-            --error-color: #dc2626;
-            --warning-color: #f59e0b;
-        }
+      :root {
+        --primary-color: #667eea;
+        --secondary-color: #764ba2;
+        --text-primary: #333;
+        --text-secondary: #666;
+        --text-white: #fff;
+        --bg-primary: #fff;
+        --bg-secondary: #f8fafc;
+        --success-color: #10b981;
+        --error-color: #dc2626;
+        --warning-color: #f59e0b;
+      }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        body {
-            font-family: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
-            line-height: 1.6;
-            color: var(--text-primary);
-            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
-            min-height: 100vh;
-        }
+      body {
+        font-family:
+          'Noto Sans KR',
+          -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
+        line-height: 1.6;
+        color: var(--text-primary);
+        background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+        min-height: 100vh;
+      }
 
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .logo {
+        font-size: 2rem;
+        font-weight: bold;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+      }
+
+      .back-link {
+        display: inline-flex;
+        align-items: center;
+        color: var(--primary-color);
+        text-decoration: none;
+        margin-bottom: 1rem;
+        font-weight: 500;
+      }
+
+      .back-link:hover {
+        text-decoration: underline;
+      }
+
+      .signup-container {
+        background: white;
+        padding: 2.5rem;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      .signup-header {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .signup-title {
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+        font-size: 1.8rem;
+      }
+
+      .signup-subtitle {
+        color: var(--text-secondary);
+        font-size: 1rem;
+      }
+
+      .step-indicator {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 2rem;
+        gap: 1rem;
+      }
+
+      .step {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .step-number {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        background: var(--bg-secondary);
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+
+      .step-number.active {
+        background: var(--primary-color);
+        color: white;
+      }
+
+      .step-number.completed {
+        background: var(--success-color);
+        color: white;
+      }
+
+      .step-text {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+      }
+
+      .step-text.active {
+        color: var(--primary-color);
+        font-weight: 600;
+      }
+
+      .step-divider {
+        width: 30px;
+        height: 2px;
+        background: var(--bg-secondary);
+      }
+
+      .step-divider.completed {
+        background: var(--success-color);
+      }
+
+      .form-step {
+        display: none;
+      }
+
+      .form-step.active {
+        display: block;
+      }
+
+      .form-section {
+        margin-bottom: 2rem;
+      }
+
+      .section-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: var(--text-primary);
+        font-size: 1rem;
+      }
+
+      .required {
+        color: var(--error-color);
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 1rem;
+        border: 2px solid var(--bg-secondary);
+        border-radius: 8px;
+        font-size: 1rem;
+        font-family: inherit;
+        transition: all 0.3s ease;
+      }
+
+      .form-input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        background: rgba(102, 126, 234, 0.05);
+      }
+
+      .form-input.error {
+        border-color: var(--error-color);
+      }
+
+      .form-select {
+        width: 100%;
+        padding: 1rem;
+        border: 2px solid var(--bg-secondary);
+        border-radius: 8px;
+        font-size: 1rem;
+        font-family: inherit;
+        background: white;
+        cursor: pointer;
+      }
+
+      .input-hint {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        margin-top: 0.25rem;
+      }
+
+      .error-message {
+        color: var(--error-color);
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+        display: none;
+      }
+
+      .error-message.show {
+        display: block;
+      }
+
+      .checkbox-group {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .checkbox-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        padding: 1rem;
+        border: 2px solid var(--bg-secondary);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .checkbox-item:hover {
+        border-color: var(--primary-color);
+        background: rgba(102, 126, 234, 0.05);
+      }
+
+      .checkbox-item.checked {
+        border-color: var(--primary-color);
+        background: rgba(102, 126, 234, 0.1);
+      }
+
+      .checkbox-input {
+        width: 20px;
+        height: 20px;
+        margin: 0;
+      }
+
+      .checkbox-label {
+        flex: 1;
+        cursor: pointer;
+      }
+
+      .checkbox-title {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+      }
+
+      .checkbox-description {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+      }
+
+      .photo-upload {
+        border: 2px dashed var(--bg-secondary);
+        border-radius: 8px;
+        padding: 2rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .photo-upload:hover {
+        border-color: var(--primary-color);
+        background: rgba(102, 126, 234, 0.05);
+      }
+
+      .photo-upload.dragover {
+        border-color: var(--primary-color);
+        background: rgba(102, 126, 234, 0.1);
+      }
+
+      .photo-preview {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: 0 auto 1rem;
+        display: none;
+      }
+
+      .upload-text {
+        color: var(--text-secondary);
+        margin-bottom: 0.5rem;
+      }
+
+      .upload-hint {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+      }
+
+      .social-login {
+        margin: 2rem 0;
+        text-align: center;
+      }
+
+      .social-divider {
+        display: flex;
+        align-items: center;
+        margin: 1.5rem 0;
+      }
+
+      .social-divider::before,
+      .social-divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: var(--bg-secondary);
+      }
+
+      .social-divider span {
+        padding: 0 1rem;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+      }
+
+      .social-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .social-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 1rem;
+        border: 2px solid var(--bg-secondary);
+        border-radius: 8px;
+        background: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: var(--text-primary);
+        font-weight: 500;
+      }
+
+      .social-button:hover {
+        border-color: var(--primary-color);
+        background: rgba(102, 126, 234, 0.05);
+      }
+
+      .kakao-button {
+        background: #fee500;
+        border-color: #fee500;
+        color: #3c1e1e;
+      }
+
+      .kakao-button:hover {
+        background: #fdd800;
+        border-color: #fdd800;
+      }
+
+      .naver-button {
+        background: #03c75a;
+        border-color: #03c75a;
+        color: white;
+      }
+
+      .naver-button:hover {
+        background: #02b351;
+        border-color: #02b351;
+      }
+
+      .navigation-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 2rem;
+        gap: 1rem;
+      }
+
+      .nav-button {
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+        min-width: 120px;
+      }
+
+      .prev-button {
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+      }
+
+      .prev-button:hover {
+        background: #e2e8f0;
+      }
+
+      .next-button {
+        background: var(--primary-color);
+        color: white;
+      }
+
+      .next-button:hover {
+        background: #5a6fd8;
+      }
+
+      .next-button:disabled {
+        background: var(--bg-secondary);
+        color: var(--text-secondary);
+        cursor: not-allowed;
+      }
+
+      .assessment-result {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        text-align: center;
+      }
+
+      .result-type {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+      }
+
+      .result-description {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+      }
+
+      @media (max-width: 768px) {
         .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .logo {
-            font-size: 2rem;
-            font-weight: bold;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 0.5rem;
-        }
-
-        .back-link {
-            display: inline-flex;
-            align-items: center;
-            color: var(--primary-color);
-            text-decoration: none;
-            margin-bottom: 1rem;
-            font-weight: 500;
-        }
-
-        .back-link:hover {
-            text-decoration: underline;
+          padding: 1rem;
         }
 
         .signup-container {
-            background: white;
-            padding: 2.5rem;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .signup-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .signup-title {
-            color: var(--primary-color);
-            margin-bottom: 0.5rem;
-            font-size: 1.8rem;
-        }
-
-        .signup-subtitle {
-            color: var(--text-secondary);
-            font-size: 1rem;
+          padding: 1.5rem;
         }
 
         .step-indicator {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 2rem;
-            gap: 1rem;
-        }
-
-        .step {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .step-number {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            background: var(--bg-secondary);
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .step-number.active {
-            background: var(--primary-color);
-            color: white;
-        }
-
-        .step-number.completed {
-            background: var(--success-color);
-            color: white;
-        }
-
-        .step-text {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-
-        .step-text.active {
-            color: var(--primary-color);
-            font-weight: 600;
+          flex-direction: column;
+          gap: 0.5rem;
         }
 
         .step-divider {
-            width: 30px;
-            height: 2px;
-            background: var(--bg-secondary);
-        }
-
-        .step-divider.completed {
-            background: var(--success-color);
-        }
-
-        .form-step {
-            display: none;
-        }
-
-        .form-step.active {
-            display: block;
-        }
-
-        .form-section {
-            margin-bottom: 2rem;
-        }
-
-        .section-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: var(--text-primary);
-            font-size: 1rem;
-        }
-
-        .required {
-            color: var(--error-color);
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 1rem;
-            border: 2px solid var(--bg-secondary);
-            border-radius: 8px;
-            font-size: 1rem;
-            font-family: inherit;
-            transition: all 0.3s ease;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            background: rgba(102, 126, 234, 0.05);
-        }
-
-        .form-input.error {
-            border-color: var(--error-color);
-        }
-
-        .form-select {
-            width: 100%;
-            padding: 1rem;
-            border: 2px solid var(--bg-secondary);
-            border-radius: 8px;
-            font-size: 1rem;
-            font-family: inherit;
-            background: white;
-            cursor: pointer;
-        }
-
-        .input-hint {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            margin-top: 0.25rem;
-        }
-
-        .error-message {
-            color: var(--error-color);
-            font-size: 0.85rem;
-            margin-top: 0.25rem;
-            display: none;
-        }
-
-        .error-message.show {
-            display: block;
-        }
-
-        .checkbox-group {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .checkbox-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.75rem;
-            padding: 1rem;
-            border: 2px solid var(--bg-secondary);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .checkbox-item:hover {
-            border-color: var(--primary-color);
-            background: rgba(102, 126, 234, 0.05);
-        }
-
-        .checkbox-item.checked {
-            border-color: var(--primary-color);
-            background: rgba(102, 126, 234, 0.1);
-        }
-
-        .checkbox-input {
-            width: 20px;
-            height: 20px;
-            margin: 0;
-        }
-
-        .checkbox-label {
-            flex: 1;
-            cursor: pointer;
-        }
-
-        .checkbox-title {
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-
-        .checkbox-description {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-
-        .photo-upload {
-            border: 2px dashed var(--bg-secondary);
-            border-radius: 8px;
-            padding: 2rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .photo-upload:hover {
-            border-color: var(--primary-color);
-            background: rgba(102, 126, 234, 0.05);
-        }
-
-        .photo-upload.dragover {
-            border-color: var(--primary-color);
-            background: rgba(102, 126, 234, 0.1);
-        }
-
-        .photo-preview {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin: 0 auto 1rem;
-            display: none;
-        }
-
-        .upload-text {
-            color: var(--text-secondary);
-            margin-bottom: 0.5rem;
-        }
-
-        .upload-hint {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
-
-        .social-login {
-            margin: 2rem 0;
-            text-align: center;
-        }
-
-        .social-divider {
-            display: flex;
-            align-items: center;
-            margin: 1.5rem 0;
-        }
-
-        .social-divider::before,
-        .social-divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: var(--bg-secondary);
-        }
-
-        .social-divider span {
-            padding: 0 1rem;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
+          width: 2px;
+          height: 20px;
         }
 
         .social-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-
-        .social-button {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            padding: 1rem;
-            border: 2px solid var(--bg-secondary);
-            border-radius: 8px;
-            background: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            color: var(--text-primary);
-            font-weight: 500;
-        }
-
-        .social-button:hover {
-            border-color: var(--primary-color);
-            background: rgba(102, 126, 234, 0.05);
-        }
-
-        .kakao-button {
-            background: #FEE500;
-            border-color: #FEE500;
-            color: #3C1E1E;
-        }
-
-        .kakao-button:hover {
-            background: #FDD800;
-            border-color: #FDD800;
-        }
-
-        .naver-button {
-            background: #03C75A;
-            border-color: #03C75A;
-            color: white;
-        }
-
-        .naver-button:hover {
-            background: #02B351;
-            border-color: #02B351;
+          grid-template-columns: 1fr;
         }
 
         .navigation-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 2rem;
-            gap: 1rem;
+          flex-direction: column;
         }
-
-        .nav-button {
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1rem;
-            min-width: 120px;
-        }
-
-        .prev-button {
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-        }
-
-        .prev-button:hover {
-            background: #e2e8f0;
-        }
-
-        .next-button {
-            background: var(--primary-color);
-            color: white;
-        }
-
-        .next-button:hover {
-            background: #5a6fd8;
-        }
-
-        .next-button:disabled {
-            background: var(--bg-secondary);
-            color: var(--text-secondary);
-            cursor: not-allowed;
-        }
-
-        .assessment-result {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
-            padding: 1.5rem;
-            border-radius: 12px;
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-
-        .result-type {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: var(--primary-color);
-            margin-bottom: 0.5rem;
-        }
-
-        .result-description {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
-            
-            .signup-container {
-                padding: 1.5rem;
-            }
-            
-            .step-indicator {
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-            
-            .step-divider {
-                width: 2px;
-                height: 20px;
-            }
-            
-            .social-buttons {
-                grid-template-columns: 1fr;
-            }
-            
-            .navigation-buttons {
-                flex-direction: column;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <div class="header">
-            <a href="index.html" class="back-link">← 홈으로 돌아가기</a>
-            <div class="logo">CHARM_INYEON</div>
+      <div class="header">
+        <a href="index.html" class="back-link">← 홈으로 돌아가기</a>
+        <div class="logo">CHARM_INYEON</div>
+      </div>
+
+      <div class="signup-container">
+        <div class="signup-header">
+          <h1 class="signup-title">💝 회원가입</h1>
+          <p class="signup-subtitle">세렌디피티로 시작되는 운명 같은 인연을 경험해보세요</p>
         </div>
 
-        <div class="signup-container">
-            <div class="signup-header">
-                <h1 class="signup-title">💝 회원가입</h1>
-                <p class="signup-subtitle">세렌디피티로 시작되는 운명 같은 인연을 경험해보세요</p>
-            </div>
-
-            <!-- 가치관 테스트 결과 표시 (테스트에서 온 경우) -->
-            <div id="assessmentResult" class="assessment-result" style="display: none;">
-                <div class="result-type" id="resultType"></div>
-                <div class="result-description" id="resultDescription"></div>
-            </div>
-
-            <!-- 단계 표시기 -->
-            <div class="step-indicator">
-                <div class="step">
-                    <div class="step-number active" id="step1">1</div>
-                    <div class="step-text active">기본정보</div>
-                </div>
-                <div class="step-divider" id="divider1"></div>
-                <div class="step">
-                    <div class="step-number" id="step2">2</div>
-                    <div class="step-text">프로필</div>
-                </div>
-                <div class="step-divider" id="divider2"></div>
-                <div class="step">
-                    <div class="step-number" id="step3">3</div>
-                    <div class="step-text">완료</div>
-                </div>
-            </div>
-
-            <form id="signupForm">
-                <!-- Step 1: 기본 정보 -->
-                <div class="form-step active" id="step1Form">
-                    <div class="form-section">
-                        <h3 class="section-title">🔐 로그인 정보</h3>
-                        
-                        <!-- 소셜 로그인 옵션 -->
-                        <div class="social-login">
-                            <div class="social-buttons">
-                                <button type="button" class="social-button kakao-button" onclick="socialLogin('kakao')">
-                                    <span>💬</span> 카카오톡으로 시작하기
-                                </button>
-                                <button type="button" class="social-button naver-button" onclick="socialLogin('naver')">
-                                    <span>N</span> 네이버로 시작하기
-                                </button>
-                            </div>
-                            
-                            <div class="social-divider">
-                                <span>또는 이메일로 가입하기</span>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="email" class="form-label">이메일 <span class="required">*</span></label>
-                            <input type="email" id="email" name="email" class="form-input" required>
-                            <div class="input-hint">로그인 시 사용할 이메일 주소를 입력해주세요</div>
-                            <div class="error-message" id="emailError"></div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="password" class="form-label">비밀번호 <span class="required">*</span></label>
-                            <input type="password" id="password" name="password" class="form-input" required>
-                            <div class="input-hint">8자 이상, 영문+숫자 조합으로 입력해주세요</div>
-                            <div class="error-message" id="passwordError"></div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="passwordConfirm" class="form-label">비밀번호 확인 <span class="required">*</span></label>
-                            <input type="password" id="passwordConfirm" name="passwordConfirm" class="form-input" required>
-                            <div class="error-message" id="passwordConfirmError"></div>
-                        </div>
-                    </div>
-
-                    <div class="form-section">
-                        <h3 class="section-title">👤 기본 정보</h3>
-                        
-                        <div class="form-group">
-                            <label for="name" class="form-label">이름 <span class="required">*</span></label>
-                            <input type="text" id="name" name="name" class="form-input" required>
-                            <div class="input-hint">실명을 입력해주세요 (매칭 시 활용)</div>
-                            <div class="error-message" id="nameError"></div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="birthdate" class="form-label">생년월일 <span class="required">*</span></label>
-                            <input type="date" id="birthdate" name="birthdate" class="form-input" required>
-                            <div class="input-hint">정확한 나이 매칭을 위해 필요합니다</div>
-                            <div class="error-message" id="birthdateError"></div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="gender" class="form-label">성별 <span class="required">*</span></label>
-                            <select id="gender" name="gender" class="form-select" required>
-                                <option value="">선택해주세요</option>
-                                <option value="male">남성</option>
-                                <option value="female">여성</option>
-                            </select>
-                            <div class="error-message" id="genderError"></div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="phone" class="form-label">휴대폰 번호 <span class="required">*</span></label>
-                            <input type="tel" id="phone" name="phone" class="form-input" placeholder="010-1234-5678" required>
-                            <div class="input-hint">본인인증 및 매칭 알림을 위해 필요합니다</div>
-                            <div class="error-message" id="phoneError"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Step 2: 프로필 정보 -->
-                <div class="form-step" id="step2Form">
-                    <div class="form-section">
-                        <h3 class="section-title">📷 프로필 사진</h3>
-                        
-                        <div class="form-group">
-                            <div class="photo-upload" onclick="triggerPhotoUpload()">
-                                <img id="photoPreview" class="photo-preview" alt="프로필 미리보기">
-                                <div class="upload-text">📸 프로필 사진 업로드</div>
-                                <div class="upload-hint">얼굴이 잘 보이는 최근 사진을 올려주세요<br>JPG, PNG 파일만 가능합니다</div>
-                            </div>
-                            <input type="file" id="profilePhoto" name="profilePhoto" accept="image/*" style="display: none;">
-                        </div>
-                    </div>
-
-                    <div class="form-section">
-                        <h3 class="section-title">🏠 거주 정보</h3>
-                        
-                        <div class="form-group">
-                            <label for="location" class="form-label">거주 지역 <span class="required">*</span></label>
-                            <select id="location" name="location" class="form-select" required>
-                                <option value="">지역을 선택해주세요</option>
-                                <option value="서울">서울특별시</option>
-                                <option value="경기">경기도</option>
-                                <option value="인천">인천광역시</option>
-                                <option value="부산">부산광역시</option>
-                                <option value="대구">대구광역시</option>
-                                <option value="대전">대전광역시</option>
-                                <option value="광주">광주광역시</option>
-                                <option value="울산">울산광역시</option>
-                                <option value="강원">강원도</option>
-                                <option value="충북">충청북도</option>
-                                <option value="충남">충청남도</option>
-                                <option value="전북">전라북도</option>
-                                <option value="전남">전라남도</option>
-                                <option value="경북">경상북도</option>
-                                <option value="경남">경상남도</option>
-                                <option value="제주">제주특별자치도</option>
-                            </select>
-                            <div class="error-message" id="locationError"></div>
-                        </div>
-                    </div>
-
-                    <div class="form-section">
-                        <h3 class="section-title">💼 직업 정보</h3>
-                        
-                        <div class="form-group">
-                            <label for="occupation" class="form-label">직업</label>
-                            <input type="text" id="occupation" name="occupation" class="form-input" placeholder="예: 교사, 사업가, 은퇴 등">
-                            <div class="input-hint">현재 하고 계신 일을 간단히 적어주세요</div>
-                        </div>
-                    </div>
-
-                    <div class="form-section">
-                        <h3 class="section-title">🎯 관심사</h3>
-                        
-                        <div class="form-group">
-                            <label class="form-label">관심 있는 활동 (중복 선택 가능)</label>
-                            <div class="checkbox-group">
-                                <div class="checkbox-item" onclick="toggleCheckbox('interest1')">
-                                    <input type="checkbox" id="interest1" name="interests" value="travel" class="checkbox-input">
-                                    <label for="interest1" class="checkbox-label">
-                                        <div class="checkbox-title">🌍 여행</div>
-                                        <div class="checkbox-description">국내외 여행, 문화체험</div>
-                                    </label>
-                                </div>
-                                <div class="checkbox-item" onclick="toggleCheckbox('interest2')">
-                                    <input type="checkbox" id="interest2" name="interests" value="culture" class="checkbox-input">
-                                    <label for="interest2" class="checkbox-label">
-                                        <div class="checkbox-title">🎭 문화생활</div>
-                                        <div class="checkbox-description">연극, 음악회, 전시회</div>
-                                    </label>
-                                </div>
-                                <div class="checkbox-item" onclick="toggleCheckbox('interest3')">
-                                    <input type="checkbox" id="interest3" name="interests" value="sports" class="checkbox-input">
-                                    <label for="interest3" class="checkbox-label">
-                                        <div class="checkbox-title">⚽ 운동</div>
-                                        <div class="checkbox-description">등산, 골프, 헬스, 산책</div>
-                                    </label>
-                                </div>
-                                <div class="checkbox-item" onclick="toggleCheckbox('interest4')">
-                                    <input type="checkbox" id="interest4" name="interests" value="cooking" class="checkbox-input">
-                                    <label for="interest4" class="checkbox-label">
-                                        <div class="checkbox-title">🍳 요리</div>
-                                        <div class="checkbox-description">요리, 베이킹, 맛집 탐방</div>
-                                    </label>
-                                </div>
-                                <div class="checkbox-item" onclick="toggleCheckbox('interest5')">
-                                    <input type="checkbox" id="interest5" name="interests" value="reading" class="checkbox-input">
-                                    <label for="interest5" class="checkbox-label">
-                                        <div class="checkbox-title">📚 독서</div>
-                                        <div class="checkbox-description">책 읽기, 독서 모임</div>
-                                    </label>
-                                </div>
-                                <div class="checkbox-item" onclick="toggleCheckbox('interest6')">
-                                    <input type="checkbox" id="interest6" name="interests" value="volunteer" class="checkbox-input">
-                                    <label for="interest6" class="checkbox-label">
-                                        <div class="checkbox-title">🤝 봉사활동</div>
-                                        <div class="checkbox-description">사회봉사, 종교활동</div>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Step 3: 완료 -->
-                <div class="form-step" id="step3Form">
-                    <div class="form-section" style="text-align: center;">
-                        <h3 class="section-title">✅ 이용약관 동의</h3>
-                        
-                        <div class="checkbox-group">
-                            <div class="checkbox-item" onclick="toggleCheckbox('agreeAll')">
-                                <input type="checkbox" id="agreeAll" class="checkbox-input">
-                                <label for="agreeAll" class="checkbox-label">
-                                    <div class="checkbox-title">전체 동의</div>
-                                    <div class="checkbox-description">아래 모든 약관에 동의합니다</div>
-                                </label>
-                            </div>
-                            
-                            <div class="checkbox-item" onclick="toggleCheckbox('agreeTerms')">
-                                <input type="checkbox" id="agreeTerms" name="agreements" value="terms" class="checkbox-input" required>
-                                <label for="agreeTerms" class="checkbox-label">
-                                    <div class="checkbox-title">[필수] 이용약관 동의</div>
-                                    <div class="checkbox-description">서비스 이용을 위한 기본 약관</div>
-                                </label>
-                            </div>
-                            
-                            <div class="checkbox-item" onclick="toggleCheckbox('agreePrivacy')">
-                                <input type="checkbox" id="agreePrivacy" name="agreements" value="privacy" class="checkbox-input" required>
-                                <label for="agreePrivacy" class="checkbox-label">
-                                    <div class="checkbox-title">[필수] 개인정보 처리방침 동의</div>
-                                    <div class="checkbox-description">개인정보 수집 및 이용에 대한 동의</div>
-                                </label>
-                            </div>
-                            
-                            <div class="checkbox-item" onclick="toggleCheckbox('agreeMarketing')">
-                                <input type="checkbox" id="agreeMarketing" name="agreements" value="marketing" class="checkbox-input">
-                                <label for="agreeMarketing" class="checkbox-label">
-                                    <div class="checkbox-title">[선택] 마케팅 정보 수신 동의</div>
-                                    <div class="checkbox-description">매칭 알림 및 이벤트 정보 수신</div>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 네비게이션 버튼 -->
-                <div class="navigation-buttons">
-                    <button type="button" class="nav-button prev-button" onclick="prevStep()" id="prevBtn" style="display: none;">
-                        이전 단계
-                    </button>
-                    <button type="button" class="nav-button next-button" onclick="nextStep()" id="nextBtn">
-                        다음 단계
-                    </button>
-                </div>
-            </form>
+        <!-- 가치관 테스트 결과 표시 (테스트에서 온 경우) -->
+        <div id="assessmentResult" class="assessment-result" style="display: none">
+          <div class="result-type" id="resultType"></div>
+          <div class="result-description" id="resultDescription"></div>
         </div>
+
+        <!-- 단계 표시기 -->
+        <div class="step-indicator">
+          <div class="step">
+            <div class="step-number active" id="step1">1</div>
+            <div class="step-text active">기본정보</div>
+          </div>
+          <div class="step-divider" id="divider1"></div>
+          <div class="step">
+            <div class="step-number" id="step2">2</div>
+            <div class="step-text">프로필</div>
+          </div>
+          <div class="step-divider" id="divider2"></div>
+          <div class="step">
+            <div class="step-number" id="step3">3</div>
+            <div class="step-text">완료</div>
+          </div>
+        </div>
+
+        <form id="signupForm">
+          <!-- Step 1: 기본 정보 -->
+          <div class="form-step active" id="step1Form">
+            <div class="form-section">
+              <h3 class="section-title">🔐 로그인 정보</h3>
+
+              <!-- 소셜 로그인 옵션 -->
+              <div class="social-login">
+                <div class="social-buttons">
+                  <button
+                    type="button"
+                    class="social-button kakao-button"
+                    onclick="socialLogin('kakao')"
+                  >
+                    <span>💬</span> 카카오톡으로 시작하기
+                  </button>
+                  <button
+                    type="button"
+                    class="social-button naver-button"
+                    onclick="socialLogin('naver')"
+                  >
+                    <span>N</span> 네이버로 시작하기
+                  </button>
+                </div>
+
+                <div class="social-divider">
+                  <span>또는 이메일로 가입하기</span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="email" class="form-label">이메일 <span class="required">*</span></label>
+                <input type="email" id="email" name="email" class="form-input" required />
+                <div class="input-hint">로그인 시 사용할 이메일 주소를 입력해주세요</div>
+                <div class="error-message" id="emailError"></div>
+              </div>
+
+              <div class="form-group">
+                <label for="password" class="form-label"
+                  >비밀번호 <span class="required">*</span></label
+                >
+                <input type="password" id="password" name="password" class="form-input" required />
+                <div class="input-hint">8자 이상, 영문+숫자 조합으로 입력해주세요</div>
+                <div class="error-message" id="passwordError"></div>
+              </div>
+
+              <div class="form-group">
+                <label for="passwordConfirm" class="form-label"
+                  >비밀번호 확인 <span class="required">*</span></label
+                >
+                <input
+                  type="password"
+                  id="passwordConfirm"
+                  name="passwordConfirm"
+                  class="form-input"
+                  required
+                />
+                <div class="error-message" id="passwordConfirmError"></div>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <h3 class="section-title">👤 기본 정보</h3>
+
+              <div class="form-group">
+                <label for="name" class="form-label">이름 <span class="required">*</span></label>
+                <input type="text" id="name" name="name" class="form-input" required />
+                <div class="input-hint">실명을 입력해주세요 (매칭 시 활용)</div>
+                <div class="error-message" id="nameError"></div>
+              </div>
+
+              <div class="form-group">
+                <label for="birthdate" class="form-label"
+                  >생년월일 <span class="required">*</span></label
+                >
+                <input type="date" id="birthdate" name="birthdate" class="form-input" required />
+                <div class="input-hint">정확한 나이 매칭을 위해 필요합니다</div>
+                <div class="error-message" id="birthdateError"></div>
+              </div>
+
+              <div class="form-group">
+                <label for="gender" class="form-label">성별 <span class="required">*</span></label>
+                <select id="gender" name="gender" class="form-select" required>
+                  <option value="">선택해주세요</option>
+                  <option value="male">남성</option>
+                  <option value="female">여성</option>
+                </select>
+                <div class="error-message" id="genderError"></div>
+              </div>
+
+              <div class="form-group">
+                <label for="phone" class="form-label"
+                  >휴대폰 번호 <span class="required">*</span></label
+                >
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  class="form-input"
+                  placeholder="010-1234-5678"
+                  required
+                />
+                <div class="input-hint">본인인증 및 매칭 알림을 위해 필요합니다</div>
+                <div class="error-message" id="phoneError"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: 프로필 정보 -->
+          <div class="form-step" id="step2Form">
+            <div class="form-section">
+              <h3 class="section-title">📷 프로필 사진</h3>
+
+              <div class="form-group">
+                <div class="photo-upload" onclick="triggerPhotoUpload()">
+                  <img id="photoPreview" class="photo-preview" alt="프로필 미리보기" />
+                  <div class="upload-text">📸 프로필 사진 업로드</div>
+                  <div class="upload-hint">
+                    얼굴이 잘 보이는 최근 사진을 올려주세요<br />JPG, PNG 파일만 가능합니다
+                  </div>
+                </div>
+                <input
+                  type="file"
+                  id="profilePhoto"
+                  name="profilePhoto"
+                  accept="image/*"
+                  style="display: none"
+                />
+              </div>
+            </div>
+
+            <div class="form-section">
+              <h3 class="section-title">🏠 거주 정보</h3>
+
+              <div class="form-group">
+                <label for="location" class="form-label"
+                  >거주 지역 <span class="required">*</span></label
+                >
+                <select id="location" name="location" class="form-select" required>
+                  <option value="">지역을 선택해주세요</option>
+                  <option value="서울">서울특별시</option>
+                  <option value="경기">경기도</option>
+                  <option value="인천">인천광역시</option>
+                  <option value="부산">부산광역시</option>
+                  <option value="대구">대구광역시</option>
+                  <option value="대전">대전광역시</option>
+                  <option value="광주">광주광역시</option>
+                  <option value="울산">울산광역시</option>
+                  <option value="강원">강원도</option>
+                  <option value="충북">충청북도</option>
+                  <option value="충남">충청남도</option>
+                  <option value="전북">전라북도</option>
+                  <option value="전남">전라남도</option>
+                  <option value="경북">경상북도</option>
+                  <option value="경남">경상남도</option>
+                  <option value="제주">제주특별자치도</option>
+                </select>
+                <div class="error-message" id="locationError"></div>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <h3 class="section-title">💼 직업 정보</h3>
+
+              <div class="form-group">
+                <label for="occupation" class="form-label">직업</label>
+                <input
+                  type="text"
+                  id="occupation"
+                  name="occupation"
+                  class="form-input"
+                  placeholder="예: 교사, 사업가, 은퇴 등"
+                />
+                <div class="input-hint">현재 하고 계신 일을 간단히 적어주세요</div>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <h3 class="section-title">🎯 관심사</h3>
+
+              <div class="form-group">
+                <label class="form-label">관심 있는 활동 (중복 선택 가능)</label>
+                <div class="checkbox-group">
+                  <div class="checkbox-item" onclick="toggleCheckbox('interest1')">
+                    <input
+                      type="checkbox"
+                      id="interest1"
+                      name="interests"
+                      value="travel"
+                      class="checkbox-input"
+                    />
+                    <label for="interest1" class="checkbox-label">
+                      <div class="checkbox-title">🌍 여행</div>
+                      <div class="checkbox-description">국내외 여행, 문화체험</div>
+                    </label>
+                  </div>
+                  <div class="checkbox-item" onclick="toggleCheckbox('interest2')">
+                    <input
+                      type="checkbox"
+                      id="interest2"
+                      name="interests"
+                      value="culture"
+                      class="checkbox-input"
+                    />
+                    <label for="interest2" class="checkbox-label">
+                      <div class="checkbox-title">🎭 문화생활</div>
+                      <div class="checkbox-description">연극, 음악회, 전시회</div>
+                    </label>
+                  </div>
+                  <div class="checkbox-item" onclick="toggleCheckbox('interest3')">
+                    <input
+                      type="checkbox"
+                      id="interest3"
+                      name="interests"
+                      value="sports"
+                      class="checkbox-input"
+                    />
+                    <label for="interest3" class="checkbox-label">
+                      <div class="checkbox-title">⚽ 운동</div>
+                      <div class="checkbox-description">등산, 골프, 헬스, 산책</div>
+                    </label>
+                  </div>
+                  <div class="checkbox-item" onclick="toggleCheckbox('interest4')">
+                    <input
+                      type="checkbox"
+                      id="interest4"
+                      name="interests"
+                      value="cooking"
+                      class="checkbox-input"
+                    />
+                    <label for="interest4" class="checkbox-label">
+                      <div class="checkbox-title">🍳 요리</div>
+                      <div class="checkbox-description">요리, 베이킹, 맛집 탐방</div>
+                    </label>
+                  </div>
+                  <div class="checkbox-item" onclick="toggleCheckbox('interest5')">
+                    <input
+                      type="checkbox"
+                      id="interest5"
+                      name="interests"
+                      value="reading"
+                      class="checkbox-input"
+                    />
+                    <label for="interest5" class="checkbox-label">
+                      <div class="checkbox-title">📚 독서</div>
+                      <div class="checkbox-description">책 읽기, 독서 모임</div>
+                    </label>
+                  </div>
+                  <div class="checkbox-item" onclick="toggleCheckbox('interest6')">
+                    <input
+                      type="checkbox"
+                      id="interest6"
+                      name="interests"
+                      value="volunteer"
+                      class="checkbox-input"
+                    />
+                    <label for="interest6" class="checkbox-label">
+                      <div class="checkbox-title">🤝 봉사활동</div>
+                      <div class="checkbox-description">사회봉사, 종교활동</div>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3: 완료 -->
+          <div class="form-step" id="step3Form">
+            <div class="form-section" style="text-align: center">
+              <h3 class="section-title">✅ 이용약관 동의</h3>
+
+              <div class="checkbox-group">
+                <div class="checkbox-item" onclick="toggleCheckbox('agreeAll')">
+                  <input type="checkbox" id="agreeAll" class="checkbox-input" />
+                  <label for="agreeAll" class="checkbox-label">
+                    <div class="checkbox-title">전체 동의</div>
+                    <div class="checkbox-description">아래 모든 약관에 동의합니다</div>
+                  </label>
+                </div>
+
+                <div class="checkbox-item" onclick="toggleCheckbox('agreeTerms')">
+                  <input
+                    type="checkbox"
+                    id="agreeTerms"
+                    name="agreements"
+                    value="terms"
+                    class="checkbox-input"
+                    required
+                  />
+                  <label for="agreeTerms" class="checkbox-label">
+                    <div class="checkbox-title">[필수] 이용약관 동의</div>
+                    <div class="checkbox-description">서비스 이용을 위한 기본 약관</div>
+                  </label>
+                </div>
+
+                <div class="checkbox-item" onclick="toggleCheckbox('agreePrivacy')">
+                  <input
+                    type="checkbox"
+                    id="agreePrivacy"
+                    name="agreements"
+                    value="privacy"
+                    class="checkbox-input"
+                    required
+                  />
+                  <label for="agreePrivacy" class="checkbox-label">
+                    <div class="checkbox-title">[필수] 개인정보 처리방침 동의</div>
+                    <div class="checkbox-description">개인정보 수집 및 이용에 대한 동의</div>
+                  </label>
+                </div>
+
+                <div class="checkbox-item" onclick="toggleCheckbox('agreeMarketing')">
+                  <input
+                    type="checkbox"
+                    id="agreeMarketing"
+                    name="agreements"
+                    value="marketing"
+                    class="checkbox-input"
+                  />
+                  <label for="agreeMarketing" class="checkbox-label">
+                    <div class="checkbox-title">[선택] 마케팅 정보 수신 동의</div>
+                    <div class="checkbox-description">매칭 알림 및 이벤트 정보 수신</div>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 네비게이션 버튼 -->
+          <div class="navigation-buttons">
+            <button
+              type="button"
+              class="nav-button prev-button"
+              onclick="prevStep()"
+              id="prevBtn"
+              style="display: none"
+            >
+              이전 단계
+            </button>
+            <button type="button" class="nav-button next-button" onclick="nextStep()" id="nextBtn">
+              다음 단계
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
 
     <script src="signup.js"></script>
-</body>
+  </body>
 </html>

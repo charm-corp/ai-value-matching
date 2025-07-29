@@ -1,723 +1,826 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>매칭 결과 - CHARM_INYEON</title>
-    <link rel="stylesheet" href="senior-styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="senior-styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        /* 매칭 결과 전용 스타일 */
-        .matching-dashboard {
-            background: var(--bg-secondary);
-            min-height: 100vh;
-            padding: var(--spacing-lg) var(--spacing-md);
-        }
+      /* 매칭 결과 전용 스타일 */
+      .matching-dashboard {
+        background: var(--bg-secondary);
+        min-height: 100vh;
+        padding: var(--spacing-lg) var(--spacing-md);
+      }
 
+      .compatibility-circle {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto var(--spacing-lg);
+        background: conic-gradient(
+          var(--primary-color) 0deg,
+          var(--primary-color) calc(var(--percentage, 85) * 3.6deg),
+          var(--bg-tertiary) calc(var(--percentage, 85) * 3.6deg),
+          var(--bg-tertiary) 360deg
+        );
+      }
+
+      .compatibility-inner {
+        width: 160px;
+        height: 160px;
+        background: var(--bg-primary);
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        box-shadow: var(--shadow-md);
+      }
+
+      .compatibility-score {
+        font-size: var(--font-size-title);
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: var(--spacing-xs);
+      }
+
+      .compatibility-label {
+        font-size: var(--font-size-base);
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      .factor-chart {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: var(--spacing-md);
+        margin: var(--spacing-xl) 0;
+      }
+
+      .factor-item {
+        background: var(--bg-primary);
+        padding: var(--spacing-lg);
+        border-radius: var(--border-radius-lg);
+        box-shadow: var(--shadow-sm);
+        border: 1px solid rgba(107, 115, 255, 0.1);
+      }
+
+      .factor-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--spacing-md);
+      }
+
+      .factor-name {
+        font-size: var(--font-size-large);
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+
+      .factor-score {
+        font-size: var(--font-size-xl);
+        font-weight: 700;
+        color: var(--primary-color);
+      }
+
+      .factor-bar {
+        width: 100%;
+        height: 12px;
+        background: var(--bg-tertiary);
+        border-radius: var(--border-radius-sm);
+        overflow: hidden;
+        margin-bottom: var(--spacing-sm);
+      }
+
+      .factor-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-light) 100%);
+        border-radius: var(--border-radius-sm);
+        transition: width 1s ease;
+      }
+
+      .factor-description {
+        font-size: var(--font-size-base);
+        color: var(--text-secondary);
+        line-height: 1.6;
+      }
+
+      .match-profile-card {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-lg);
+        box-shadow: var(--shadow-md);
+        overflow: hidden;
+        margin-bottom: var(--spacing-xl);
+        border: 2px solid var(--primary-light);
+      }
+
+      .profile-header {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+        color: white;
+        padding: var(--spacing-lg);
+        text-align: center;
+      }
+
+      .profile-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4rem;
+        margin: 0 auto var(--spacing-md);
+        border: 4px solid rgba(255, 255, 255, 0.3);
+      }
+
+      .profile-name {
+        font-size: var(--font-size-xxl);
+        font-weight: 700;
+        margin-bottom: var(--spacing-xs);
+      }
+
+      .profile-age {
+        font-size: var(--font-size-large);
+        opacity: 0.9;
+      }
+
+      .profile-body {
+        padding: var(--spacing-lg);
+      }
+
+      .profile-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--spacing-sm);
+        margin-bottom: var(--spacing-lg);
+        justify-content: center;
+      }
+
+      .profile-tag {
+        background: var(--accent-color);
+        color: white;
+        padding: var(--spacing-sm) var(--spacing-md);
+        border-radius: var(--border-radius-md);
+        font-size: var(--font-size-base);
+        font-weight: 500;
+      }
+
+      .profile-bio {
+        background: var(--bg-secondary);
+        padding: var(--spacing-lg);
+        border-radius: var(--border-radius-md);
+        font-size: var(--font-size-base);
+        line-height: 1.7;
+        margin-bottom: var(--spacing-lg);
+        text-align: center;
+      }
+
+      .match-actions {
+        display: flex;
+        gap: var(--spacing-md);
+        justify-content: center;
+      }
+
+      .insights-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: var(--spacing-lg);
+        margin: var(--spacing-xl) 0;
+      }
+
+      .insight-card {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-lg);
+        padding: var(--spacing-lg);
+        box-shadow: var(--shadow-sm);
+        border-left: 4px solid var(--accent-color);
+      }
+
+      .insight-icon {
+        width: 48px;
+        height: 48px;
+        background: var(--accent-color);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-bottom: var(--spacing-md);
+      }
+
+      .insight-title {
+        font-size: var(--font-size-large);
+        font-weight: 600;
+        color: var(--primary-color);
+        margin-bottom: var(--spacing-sm);
+      }
+
+      .conversation-starters {
+        background: var(--bg-warm);
+        border-radius: var(--border-radius-lg);
+        padding: var(--spacing-xl);
+        margin: var(--spacing-xl) 0;
+        border: 2px solid var(--warning-color);
+      }
+
+      .starter-item {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-md);
+        padding: var(--spacing-lg);
+        margin-bottom: var(--spacing-md);
+        box-shadow: var(--shadow-sm);
+        position: relative;
+      }
+
+      .starter-item:last-child {
+        margin-bottom: 0;
+      }
+
+      .starter-icon {
+        position: absolute;
+        top: var(--spacing-md);
+        left: var(--spacing-md);
+        width: 24px;
+        height: 24px;
+        background: var(--warning-color);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+      }
+
+      .starter-content {
+        margin-left: var(--spacing-xl);
+      }
+
+      .next-steps {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-lg);
+        padding: var(--spacing-xl);
+        margin: var(--spacing-xl) 0;
+        box-shadow: var(--shadow-md);
+        text-align: center;
+      }
+
+      .step-number {
+        width: 60px;
+        height: 60px;
+        background: var(--primary-color);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: var(--font-size-xl);
+        font-weight: 700;
+        margin: 0 auto var(--spacing-md);
+      }
+
+      @media (max-width: 768px) {
         .compatibility-circle {
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto var(--spacing-lg);
-            background: conic-gradient(
-                var(--primary-color) 0deg,
-                var(--primary-color) calc(var(--percentage, 85) * 3.6deg),
-                var(--bg-tertiary) calc(var(--percentage, 85) * 3.6deg),
-                var(--bg-tertiary) 360deg
-            );
+          width: 160px;
+          height: 160px;
         }
 
         .compatibility-inner {
-            width: 160px;
-            height: 160px;
-            background: var(--bg-primary);
-            border-radius: 50%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            box-shadow: var(--shadow-md);
+          width: 130px;
+          height: 130px;
         }
 
         .compatibility-score {
-            font-size: var(--font-size-title);
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: var(--spacing-xs);
-        }
-
-        .compatibility-label {
-            font-size: var(--font-size-base);
-            color: var(--text-secondary);
-            font-weight: 500;
+          font-size: var(--font-size-xxl);
         }
 
         .factor-chart {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: var(--spacing-md);
-            margin: var(--spacing-xl) 0;
-        }
-
-        .factor-item {
-            background: var(--bg-primary);
-            padding: var(--spacing-lg);
-            border-radius: var(--border-radius-lg);
-            box-shadow: var(--shadow-sm);
-            border: 1px solid rgba(107, 115, 255, 0.1);
-        }
-
-        .factor-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--spacing-md);
-        }
-
-        .factor-name {
-            font-size: var(--font-size-large);
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .factor-score {
-            font-size: var(--font-size-xl);
-            font-weight: 700;
-            color: var(--primary-color);
-        }
-
-        .factor-bar {
-            width: 100%;
-            height: 12px;
-            background: var(--bg-tertiary);
-            border-radius: var(--border-radius-sm);
-            overflow: hidden;
-            margin-bottom: var(--spacing-sm);
-        }
-
-        .factor-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-light) 100%);
-            border-radius: var(--border-radius-sm);
-            transition: width 1s ease;
-        }
-
-        .factor-description {
-            font-size: var(--font-size-base);
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
-
-        .match-profile-card {
-            background: var(--bg-primary);
-            border-radius: var(--border-radius-lg);
-            box-shadow: var(--shadow-md);
-            overflow: hidden;
-            margin-bottom: var(--spacing-xl);
-            border: 2px solid var(--primary-light);
-        }
-
-        .profile-header {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
-            color: white;
-            padding: var(--spacing-lg);
-            text-align: center;
-        }
-
-        .profile-avatar {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 4rem;
-            margin: 0 auto var(--spacing-md);
-            border: 4px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .profile-name {
-            font-size: var(--font-size-xxl);
-            font-weight: 700;
-            margin-bottom: var(--spacing-xs);
-        }
-
-        .profile-age {
-            font-size: var(--font-size-large);
-            opacity: 0.9;
-        }
-
-        .profile-body {
-            padding: var(--spacing-lg);
-        }
-
-        .profile-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: var(--spacing-sm);
-            margin-bottom: var(--spacing-lg);
-            justify-content: center;
-        }
-
-        .profile-tag {
-            background: var(--accent-color);
-            color: white;
-            padding: var(--spacing-sm) var(--spacing-md);
-            border-radius: var(--border-radius-md);
-            font-size: var(--font-size-base);
-            font-weight: 500;
-        }
-
-        .profile-bio {
-            background: var(--bg-secondary);
-            padding: var(--spacing-lg);
-            border-radius: var(--border-radius-md);
-            font-size: var(--font-size-base);
-            line-height: 1.7;
-            margin-bottom: var(--spacing-lg);
-            text-align: center;
+          grid-template-columns: 1fr;
         }
 
         .match-actions {
-            display: flex;
-            gap: var(--spacing-md);
-            justify-content: center;
+          flex-direction: column;
         }
 
-        .insights-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: var(--spacing-lg);
-            margin: var(--spacing-xl) 0;
+        .match-actions .btn {
+          width: 100%;
         }
-
-        .insight-card {
-            background: var(--bg-primary);
-            border-radius: var(--border-radius-lg);
-            padding: var(--spacing-lg);
-            box-shadow: var(--shadow-sm);
-            border-left: 4px solid var(--accent-color);
-        }
-
-        .insight-icon {
-            width: 48px;
-            height: 48px;
-            background: var(--accent-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            margin-bottom: var(--spacing-md);
-        }
-
-        .insight-title {
-            font-size: var(--font-size-large);
-            font-weight: 600;
-            color: var(--primary-color);
-            margin-bottom: var(--spacing-sm);
-        }
-
-        .conversation-starters {
-            background: var(--bg-warm);
-            border-radius: var(--border-radius-lg);
-            padding: var(--spacing-xl);
-            margin: var(--spacing-xl) 0;
-            border: 2px solid var(--warning-color);
-        }
-
-        .starter-item {
-            background: var(--bg-primary);
-            border-radius: var(--border-radius-md);
-            padding: var(--spacing-lg);
-            margin-bottom: var(--spacing-md);
-            box-shadow: var(--shadow-sm);
-            position: relative;
-        }
-
-        .starter-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .starter-icon {
-            position: absolute;
-            top: var(--spacing-md);
-            left: var(--spacing-md);
-            width: 24px;
-            height: 24px;
-            background: var(--warning-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-        }
-
-        .starter-content {
-            margin-left: var(--spacing-xl);
-        }
-
-        .next-steps {
-            background: var(--bg-primary);
-            border-radius: var(--border-radius-lg);
-            padding: var(--spacing-xl);
-            margin: var(--spacing-xl) 0;
-            box-shadow: var(--shadow-md);
-            text-align: center;
-        }
-
-        .step-number {
-            width: 60px;
-            height: 60px;
-            background: var(--primary-color);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: var(--font-size-xl);
-            font-weight: 700;
-            margin: 0 auto var(--spacing-md);
-        }
-
-        @media (max-width: 768px) {
-            .compatibility-circle {
-                width: 160px;
-                height: 160px;
-            }
-
-            .compatibility-inner {
-                width: 130px;
-                height: 130px;
-            }
-
-            .compatibility-score {
-                font-size: var(--font-size-xxl);
-            }
-
-            .factor-chart {
-                grid-template-columns: 1fr;
-            }
-
-            .match-actions {
-                flex-direction: column;
-            }
-
-            .match-actions .btn {
-                width: 100%;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <!-- 음성 안내 컨트롤러 -->
     <div class="voice-controller" role="banner" aria-label="음성 안내 설정">
-        <button class="voice-toggle" id="voiceToggle" aria-pressed="false">
-            <span class="voice-icon" aria-hidden="true">🔊</span>
-            <span>음성 안내</span>
-        </button>
-        <div class="voice-status" id="voiceStatus">꺼짐</div>
+      <button class="voice-toggle" id="voiceToggle" aria-pressed="false">
+        <span class="voice-icon" aria-hidden="true">🔊</span>
+        <span>음성 안내</span>
+      </button>
+      <div class="voice-status" id="voiceStatus">꺼짐</div>
     </div>
 
     <!-- 글씨 크기 조절 -->
     <div class="font-size-controller" role="toolbar" aria-label="글씨 크기 조절">
-        <button class="font-size-btn" data-size="small" aria-label="작은 글씨">A</button>
-        <button class="font-size-btn active" data-size="normal" aria-label="보통 글씨">A</button>
-        <button class="font-size-btn" data-size="large" aria-label="큰 글씨">A</button>
+      <button class="font-size-btn" data-size="small" aria-label="작은 글씨">A</button>
+      <button class="font-size-btn active" data-size="normal" aria-label="보통 글씨">A</button>
+      <button class="font-size-btn" data-size="large" aria-label="큰 글씨">A</button>
     </div>
 
     <div class="matching-dashboard">
-        <div class="container" style="max-width: 1000px; margin: 0 auto;">
-            <!-- 헤더 -->
-            <header style="text-align: center; margin-bottom: var(--spacing-xl);">
-                <h1 data-voice="매칭 결과를 확인해보세요" style="color: var(--primary-color); margin-bottom: var(--spacing-md);">
-                    🎉 축하합니다!
-                </h1>
-                <p style="font-size: var(--font-size-large); color: var(--text-secondary);">
-                    AI가 분석한 결과, 이영희님과 높은 호환성을 보입니다
-                </p>
-            </header>
+      <div class="container" style="max-width: 1000px; margin: 0 auto">
+        <!-- 헤더 -->
+        <header style="text-align: center; margin-bottom: var(--spacing-xl)">
+          <h1
+            data-voice="매칭 결과를 확인해보세요"
+            style="color: var(--primary-color); margin-bottom: var(--spacing-md)"
+          >
+            🎉 축하합니다!
+          </h1>
+          <p style="font-size: var(--font-size-large); color: var(--text-secondary)">
+            AI가 분석한 결과, 이영희님과 높은 호환성을 보입니다
+          </p>
+        </header>
 
-            <!-- 호환성 점수 -->
-            <section class="card" style="text-align: center; margin-bottom: var(--spacing-xl);">
-                <div class="compatibility-circle" style="--percentage: 92" role="img" aria-label="호환성 점수 92%">
-                    <div class="compatibility-inner">
-                        <div class="compatibility-score">92%</div>
-                        <div class="compatibility-label">호환성</div>
-                    </div>
-                </div>
-                <div class="alert alert-success" style="max-width: 500px; margin: 0 auto;">
-                    <span style="font-size: 1.2em;">💖</span>
-                    <span><strong>매우 높은 호환성!</strong> 가치관과 라이프스타일이 잘 맞습니다.</span>
-                </div>
-            </section>
+        <!-- 호환성 점수 -->
+        <section class="card" style="text-align: center; margin-bottom: var(--spacing-xl)">
+          <div
+            class="compatibility-circle"
+            style="--percentage: 92"
+            role="img"
+            aria-label="호환성 점수 92%"
+          >
+            <div class="compatibility-inner">
+              <div class="compatibility-score">92%</div>
+              <div class="compatibility-label">호환성</div>
+            </div>
+          </div>
+          <div class="alert alert-success" style="max-width: 500px; margin: 0 auto">
+            <span style="font-size: 1.2em">💖</span>
+            <span><strong>매우 높은 호환성!</strong> 가치관과 라이프스타일이 잘 맞습니다.</span>
+          </div>
+        </section>
 
-            <!-- 상대방 프로필 -->
-            <section class="match-profile-card">
-                <div class="profile-header">
-                    <div class="profile-avatar">👩‍🎨</div>
-                    <div class="profile-name">이영희님</div>
-                    <div class="profile-age">48세 • 서울 강남구</div>
-                </div>
-                <div class="profile-body">
-                    <div class="profile-tags">
-                        <span class="profile-tag">예술 애호가</span>
-                        <span class="profile-tag">성장 지향</span>
-                        <span class="profile-tag">독서 좋아함</span>
-                        <span class="profile-tag">가족 중시</span>
-                        <span class="profile-tag">여행 좋아함</span>
-                    </div>
-                    <div class="profile-bio">
-                        "예술과 문화를 사랑하며, 끊임없이 배우고 성장하는 삶을 추구합니다. 
-                        좋은 책과 따뜻한 차 한 잔으로 시작하는 하루를 좋아하고, 
-                        새로운 사람들과의 진솔한 대화를 통해 서로 성장하는 관계를 만들어가고 싶습니다."
-                    </div>
-                    <div class="match-actions">
-                        <button class="btn btn-primary btn-large" data-voice="대화 시작하기">
-                            <span>💬 대화 시작하기</span>
-                        </button>
-                        <button class="btn btn-secondary" data-voice="프로필 자세히 보기">
-                            <span>📋 프로필 자세히</span>
-                        </button>
-                        <button class="btn btn-secondary" data-voice="나중에 결정하기">
-                            <span>⏰ 나중에 결정</span>
-                        </button>
-                    </div>
-                </div>
-            </section>
+        <!-- 상대방 프로필 -->
+        <section class="match-profile-card">
+          <div class="profile-header">
+            <div class="profile-avatar">👩‍🎨</div>
+            <div class="profile-name">이영희님</div>
+            <div class="profile-age">48세 • 서울 강남구</div>
+          </div>
+          <div class="profile-body">
+            <div class="profile-tags">
+              <span class="profile-tag">예술 애호가</span>
+              <span class="profile-tag">성장 지향</span>
+              <span class="profile-tag">독서 좋아함</span>
+              <span class="profile-tag">가족 중시</span>
+              <span class="profile-tag">여행 좋아함</span>
+            </div>
+            <div class="profile-bio">
+              "예술과 문화를 사랑하며, 끊임없이 배우고 성장하는 삶을 추구합니다. 좋은 책과 따뜻한 차
+              한 잔으로 시작하는 하루를 좋아하고, 새로운 사람들과의 진솔한 대화를 통해 서로 성장하는
+              관계를 만들어가고 싶습니다."
+            </div>
+            <div class="match-actions">
+              <button class="btn btn-primary btn-large" data-voice="대화 시작하기">
+                <span>💬 대화 시작하기</span>
+              </button>
+              <button class="btn btn-secondary" data-voice="프로필 자세히 보기">
+                <span>📋 프로필 자세히</span>
+              </button>
+              <button class="btn btn-secondary" data-voice="나중에 결정하기">
+                <span>⏰ 나중에 결정</span>
+              </button>
+            </div>
+          </div>
+        </section>
 
-            <!-- 호환성 요소 분석 -->
-            <section style="margin-bottom: var(--spacing-xl);">
-                <h2 style="text-align: center; margin-bottom: var(--spacing-lg); color: var(--primary-color);" data-voice="호환성 요소별 분석 결과">
-                    📊 호환성 요소별 분석
-                </h2>
-                <div class="factor-chart">
-                    <div class="factor-item">
-                        <div class="factor-header">
-                            <div class="factor-name">가치관 일치도</div>
-                            <div class="factor-score">95%</div>
-                        </div>
-                        <div class="factor-bar">
-                            <div class="factor-fill" style="width: 95%;"></div>
-                        </div>
-                        <div class="factor-description">
-                            가족, 성장, 관계에 대한 가치관이 매우 유사합니다. 인생의 우선순위가 잘 맞아 깊은 공감대를 형성할 수 있습니다.
-                        </div>
-                    </div>
+        <!-- 호환성 요소 분석 -->
+        <section style="margin-bottom: var(--spacing-xl)">
+          <h2
+            style="
+              text-align: center;
+              margin-bottom: var(--spacing-lg);
+              color: var(--primary-color);
+            "
+            data-voice="호환성 요소별 분석 결과"
+          >
+            📊 호환성 요소별 분석
+          </h2>
+          <div class="factor-chart">
+            <div class="factor-item">
+              <div class="factor-header">
+                <div class="factor-name">가치관 일치도</div>
+                <div class="factor-score">95%</div>
+              </div>
+              <div class="factor-bar">
+                <div class="factor-fill" style="width: 95%"></div>
+              </div>
+              <div class="factor-description">
+                가족, 성장, 관계에 대한 가치관이 매우 유사합니다. 인생의 우선순위가 잘 맞아 깊은
+                공감대를 형성할 수 있습니다.
+              </div>
+            </div>
 
-                    <div class="factor-item">
-                        <div class="factor-header">
-                            <div class="factor-name">라이프스타일</div>
-                            <div class="factor-score">88%</div>
-                        </div>
-                        <div class="factor-bar">
-                            <div class="factor-fill" style="width: 88%;"></div>
-                        </div>
-                        <div class="factor-description">
-                            독서, 문화 활동, 여행에 대한 관심이 비슷합니다. 함께 즐길 수 있는 활동이 많아 의미 있는 시간을 보낼 수 있습니다.
-                        </div>
-                    </div>
+            <div class="factor-item">
+              <div class="factor-header">
+                <div class="factor-name">라이프스타일</div>
+                <div class="factor-score">88%</div>
+              </div>
+              <div class="factor-bar">
+                <div class="factor-fill" style="width: 88%"></div>
+              </div>
+              <div class="factor-description">
+                독서, 문화 활동, 여행에 대한 관심이 비슷합니다. 함께 즐길 수 있는 활동이 많아 의미
+                있는 시간을 보낼 수 있습니다.
+              </div>
+            </div>
 
-                    <div class="factor-item">
-                        <div class="factor-header">
-                            <div class="factor-name">의사소통 방식</div>
-                            <div class="factor-score">92%</div>
-                        </div>
-                        <div class="factor-bar">
-                            <div class="factor-fill" style="width: 92%;"></div>
-                        </div>
-                        <div class="factor-description">
-                            서로를 배려하며 진솔하게 소통하는 스타일이 비슷합니다. 갈등 상황에서도 건설적인 대화가 가능할 것입니다.
-                        </div>
-                    </div>
+            <div class="factor-item">
+              <div class="factor-header">
+                <div class="factor-name">의사소통 방식</div>
+                <div class="factor-score">92%</div>
+              </div>
+              <div class="factor-bar">
+                <div class="factor-fill" style="width: 92%"></div>
+              </div>
+              <div class="factor-description">
+                서로를 배려하며 진솔하게 소통하는 스타일이 비슷합니다. 갈등 상황에서도 건설적인
+                대화가 가능할 것입니다.
+              </div>
+            </div>
 
-                    <div class="factor-item">
-                        <div class="factor-header">
-                            <div class="factor-name">성격 호환성</div>
-                            <div class="factor-score">85%</div>
-                        </div>
-                        <div class="factor-bar">
-                            <div class="factor-fill" style="width: 85%;"></div>
-                        </div>
-                        <div class="factor-description">
-                            안정적이면서도 새로운 경험을 추구하는 성향이 균형을 이룹니다. 서로의 다른 점이 좋은 자극이 될 수 있습니다.
-                        </div>
-                    </div>
+            <div class="factor-item">
+              <div class="factor-header">
+                <div class="factor-name">성격 호환성</div>
+                <div class="factor-score">85%</div>
+              </div>
+              <div class="factor-bar">
+                <div class="factor-fill" style="width: 85%"></div>
+              </div>
+              <div class="factor-description">
+                안정적이면서도 새로운 경험을 추구하는 성향이 균형을 이룹니다. 서로의 다른 점이 좋은
+                자극이 될 수 있습니다.
+              </div>
+            </div>
 
-                    <div class="factor-item">
-                        <div class="factor-header">
-                            <div class="factor-name">생활 패턴</div>
-                            <div class="factor-score">79%</div>
-                        </div>
-                        <div class="factor-bar">
-                            <div class="factor-fill" style="width: 79%;"></div>
-                        </div>
-                        <div class="factor-description">
-                            규칙적인 생활을 선호하면서도 자유로운 시간을 중시하는 점이 비슷합니다. 서로의 개인 시간을 존중할 수 있습니다.
-                        </div>
-                    </div>
+            <div class="factor-item">
+              <div class="factor-header">
+                <div class="factor-name">생활 패턴</div>
+                <div class="factor-score">79%</div>
+              </div>
+              <div class="factor-bar">
+                <div class="factor-fill" style="width: 79%"></div>
+              </div>
+              <div class="factor-description">
+                규칙적인 생활을 선호하면서도 자유로운 시간을 중시하는 점이 비슷합니다. 서로의 개인
+                시간을 존중할 수 있습니다.
+              </div>
+            </div>
 
-                    <div class="factor-item">
-                        <div class="factor-header">
-                            <div class="factor-name">미래 계획</div>
-                            <div class="factor-score">91%</div>
-                        </div>
-                        <div class="factor-bar">
-                            <div class="factor-fill" style="width: 91%;"></div>
-                        </div>
-                        <div class="factor-description">
-                            안정적인 관계를 바탕으로 함께 성장하고 새로운 경험을 쌓아가고자 하는 목표가 일치합니다.
-                        </div>
-                    </div>
-                </div>
-            </section>
+            <div class="factor-item">
+              <div class="factor-header">
+                <div class="factor-name">미래 계획</div>
+                <div class="factor-score">91%</div>
+              </div>
+              <div class="factor-bar">
+                <div class="factor-fill" style="width: 91%"></div>
+              </div>
+              <div class="factor-description">
+                안정적인 관계를 바탕으로 함께 성장하고 새로운 경험을 쌓아가고자 하는 목표가
+                일치합니다.
+              </div>
+            </div>
+          </div>
+        </section>
 
-            <!-- AI 인사이트 -->
-            <section style="margin-bottom: var(--spacing-xl);">
-                <h2 style="text-align: center; margin-bottom: var(--spacing-lg); color: var(--primary-color);" data-voice="AI가 발견한 특별한 공통점들">
-                    🤖 AI가 발견한 특별한 공통점들
-                </h2>
-                <div class="insights-grid">
-                    <div class="insight-card">
-                        <div class="insight-icon">📚</div>
-                        <div class="insight-title">지적 호기심</div>
-                        <p>두 분 모두 독서와 학습을 통한 자기계발을 중시하며, 새로운 지식을 탐구하는 것을 즐거워합니다. 함께 책을 읽고 토론하는 시간이 즐거울 것입니다.</p>
-                    </div>
+        <!-- AI 인사이트 -->
+        <section style="margin-bottom: var(--spacing-xl)">
+          <h2
+            style="
+              text-align: center;
+              margin-bottom: var(--spacing-lg);
+              color: var(--primary-color);
+            "
+            data-voice="AI가 발견한 특별한 공통점들"
+          >
+            🤖 AI가 발견한 특별한 공통점들
+          </h2>
+          <div class="insights-grid">
+            <div class="insight-card">
+              <div class="insight-icon">📚</div>
+              <div class="insight-title">지적 호기심</div>
+              <p>
+                두 분 모두 독서와 학습을 통한 자기계발을 중시하며, 새로운 지식을 탐구하는 것을
+                즐거워합니다. 함께 책을 읽고 토론하는 시간이 즐거울 것입니다.
+              </p>
+            </div>
 
-                    <div class="insight-card">
-                        <div class="insight-icon">🎨</div>
-                        <div class="insight-title">문화적 감수성</div>
-                        <p>예술과 문화에 대한 깊은 이해와 관심을 공유합니다. 미술관, 콘서트, 연극 관람 등 문화 활동을 함께 즐기며 풍성한 경험을 쌓을 수 있습니다.</p>
-                    </div>
+            <div class="insight-card">
+              <div class="insight-icon">🎨</div>
+              <div class="insight-title">문화적 감수성</div>
+              <p>
+                예술과 문화에 대한 깊은 이해와 관심을 공유합니다. 미술관, 콘서트, 연극 관람 등 문화
+                활동을 함께 즐기며 풍성한 경험을 쌓을 수 있습니다.
+              </p>
+            </div>
 
-                    <div class="insight-card">
-                        <div class="insight-icon">🌱</div>
-                        <div class="insight-title">성장 마인드</div>
-                        <p>나이에 상관없이 끊임없이 배우고 성장하려는 의지가 강합니다. 서로를 격려하며 새로운 도전을 함께 할 수 있는 동반자가 될 것입니다.</p>
-                    </div>
+            <div class="insight-card">
+              <div class="insight-icon">🌱</div>
+              <div class="insight-title">성장 마인드</div>
+              <p>
+                나이에 상관없이 끊임없이 배우고 성장하려는 의지가 강합니다. 서로를 격려하며 새로운
+                도전을 함께 할 수 있는 동반자가 될 것입니다.
+              </p>
+            </div>
 
-                    <div class="insight-card">
-                        <div class="insight-icon">💝</div>
-                        <div class="insight-title">깊은 관계 추구</div>
-                        <p>표면적인 만남보다는 진솔하고 깊이 있는 관계를 원합니다. 서로의 생각과 감정을 나누며 의미 있는 유대감을 형성할 가능성이 높습니다.</p>
-                    </div>
-                </div>
-            </section>
+            <div class="insight-card">
+              <div class="insight-icon">💝</div>
+              <div class="insight-title">깊은 관계 추구</div>
+              <p>
+                표면적인 만남보다는 진솔하고 깊이 있는 관계를 원합니다. 서로의 생각과 감정을 나누며
+                의미 있는 유대감을 형성할 가능성이 높습니다.
+              </p>
+            </div>
+          </div>
+        </section>
 
-            <!-- 대화 시작 가이드 -->
-            <section class="conversation-starters">
-                <h2 style="text-align: center; margin-bottom: var(--spacing-lg); color: var(--warning-color);" data-voice="AI 추천 대화 주제들">
-                    💡 AI 추천 대화 주제들
-                </h2>
-                <p style="text-align: center; margin-bottom: var(--spacing-lg); color: var(--text-secondary);">
-                    첫 대화가 어색하지 않도록 AI가 맞춤형 대화 주제를 제안해드립니다
-                </p>
+        <!-- 대화 시작 가이드 -->
+        <section class="conversation-starters">
+          <h2
+            style="
+              text-align: center;
+              margin-bottom: var(--spacing-lg);
+              color: var(--warning-color);
+            "
+            data-voice="AI 추천 대화 주제들"
+          >
+            💡 AI 추천 대화 주제들
+          </h2>
+          <p
+            style="
+              text-align: center;
+              margin-bottom: var(--spacing-lg);
+              color: var(--text-secondary);
+            "
+          >
+            첫 대화가 어색하지 않도록 AI가 맞춤형 대화 주제를 제안해드립니다
+          </p>
 
-                <div class="starter-item">
-                    <div class="starter-icon">1</div>
-                    <div class="starter-content">
-                        <h4 style="color: var(--primary-color); margin-bottom: var(--spacing-xs);">독서와 학습</h4>
-                        <p>"최근에 읽으신 책 중에서 가장 인상 깊었던 책이 있나요? 저는 요즘 인문학 도서에 빠져있어서 추천해주실 만한 책이 있다면 듣고 싶어요."</p>
-                    </div>
-                </div>
+          <div class="starter-item">
+            <div class="starter-icon">1</div>
+            <div class="starter-content">
+              <h4 style="color: var(--primary-color); margin-bottom: var(--spacing-xs)">
+                독서와 학습
+              </h4>
+              <p>
+                "최근에 읽으신 책 중에서 가장 인상 깊었던 책이 있나요? 저는 요즘 인문학 도서에
+                빠져있어서 추천해주실 만한 책이 있다면 듣고 싶어요."
+              </p>
+            </div>
+          </div>
 
-                <div class="starter-item">
-                    <div class="starter-icon">2</div>
-                    <div class="starter-content">
-                        <h4 style="color: var(--primary-color); margin-bottom: var(--spacing-xs);">문화 생활</h4>
-                        <p>"예술과 문화 활동을 좋아하신다고 하셨는데, 어떤 장르를 특히 선호하시나요? 저도 미술관이나 전시회 관람을 즐기는 편이라 함께 이야기 나누고 싶어요."</p>
-                    </div>
-                </div>
+          <div class="starter-item">
+            <div class="starter-icon">2</div>
+            <div class="starter-content">
+              <h4 style="color: var(--primary-color); margin-bottom: var(--spacing-xs)">
+                문화 생활
+              </h4>
+              <p>
+                "예술과 문화 활동을 좋아하신다고 하셨는데, 어떤 장르를 특히 선호하시나요? 저도
+                미술관이나 전시회 관람을 즐기는 편이라 함께 이야기 나누고 싶어요."
+              </p>
+            </div>
+          </div>
 
-                <div class="starter-item">
-                    <div class="starter-icon">3</div>
-                    <div class="starter-content">
-                        <h4 style="color: var(--primary-color); margin-bottom: var(--spacing-xs);">성장과 도전</h4>
-                        <p>"새로운 것을 배우는 것을 좋아하신다니 멋지세요! 최근에 시작한 새로운 취미나 관심 분야가 있으신가요? 저도 끊임없이 배우려고 노력하는 편이에요."</p>
-                    </div>
-                </div>
+          <div class="starter-item">
+            <div class="starter-icon">3</div>
+            <div class="starter-content">
+              <h4 style="color: var(--primary-color); margin-bottom: var(--spacing-xs)">
+                성장과 도전
+              </h4>
+              <p>
+                "새로운 것을 배우는 것을 좋아하신다니 멋지세요! 최근에 시작한 새로운 취미나 관심
+                분야가 있으신가요? 저도 끊임없이 배우려고 노력하는 편이에요."
+              </p>
+            </div>
+          </div>
 
-                <div class="starter-item">
-                    <div class="starter-icon">4</div>
-                    <div class="starter-content">
-                        <h4 style="color: var(--primary-color); margin-bottom: var(--spacing-xs);">여행과 경험</h4>
-                        <p>"여행을 좋아하신다고 하셨는데, 기억에 남는 여행지가 있으신가요? 혹시 앞으로 가보고 싶은 곳이 있다면 그 이유도 궁금해요."</p>
-                    </div>
-                </div>
-            </section>
+          <div class="starter-item">
+            <div class="starter-icon">4</div>
+            <div class="starter-content">
+              <h4 style="color: var(--primary-color); margin-bottom: var(--spacing-xs)">
+                여행과 경험
+              </h4>
+              <p>
+                "여행을 좋아하신다고 하셨는데, 기억에 남는 여행지가 있으신가요? 혹시 앞으로 가보고
+                싶은 곳이 있다면 그 이유도 궁금해요."
+              </p>
+            </div>
+          </div>
+        </section>
 
-            <!-- 다음 단계 안내 -->
-            <section class="next-steps">
-                <h2 style="margin-bottom: var(--spacing-lg); color: var(--primary-color);" data-voice="다음 단계 안내">
-                    다음 단계는 어떻게 하나요?
-                </h2>
-                
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--spacing-lg); margin-bottom: var(--spacing-xl);">
-                    <div>
-                        <div class="step-number">1</div>
-                        <h4 style="margin-bottom: var(--spacing-sm);">대화 시작</h4>
-                        <p>위에서 제안한 주제로 자연스럽게 대화를 시작해보세요. 부담 갖지 마시고 편안하게 인사를 나눠보세요.</p>
-                    </div>
+        <!-- 다음 단계 안내 -->
+        <section class="next-steps">
+          <h2
+            style="margin-bottom: var(--spacing-lg); color: var(--primary-color)"
+            data-voice="다음 단계 안내"
+          >
+            다음 단계는 어떻게 하나요?
+          </h2>
 
-                    <div>
-                        <div class="step-number">2</div>
-                        <h4 style="margin-bottom: var(--spacing-sm);">서로 알아가기</h4>
-                        <p>온라인으로 충분히 대화를 나눈 후, 편안한 공간에서 만나 서로에 대해 더 자세히 알아가는 시간을 가져보세요.</p>
-                    </div>
+          <div
+            style="
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+              gap: var(--spacing-lg);
+              margin-bottom: var(--spacing-xl);
+            "
+          >
+            <div>
+              <div class="step-number">1</div>
+              <h4 style="margin-bottom: var(--spacing-sm)">대화 시작</h4>
+              <p>
+                위에서 제안한 주제로 자연스럽게 대화를 시작해보세요. 부담 갖지 마시고 편안하게
+                인사를 나눠보세요.
+              </p>
+            </div>
 
-                    <div>
-                        <div class="step-number">3</div>
-                        <h4 style="margin-bottom: var(--spacing-sm);">관계 발전</h4>
-                        <p>서로에게 호감을 느끼신다면 함께 문화 활동을 즐기거나 취미를 공유하며 관계를 발전시켜 나가세요.</p>
-                    </div>
-                </div>
+            <div>
+              <div class="step-number">2</div>
+              <h4 style="margin-bottom: var(--spacing-sm)">서로 알아가기</h4>
+              <p>
+                온라인으로 충분히 대화를 나눈 후, 편안한 공간에서 만나 서로에 대해 더 자세히
+                알아가는 시간을 가져보세요.
+              </p>
+            </div>
 
-                <div class="alert alert-info" style="max-width: 600px; margin: 0 auto var(--spacing-lg);">
-                    <span style="font-size: 1.2em;">🛡️</span>
-                    <span>첫 만남은 항상 공개된 장소에서 하시고, 개인정보는 신중하게 공유해주세요. 언제든 불편하시면 신고하거나 차단할 수 있습니다.</span>
-                </div>
+            <div>
+              <div class="step-number">3</div>
+              <h4 style="margin-bottom: var(--spacing-sm)">관계 발전</h4>
+              <p>
+                서로에게 호감을 느끼신다면 함께 문화 활동을 즐기거나 취미를 공유하며 관계를 발전시켜
+                나가세요.
+              </p>
+            </div>
+          </div>
 
-                <div style="display: flex; gap: var(--spacing-md); justify-content: center; flex-wrap: wrap;">
-                    <button class="btn btn-primary btn-large" data-voice="지금 대화 시작하기">
-                        <span>💬 지금 대화 시작하기</span>
-                    </button>
-                    <button class="btn btn-secondary" data-voice="다른 매치 보기">
-                        <span>👥 다른 매치 보기</span>
-                    </button>
-                    <button class="btn btn-secondary" data-voice="매칭 설정 변경">
-                        <span>⚙️ 매칭 설정 변경</span>
-                    </button>
-                </div>
-            </section>
-        </div>
+          <div class="alert alert-info" style="max-width: 600px; margin: 0 auto var(--spacing-lg)">
+            <span style="font-size: 1.2em">🛡️</span>
+            <span
+              >첫 만남은 항상 공개된 장소에서 하시고, 개인정보는 신중하게 공유해주세요. 언제든
+              불편하시면 신고하거나 차단할 수 있습니다.</span
+            >
+          </div>
+
+          <div
+            style="display: flex; gap: var(--spacing-md); justify-content: center; flex-wrap: wrap"
+          >
+            <button class="btn btn-primary btn-large" data-voice="지금 대화 시작하기">
+              <span>💬 지금 대화 시작하기</span>
+            </button>
+            <button class="btn btn-secondary" data-voice="다른 매치 보기">
+              <span>👥 다른 매치 보기</span>
+            </button>
+            <button class="btn btn-secondary" data-voice="매칭 설정 변경">
+              <span>⚙️ 매칭 설정 변경</span>
+            </button>
+          </div>
+        </section>
+      </div>
     </div>
 
     <script src="senior-ui.js"></script>
     <script>
-        // 매칭 결과 페이지 전용 JavaScript
-        document.addEventListener('DOMContentLoaded', function() {
-            // 호환성 점수 애니메이션
-            animateCompatibilityScore();
-            
-            // 요소별 점수 애니메이션
-            animateFactorBars();
-            
-            // 음성 안내 메시지 커스터마이즈
-            customizeVoiceMessages();
-        });
+      // 매칭 결과 페이지 전용 JavaScript
+      document.addEventListener('DOMContentLoaded', function () {
+        // 호환성 점수 애니메이션
+        animateCompatibilityScore();
 
-        function animateCompatibilityScore() {
-            const scoreElement = document.querySelector('.compatibility-score');
-            const circle = document.querySelector('.compatibility-circle');
-            const targetScore = 92;
-            
-            let currentScore = 0;
-            const increment = targetScore / 60; // 1초 동안 애니메이션
-            
-            const timer = setInterval(() => {
-                currentScore += increment;
-                if (currentScore >= targetScore) {
-                    currentScore = targetScore;
-                    clearInterval(timer);
-                }
-                
-                scoreElement.textContent = Math.round(currentScore) + '%';
-                circle.style.setProperty('--percentage', currentScore);
-            }, 16); // 60fps
-        }
+        // 요소별 점수 애니메이션
+        animateFactorBars();
 
-        function animateFactorBars() {
-            const factorBars = document.querySelectorAll('.factor-fill');
-            
-            // Intersection Observer를 사용하여 뷰포트에 들어올 때 애니메이션 실행
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const bar = entry.target;
-                        const width = bar.style.width;
-                        bar.style.width = '0%';
-                        
-                        setTimeout(() => {
-                            bar.style.width = width;
-                        }, 100);
-                        
-                        observer.unobserve(bar);
-                    }
-                });
-            }, { threshold: 0.5 });
-            
-            factorBars.forEach(bar => observer.observe(bar));
-        }
+        // 음성 안내 메시지 커스터마이즈
+        customizeVoiceMessages();
+      });
 
-        function customizeVoiceMessages() {
-            // 매칭 결과 페이지용 추가 음성 안내 설정
-            const voiceElements = document.querySelectorAll('[data-voice]');
-            
-            voiceElements.forEach(element => {
-                element.addEventListener('focus', () => {
-                    if (window.seniorUI && window.seniorUI.isVoiceEnabled) {
-                        const message = element.getAttribute('data-voice');
-                        window.seniorUI.speak(message);
-                    }
-                });
+      function animateCompatibilityScore() {
+        const scoreElement = document.querySelector('.compatibility-score');
+        const circle = document.querySelector('.compatibility-circle');
+        const targetScore = 92;
+
+        let currentScore = 0;
+        const increment = targetScore / 60; // 1초 동안 애니메이션
+
+        const timer = setInterval(() => {
+          currentScore += increment;
+          if (currentScore >= targetScore) {
+            currentScore = targetScore;
+            clearInterval(timer);
+          }
+
+          scoreElement.textContent = Math.round(currentScore) + '%';
+          circle.style.setProperty('--percentage', currentScore);
+        }, 16); // 60fps
+      }
+
+      function animateFactorBars() {
+        const factorBars = document.querySelectorAll('.factor-fill');
+
+        // Intersection Observer를 사용하여 뷰포트에 들어올 때 애니메이션 실행
+        const observer = new IntersectionObserver(
+          entries => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                const bar = entry.target;
+                const width = bar.style.width;
+                bar.style.width = '0%';
+
+                setTimeout(() => {
+                  bar.style.width = width;
+                }, 100);
+
+                observer.unobserve(bar);
+              }
             });
-        }
+          },
+          { threshold: 0.5 }
+        );
 
-        // 버튼 클릭 이벤트 처리
-        document.addEventListener('click', function(e) {
-            const target = e.target;
-            
-            if (target.matches('.btn') || target.closest('.btn')) {
-                const btn = target.matches('.btn') ? target : target.closest('.btn');
-                const text = btn.textContent.trim();
-                
-                // 실제 기능 구현 시 여기에 API 호출 등을 추가
-                if (text.includes('대화 시작')) {
-                    handleStartConversation();
-                } else if (text.includes('프로필 자세히')) {
-                    handleViewProfile();
-                } else if (text.includes('나중에 결정')) {
-                    handleDecideLater();
-                } else if (text.includes('다른 매치')) {
-                    handleViewOtherMatches();
-                } else if (text.includes('매칭 설정')) {
-                    handleMatchingSettings();
-                }
+        factorBars.forEach(bar => observer.observe(bar));
+      }
+
+      function customizeVoiceMessages() {
+        // 매칭 결과 페이지용 추가 음성 안내 설정
+        const voiceElements = document.querySelectorAll('[data-voice]');
+
+        voiceElements.forEach(element => {
+          element.addEventListener('focus', () => {
+            if (window.seniorUI && window.seniorUI.isVoiceEnabled) {
+              const message = element.getAttribute('data-voice');
+              window.seniorUI.speak(message);
             }
+          });
         });
+      }
 
-        function handleStartConversation() {
-            // 대화 시작 기능
-            alert('대화 기능이 곧 추가됩니다. 조금만 기다려주세요!');
-        }
+      // 버튼 클릭 이벤트 처리
+      document.addEventListener('click', function (e) {
+        const target = e.target;
 
-        function handleViewProfile() {
-            // 프로필 상세 보기
-            alert('프로필 상세 페이지로 이동합니다.');
-        }
+        if (target.matches('.btn') || target.closest('.btn')) {
+          const btn = target.matches('.btn') ? target : target.closest('.btn');
+          const text = btn.textContent.trim();
 
-        function handleDecideLater() {
-            // 나중에 결정
-            if (confirm('이 매치를 저장하고 나중에 결정하시겠습니까?')) {
-                alert('매치가 저장되었습니다. 마이페이지에서 확인할 수 있습니다.');
-            }
+          // 실제 기능 구현 시 여기에 API 호출 등을 추가
+          if (text.includes('대화 시작')) {
+            handleStartConversation();
+          } else if (text.includes('프로필 자세히')) {
+            handleViewProfile();
+          } else if (text.includes('나중에 결정')) {
+            handleDecideLater();
+          } else if (text.includes('다른 매치')) {
+            handleViewOtherMatches();
+          } else if (text.includes('매칭 설정')) {
+            handleMatchingSettings();
+          }
         }
+      });
 
-        function handleViewOtherMatches() {
-            // 다른 매치 보기
-            window.location.href = 'matches.html';
-        }
+      function handleStartConversation() {
+        // 대화 시작 기능
+        alert('대화 기능이 곧 추가됩니다. 조금만 기다려주세요!');
+      }
 
-        function handleMatchingSettings() {
-            // 매칭 설정 변경
-            window.location.href = 'settings.html';
+      function handleViewProfile() {
+        // 프로필 상세 보기
+        alert('프로필 상세 페이지로 이동합니다.');
+      }
+
+      function handleDecideLater() {
+        // 나중에 결정
+        if (confirm('이 매치를 저장하고 나중에 결정하시겠습니까?')) {
+          alert('매치가 저장되었습니다. 마이페이지에서 확인할 수 있습니다.');
         }
+      }
+
+      function handleViewOtherMatches() {
+        // 다른 매치 보기
+        window.location.href = 'matches.html';
+      }
+
+      function handleMatchingSettings() {
+        // 매칭 설정 변경
+        window.location.href = 'settings.html';
+      }
     </script>
-</body>
+  </body>
 </html>

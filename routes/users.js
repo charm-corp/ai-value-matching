@@ -1,9 +1,77 @@
 const express = require('express');
 const User = require('../models/User');
 const { authenticate, requireVerified, requireOwnership } = require('../middleware/auth');
-const { validateProfileUpdate, validateUserSettings, validatePagination, validateObjectId } = require('../middleware/validation');
+const {
+  validateProfileUpdate,
+  validateUserSettings,
+  validatePagination,
+  validateObjectId,
+} = require('../middleware/validation');
 
 const router = express.Router();
+
+/**
+ * @swagger
+ * /api/users:
+ *   get:
+ *     summary: 사용자 목록 조회 (테스트용)
+ *     tags: [Users]
+ *     parameters:
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: 조회할 사용자 수
+ *     responses:
+ *       200:
+ *         description: 사용자 목록 조회 성공
+ */
+router.get('/', async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 10;
+    
+    const users = await User.find({}, {
+      password: 0,
+      verificationToken: 0,
+      resetPasswordToken: 0,
+      __v: 0
+    }).limit(limit).sort({ createdAt: -1 });
+
+    const userCount = await User.countDocuments();
+
+    res.json({
+      success: true,
+      data: {
+        users: users.map(user => ({
+          id: user._id,
+          name: user.name,
+          age: user.age,
+          gender: user.gender,
+          location: user.location,
+          occupation: user.occupation,
+          bio: user.bio,
+          maritalStatus: user.maritalStatus,
+          hasChildren: user.hasChildren,
+          wantsChildren: user.wantsChildren,
+          isVerified: user.isVerified,
+          isActive: user.isActive,
+          createdAt: user.createdAt
+        })),
+        totalCount: userCount,
+        currentCount: users.length
+      },
+      message: `총 ${userCount}명의 사용자 중 ${users.length}명을 조회했습니다.`
+    });
+  } catch (error) {
+    console.error('사용자 목록 조회 오류:', error);
+    res.status(500).json({
+      success: false,
+      error: '사용자 목록을 불러오는 중 오류가 발생했습니다.',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+});
 
 /**
  * @swagger
@@ -20,16 +88,16 @@ const router = express.Router();
 router.get('/profile', authenticate, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
-    
+
     if (!user) {
       return res.status(404).json({
         success: false,
-        error: '사용자를 찾을 수 없습니다.'
+        error: '사용자를 찾을 수 없습니다.',
       });
     }
-    
+
     const profileCompleteness = user.calculateProfileCompleteness();
-    
+
     res.json({
       success: true,
       data: {
@@ -50,16 +118,15 @@ router.get('/profile', authenticate, async (req, res) => {
           stats: user.stats,
           profileCompleteness,
           createdAt: user.createdAt,
-          updatedAt: user.updatedAt
-        }
-      }
+          updatedAt: user.updatedAt,
+        },
+      },
     });
-    
   } catch (error) {
     console.error('Get profile error:', error);
     res.status(500).json({
       success: false,
-      error: '프로필 조회 중 오류가 발생했습니다.'
+      error: '프로필 조회 중 오류가 발생했습니다.',
     });
   }
 });
@@ -103,29 +170,35 @@ router.get('/profile', authenticate, async (req, res) => {
 router.put('/profile', authenticate, validateProfileUpdate, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
-    
+
     if (!user) {
       return res.status(404).json({
         success: false,
-        error: '사용자를 찾을 수 없습니다.'
+        error: '사용자를 찾을 수 없습니다.',
       });
     }
-    
+
     const { name, bio, phone, location } = req.body;
-    
-    if (name) {user.name = name;}
-    if (bio !== undefined) {user.bio = bio;}
-    if (phone !== undefined) {user.phone = phone;}
+
+    if (name) {
+      user.name = name;
+    }
+    if (bio !== undefined) {
+      user.bio = bio;
+    }
+    if (phone !== undefined) {
+      user.phone = phone;
+    }
     if (location) {
       user.location = { ...user.location, ...location };
     }
-    
+
     // 프로필 완성도 재계산
     const completeness = user.calculateProfileCompleteness();
     user.isProfileComplete = completeness >= 80;
-    
+
     await user.save();
-    
+
     res.json({
       success: true,
       message: '프로필이 업데이트되었습니다.',
@@ -138,16 +211,15 @@ router.put('/profile', authenticate, validateProfileUpdate, async (req, res) => 
           location: user.location,
           isProfileComplete: user.isProfileComplete,
           profileCompleteness: completeness,
-          updatedAt: user.updatedAt
-        }
-      }
+          updatedAt: user.updatedAt,
+        },
+      },
     });
-    
   } catch (error) {
     console.error('Update profile error:', error);
     res.status(500).json({
       success: false,
-      error: '프로필 업데이트 중 오류가 발생했습니다.'
+      error: '프로필 업데이트 중 오류가 발생했습니다.',
     });
   }
 });
@@ -167,19 +239,18 @@ router.put('/profile', authenticate, validateProfileUpdate, async (req, res) => 
 router.get('/settings', authenticate, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
-    
+
     res.json({
       success: true,
       data: {
-        settings: user.preferences
-      }
+        settings: user.preferences,
+      },
     });
-    
   } catch (error) {
     console.error('Get settings error:', error);
     res.status(500).json({
       success: false,
-      error: '설정 조회 중 오류가 발생했습니다.'
+      error: '설정 조회 중 오류가 발생했습니다.',
     });
   }
 });
@@ -212,17 +283,17 @@ router.get('/settings', authenticate, async (req, res) => {
 router.put('/settings', authenticate, validateUserSettings, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
-    
+
     const { notifications, privacy, matching } = req.body;
-    
+
     if (notifications) {
       user.preferences.notifications = { ...user.preferences.notifications, ...notifications };
     }
-    
+
     if (privacy) {
       user.preferences.privacy = { ...user.preferences.privacy, ...privacy };
     }
-    
+
     if (matching) {
       // 나이 범위 검증
       if (matching.ageRange) {
@@ -230,29 +301,28 @@ router.put('/settings', authenticate, validateUserSettings, async (req, res) => 
         if (min && max && min > max) {
           return res.status(400).json({
             success: false,
-            error: '최소 나이는 최대 나이보다 작아야 합니다.'
+            error: '최소 나이는 최대 나이보다 작아야 합니다.',
           });
         }
       }
-      
+
       user.preferences.matching = { ...user.preferences.matching, ...matching };
     }
-    
+
     await user.save();
-    
+
     res.json({
       success: true,
       message: '설정이 업데이트되었습니다.',
       data: {
-        settings: user.preferences
-      }
+        settings: user.preferences,
+      },
     });
-    
   } catch (error) {
     console.error('Update settings error:', error);
     res.status(500).json({
       success: false,
-      error: '설정 업데이트 중 오류가 발생했습니다.'
+      error: '설정 업데이트 중 오류가 발생했습니다.',
     });
   }
 });
@@ -281,37 +351,37 @@ router.put('/settings', authenticate, validateUserSettings, async (req, res) => 
 router.get('/:id', authenticate, validateObjectId('id'), async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
-    
+
     if (!user || !user.isActive) {
       return res.status(404).json({
         success: false,
-        error: '사용자를 찾을 수 없습니다.'
+        error: '사용자를 찾을 수 없습니다.',
       });
     }
-    
+
     // 본인이 아닌 경우 공개 정보만 반환
     const isOwnProfile = user._id.toString() === req.user._id.toString();
-    
+
     const publicProfile = {
       id: user._id,
       name: user.name,
       profileImage: user.profileImage,
       bio: user.bio,
-      isOnline: user.isOnline
+      isOnline: user.isOnline,
     };
-    
+
     // 프라이버시 설정에 따라 정보 공개
     if (user.preferences.privacy.showAge) {
       publicProfile.age = user.age;
     }
-    
+
     if (user.preferences.privacy.showLocation && user.location) {
       publicProfile.location = {
         city: user.location.city,
-        district: user.location.district
+        district: user.location.district,
       };
     }
-    
+
     // 본인인 경우 모든 정보 반환
     if (isOwnProfile) {
       publicProfile.email = user.email;
@@ -320,25 +390,24 @@ router.get('/:id', authenticate, validateObjectId('id'), async (req, res) => {
       publicProfile.stats = user.stats;
       publicProfile.lastActive = user.lastActive;
     }
-    
+
     // 프로필 조회수 증가 (본인이 아닌 경우)
     if (!isOwnProfile) {
       user.stats.profileViews += 1;
       await user.save({ validateBeforeSave: false });
     }
-    
+
     res.json({
       success: true,
       data: {
-        profile: publicProfile
-      }
+        profile: publicProfile,
+      },
     });
-    
   } catch (error) {
     console.error('Get user profile error:', error);
     res.status(500).json({
       success: false,
-      error: '사용자 프로필 조회 중 오류가 발생했습니다.'
+      error: '사용자 프로필 조회 중 오류가 발생했습니다.',
     });
   }
 });
@@ -389,39 +458,39 @@ router.get('/:id', authenticate, validateObjectId('id'), async (req, res) => {
 router.get('/search', authenticate, requireVerified, validatePagination, async (req, res) => {
   try {
     const { q, ageRange, gender, city, page = 1, limit = 20 } = req.query;
-    
+
     // 검색 쿼리 구성
     const searchQuery = {
       isActive: true,
       isVerified: true,
       _id: { $ne: req.user._id }, // 본인 제외
-      'preferences.privacy.allowSearch': true // 검색 허용한 사용자만
+      'preferences.privacy.allowSearch': true, // 검색 허용한 사용자만
     };
-    
+
     // 검색어가 있는 경우 이름이나 소개에서 검색
     if (q) {
       searchQuery.$or = [
         { name: { $regex: q, $options: 'i' } },
-        { bio: { $regex: q, $options: 'i' } }
+        { bio: { $regex: q, $options: 'i' } },
       ];
     }
-    
+
     // 필터 적용
     if (ageRange) {
       searchQuery.age = ageRange;
     }
-    
+
     if (gender) {
       searchQuery.gender = gender;
     }
-    
+
     if (city) {
       searchQuery['location.city'] = { $regex: city, $options: 'i' };
     }
-    
+
     // 페이지네이션 설정
     const skip = (parseInt(page) - 1) * parseInt(limit);
-    
+
     // 검색 실행
     const [users, total] = await Promise.all([
       User.find(searchQuery)
@@ -429,9 +498,9 @@ router.get('/search', authenticate, requireVerified, validatePagination, async (
         .sort({ lastActive: -1 })
         .skip(skip)
         .limit(parseInt(limit)),
-      User.countDocuments(searchQuery)
+      User.countDocuments(searchQuery),
     ]);
-    
+
     // 결과에서 프라이버시 설정 적용
     const filteredUsers = users.map(user => {
       const publicInfo = {
@@ -439,23 +508,23 @@ router.get('/search', authenticate, requireVerified, validatePagination, async (
         name: user.name,
         profileImage: user.profileImage,
         bio: user.bio,
-        isOnline: user.isOnline
+        isOnline: user.isOnline,
       };
-      
+
       if (user.preferences?.privacy?.showAge !== false) {
         publicInfo.age = user.age;
       }
-      
+
       if (user.preferences?.privacy?.showLocation !== false && user.location) {
         publicInfo.location = {
           city: user.location.city,
-          district: user.location.district
+          district: user.location.district,
         };
       }
-      
+
       return publicInfo;
     });
-    
+
     res.json({
       success: true,
       data: {
@@ -464,16 +533,15 @@ router.get('/search', authenticate, requireVerified, validatePagination, async (
           page: parseInt(page),
           limit: parseInt(limit),
           total,
-          pages: Math.ceil(total / parseInt(limit))
-        }
-      }
+          pages: Math.ceil(total / parseInt(limit)),
+        },
+      },
     });
-    
   } catch (error) {
     console.error('Search users error:', error);
     res.status(500).json({
       success: false,
-      error: '사용자 검색 중 오류가 발생했습니다.'
+      error: '사용자 검색 중 오류가 발생했습니다.',
     });
   }
 });
@@ -509,24 +577,25 @@ router.get('/search', authenticate, requireVerified, validatePagination, async (
 router.get('/nearby', authenticate, requireVerified, async (req, res) => {
   try {
     const { lat, lng, radius = 30 } = req.query;
-    
+
     if (!lat || !lng) {
       return res.status(400).json({
         success: false,
-        error: '위치 정보(위도, 경도)가 필요합니다.'
+        error: '위치 정보(위도, 경도)가 필요합니다.',
       });
     }
-    
+
     const coordinates = [parseFloat(lng), parseFloat(lat)];
     const maxDistance = parseInt(radius) * 1000; // km를 m로 변환
-    
+
     const nearbyUsers = await User.findNearbyUsers(coordinates, maxDistance);
-    
+
     // 본인 제외 및 프라이버시 필터링
     const filteredUsers = nearbyUsers
-      .filter(user => 
-        user._id.toString() !== req.user._id.toString() &&
-        user.preferences?.privacy?.allowSearch !== false
+      .filter(
+        user =>
+          user._id.toString() !== req.user._id.toString() &&
+          user.preferences?.privacy?.allowSearch !== false
       )
       .map(user => ({
         id: user._id,
@@ -534,27 +603,29 @@ router.get('/nearby', authenticate, requireVerified, async (req, res) => {
         profileImage: user.profileImage,
         bio: user.bio,
         age: user.preferences?.privacy?.showAge !== false ? user.age : undefined,
-        location: user.preferences?.privacy?.showLocation !== false ? {
-          city: user.location?.city,
-          district: user.location?.district
-        } : undefined,
-        isOnline: user.isOnline
+        location:
+          user.preferences?.privacy?.showLocation !== false
+            ? {
+                city: user.location?.city,
+                district: user.location?.district,
+              }
+            : undefined,
+        isOnline: user.isOnline,
       }));
-    
+
     res.json({
       success: true,
       data: {
         users: filteredUsers,
         total: filteredUsers.length,
-        radius: parseInt(radius)
-      }
+        radius: parseInt(radius),
+      },
     });
-    
   } catch (error) {
     console.error('Get nearby users error:', error);
     res.status(500).json({
       success: false,
-      error: '근처 사용자 조회 중 오류가 발생했습니다.'
+      error: '근처 사용자 조회 중 오류가 발생했습니다.',
     });
   }
 });
@@ -574,22 +645,21 @@ router.get('/nearby', authenticate, requireVerified, async (req, res) => {
 router.get('/stats', authenticate, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
-    
+
     res.json({
       success: true,
       data: {
         stats: user.stats,
         profileCompleteness: user.calculateProfileCompleteness(),
         memberSince: user.createdAt,
-        lastActive: user.lastActive
-      }
+        lastActive: user.lastActive,
+      },
     });
-    
   } catch (error) {
     console.error('Get user stats error:', error);
     res.status(500).json({
       success: false,
-      error: '통계 조회 중 오류가 발생했습니다.'
+      error: '통계 조회 중 오류가 발생했습니다.',
     });
   }
 });
@@ -622,44 +692,43 @@ router.get('/stats', authenticate, async (req, res) => {
 router.delete('/delete', authenticate, async (req, res) => {
   try {
     const { currentPassword, reason } = req.body;
-    
+
     if (!currentPassword) {
       return res.status(400).json({
         success: false,
-        error: '비밀번호 확인이 필요합니다.'
+        error: '비밀번호 확인이 필요합니다.',
       });
     }
-    
+
     // 비밀번호 확인
     const user = await User.findById(req.user._id).select('+password');
     const isValidPassword = await user.comparePassword(currentPassword);
-    
+
     if (!isValidPassword) {
       return res.status(400).json({
         success: false,
-        error: '비밀번호가 올바르지 않습니다.'
+        error: '비밀번호가 올바르지 않습니다.',
       });
     }
-    
+
     // 소프트 삭제 (실제로는 비활성화)
     user.isActive = false;
     user.deletedAt = new Date();
     user.deletionReason = reason || 'User requested deletion';
-    
+
     await user.save({ validateBeforeSave: false });
-    
+
     // TODO: 관련 데이터 정리 (매치, 대화 등)
-    
+
     res.json({
       success: true,
-      message: '계정이 삭제되었습니다.'
+      message: '계정이 삭제되었습니다.',
     });
-    
   } catch (error) {
     console.error('Delete account error:', error);
     res.status(500).json({
       success: false,
-      error: '계정 삭제 중 오류가 발생했습니다.'
+      error: '계정 삭제 중 오류가 발생했습니다.',
     });
   }
 });

@@ -26,11 +26,11 @@ const io = socketIo(server, {
     origin: process.env.ALLOWED_ORIGINS?.split(',') || [
       'http://localhost:3000',
       'http://localhost:8080',
-      'http://127.0.0.1:5500'
+      'http://127.0.0.1:5500',
     ],
     methods: ['GET', 'POST'],
-    credentials: true
-  }
+    credentials: true,
+  },
 });
 
 const PORT = process.env.PORT || 3000;
@@ -48,24 +48,26 @@ const limiter = rateLimit({
   message: {
     success: false,
     error: '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.',
-    code: 'RATE_LIMIT_EXCEEDED'
+    code: 'RATE_LIMIT_EXCEEDED',
   },
   standardHeaders: true,
   legacyHeaders: false,
 });
 
 // 보안 미들웨어
-app.use(helmet({
-  crossOriginEmbedderPolicy: false,
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      scriptSrc: ["'self'", "'unsafe-inline'"],
-      imgSrc: ["'self'", "data:", "https:"],
+app.use(
+  helmet({
+    crossOriginEmbedderPolicy: false,
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", 'data:', 'https:'],
+      },
     },
-  }
-}));
+  })
+);
 app.use(compression());
 app.use(limiter);
 
@@ -75,9 +77,9 @@ const corsOptions = {
     const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [
       'http://localhost:3000',
       'http://localhost:8080',
-      'http://127.0.0.1:5500'
+      'http://127.0.0.1:5500',
     ];
-    
+
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
@@ -86,7 +88,7 @@ const corsOptions = {
     }
   },
   credentials: true,
-  optionsSuccessStatus: 200
+  optionsSuccessStatus: 200,
 };
 
 app.use(cors(corsOptions));
@@ -98,14 +100,18 @@ app.use(security.sanitizeInput);
 app.use(security.preventInjection);
 
 // 바디 파싱 미들웨어
-app.use(express.json({ 
-  limit: '10mb',
-  strict: true
-}));
-app.use(express.urlencoded({ 
-  extended: true, 
-  limit: '10mb' 
-}));
+app.use(
+  express.json({
+    limit: '10mb',
+    strict: true,
+  })
+);
+app.use(
+  express.urlencoded({
+    extended: true,
+    limit: '10mb',
+  })
+);
 
 // 로깅 설정
 if (process.env.NODE_ENV === 'development') {
@@ -115,12 +121,15 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // 정적 파일 서비스
-app.use('/uploads', express.static('uploads', {
-  setHeaders: (res, path) => {
-    res.setHeader('X-Content-Type-Options', 'nosniff');
-    res.setHeader('Cache-Control', 'public, max-age=31536000');
-  }
-}));
+app.use(
+  '/uploads',
+  express.static('uploads', {
+    setHeaders: (res, path) => {
+      res.setHeader('X-Content-Type-Options', 'nosniff');
+      res.setHeader('Cache-Control', 'public, max-age=31536000');
+    },
+  })
+);
 
 // 데이터베이스 연결 함수
 let mongoServer;
@@ -128,7 +137,7 @@ let mongoServer;
 const connectDB = async () => {
   try {
     let mongoUri;
-    
+
     // Atlas 연결 우선 시도
     if (process.env.MONGODB_ATLAS_URI && process.env.NODE_ENV === 'production') {
       console.log('🌍 MongoDB Atlas 연결 시도...');
@@ -141,8 +150,8 @@ const connectDB = async () => {
       mongoServer = await MongoMemoryServer.create({
         instance: {
           port: 27017,
-          dbName: 'charm_inyeon'
-        }
+          dbName: 'charm_inyeon',
+        },
       });
       mongoUri = mongoServer.getUri();
     }
@@ -160,23 +169,22 @@ const connectDB = async () => {
 
     console.log(`✅ MongoDB 연결 성공: ${conn.connection.host}`);
     console.log(`📊 데이터베이스: ${conn.connection.name}`);
-    
+
     // 연결 상태 모니터링
-    mongoose.connection.on('error', (err) => {
+    mongoose.connection.on('error', err => {
       console.error('❌ MongoDB 연결 오류:', err);
     });
-    
+
     mongoose.connection.on('disconnected', () => {
       console.log('📡 MongoDB 연결 끊김');
     });
-    
+
     mongoose.connection.on('reconnected', () => {
       console.log('🔄 MongoDB 재연결 성공');
     });
-
   } catch (error) {
     console.error('❌ 데이터베이스 연결 실패:', error.message);
-    
+
     // Atlas 실패 시 In-Memory로 폴백
     if (!mongoServer) {
       console.log('🔄 In-Memory MongoDB로 폴백...');
@@ -202,10 +210,10 @@ const Match = require('./models/Match');
 const initializeTestData = async () => {
   try {
     const userCount = await User.countDocuments();
-    
+
     if (userCount === 0) {
       console.log('👥 테스트 데이터 생성 중...');
-      
+
       // 김세렌 사용자
       const serenUser = new User({
         name: '김세렌',
@@ -216,7 +224,7 @@ const initializeTestData = async () => {
         bio: '운명적인 만남을 기다리는 사람입니다. 세렌디피티를 믿으며 진정한 인연을 찾고 있습니다.',
         location: {
           city: '서울',
-          district: '강남구'
+          district: '강남구',
         },
         interests: ['문화생활', '독서', '여행', '음악감상'],
         profileImage: 'male-classic.svg',
@@ -224,9 +232,9 @@ const initializeTestData = async () => {
         hasProfileImage: true,
         profileCompleteness: 85,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
-      
+
       // 이매력 사용자
       const maeryukUser = new User({
         name: '이매력',
@@ -237,7 +245,7 @@ const initializeTestData = async () => {
         bio: '진정한 인연을 찾고 있습니다. 함께 웃고 울 수 있는 따뜻한 사람을 만나고 싶어요.',
         location: {
           city: '서울',
-          district: '서초구'
+          district: '서초구',
         },
         interests: ['요리', '영화감상', '산책', '카페투어'],
         profileImage: 'female-friendly.svg',
@@ -245,56 +253,88 @@ const initializeTestData = async () => {
         hasProfileImage: true,
         profileCompleteness: 92,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
-      
+
       await serenUser.save();
       await maeryukUser.save();
-      
+
       console.log('✅ 테스트 사용자 생성 완료');
       console.log('👤 김세렌 (test-user-1)');
       console.log('👤 이매력 (test-user-2)');
-      
+
       // 가치관 평가 데이터
       const serenAssessment = new ValuesAssessment({
         userId: serenUser._id,
         responses: {
-          q1: 5, q2: 4, q3: 5, q4: 3, q5: 4,
-          q6: 5, q7: 4, q8: 3, q9: 5, q10: 4,
-          q11: 3, q12: 5, q13: 4, q14: 3, q15: 5,
-          q16: 4, q17: 5, q18: 3, q19: 4, q20: 5
+          q1: 5,
+          q2: 4,
+          q3: 5,
+          q4: 3,
+          q5: 4,
+          q6: 5,
+          q7: 4,
+          q8: 3,
+          q9: 5,
+          q10: 4,
+          q11: 3,
+          q12: 5,
+          q13: 4,
+          q14: 3,
+          q15: 5,
+          q16: 4,
+          q17: 5,
+          q18: 3,
+          q19: 4,
+          q20: 5,
         },
         analysis: {
           personalityType: 'HARMONIOUS_SAGE',
           confidenceLevel: 0.88,
-          summary: '조화로운 지혜로운 성격으로 안정적인 관계를 선호합니다.'
+          summary: '조화로운 지혜로운 성격으로 안정적인 관계를 선호합니다.',
         },
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
-      
+
       const maeryukAssessment = new ValuesAssessment({
         userId: maeryukUser._id,
         responses: {
-          q1: 4, q2: 5, q3: 4, q4: 5, q5: 3,
-          q6: 4, q7: 5, q8: 4, q9: 3, q10: 5,
-          q11: 4, q12: 3, q13: 5, q14: 4, q15: 3,
-          q16: 5, q17: 4, q18: 5, q19: 3, q20: 4
+          q1: 4,
+          q2: 5,
+          q3: 4,
+          q4: 5,
+          q5: 3,
+          q6: 4,
+          q7: 5,
+          q8: 4,
+          q9: 3,
+          q10: 5,
+          q11: 4,
+          q12: 3,
+          q13: 5,
+          q14: 4,
+          q15: 3,
+          q16: 5,
+          q17: 4,
+          q18: 5,
+          q19: 3,
+          q20: 4,
         },
         analysis: {
           personalityType: 'WARM_COMPANION',
           confidenceLevel: 0.92,
-          summary: '따뜻한 동반자형으로 깊은 감정적 유대를 중요시합니다.'
+          summary: '따뜻한 동반자형으로 깊은 감정적 유대를 중요시합니다.',
         },
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
-      
+
       await serenAssessment.save();
       await maeryukAssessment.save();
-      
+
       console.log('✅ 가치관 평가 데이터 생성 완료');
-      
+
       // 매칭 데이터
       const testMatch = new Match({
         userId: serenUser._id,
@@ -304,21 +344,21 @@ const initializeTestData = async () => {
           values: 82,
           interests: 68,
           lifestyle: 74,
-          personality: 77
+          personality: 77,
         },
         serendipityScore: 64,
         status: 'pending',
         aiAnalysis: {
           strengths: ['가치관 일치도 높음', '감정적 안정성 우수', '생활 패턴 조화'],
           challenges: ['취미 영역 다양화 필요'],
-          recommendation: '편안한 카페에서 2-3시간 대화를 추천합니다.'
+          recommendation: '편안한 카페에서 2-3시간 대화를 추천합니다.',
         },
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
-      
+
       await testMatch.save();
-      
+
       console.log('✅ 매칭 데이터 생성 완료');
       console.log('💝 김세렌 ↔ 이매력 매칭 (75점)');
     }
@@ -363,9 +403,10 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: process.env.NODE_ENV === 'production' 
-          ? 'https://charm-inyeon.com/api' 
-          : `http://localhost:${PORT}/api`,
+        url:
+          process.env.NODE_ENV === 'production'
+            ? 'https://charm-inyeon.com/api'
+            : `http://localhost:${PORT}/api`,
         description: process.env.NODE_ENV === 'production' ? '프로덕션 서버' : '개발 서버',
       },
     ],
@@ -377,18 +418,18 @@ const swaggerSpec = swaggerJsdoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Socket.IO 채팅 핸들러
-io.on('connection', (socket) => {
+io.on('connection', socket => {
   console.log('👤 사용자 연결됨:', socket.id);
-  
-  socket.on('join-room', (roomId) => {
+
+  socket.on('join-room', roomId => {
     socket.join(roomId);
     console.log(`🏠 사용자 ${socket.id}가 방 ${roomId}에 입장`);
   });
-  
-  socket.on('send-message', (data) => {
+
+  socket.on('send-message', data => {
     socket.to(data.roomId).emit('receive-message', data);
   });
-  
+
   socket.on('disconnect', () => {
     console.log('👋 사용자 연결 해제:', socket.id);
   });
@@ -398,14 +439,14 @@ io.on('connection', (socket) => {
 app.get('/health', (req, res) => {
   const uptime = process.uptime();
   const uptimeHours = (uptime / 3600).toFixed(5);
-  
+
   res.json({
     status: 'OK',
     timestamp: new Date().toISOString(),
     uptime: `${uptimeHours} hours`,
     database: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected',
     environment: process.env.NODE_ENV || 'development',
-    version: '1.0.0'
+    version: '1.0.0',
   });
 });
 
@@ -416,7 +457,7 @@ app.get('/', (req, res) => {
     version: '1.0.0',
     status: 'running',
     docs: '/api-docs',
-    health: '/health'
+    health: '/health',
   });
 });
 
@@ -425,7 +466,7 @@ app.use((req, res) => {
   res.status(404).json({
     success: false,
     error: '요청한 엔드포인트를 찾을 수 없습니다.',
-    path: req.path
+    path: req.path,
   });
 });
 
@@ -435,7 +476,7 @@ app.use((err, req, res, next) => {
   res.status(500).json({
     success: false,
     error: '서버 내부 오류가 발생했습니다.',
-    message: process.env.NODE_ENV === 'development' ? err.message : '서버 오류'
+    message: process.env.NODE_ENV === 'development' ? err.message : '서버 오류',
   });
 });
 
@@ -444,7 +485,7 @@ const startServer = async () => {
   try {
     await connectDB();
     await initializeTestData();
-    
+
     server.listen(PORT, () => {
       console.log('\n🎊 CHARM_INYEON 서버 시작 완료! 🎊');
       console.log(`🌐 서버 주소: http://localhost:${PORT}`);

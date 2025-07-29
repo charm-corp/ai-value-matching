@@ -25,7 +25,7 @@
 }
 
 .form-label.required::after {
-  content: " *";
+  content: ' *';
   color: var(--error);
   font-weight: var(--font-bold);
 }
@@ -100,7 +100,7 @@
   margin-bottom: 0 !important;
 }
 
-.form-checkbox input[type="checkbox"] {
+.form-checkbox input[type='checkbox'] {
   display: none;
 }
 
@@ -116,14 +116,14 @@
   background: var(--bg-primary);
 }
 
-.form-checkbox input[type="checkbox"]:checked + span .checkmark,
-.form-checkbox input[type="checkbox"]:checked + .checkmark {
+.form-checkbox input[type='checkbox']:checked + span .checkmark,
+.form-checkbox input[type='checkbox']:checked + .checkmark {
   background: var(--primary-color);
   border-color: var(--primary-color);
 }
 
-.form-checkbox input[type="checkbox"]:checked + span .checkmark::after,
-.form-checkbox input[type="checkbox"]:checked + .checkmark::after {
+.form-checkbox input[type='checkbox']:checked + span .checkmark::after,
+.form-checkbox input[type='checkbox']:checked + .checkmark::after {
   content: '';
   position: absolute;
   left: 6px;
@@ -144,7 +144,7 @@
   margin-bottom: var(--spacing-sm);
 }
 
-.form-radio input[type="radio"] {
+.form-radio input[type='radio'] {
   width: 20px;
   height: 20px;
   margin: 0;
@@ -203,7 +203,7 @@
   margin-bottom: 0 !important;
 }
 
-.checkbox-label input[type="checkbox"] {
+.checkbox-label input[type='checkbox'] {
   display: none;
 }
 
@@ -408,26 +408,26 @@
     grid-template-columns: 1fr;
     gap: var(--spacing-md);
   }
-  
+
   .auth-form {
     padding: var(--spacing-xl) var(--spacing-lg);
   }
-  
+
   .form-input,
   .form-select,
   .form-textarea {
     padding: var(--spacing-md);
     min-height: 52px; /* 모바일에서 더 큰 터치 영역 */
   }
-  
+
   .social-login {
     gap: var(--spacing-sm);
   }
-  
+
   .password-requirements {
     gap: var(--spacing-xs);
   }
-  
+
   .requirement {
     font-size: var(--font-xs);
     padding: 4px var(--spacing-sm);
@@ -448,7 +448,14 @@
 }
 
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  75% { transform: translateX(5px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
 }

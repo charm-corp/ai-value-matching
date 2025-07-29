@@ -2,7 +2,7 @@ const ValuesAssessment = require('../models/ValuesAssessment');
 
 /**
  * 4060세대 특화 가치관 분석 엔진
- * 
+ *
  * 핵심 기능:
  * 1. 15개 질문 체계적 분석
  * 2. 4060세대 특성 반영
@@ -22,10 +22,10 @@ class ValuesAnalysisEngine {
           wisdom: '지혜와 성숙함',
           authenticity: '진정성과 솔직함',
           gratitude: '감사와 만족',
-          purpose: '목적의식과 의미'
-        }
+          purpose: '목적의식과 의미',
+        },
       },
-      
+
       // 관계 중심 가치관
       relationshipValues: {
         name: '관계관',
@@ -35,23 +35,23 @@ class ValuesAnalysisEngine {
           family: '가족 중심성',
           loyalty: '신뢰와 충성',
           communication: '소통과 이해',
-          support: '상호 지지'
-        }
+          support: '상호 지지',
+        },
       },
-      
+
       // 안정성과 성장의 균형
       stabilityGrowth: {
         name: '안정-성장 균형',
         description: '안정과 새로운 도전 사이의 균형점',
-        weight: 0.20,
+        weight: 0.2,
         subCategories: {
           security: '경제적/정서적 안정',
           adventure: '새로운 경험과 도전',
           comfort: '편안함과 평화',
-          growth: '지속적 학습과 발전'
-        }
+          growth: '지속적 학습과 발전',
+        },
       },
-      
+
       // 건강과 웰빙
       healthWellness: {
         name: '건강관',
@@ -61,10 +61,10 @@ class ValuesAnalysisEngine {
           physical: '신체 건강 관리',
           mental: '정신적 웰빙',
           balance: '일과 삶의 균형',
-          vitality: '활력과 에너지'
-        }
+          vitality: '활력과 에너지',
+        },
       },
-      
+
       // 사회적 기여와 의미
       socialContribution: {
         name: '사회기여관',
@@ -74,9 +74,9 @@ class ValuesAnalysisEngine {
           legacy: '유산과 전수',
           mentoring: '후배 양성',
           community: '공동체 참여',
-          volunteering: '봉사와 나눔'
-        }
-      }
+          volunteering: '봉사와 나눔',
+        },
+      },
     };
 
     // 4060세대 성격 특성 매핑
@@ -84,32 +84,36 @@ class ValuesAnalysisEngine {
       // 성숙한 외향성 (젊은 층과 다른 특성)
       matureExtroversion: {
         characteristics: ['깊이 있는 대화 선호', '선택적 사교', '의미 있는 관계 추구'],
-        indicators: ['social_quality_over_quantity', 'meaningful_conversations', 'selective_networking']
+        indicators: [
+          'social_quality_over_quantity',
+          'meaningful_conversations',
+          'selective_networking',
+        ],
       },
-      
+
       // 경험 기반 개방성
       experienceBasedOpenness: {
         characteristics: ['새로운 관점 수용', '문화적 탐구', '평생 학습'],
-        indicators: ['cultural_interest', 'learning_orientation', 'perspective_flexibility']
+        indicators: ['cultural_interest', 'learning_orientation', 'perspective_flexibility'],
       },
-      
+
       // 책임감 있는 성실성
       responsibleConscientiousness: {
         characteristics: ['약속 중시', '장기적 계획', '신뢰성'],
-        indicators: ['reliability', 'long_term_planning', 'commitment_keeping']
+        indicators: ['reliability', 'long_term_planning', 'commitment_keeping'],
       },
-      
+
       // 포용적 친화성
       inclusiveAgreeableness: {
         characteristics: ['이해심', '포용력', '갈등 조정'],
-        indicators: ['empathy', 'conflict_resolution', 'inclusive_attitude']
+        indicators: ['empathy', 'conflict_resolution', 'inclusive_attitude'],
       },
-      
+
       // 안정된 정서성
       emotionalStability: {
         characteristics: ['감정 조절', '스트레스 관리', '회복력'],
-        indicators: ['emotional_regulation', 'stress_management', 'resilience']
-      }
+        indicators: ['emotional_regulation', 'stress_management', 'resilience'],
+      },
     };
   }
 
@@ -119,24 +123,24 @@ class ValuesAnalysisEngine {
   async analyzeUserValues(userId, answers) {
     try {
       console.log(`🎯 가치관 분석 시작 - 사용자: ${userId}`);
-      
+
       // 1. 기본 점수 계산
       const basicScores = this.calculateBasicScores(answers);
-      
+
       // 2. 4060세대 특성 반영 조정
       const adjustedScores = this.adjustForAgeGroup(basicScores, answers);
-      
+
       // 3. 개인별 가치관 프로필 생성
       const valueProfile = this.generateValueProfile(adjustedScores, answers);
-      
+
       // 4. 설명 가능한 분석 결과 생성
       const analysisResult = this.generateExplanation(valueProfile, answers);
-      
+
       // 5. 매칭 호환성 요소 추출
       const compatibilityFactors = this.extractCompatibilityFactors(valueProfile);
-      
+
       console.log(`✅ 가치관 분석 완료 - 사용자: ${userId}`);
-      
+
       return {
         userId,
         valueProfile,
@@ -144,9 +148,8 @@ class ValuesAnalysisEngine {
         compatibilityFactors,
         confidence: this.calculateConfidence(answers),
         timestamp: new Date(),
-        version: '3.0' // Phase 3 버전
+        version: '3.0', // Phase 3 버전
       };
-      
     } catch (error) {
       console.error('가치관 분석 오류:', error);
       throw new Error(`가치관 분석 실패: ${error.message}`);
@@ -158,33 +161,33 @@ class ValuesAnalysisEngine {
    */
   calculateBasicScores(answers) {
     const scores = {};
-    
+
     // 각 가치관 차원별 점수 초기화
     Object.keys(this.coreValueDimensions).forEach(dimension => {
       scores[dimension] = {
         overall: 0,
-        subCategories: {}
+        subCategories: {},
       };
-      
+
       // 하위 카테고리 초기화
       Object.keys(this.coreValueDimensions[dimension].subCategories).forEach(subCat => {
         scores[dimension].subCategories[subCat] = 0;
       });
     });
-    
+
     // 답변별 점수 계산
     answers.forEach((answer, questionId) => {
       const weights = answer.weights || {};
-      
+
       // 각 가중치를 해당 차원에 반영
       Object.keys(weights).forEach(category => {
         const weight = weights[category];
-        
+
         // 카테고리를 적절한 차원에 매핑
         const mappedDimension = this.mapCategoryToDimension(category);
         if (mappedDimension && scores[mappedDimension]) {
           scores[mappedDimension].overall += weight;
-          
+
           // 하위 카테고리에도 반영
           const subCategory = this.mapCategoryToSubCategory(category, mappedDimension);
           if (subCategory && scores[mappedDimension].subCategories[subCategory] !== undefined) {
@@ -193,10 +196,10 @@ class ValuesAnalysisEngine {
         }
       });
     });
-    
+
     // 점수 정규화 (0-100 스케일)
     this.normalizeScores(scores, answers.size);
-    
+
     return scores;
   }
 
@@ -205,40 +208,40 @@ class ValuesAnalysisEngine {
    */
   adjustForAgeGroup(basicScores, answers) {
     const adjustedScores = JSON.parse(JSON.stringify(basicScores));
-    
+
     // 연령대별 가중치 조정
     const ageAdjustments = {
       // 관계의 질을 양보다 중시
       relationshipValues: 1.15,
-      
+
       // 안정성의 중요도 증가
-      stabilityGrowth: 1.10,
-      
+      stabilityGrowth: 1.1,
+
       // 건강에 대한 관심 증가
       healthWellness: 1.12,
-      
+
       // 사회적 기여 의식 증가
-      socialContribution: 1.20,
-      
+      socialContribution: 1.2,
+
       // 인생 경험 기반 지혜 반영
-      lifePerspective: 1.18
+      lifePerspective: 1.18,
     };
-    
+
     // 조정 적용
     Object.keys(ageAdjustments).forEach(dimension => {
       if (adjustedScores[dimension]) {
         adjustedScores[dimension].overall *= ageAdjustments[dimension];
-        
+
         // 하위 카테고리도 조정
         Object.keys(adjustedScores[dimension].subCategories).forEach(subCat => {
           adjustedScores[dimension].subCategories[subCat] *= ageAdjustments[dimension];
         });
       }
     });
-    
+
     // 재정규화
     this.normalizeScores(adjustedScores, answers.size);
-    
+
     return adjustedScores;
   }
 
@@ -252,7 +255,7 @@ class ValuesAnalysisEngine {
         dimension,
         score: scores[dimension].overall,
         name: this.coreValueDimensions[dimension].name,
-        description: this.coreValueDimensions[dimension].description
+        description: this.coreValueDimensions[dimension].description,
       }))
       .sort((a, b) => b.score - a.score)
       .slice(0, 3);
@@ -264,26 +267,26 @@ class ValuesAnalysisEngine {
         .map(subCat => ({
           category: subCat,
           score: scores[dimension].subCategories[subCat],
-          name: this.coreValueDimensions[dimension].subCategories[subCat]
+          name: this.coreValueDimensions[dimension].subCategories[subCat],
         }))
         .sort((a, b) => b.score - a.score);
-      
+
       dimensionDetails[dimension] = {
         overall: scores[dimension].overall,
         topSubCategories: subCategories.slice(0, 2),
-        allSubCategories: subCategories
+        allSubCategories: subCategories,
       };
     });
 
     // 성격 특성 프로필
     const personalityProfile = this.generatePersonalityProfile(answers);
-    
+
     return {
       primaryValues: topDimensions,
       dimensionDetails,
       personalityProfile,
       overallScores: scores,
-      profileSummary: this.generateProfileSummary(topDimensions, personalityProfile)
+      profileSummary: this.generateProfileSummary(topDimensions, personalityProfile),
     };
   }
 
@@ -297,25 +300,30 @@ class ValuesAnalysisEngine {
       decisionMaking: 'experienced', // 경험 기반
       socialPreference: 'selective', // 선택적 사교
       conflictResolution: 'collaborative', // 협력적
-      stressManagement: 'balanced' // 균형적
+      stressManagement: 'balanced', // 균형적
     };
 
     // 답변 기반 성격 특성 분석
     answers.forEach((answer, questionId) => {
       // 질문 ID별 성격 특성 매핑
-      switch(parseInt(questionId)) {
+      switch (parseInt(questionId)) {
         case 3: // 의사결정 방식
           if (answer.value === 'logic') personality.decisionMaking = 'analytical';
           else if (answer.value === 'emotion') personality.decisionMaking = 'intuitive';
           else if (answer.value === 'experience') personality.decisionMaking = 'experienced';
           break;
-          
+
         case 5: // 갈등 대처
-          personality.conflictResolution = answer.value === 'direct' ? 'direct' :
-                                          answer.value === 'avoid' ? 'avoidant' :
-                                          answer.value === 'mediate' ? 'collaborative' : 'diplomatic';
+          personality.conflictResolution =
+            answer.value === 'direct'
+              ? 'direct'
+              : answer.value === 'avoid'
+                ? 'avoidant'
+                : answer.value === 'mediate'
+                  ? 'collaborative'
+                  : 'diplomatic';
           break;
-          
+
         case 9: // 사회적 성향 (새로운 사람들과의 만남)
           // 이 부분은 전체 답변을 확인한 후 결정
           break;
@@ -334,14 +342,14 @@ class ValuesAnalysisEngine {
       detailedAnalysis: this.generateDetailedAnalysis(valueProfile),
       strengthsAndChallenges: this.generateStrengthsAndChallenges(valueProfile),
       relationshipInsights: this.generateRelationshipInsights(valueProfile),
-      personalGrowthAreas: this.generatePersonalGrowthAreas(valueProfile)
+      personalGrowthAreas: this.generatePersonalGrowthAreas(valueProfile),
     };
 
     return {
       ...explanations,
       confidenceLevel: this.calculateAnalysisConfidence(valueProfile),
       keyFindings: this.extractKeyFindings(valueProfile),
-      actionableInsights: this.generateActionableInsights(valueProfile)
+      actionableInsights: this.generateActionableInsights(valueProfile),
     };
   }
 
@@ -351,13 +359,13 @@ class ValuesAnalysisEngine {
   generateCoreMessage(valueProfile) {
     const primaryValue = valueProfile.primaryValues[0];
     const personalityType = this.determinePersonalityType(valueProfile);
-    
+
     const messages = {
-      lifePerspective: "삶의 깊이와 의미를 추구하는 지혜로운 분입니다.",
-      relationshipValues: "진정한 인간관계와 소통을 중시하는 따뜻한 분입니다.",
-      stabilityGrowth: "안정과 성장의 균형을 추구하는 신중한 분입니다.",
-      healthWellness: "건강하고 균형잡힌 삶을 추구하는 현명한 분입니다.",
-      socialContribution: "사회에 기여하고 의미있는 가치를 남기고자 하는 분입니다."
+      lifePerspective: '삶의 깊이와 의미를 추구하는 지혜로운 분입니다.',
+      relationshipValues: '진정한 인간관계와 소통을 중시하는 따뜻한 분입니다.',
+      stabilityGrowth: '안정과 성장의 균형을 추구하는 신중한 분입니다.',
+      healthWellness: '건강하고 균형잡힌 삶을 추구하는 현명한 분입니다.',
+      socialContribution: '사회에 기여하고 의미있는 가치를 남기고자 하는 분입니다.',
     };
 
     return `${messages[primaryValue.dimension]} ${personalityType.description}을 통해 더욱 풍성한 인생을 만들어가고 계십니다.`;
@@ -368,13 +376,14 @@ class ValuesAnalysisEngine {
    */
   generateDetailedAnalysis(valueProfile) {
     const analysis = [];
-    
+
     valueProfile.primaryValues.forEach((value, index) => {
       const detail = valueProfile.dimensionDetails[value.dimension];
-      const rank = index === 0 ? '가장 중요하게' : index === 1 ? '두 번째로 중요하게' : '세 번째로 중요하게';
-      
+      const rank =
+        index === 0 ? '가장 중요하게' : index === 1 ? '두 번째로 중요하게' : '세 번째로 중요하게';
+
       const topSubCategory = detail.topSubCategories[0];
-      
+
       analysis.push({
         rank: index + 1,
         dimension: value.name,
@@ -383,11 +392,11 @@ class ValuesAnalysisEngine {
         subCategories: detail.topSubCategories.map(sub => ({
           name: sub.name,
           score: Math.round(sub.score),
-          strength: sub.score > 70 ? 'high' : sub.score > 50 ? 'medium' : 'low'
-        }))
+          strength: sub.score > 70 ? 'high' : sub.score > 50 ? 'medium' : 'low',
+        })),
       });
     });
-    
+
     return analysis;
   }
 
@@ -408,7 +417,7 @@ class ValuesAnalysisEngine {
             strengths.push({
               area: sub.name,
               description: `${sub.name} 영역에서 뛰어난 가치관을 보여주십니다.`,
-              score: Math.round(sub.score)
+              score: Math.round(sub.score),
             });
           }
         });
@@ -423,7 +432,7 @@ class ValuesAnalysisEngine {
           area: this.coreValueDimensions[dimension].name,
           description: `${this.coreValueDimensions[dimension].name} 영역에서 더 많은 관심을 기울일 수 있습니다.`,
           score: Math.round(detail.overall),
-          suggestion: this.getSuggestionForDimension(dimension)
+          suggestion: this.getSuggestionForDimension(dimension),
         });
       }
     });
@@ -440,14 +449,14 @@ class ValuesAnalysisEngine {
    */
   generateRelationshipInsights(valueProfile) {
     const insights = [];
-    
+
     // 의사소통 스타일 분석
     const commStyle = valueProfile.personalityProfile.communicationStyle;
     insights.push({
       type: 'communication',
       title: '소통 스타일',
       description: this.getCommunicationStyleDescription(commStyle),
-      tips: this.getCommunicationTips(commStyle)
+      tips: this.getCommunicationTips(commStyle),
     });
 
     // 갈등 해결 방식
@@ -456,7 +465,7 @@ class ValuesAnalysisEngine {
       type: 'conflict',
       title: '갈등 해결',
       description: this.getConflictResolutionDescription(conflictStyle),
-      tips: this.getConflictResolutionTips(conflictStyle)
+      tips: this.getConflictResolutionTips(conflictStyle),
     });
 
     // 관계에서 중시하는 가치
@@ -466,7 +475,7 @@ class ValuesAnalysisEngine {
         type: 'values',
         title: '관계에서 중시하는 가치',
         description: `${relationshipValue.topSubCategories[0].name}을 가장 중요하게 생각하시며, 이는 깊이 있는 관계 형성의 기반이 됩니다.`,
-        score: Math.round(relationshipValue.overall)
+        score: Math.round(relationshipValue.overall),
       });
     }
 
@@ -487,8 +496,8 @@ class ValuesAnalysisEngine {
       details: valueProfile.primaryValues.map(v => ({
         dimension: v.dimension,
         importance: v.score,
-        compatibilityType: 'similarity' // 유사성 기반
-      }))
+        compatibilityType: 'similarity', // 유사성 기반
+      })),
     });
 
     // 2. 성격 보완성 (25% 가중치)
@@ -496,7 +505,7 @@ class ValuesAnalysisEngine {
       factor: 'personality_complement',
       weight: 0.25,
       description: '성격 특성 보완',
-      details: this.getPersonalityComplementFactors(valueProfile.personalityProfile)
+      details: this.getPersonalityComplementFactors(valueProfile.personalityProfile),
     });
 
     // 3. 라이프스타일 호환성 (20% 가중치)
@@ -504,7 +513,7 @@ class ValuesAnalysisEngine {
       factor: 'lifestyle_compatibility',
       weight: 0.2,
       description: '생활방식 조화',
-      details: this.getLifestyleCompatibilityFactors(valueProfile)
+      details: this.getLifestyleCompatibilityFactors(valueProfile),
     });
 
     // 4. 의사소통 스타일 (15% 가중치)
@@ -515,8 +524,8 @@ class ValuesAnalysisEngine {
       details: {
         style: valueProfile.personalityProfile.communicationStyle,
         flexibility: this.getCommunicationFlexibility(valueProfile),
-        preferredMethods: this.getPreferredCommunicationMethods(valueProfile)
-      }
+        preferredMethods: this.getPreferredCommunicationMethods(valueProfile),
+      },
     });
 
     return factors;
@@ -527,19 +536,19 @@ class ValuesAnalysisEngine {
    */
   calculateConfidence(answers) {
     let confidence = 0;
-    
+
     // 답변 완성도 (40%)
     const completionRate = answers.size / 15; // 15개 질문 기준
     confidence += completionRate * 40;
-    
+
     // 답변 일관성 (35%)
     const consistency = this.calculateAnswerConsistency(answers);
     confidence += consistency * 35;
-    
+
     // 답변 다양성 (25%)
     const diversity = this.calculateAnswerDiversity(answers);
     confidence += diversity * 25;
-    
+
     return Math.min(Math.round(confidence), 100);
   }
 
@@ -554,7 +563,7 @@ class ValuesAnalysisEngine {
       // 안정/모험 관련 질문들
       { questions: [1, 6, 7], category: 'stability_adventure' },
       // 사회적 성향 관련 질문들
-      { questions: [2, 4, 9], category: 'social_preferences' }
+      { questions: [2, 4, 9], category: 'social_preferences' },
     ];
 
     let totalConsistency = 0;
@@ -592,10 +601,11 @@ class ValuesAnalysisEngine {
 
     // 분산을 기반으로 일관성 계산
     const mean = categoryValues.reduce((sum, val) => sum + val, 0) / categoryValues.length;
-    const variance = categoryValues.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / categoryValues.length;
-    
+    const variance =
+      categoryValues.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / categoryValues.length;
+
     // 분산이 낮을수록 일관성이 높음 (0-1 스케일로 정규화)
-    return Math.max(0, Math.min(1, 1 - (variance / 25))); // 25는 임계값
+    return Math.max(0, Math.min(1, 1 - variance / 25)); // 25는 임계값
   }
 
   /**
@@ -604,47 +614,47 @@ class ValuesAnalysisEngine {
   calculateAnswerDiversity(answers) {
     const answerValues = Array.from(answers.values()).map(answer => answer.value);
     const uniqueAnswers = new Set(answerValues);
-    
+
     // 다양성 점수 = 고유 답변 비율
     return uniqueAnswers.size / answerValues.length;
   }
 
   // 유틸리티 메서드들...
-  
+
   /**
    * 카테고리를 주요 차원에 매핑
    */
   mapCategoryToDimension(category) {
     const mappings = {
       // 인생관 관련
-      'life_values': 'lifePerspective',
-      'spirituality': 'lifePerspective',
-      'growth': 'lifePerspective',
-      'purpose': 'lifePerspective',
-      
+      life_values: 'lifePerspective',
+      spirituality: 'lifePerspective',
+      growth: 'lifePerspective',
+      purpose: 'lifePerspective',
+
       // 관계관 관련
-      'family': 'relationshipValues',
-      'relationships': 'relationshipValues',
-      'agreeableness': 'relationshipValues',
-      'empathy': 'relationshipValues',
-      
+      family: 'relationshipValues',
+      relationships: 'relationshipValues',
+      agreeableness: 'relationshipValues',
+      empathy: 'relationshipValues',
+
       // 안정-성장 균형
-      'security': 'stabilityGrowth',
-      'stability': 'stabilityGrowth',
-      'adventure': 'stabilityGrowth',
-      'openness': 'stabilityGrowth',
-      
+      security: 'stabilityGrowth',
+      stability: 'stabilityGrowth',
+      adventure: 'stabilityGrowth',
+      openness: 'stabilityGrowth',
+
       // 건강관
-      'health': 'healthWellness',
-      'active': 'healthWellness',
-      'balance': 'healthWellness',
-      
+      health: 'healthWellness',
+      active: 'healthWellness',
+      balance: 'healthWellness',
+
       // 사회기여관
-      'career': 'socialContribution',
-      'volunteering': 'socialContribution',
-      'community': 'socialContribution'
+      career: 'socialContribution',
+      volunteering: 'socialContribution',
+      community: 'socialContribution',
     };
-    
+
     return mappings[category];
   }
 
@@ -654,34 +664,34 @@ class ValuesAnalysisEngine {
   mapCategoryToSubCategory(category, dimension) {
     const mappings = {
       lifePerspective: {
-        'growth': 'purpose',
-        'spirituality': 'wisdom',
-        'life_values': 'authenticity'
+        growth: 'purpose',
+        spirituality: 'wisdom',
+        life_values: 'authenticity',
       },
       relationshipValues: {
-        'family': 'family',
-        'relationships': 'communication',
-        'agreeableness': 'support',
-        'empathy': 'support'
+        family: 'family',
+        relationships: 'communication',
+        agreeableness: 'support',
+        empathy: 'support',
       },
       stabilityGrowth: {
-        'security': 'security',
-        'stability': 'security',
-        'adventure': 'adventure',
-        'growth': 'growth'
+        security: 'security',
+        stability: 'security',
+        adventure: 'adventure',
+        growth: 'growth',
       },
       healthWellness: {
-        'health': 'physical',
-        'active': 'physical',
-        'balance': 'balance'
+        health: 'physical',
+        active: 'physical',
+        balance: 'balance',
       },
       socialContribution: {
-        'career': 'legacy',
-        'volunteering': 'volunteering',
-        'community': 'community'
-      }
+        career: 'legacy',
+        volunteering: 'volunteering',
+        community: 'community',
+      },
     };
-    
+
     return mappings[dimension]?.[category];
   }
 
@@ -690,15 +700,20 @@ class ValuesAnalysisEngine {
    */
   normalizeScores(scores, totalAnswers) {
     const maxPossibleScore = totalAnswers * 5; // 최대 가중치가 5라고 가정
-    
+
     Object.keys(scores).forEach(dimension => {
       // 전체 점수 정규화
-      scores[dimension].overall = Math.min(100, (scores[dimension].overall / maxPossibleScore) * 100);
-      
+      scores[dimension].overall = Math.min(
+        100,
+        (scores[dimension].overall / maxPossibleScore) * 100
+      );
+
       // 하위 카테고리 점수 정규화
       Object.keys(scores[dimension].subCategories).forEach(subCat => {
-        scores[dimension].subCategories[subCat] = Math.min(100, 
-          (scores[dimension].subCategories[subCat] / maxPossibleScore) * 100);
+        scores[dimension].subCategories[subCat] = Math.min(
+          100,
+          (scores[dimension].subCategories[subCat] / maxPossibleScore) * 100
+        );
       });
     });
   }
@@ -708,48 +723,51 @@ class ValuesAnalysisEngine {
    */
   generateProfileSummary(topDimensions, personalityProfile) {
     const primary = topDimensions[0];
-    
+
     const summaryTemplates = {
-      lifePerspective: "지혜롭고 성숙한 인생관을 바탕으로 의미있는 삶을 추구하는",
-      relationshipValues: "진정한 관계와 소통을 중시하며 따뜻한 마음을 가진",
-      stabilityGrowth: "안정과 도전의 균형을 추구하며 신중하면서도 열린 마음을 가진",
-      healthWellness: "건강하고 균형잡힌 삶을 중시하며 자기관리를 잘하는",
-      socialContribution: "사회에 기여하고 의미있는 가치를 남기고자 하는"
+      lifePerspective: '지혜롭고 성숙한 인생관을 바탕으로 의미있는 삶을 추구하는',
+      relationshipValues: '진정한 관계와 소통을 중시하며 따뜻한 마음을 가진',
+      stabilityGrowth: '안정과 도전의 균형을 추구하며 신중하면서도 열린 마음을 가진',
+      healthWellness: '건강하고 균형잡힌 삶을 중시하며 자기관리를 잘하는',
+      socialContribution: '사회에 기여하고 의미있는 가치를 남기고자 하는',
     };
 
     const personalityTypes = {
-      diplomatic: "배려깊고 조화로운",
-      analytical: "논리적이고 신중한",
-      supportive: "따뜻하고 지지적인",
-      direct: "솔직하고 명확한"
+      diplomatic: '배려깊고 조화로운',
+      analytical: '논리적이고 신중한',
+      supportive: '따뜻하고 지지적인',
+      direct: '솔직하고 명확한',
     };
 
-    const baseTemplate = summaryTemplates[primary.dimension] || "균형잡힌 가치관을 가진";
-    const personalityType = personalityTypes[personalityProfile.communicationStyle] || "성숙한";
+    const baseTemplate = summaryTemplates[primary.dimension] || '균형잡힌 가치관을 가진';
+    const personalityType = personalityTypes[personalityProfile.communicationStyle] || '성숙한';
 
     return `${baseTemplate} ${personalityType} 분입니다.`;
   }
 
   // 추가 유틸리티 메서드들...
-  
+
   getCommunicationStyleDescription(style) {
     const descriptions = {
-      diplomatic: "상대방을 배려하며 조화를 추구하는 소통을 선호합니다.",
-      direct: "솔직하고 명확한 의사표현을 중시합니다.",
-      supportive: "상대방을 지지하고 격려하는 소통을 합니다.",
-      analytical: "논리적이고 체계적인 대화를 선호합니다."
+      diplomatic: '상대방을 배려하며 조화를 추구하는 소통을 선호합니다.',
+      direct: '솔직하고 명확한 의사표현을 중시합니다.',
+      supportive: '상대방을 지지하고 격려하는 소통을 합니다.',
+      analytical: '논리적이고 체계적인 대화를 선호합니다.',
     };
-    return descriptions[style] || "균형잡힌 소통 스타일을 가지고 있습니다.";
+    return descriptions[style] || '균형잡힌 소통 스타일을 가지고 있습니다.';
   }
 
   getCommunicationTips(style) {
     const tips = {
-      diplomatic: ["상대방의 의견을 충분히 들어보세요", "갈등을 피하기보다 건설적으로 해결해보세요"],
-      direct: ["때로는 부드러운 표현도 시도해보세요", "상대방의 감정도 고려해주세요"],
-      supportive: ["자신의 의견도 당당히 표현하세요", "경계설정의 중요성을 기억하세요"],
-      analytical: ["감정적 측면도 고려해보세요", "때로는 직감도 신뢰해보세요"]
+      diplomatic: [
+        '상대방의 의견을 충분히 들어보세요',
+        '갈등을 피하기보다 건설적으로 해결해보세요',
+      ],
+      direct: ['때로는 부드러운 표현도 시도해보세요', '상대방의 감정도 고려해주세요'],
+      supportive: ['자신의 의견도 당당히 표현하세요', '경계설정의 중요성을 기억하세요'],
+      analytical: ['감정적 측면도 고려해보세요', '때로는 직감도 신뢰해보세요'],
     };
-    return tips[style] || ["열린 마음으로 소통하세요", "상대방을 이해하려 노력하세요"];
+    return tips[style] || ['열린 마음으로 소통하세요', '상대방을 이해하려 노력하세요'];
   }
 
   /**
@@ -758,16 +776,16 @@ class ValuesAnalysisEngine {
   determinePersonalityType(valueProfile) {
     const communication = valueProfile.personalityProfile.communicationStyle;
     const conflict = valueProfile.personalityProfile.conflictResolution;
-    
+
     const typeDescriptions = {
       diplomatic_collaborative: { type: 'diplomatic', description: '배려 깊고 협력적인 성향' },
       diplomatic_direct: { type: 'balanced', description: '균형잡힌 소통 방식' },
       analytical_experienced: { type: 'analytical', description: '신중하고 경험 기반의 판단' },
       supportive_collaborative: { type: 'supportive', description: '따뜻하고 지지적인 마음' },
       direct_collaborative: { type: 'leadership', description: '리더십 있고 협력적인 성향' },
-      experienced_diplomatic: { type: 'wise', description: '지혜롭고 외교적인 접근' }
+      experienced_diplomatic: { type: 'wise', description: '지혜롭고 외교적인 접근' },
     };
-    
+
     const key = `${communication}_${conflict}`;
     return typeDescriptions[key] || { type: 'mature', description: '성숙하고 균형잡힌 접근법' };
   }
@@ -781,20 +799,20 @@ class ValuesAnalysisEngine {
         trait: 'communication_style',
         style: personalityProfile.communicationStyle,
         flexibility: this.getCommunicationFlexibility(personalityProfile),
-        description: '소통 방식의 유연성과 적응력'
+        description: '소통 방식의 유연성과 적응력',
       },
       {
         trait: 'decision_making',
         style: personalityProfile.decisionMaking,
         adaptability: this.getDecisionMakingAdaptability(personalityProfile),
-        description: '의사결정 과정의 다양성과 보완성'
+        description: '의사결정 과정의 다양성과 보완성',
       },
       {
         trait: 'conflict_resolution',
         style: personalityProfile.conflictResolution,
         effectiveness: this.getConflictResolutionEffectiveness(personalityProfile),
-        description: '갈등 해결 능력과 접근 방식'
-      }
+        description: '갈등 해결 능력과 접근 방식',
+      },
     ];
   }
 
@@ -804,12 +822,12 @@ class ValuesAnalysisEngine {
   getLifestyleCompatibilityFactors(valueProfile) {
     const healthValue = valueProfile.dimensionDetails.healthWellness?.overall || 50;
     const socialValue = valueProfile.dimensionDetails.relationshipValues?.overall || 50;
-    
+
     return {
       activityLevel: this.categorizeActivityLevel(healthValue),
       socialPreference: this.categorizeSocialPreference(socialValue),
       routineFlexibility: this.calculateRoutineFlexibility(valueProfile),
-      leisureStyle: this.identifyLeisureStyle(valueProfile)
+      leisureStyle: this.identifyLeisureStyle(valueProfile),
     };
   }
 
@@ -839,10 +857,10 @@ class ValuesAnalysisEngine {
   calculateRoutineFlexibility(valueProfile) {
     const stabilityScore = valueProfile.dimensionDetails.stabilityGrowth?.overall || 50;
     const growthScore = valueProfile.dimensionDetails.stabilityGrowth?.subCategories?.growth || 50;
-    
+
     // 안정성과 성장 욕구의 균형을 기반으로 유연성 계산
-    const flexibilityScore = (growthScore * 0.7) + ((100 - stabilityScore) * 0.3);
-    
+    const flexibilityScore = growthScore * 0.7 + (100 - stabilityScore) * 0.3;
+
     if (flexibilityScore > 70) return 'highly_flexible';
     if (flexibilityScore > 50) return 'moderately_flexible';
     return 'routine_oriented';
@@ -854,7 +872,7 @@ class ValuesAnalysisEngine {
   identifyLeisureStyle(valueProfile) {
     const creativity = valueProfile.dimensionDetails.lifePerspective?.subCategories?.wisdom || 50;
     const social = valueProfile.dimensionDetails.relationshipValues?.overall || 50;
-    
+
     if (creativity > 70 && social > 70) return 'creative_social';
     if (creativity > 70) return 'creative_individual';
     if (social > 70) return 'social_oriented';
@@ -870,9 +888,9 @@ class ValuesAnalysisEngine {
       diplomatic: 85, // 매우 유연
       supportive: 80, // 높은 유연성
       analytical: 60, // 중간 유연성
-      direct: 50      // 낮은 유연성 (명확성 선호)
+      direct: 50, // 낮은 유연성 (명확성 선호)
     };
-    
+
     return flexibility[style] || 70;
   }
 
@@ -883,11 +901,11 @@ class ValuesAnalysisEngine {
     const style = personalityProfile.decisionMaking;
     const adaptability = {
       experienced: 90, // 경험 기반으로 매우 적응적
-      intuitive: 75,   // 직관적으로 유연함
-      analytical: 60,  // 분석적이지만 적응 가능
-      impulsive: 40    // 충동적 (4060세대에서는 드물음)
+      intuitive: 75, // 직관적으로 유연함
+      analytical: 60, // 분석적이지만 적응 가능
+      impulsive: 40, // 충동적 (4060세대에서는 드물음)
     };
-    
+
     return adaptability[style] || 70;
   }
 
@@ -898,11 +916,11 @@ class ValuesAnalysisEngine {
     const style = personalityProfile.conflictResolution;
     const effectiveness = {
       collaborative: 90, // 가장 효과적
-      diplomatic: 85,    // 매우 효과적
-      direct: 70,        // 효과적이지만 상황 의존적
-      avoidant: 50       // 제한적 효과성
+      diplomatic: 85, // 매우 효과적
+      direct: 70, // 효과적이지만 상황 의존적
+      avoidant: 50, // 제한적 효과성
     };
-    
+
     return effectiveness[style] || 70;
   }
 
@@ -912,14 +930,14 @@ class ValuesAnalysisEngine {
   getPreferredCommunicationMethods(valueProfile) {
     const style = valueProfile.personalityProfile.communicationStyle;
     const ageFactors = ['face_to_face', 'phone_call', 'thoughtful_message'];
-    
+
     const methodsByStyle = {
       diplomatic: ['face_to_face', 'thoughtful_message', 'group_discussion'],
       supportive: ['face_to_face', 'phone_call', 'encouraging_message'],
       analytical: ['email', 'structured_discussion', 'document_sharing'],
-      direct: ['phone_call', 'face_to_face', 'clear_message']
+      direct: ['phone_call', 'face_to_face', 'clear_message'],
     };
-    
+
     return methodsByStyle[style] || ageFactors;
   }
 
@@ -932,9 +950,9 @@ class ValuesAnalysisEngine {
       relationshipValues: '소중한 사람들과의 관계에 더 많은 시간과 노력을 투자해보세요',
       stabilityGrowth: '안정성과 새로운 도전 사이의 균형점을 찾아보세요',
       healthWellness: '신체적, 정신적 건강에 더 많은 관심을 기울여보세요',
-      socialContribution: '사회나 공동체에 기여할 수 있는 방법을 찾아보세요'
+      socialContribution: '사회나 공동체에 기여할 수 있는 방법을 찾아보세요',
     };
-    
+
     return suggestions[dimension] || '이 영역에서 개선할 수 있는 부분을 찾아보세요';
   }
 
@@ -944,7 +962,7 @@ class ValuesAnalysisEngine {
   calculateCategoryConsistency(answers, category) {
     // 답변 가중치들의 일관성을 체크
     const weights = answers.map(answer => answer.weights || {});
-    
+
     // 관련 카테고리의 가중치들만 추출
     const relevantWeights = weights.map(w => {
       const categoryKeys = Object.keys(w).filter(key => this.isCategoryRelated(key, category));
@@ -955,10 +973,12 @@ class ValuesAnalysisEngine {
 
     // 분산 기반 일관성 계산
     const mean = relevantWeights.reduce((sum, val) => sum + val, 0) / relevantWeights.length;
-    const variance = relevantWeights.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / relevantWeights.length;
-    
+    const variance =
+      relevantWeights.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) /
+      relevantWeights.length;
+
     // 분산이 낮을수록 일관성이 높음
-    return Math.max(0, Math.min(1, 1 - (variance / 25)));
+    return Math.max(0, Math.min(1, 1 - variance / 25));
   }
 
   /**
@@ -968,9 +988,9 @@ class ValuesAnalysisEngine {
     const categoryMappings = {
       family_relationships: ['family', 'relationships', 'agreeableness', 'empathy'],
       stability_adventure: ['security', 'stability', 'adventure', 'openness', 'growth'],
-      social_preferences: ['extroversion', 'agreeableness', 'relationships', 'social']
+      social_preferences: ['extroversion', 'agreeableness', 'relationships', 'social'],
     };
-    
+
     return categoryMappings[category]?.includes(key) || false;
   }
 
@@ -980,16 +1000,16 @@ class ValuesAnalysisEngine {
   generateCoreMessage(valueProfile) {
     const primaryValue = valueProfile.primaryValues[0];
     const personalityType = this.determinePersonalityType(valueProfile);
-    
+
     const messages = {
-      lifePerspective: "삶의 깊이와 의미를 추구하는 지혜로운 분입니다.",
-      relationshipValues: "진정한 인간관계와 소통을 중시하는 따뜻한 분입니다.",
-      stabilityGrowth: "안정과 성장의 균형을 추구하는 신중한 분입니다.",
-      healthWellness: "건강하고 균형잡힌 삶을 추구하는 현명한 분입니다.",
-      socialContribution: "사회에 기여하고 의미있는 가치를 남기고자 하는 분입니다."
+      lifePerspective: '삶의 깊이와 의미를 추구하는 지혜로운 분입니다.',
+      relationshipValues: '진정한 인간관계와 소통을 중시하는 따뜻한 분입니다.',
+      stabilityGrowth: '안정과 성장의 균형을 추구하는 신중한 분입니다.',
+      healthWellness: '건강하고 균형잡힌 삶을 추구하는 현명한 분입니다.',
+      socialContribution: '사회에 기여하고 의미있는 가치를 남기고자 하는 분입니다.',
     };
 
-    const baseMessage = messages[primaryValue.dimension] || "균형잡힌 가치관을 가진 분입니다.";
+    const baseMessage = messages[primaryValue.dimension] || '균형잡힌 가치관을 가진 분입니다.';
     return `${baseMessage} ${personalityType.description}을 통해 더욱 풍성한 인생을 만들어가고 계십니다.`;
   }
 
@@ -998,13 +1018,14 @@ class ValuesAnalysisEngine {
    */
   generateDetailedAnalysis(valueProfile) {
     const analysis = [];
-    
+
     valueProfile.primaryValues.forEach((value, index) => {
       const detail = valueProfile.dimensionDetails[value.dimension];
-      const rank = index === 0 ? '가장 중요하게' : index === 1 ? '두 번째로 중요하게' : '세 번째로 중요하게';
-      
+      const rank =
+        index === 0 ? '가장 중요하게' : index === 1 ? '두 번째로 중요하게' : '세 번째로 중요하게';
+
       const topSubCategory = detail.topSubCategories[0];
-      
+
       analysis.push({
         rank: index + 1,
         dimension: value.name,
@@ -1013,11 +1034,11 @@ class ValuesAnalysisEngine {
         subCategories: detail.topSubCategories.map(sub => ({
           name: sub.name,
           score: Math.round(sub.score),
-          strength: sub.score > 70 ? 'high' : sub.score > 50 ? 'medium' : 'low'
-        }))
+          strength: sub.score > 70 ? 'high' : sub.score > 50 ? 'medium' : 'low',
+        })),
       });
     });
-    
+
     return analysis;
   }
 
@@ -1026,14 +1047,14 @@ class ValuesAnalysisEngine {
    */
   generateRelationshipInsights(valueProfile) {
     const insights = [];
-    
+
     // 의사소통 스타일 분석
     const commStyle = valueProfile.personalityProfile.communicationStyle;
     insights.push({
       type: 'communication',
       title: '소통 스타일',
       description: this.getCommunicationStyleDescription(commStyle),
-      tips: this.getCommunicationTips(commStyle)
+      tips: this.getCommunicationTips(commStyle),
     });
 
     // 갈등 해결 방식
@@ -1042,7 +1063,7 @@ class ValuesAnalysisEngine {
       type: 'conflict',
       title: '갈등 해결',
       description: this.getConflictResolutionDescription(conflictStyle),
-      tips: this.getConflictResolutionTips(conflictStyle)
+      tips: this.getConflictResolutionTips(conflictStyle),
     });
 
     // 관계에서 중시하는 가치
@@ -1052,7 +1073,7 @@ class ValuesAnalysisEngine {
         type: 'values',
         title: '관계에서 중시하는 가치',
         description: `${relationshipValue.topSubCategories[0].name}을 가장 중요하게 생각하시며, 이는 깊이 있는 관계 형성의 기반이 됩니다.`,
-        score: Math.round(relationshipValue.overall)
+        score: Math.round(relationshipValue.overall),
       });
     }
 
@@ -1067,9 +1088,9 @@ class ValuesAnalysisEngine {
       direct: '문제를 직접적으로 다루며 명확한 해결책을 추구합니다',
       collaborative: '상호 협력을 통해 서로 만족할 수 있는 해결책을 찾습니다',
       diplomatic: '조화를 중시하며 부드러운 방식으로 갈등을 해결합니다',
-      avoidant: '갈등을 피하는 경향이 있으며 시간을 두고 해결하려 합니다'
+      avoidant: '갈등을 피하는 경향이 있으며 시간을 두고 해결하려 합니다',
     };
-    
+
     return descriptions[style] || '상황에 따라 유연하게 갈등을 해결합니다';
   }
 
@@ -1079,11 +1100,17 @@ class ValuesAnalysisEngine {
   getConflictResolutionTips(style) {
     const tips = {
       direct: ['때로는 감정적 측면도 고려해보세요', '상대방의 입장을 충분히 들어보세요'],
-      collaborative: ['때로는 빠른 결정도 필요할 수 있습니다', '완벽한 해결책을 추구하기보다 실용적 접근도 시도해보세요'],
-      diplomatic: ['중요한 문제는 명확히 표현하는 것도 필요합니다', '갈등을 피하기보다 건설적으로 다루어보세요'],
-      avoidant: ['작은 문제는 일찍 해결하는 것이 좋습니다', '대화를 통한 해결을 시도해보세요']
+      collaborative: [
+        '때로는 빠른 결정도 필요할 수 있습니다',
+        '완벽한 해결책을 추구하기보다 실용적 접근도 시도해보세요',
+      ],
+      diplomatic: [
+        '중요한 문제는 명확히 표현하는 것도 필요합니다',
+        '갈등을 피하기보다 건설적으로 다루어보세요',
+      ],
+      avoidant: ['작은 문제는 일찍 해결하는 것이 좋습니다', '대화를 통한 해결을 시도해보세요'],
     };
-    
+
     return tips[style] || ['열린 마음으로 소통하세요', '서로의 관점을 이해하려 노력하세요'];
   }
 
@@ -1092,17 +1119,17 @@ class ValuesAnalysisEngine {
    */
   generatePersonalGrowthAreas(valueProfile) {
     const growthAreas = [];
-    
+
     // 상대적으로 낮은 점수의 가치관 영역
     const allDimensions = Object.keys(valueProfile.overallScores);
     const sortedDimensions = allDimensions
       .map(dim => ({
         dimension: dim,
         score: valueProfile.overallScores[dim].overall,
-        name: this.coreValueDimensions[dim]?.name || dim
+        name: this.coreValueDimensions[dim]?.name || dim,
       }))
       .sort((a, b) => a.score - b.score);
-    
+
     // 하위 2개 영역을 성장 기회로 제안
     sortedDimensions.slice(0, 2).forEach(dim => {
       if (dim.score < 70) {
@@ -1111,11 +1138,11 @@ class ValuesAnalysisEngine {
           currentLevel: Math.round(dim.score),
           growthPotential: 'high',
           suggestion: this.getSuggestionForDimension(dim.dimension),
-          benefits: this.getGrowthBenefits(dim.dimension)
+          benefits: this.getGrowthBenefits(dim.dimension),
         });
       }
     });
-    
+
     return growthAreas;
   }
 
@@ -1128,9 +1155,9 @@ class ValuesAnalysisEngine {
       relationshipValues: ['더 따뜻한 인간관계', '신뢰받는 관계', '사회적 지지망 확대'],
       stabilityGrowth: ['균형잡힌 삶', '변화 적응력', '새로운 기회 발견'],
       healthWellness: ['활력 넘치는 일상', '스트레스 관리 능력', '장기적 건강'],
-      socialContribution: ['의미있는 삶', '사회적 연결감', '긍정적 영향력']
+      socialContribution: ['의미있는 삶', '사회적 연결감', '긍정적 영향력'],
     };
-    
+
     return benefits[dimension] || ['개인적 성장', '삶의 질 향상', '새로운 가능성'];
   }
 
@@ -1140,29 +1167,29 @@ class ValuesAnalysisEngine {
   identifyBalanceNeeds(valueProfile) {
     const balanceAreas = [];
     const scores = valueProfile.overallScores;
-    
+
     // 점수 차이가 큰 영역들 찾기
     const scoreValues = Object.keys(scores).map(key => ({
       dimension: key,
-      score: scores[key].overall
+      score: scores[key].overall,
     }));
-    
+
     const maxScore = Math.max(...scoreValues.map(s => s.score));
     const minScore = Math.min(...scoreValues.map(s => s.score));
-    
+
     if (maxScore - minScore > 40) {
       const lowScoringAreas = scoreValues.filter(s => s.score < maxScore - 30);
-      
+
       lowScoringAreas.forEach(area => {
         balanceAreas.push({
           area: this.coreValueDimensions[area.dimension]?.name || area.dimension,
           currentScore: Math.round(area.score),
           suggestion: `${this.coreValueDimensions[area.dimension]?.name || area.dimension} 영역에 더 관심을 기울여 균형을 맞춰보세요`,
-          priority: maxScore - area.score > 50 ? 'high' : 'medium'
+          priority: maxScore - area.score > 50 ? 'high' : 'medium',
         });
       });
     }
-    
+
     return balanceAreas;
   }
 
@@ -1171,20 +1198,20 @@ class ValuesAnalysisEngine {
    */
   calculateAnalysisConfidence(valueProfile) {
     let confidence = 70; // 기본 신뢰도
-    
+
     // 답변 완성도 기반 조정
     const completion = valueProfile.primaryValues.length / 3; // 상위 3개 기준
     confidence += completion * 15;
-    
+
     // 일관성 기반 조정
     const topScores = valueProfile.primaryValues.map(v => v.score);
     const scoreVariation = Math.max(...topScores) - Math.min(...topScores);
     if (scoreVariation < 20) confidence += 10; // 일관된 점수
-    
+
     // 극값 확인 (너무 극단적이지 않은지)
     const hasExtreme = topScores.some(score => score > 95 || score < 10);
     if (!hasExtreme) confidence += 5;
-    
+
     return Math.min(Math.round(confidence), 100);
   }
 
@@ -1193,16 +1220,16 @@ class ValuesAnalysisEngine {
    */
   extractKeyFindings(valueProfile) {
     const findings = [];
-    
+
     // 가장 강한 가치관
     const topValue = valueProfile.primaryValues[0];
     findings.push(`가장 중시하는 가치: ${topValue.name} (${Math.round(topValue.score)}점)`);
-    
+
     // 성격적 강점 (간단한 버전)
     const personality = valueProfile.personalityProfile;
     findings.push(`소통 스타일: ${personality.communicationStyle}`);
     findings.push(`갈등 해결: ${personality.conflictResolution}`);
-    
+
     return findings.slice(0, 5);
   }
 
@@ -1211,15 +1238,15 @@ class ValuesAnalysisEngine {
    */
   generateActionableInsights(valueProfile) {
     const insights = [];
-    
+
     // 관계에서 활용할 수 있는 강점
     const topValue = valueProfile.primaryValues[0];
     insights.push({
       category: 'relationship_strength',
       insight: `${topValue.name}을 중시하는 특성을 관계에서 활용하세요`,
-      action: this.getValueBasedAction(topValue.dimension)
+      action: this.getValueBasedAction(topValue.dimension),
     });
-    
+
     // 성장 영역
     const allDimensions = Object.keys(valueProfile.dimensionDetails);
     allDimensions.forEach(dimension => {
@@ -1228,11 +1255,11 @@ class ValuesAnalysisEngine {
         insights.push({
           category: 'growth_opportunity',
           insight: `${this.coreValueDimensions[dimension]?.name} 영역에서 성장 기회가 있습니다`,
-          action: this.getSuggestionForDimension(dimension)
+          action: this.getSuggestionForDimension(dimension),
         });
       }
     });
-    
+
     return insights.slice(0, 3);
   }
 
@@ -1245,9 +1272,9 @@ class ValuesAnalysisEngine {
       relationshipValues: '서로의 관계 경험과 소중한 사람들에 대해 이야기해보세요',
       stabilityGrowth: '안정적인 환경에서 새로운 경험을 함께 시도해보세요',
       healthWellness: '건강한 활동과 웰빙을 함께 추구해보세요',
-      socialContribution: '의미 있는 봉사나 사회 활동을 함께 계획해보세요'
+      socialContribution: '의미 있는 봉사나 사회 활동을 함께 계획해보세요',
     };
-    
+
     return actions[dimension] || '이 가치를 중심으로 함께할 수 있는 활동을 찾아보세요';
   }
 

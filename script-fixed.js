@@ -1,14 +1,14 @@
 // CHARM_INYEON 메인 스크립트 - 통합 및 정리된 버전
 
 // 페이지 로드 시 모든 기능 초기화
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   console.log('🚀 CHARM_INYEON 초기화 시작');
-  
+
   initializeNavigation();
   initializeContactForm();
   initializeMobileMenu();
   initializeButtons();
-  
+
   console.log('✅ 모든 기능 초기화 완료');
 });
 
@@ -16,25 +16,25 @@ document.addEventListener('DOMContentLoaded', function() {
 function initializeNavigation() {
   // 네비게이션 링크 클릭 이벤트
   const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
-  
+
   navLinks.forEach(link => {
-    link.addEventListener('click', function(e) {
+    link.addEventListener('click', function (e) {
       e.preventDefault();
-      
+
       const targetId = this.getAttribute('href').substring(1);
       const targetSection = document.getElementById(targetId);
-      
+
       if (targetSection) {
         targetSection.scrollIntoView({
           behavior: 'smooth',
-          block: 'start'
+          block: 'start',
         });
-        
+
         updateActiveNavLink(this);
       }
     });
   });
-  
+
   // 스크롤 시 활성 네비게이션 업데이트
   window.addEventListener('scroll', throttle(updateActiveNavOnScroll, 100));
 }
@@ -49,18 +49,18 @@ function updateActiveNavLink(activeLink) {
 function updateActiveNavOnScroll() {
   const sections = document.querySelectorAll('section[id]');
   const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
-  
+
   let current = '';
-  
+
   sections.forEach(section => {
     const sectionTop = section.getBoundingClientRect().top;
     const sectionHeight = section.offsetHeight;
-    
+
     if (sectionTop <= 100 && sectionTop + sectionHeight > 100) {
       current = section.getAttribute('id');
     }
   });
-  
+
   navLinks.forEach(link => {
     link.classList.remove('active');
     if (link.getAttribute('href') === `#${current}`) {
@@ -71,30 +71,30 @@ function updateActiveNavOnScroll() {
 
 function throttle(func, limit) {
   let inThrottle;
-  return function() {
+  return function () {
     const args = arguments;
     const context = this;
     if (!inThrottle) {
       func.apply(context, args);
       inThrottle = true;
-      setTimeout(() => inThrottle = false, limit);
+      setTimeout(() => (inThrottle = false), limit);
     }
-  }
+  };
 }
 
 // ========== 모바일 메뉴 ==========
 function initializeMobileMenu() {
   const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
   const navLinks = document.querySelector('.nav-links');
-  
+
   if (mobileMenuToggle && navLinks) {
-    mobileMenuToggle.addEventListener('click', function() {
+    mobileMenuToggle.addEventListener('click', function () {
       navLinks.classList.toggle('active');
       this.classList.toggle('active');
     });
-    
+
     navLinks.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', function() {
+      link.addEventListener('click', function () {
         navLinks.classList.remove('active');
         mobileMenuToggle.classList.remove('active');
       });
@@ -105,12 +105,12 @@ function initializeMobileMenu() {
 // ========== 버튼 기능 통합 ==========
 function initializeButtons() {
   console.log('🔘 버튼 초기화 시작');
-  
+
   // 1. 무료로 시작하기 버튼 → 가치관 테스트
   const startButtons = document.querySelectorAll('.primary-button');
   startButtons.forEach(button => {
     if (button.textContent.includes('무료로 시작하기')) {
-      button.addEventListener('click', function(e) {
+      button.addEventListener('click', function (e) {
         e.preventDefault();
         console.log('🎯 가치관 테스트로 이동');
         window.location.href = 'values-assessment.html';
@@ -118,33 +118,33 @@ function initializeButtons() {
       console.log('✅ 무료로 시작하기 버튼 연결됨');
     }
   });
-  
+
   // 2. 회원가입 버튼들 → 회원가입 페이지
   const signupButtons = document.querySelectorAll('.signup-btn, #signup-btn-2, .cta-large-button');
   signupButtons.forEach(button => {
-    button.addEventListener('click', function(e) {
+    button.addEventListener('click', function (e) {
       e.preventDefault();
       console.log('📝 회원가입 페이지로 이동');
       window.location.href = 'signup.html';
     });
   });
   console.log('✅ 회원가입 버튼들 연결됨');
-  
+
   // 3. 소개 영상 보기 버튼 → 애니메이션
   const videoButton = document.querySelector('.secondary-button');
   if (videoButton) {
-    videoButton.addEventListener('click', function(e) {
+    videoButton.addEventListener('click', function (e) {
       e.preventDefault();
       console.log('🎬 소개 애니메이션 실행');
       openIntroAnimation();
     });
     console.log('✅ 소개 영상 버튼 연결됨');
   }
-  
+
   // 4. 로그인 버튼 → 로그인 모달
   const loginButtons = document.querySelectorAll('.login-btn');
   loginButtons.forEach(button => {
-    button.addEventListener('click', function(e) {
+    button.addEventListener('click', function (e) {
       e.preventDefault();
       console.log('🔑 로그인 모달 실행');
       openLoginModal();
@@ -159,7 +159,7 @@ function showModal(title, message) {
   if (existingModal) {
     existingModal.remove();
   }
-  
+
   const modalOverlay = document.createElement('div');
   modalOverlay.className = 'modal-overlay';
   modalOverlay.style.cssText = `
@@ -175,7 +175,7 @@ function showModal(title, message) {
     z-index: 10000;
     animation: fadeIn 0.2s ease-out;
   `;
-  
+
   const modalContent = document.createElement('div');
   modalContent.className = 'modal-content';
   modalContent.style.cssText = `
@@ -188,7 +188,7 @@ function showModal(title, message) {
     animation: slideUp 0.3s ease-out;
     text-align: center;
   `;
-  
+
   modalContent.innerHTML = `
     <h3 style="margin: 0 0 15px 0; color: #2563eb; font-size: 1.2em;">${title}</h3>
     <p style="margin: 0 0 20px 0; color: #64748b; line-height: 1.5;">${message}</p>
@@ -204,21 +204,21 @@ function showModal(title, message) {
       transition: background 0.2s;
     ">확인</button>
   `;
-  
+
   modalOverlay.appendChild(modalContent);
   document.body.appendChild(modalOverlay);
-  
+
   const closeBtn = modalContent.querySelector('.modal-close-btn');
   const closeModal = () => {
     modalOverlay.style.animation = 'fadeOut 0.2s ease-out';
     setTimeout(() => modalOverlay.remove(), 200);
   };
-  
+
   closeBtn.addEventListener('click', closeModal);
-  modalOverlay.addEventListener('click', (e) => {
+  modalOverlay.addEventListener('click', e => {
     if (e.target === modalOverlay) closeModal();
   });
-  
+
   document.addEventListener('keydown', function handleKeyPress(e) {
     if (e.key === 'Escape') {
       closeModal();
@@ -234,7 +234,7 @@ function openLoginModal() {
 // ========== 소개 애니메이션 ==========
 function openIntroAnimation() {
   console.log('🎭 소개 애니메이션 모달 열기');
-  
+
   const modalOverlay = document.createElement('div');
   modalOverlay.className = 'intro-modal-overlay';
   modalOverlay.style.cssText = `
@@ -369,7 +369,7 @@ function openIntroAnimation() {
   };
 
   closeButton.addEventListener('click', closeModal);
-  modalOverlay.addEventListener('click', (e) => {
+  modalOverlay.addEventListener('click', e => {
     if (e.target === modalOverlay) closeModal();
   });
 
@@ -389,8 +389,10 @@ function initializeContactForm() {
   const contactForm = document.getElementById('contactForm');
   if (contactForm) {
     contactForm.addEventListener('submit', handleContactFormSubmit);
-    
-    const requiredFields = contactForm.querySelectorAll('input[required], select[required], textarea[required]');
+
+    const requiredFields = contactForm.querySelectorAll(
+      'input[required], select[required], textarea[required]'
+    );
     requiredFields.forEach(field => {
       field.addEventListener('blur', validateField);
       field.addEventListener('input', clearFieldError);
@@ -400,19 +402,19 @@ function initializeContactForm() {
 
 function handleContactFormSubmit(e) {
   e.preventDefault();
-  
+
   const form = e.target;
   const formData = new FormData(form);
-  
+
   if (!validateForm(form)) {
     return;
   }
-  
+
   const submitBtn = form.querySelector('button[type="submit"]');
   const originalText = submitBtn.textContent;
   submitBtn.disabled = true;
   submitBtn.textContent = '전송 중...';
-  
+
   setTimeout(() => {
     showContactSuccessModal();
     form.reset();
@@ -427,7 +429,7 @@ function showContactSuccessModal() {
   if (existingModal) {
     existingModal.remove();
   }
-  
+
   const modalOverlay = document.createElement('div');
   modalOverlay.className = 'modal-overlay';
   modalOverlay.style.cssText = `
@@ -443,7 +445,7 @@ function showContactSuccessModal() {
     z-index: 10000;
     animation: fadeIn 0.2s ease-out;
   `;
-  
+
   const modalContent = document.createElement('div');
   modalContent.className = 'modal-content';
   modalContent.style.cssText = `
@@ -456,7 +458,7 @@ function showContactSuccessModal() {
     animation: slideUp 0.3s ease-out;
     text-align: center;
   `;
-  
+
   modalContent.innerHTML = `
     <div style="font-size: 3rem; margin-bottom: 1rem;">✅</div>
     <h3 style="margin: 0 0 1rem 0; color: #2563eb; font-size: 1.4em;">문의 접수 완료!</h3>
@@ -511,25 +513,27 @@ function showContactSuccessModal() {
       width: 100%;
     ">확인</button>
   `;
-  
+
   modalOverlay.appendChild(modalContent);
   document.body.appendChild(modalOverlay);
-  
+
   const closeBtn = modalContent.querySelector('.modal-close-btn');
   const closeModal = () => {
     modalOverlay.style.animation = 'fadeOut 0.2s ease-out';
     setTimeout(() => modalOverlay.remove(), 200);
   };
-  
+
   closeBtn.addEventListener('click', closeModal);
-  modalOverlay.addEventListener('click', (e) => {
+  modalOverlay.addEventListener('click', e => {
     if (e.target === modalOverlay) closeModal();
   });
-  
+
   // 전역 함수들
-  window.openKakaoTalk = function() {
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
+  window.openKakaoTalk = function () {
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      navigator.userAgent
+    );
+
     if (isMobile) {
       window.location.href = 'kakaotalk://plusfriend/home/@charm_inyeon';
       setTimeout(() => {
@@ -538,16 +542,21 @@ function showContactSuccessModal() {
     } else {
       window.open('https://pf.kakao.com/_xmwxmxl', '_blank');
     }
-    
-    showModal('카카오톡 상담', '카카오톡 채널 "@CHARM_INYEON"을 검색하시거나\n준비 중인 링크로 곧 연결됩니다!');
+
+    showModal(
+      '카카오톡 상담',
+      '카카오톡 채널 "@CHARM_INYEON"을 검색하시거나\n준비 중인 링크로 곧 연결됩니다!'
+    );
   };
-  
-  window.openEmail = function() {
+
+  window.openEmail = function () {
     const subject = encodeURIComponent('CHARM_INYEON 문의사항');
-    const body = encodeURIComponent('안녕하세요, CHARM_INYEON 담당자님\n\n다음과 같이 문의드립니다:\n\n[문의 내용을 작성해주세요]\n\n감사합니다.');
-    
+    const body = encodeURIComponent(
+      '안녕하세요, CHARM_INYEON 담당자님\n\n다음과 같이 문의드립니다:\n\n[문의 내용을 작성해주세요]\n\n감사합니다.'
+    );
+
     window.location.href = `mailto:hello@valuematch.co.kr?subject=${subject}&body=${body}`;
-    
+
     setTimeout(() => {
       const emailAddress = 'hello@valuematch.co.kr';
       if (navigator.clipboard) {
@@ -564,14 +573,16 @@ function showContactSuccessModal() {
 // ========== 폼 검증 유틸리티 ==========
 function validateForm(form) {
   let isValid = true;
-  const requiredFields = form.querySelectorAll('input[required], select[required], textarea[required]');
-  
+  const requiredFields = form.querySelectorAll(
+    'input[required], select[required], textarea[required]'
+  );
+
   requiredFields.forEach(field => {
     if (!validateField({ target: field })) {
       isValid = false;
     }
   });
-  
+
   return isValid;
 }
 
@@ -580,12 +591,12 @@ function validateField(e) {
   const value = field.value.trim();
   let isValid = true;
   let errorMessage = '';
-  
+
   if (field.hasAttribute('required') && !value) {
     isValid = false;
     errorMessage = '필수 입력 항목입니다.';
   }
-  
+
   if (field.type === 'email' && value) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(value)) {
@@ -593,7 +604,7 @@ function validateField(e) {
       errorMessage = '올바른 이메일 형식을 입력해주세요.';
     }
   }
-  
+
   if (field.type === 'tel' && value) {
     const phoneRegex = /^[0-9-+\s()]+$/;
     if (!phoneRegex.test(value)) {
@@ -601,24 +612,24 @@ function validateField(e) {
       errorMessage = '올바른 전화번호 형식을 입력해주세요.';
     }
   }
-  
+
   if (field.name === 'message' && value && value.length < 10) {
     isValid = false;
     errorMessage = '메시지는 10자 이상 입력해주세요.';
   }
-  
+
   if (!isValid) {
     showFieldError(field, errorMessage);
   } else {
     clearFieldError(field);
   }
-  
+
   return isValid;
 }
 
 function showFieldError(field, message) {
   clearFieldError(field);
-  
+
   const errorElement = document.createElement('div');
   errorElement.className = 'field-error';
   errorElement.textContent = message;
@@ -628,7 +639,7 @@ function showFieldError(field, message) {
     margin-top: 0.25rem;
     display: block;
   `;
-  
+
   field.style.borderColor = '#dc2626';
   field.parentNode.insertBefore(errorElement, field.nextSibling);
 }
@@ -644,7 +655,7 @@ function clearFieldError(field) {
 function clearAllErrors(form) {
   const errorElements = form.querySelectorAll('.field-error');
   errorElements.forEach(error => error.remove());
-  
+
   const fields = form.querySelectorAll('input, select, textarea');
   fields.forEach(field => {
     field.style.borderColor = '';

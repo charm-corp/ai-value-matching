@@ -203,12 +203,17 @@
 }
 
 @keyframes spin {
-  0% { transform: translate(-50%, -50%) rotate(0deg); }
-  100% { transform: translate(-50%, -50%) rotate(360deg); }
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
 }
 
 /* 특별한 버튼들 (기존 코드 호환성) */
-.login-btn, .signup-btn {
+.login-btn,
+.signup-btn {
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
@@ -290,7 +295,8 @@
 }
 
 /* 아이콘 스타일 */
-.nav-icon, .btn-icon-svg {
+.nav-icon,
+.btn-icon-svg {
   width: 20px;
   height: 20px;
   transition: var(--transition-normal);
@@ -307,12 +313,12 @@
     padding: var(--spacing-md) var(--spacing-lg);
     font-size: var(--font-sm);
   }
-  
+
   .btn-lg {
     padding: var(--spacing-lg) var(--spacing-xl);
     font-size: var(--font-base);
   }
-  
+
   .btn-fab {
     bottom: var(--spacing-lg);
     right: var(--spacing-lg);

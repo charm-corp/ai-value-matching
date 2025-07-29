@@ -13,25 +13,25 @@ const checkPrivacyConsent = (requiredConsents = ['privacy']) => {
   return async (req, res, next) => {
     try {
       const user = req.user;
-      
+
       if (!user) {
         return res.status(401).json({
           success: false,
-          message: '인증이 필요합니다'
+          message: '인증이 필요합니다',
         });
       }
 
       // 필수 동의 항목 확인
       const missingConsents = [];
-      
+
       if (requiredConsents.includes('privacy') && !user.agreePrivacy) {
         missingConsents.push('개인정보처리방침');
       }
-      
+
       if (requiredConsents.includes('terms') && !user.agreeTerms) {
         missingConsents.push('이용약관');
       }
-      
+
       if (requiredConsents.includes('marketing') && !user.agreeMarketing) {
         missingConsents.push('마케팅 정보 수신');
       }
@@ -40,7 +40,7 @@ const checkPrivacyConsent = (requiredConsents = ['privacy']) => {
         return res.status(403).json({
           success: false,
           message: '필요한 동의가 완료되지 않았습니다',
-          missingConsents
+          missingConsents,
         });
       }
 
@@ -49,7 +49,7 @@ const checkPrivacyConsent = (requiredConsents = ['privacy']) => {
       console.error('Privacy consent check error:', error);
       res.status(500).json({
         success: false,
-        message: '동의 확인 중 오류가 발생했습니다'
+        message: '동의 확인 중 오류가 발생했습니다',
       });
     }
   };
@@ -69,12 +69,12 @@ const logSensitiveDataAccess = (dataType = 'unknown') => {
         ip: req.ip || req.connection.remoteAddress,
         userAgent: req.get('User-Agent'),
         timestamp: new Date().toISOString(),
-        sessionId: req.sessionID
+        sessionId: req.sessionID,
       };
 
       // 실제 운영 환경에서는 보안 로그 시스템에 저장
       console.log('SENSITIVE_DATA_ACCESS:', JSON.stringify(accessLog));
-      
+
       // 응답 후 추가 로깅
       res.on('finish', () => {
         accessLog.statusCode = res.statusCode;
@@ -96,24 +96,24 @@ const logSensitiveDataAccess = (dataType = 'unknown') => {
 const maskPersonalData = (fields = []) => {
   return (req, res, next) => {
     const originalSend = res.send;
-    
-    res.send = function(data) {
+
+    res.send = function (data) {
       try {
         if (typeof data === 'string') {
           data = JSON.parse(data);
         }
-        
+
         if (data && typeof data === 'object') {
           data = maskSensitiveFields(data, fields);
         }
-        
+
         originalSend.call(this, JSON.stringify(data));
       } catch (error) {
         console.error('Data masking error:', error);
         originalSend.call(this, data);
       }
     };
-    
+
     next();
   };
 };
@@ -122,14 +122,16 @@ const maskPersonalData = (fields = []) => {
  * 민감한 필드 마스킹 함수
  */
 function maskSensitiveFields(obj, fields) {
-  if (!obj || typeof obj !== 'object') {return obj;}
-  
+  if (!obj || typeof obj !== 'object') {
+    return obj;
+  }
+
   const masked = Array.isArray(obj) ? [] : {};
-  
+
   for (const key in obj) {
     if (obj.hasOwnProperty(key)) {
       const value = obj[key];
-      
+
       if (fields.includes(key)) {
         // 필드별 마스킹 적용
         if (key === 'email') {
@@ -151,7 +153,7 @@ function maskSensitiveFields(obj, fields) {
       }
     }
   }
-  
+
   return masked;
 }
 
@@ -164,23 +166,23 @@ const sanitizeInput = (req, res, next) => {
     if (req.body) {
       req.body = sanitizeObject(req.body);
     }
-    
+
     // 쿼리 파라미터 정제
     if (req.query) {
       req.query = sanitizeObject(req.query);
     }
-    
+
     // 경로 파라미터 정제
     if (req.params) {
       req.params = sanitizeObject(req.params);
     }
-    
+
     next();
   } catch (error) {
     console.error('Input sanitization error:', error);
     res.status(400).json({
       success: false,
-      message: '입력 데이터 검증 실패'
+      message: '입력 데이터 검증 실패',
     });
   }
 };
@@ -192,13 +194,13 @@ function sanitizeObject(obj) {
   if (!obj || typeof obj !== 'object') {
     return typeof obj === 'string' ? xss(obj) : obj;
   }
-  
+
   const sanitized = Array.isArray(obj) ? [] : {};
-  
+
   for (const key in obj) {
     if (obj.hasOwnProperty(key)) {
       const value = obj[key];
-      
+
       if (typeof value === 'string') {
         sanitized[key] = xss(value);
       } else if (typeof value === 'object' && value !== null) {
@@ -208,7 +210,7 @@ function sanitizeObject(obj) {
       }
     }
   }
-  
+
   return sanitized;
 }
 
@@ -220,24 +222,24 @@ const checkDataAccess = (dataType = 'general') => {
     try {
       const user = req.user;
       const targetUserId = req.params.userId || req.body.userId;
-      
+
       // 자신의 데이터에만 접근 가능
       if (targetUserId && user.id !== targetUserId) {
         // 관리자 또는 특별 권한 확인
         if (!user.isAdmin && !hasSpecialPermission(user, dataType)) {
           return res.status(403).json({
             success: false,
-            message: '데이터 접근 권한이 없습니다'
+            message: '데이터 접근 권한이 없습니다',
           });
         }
       }
-      
+
       next();
     } catch (error) {
       console.error('Data access check error:', error);
       res.status(500).json({
         success: false,
-        message: '접근 권한 확인 중 오류가 발생했습니다'
+        message: '접근 권한 확인 중 오류가 발생했습니다',
       });
     }
   };
@@ -251,7 +253,7 @@ function hasSpecialPermission(user, dataType) {
   if (dataType === 'matching' && user.role === 'service') {
     return true;
   }
-  
+
   // 기타 특별 권한 로직
   return false;
 }
@@ -262,21 +264,21 @@ function hasSpecialPermission(user, dataType) {
 const checkDataRetention = async (req, res, next) => {
   try {
     const user = req.user;
-    
+
     // 비활성 계정의 데이터 보존 기간 확인 (예: 1년)
     if (!user.isActive) {
       const lastActive = new Date(user.lastActive);
       const retentionPeriod = 365 * 24 * 60 * 60 * 1000; // 1년
-      
+
       if (Date.now() - lastActive.getTime() > retentionPeriod) {
         return res.status(410).json({
           success: false,
           message: '데이터 보존 기간이 만료되었습니다',
-          code: 'DATA_RETENTION_EXPIRED'
+          code: 'DATA_RETENTION_EXPIRED',
         });
       }
     }
-    
+
     next();
   } catch (error) {
     console.error('Data retention check error:', error);
@@ -290,11 +292,11 @@ const checkDataRetention = async (req, res, next) => {
 const specifyDataPurpose = (purpose = 'service') => {
   return (req, res, next) => {
     req.dataPurpose = purpose;
-    
+
     // 응답 헤더에 데이터 처리 목적 명시
     res.setHeader('X-Data-Purpose', purpose);
     res.setHeader('X-Privacy-Policy', '/privacy-policy');
-    
+
     next();
   };
 };
@@ -305,24 +307,24 @@ const specifyDataPurpose = (purpose = 'service') => {
 const anonymizeData = (fields = []) => {
   return (req, res, next) => {
     const originalSend = res.send;
-    
-    res.send = function(data) {
+
+    res.send = function (data) {
       try {
         if (typeof data === 'string') {
           data = JSON.parse(data);
         }
-        
+
         if (data && typeof data === 'object') {
           data = anonymizeFields(data, fields);
         }
-        
+
         originalSend.call(this, JSON.stringify(data));
       } catch (error) {
         console.error('Data anonymization error:', error);
         originalSend.call(this, data);
       }
     };
-    
+
     next();
   };
 };
@@ -331,14 +333,16 @@ const anonymizeData = (fields = []) => {
  * 필드 익명화 함수
  */
 function anonymizeFields(obj, fields) {
-  if (!obj || typeof obj !== 'object') {return obj;}
-  
+  if (!obj || typeof obj !== 'object') {
+    return obj;
+  }
+
   const anonymized = Array.isArray(obj) ? [] : {};
-  
+
   for (const key in obj) {
     if (obj.hasOwnProperty(key)) {
       const value = obj[key];
-      
+
       if (fields.includes(key)) {
         // 필드별 익명화
         if (key === 'email') {
@@ -357,7 +361,7 @@ function anonymizeFields(obj, fields) {
       }
     }
   }
-  
+
   return anonymized;
 }
 
@@ -369,5 +373,5 @@ module.exports = {
   checkDataAccess,
   checkDataRetention,
   specifyDataPurpose,
-  anonymizeData
+  anonymizeData,
 };

@@ -9,23 +9,23 @@ class APIClient {
   // Set authorization header
   getHeaders(contentType = 'application/json') {
     const headers = {
-      'Content-Type': contentType
+      'Content-Type': contentType,
     };
-        
+
     if (this.token) {
       headers['Authorization'] = `Bearer ${this.token}`;
     }
-        
+
     return headers;
   }
 
   // Handle API responses
   async handleResponse(response) {
     if (!response.ok) {
-      const error = await response.json().catch(() => ({ 
-        error: `HTTP ${response.status}` 
+      const error = await response.json().catch(() => ({
+        error: `HTTP ${response.status}`,
       }));
-            
+
       // Token expired - try to refresh
       if (response.status === 401 && error.expired && this.refreshToken) {
         const refreshed = await this.refreshAccessToken();
@@ -33,10 +33,10 @@ class APIClient {
           throw new Error('TOKEN_REFRESHED'); // Signal to retry request
         }
       }
-            
+
       throw new Error(error.error || error.message || 'Unknown error');
     }
-        
+
     return await response.json();
   }
 
@@ -46,9 +46,9 @@ class APIClient {
       const response = await fetch(`${this.baseURL}/auth/refresh`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ refreshToken: this.refreshToken })
+        body: JSON.stringify({ refreshToken: this.refreshToken }),
       });
-            
+
       if (response.ok) {
         const data = await response.json();
         this.setTokens(data.data.token, data.data.refreshToken);
@@ -57,7 +57,7 @@ class APIClient {
     } catch (error) {
       console.error('Token refresh failed:', error);
     }
-        
+
     this.logout();
     return false;
   }
@@ -69,8 +69,8 @@ class APIClient {
       ...options,
       headers: {
         ...this.getHeaders(),
-        ...options.headers
-      }
+        ...options.headers,
+      },
     };
 
     try {
@@ -81,7 +81,7 @@ class APIClient {
         // Retry with new token
         config.headers = {
           ...this.getHeaders(),
-          ...options.headers
+          ...options.headers,
         };
         const response = await fetch(url, config);
         return await this.handleResponse(response);
@@ -122,15 +122,15 @@ class APIClient {
   async register(userData) {
     const response = await this.request('/auth/register', {
       method: 'POST',
-      body: JSON.stringify(userData)
+      body: JSON.stringify(userData),
     });
-        
+
     if (response.success) {
       // 테스트 서버와 실제 서버 모두 지원
       const token = response.token || response.data?.token;
       const refreshToken = response.refreshToken || response.data?.refreshToken;
       const user = response.user || response.data?.user;
-      
+
       if (token) {
         this.setTokens(token, refreshToken);
       }
@@ -138,22 +138,22 @@ class APIClient {
         this.setCurrentUser(user);
       }
     }
-        
+
     return response;
   }
 
   async login(email, password, rememberMe = false) {
     const response = await this.request('/auth/login', {
       method: 'POST',
-      body: JSON.stringify({ email, password, rememberMe })
+      body: JSON.stringify({ email, password, rememberMe }),
     });
-        
+
     if (response.success) {
       // 테스트 서버와 실제 서버 모두 지원
       const token = response.token || response.data?.token;
       const refreshToken = response.refreshToken || response.data?.refreshToken;
       const user = response.user || response.data?.user;
-      
+
       if (token) {
         this.setTokens(token, refreshToken);
       }
@@ -161,7 +161,7 @@ class APIClient {
         this.setCurrentUser(user);
       }
     }
-        
+
     return response;
   }
 
@@ -172,7 +172,7 @@ class APIClient {
   async changePassword(currentPassword, newPassword, confirmPassword) {
     return await this.request('/auth/change-password', {
       method: 'PUT',
-      body: JSON.stringify({ currentPassword, newPassword, confirmPassword })
+      body: JSON.stringify({ currentPassword, newPassword, confirmPassword }),
     });
   }
 
@@ -184,7 +184,7 @@ class APIClient {
   async submitValuesAssessment(answers) {
     return await this.request('/values/submit', {
       method: 'POST',
-      body: JSON.stringify({ answers })
+      body: JSON.stringify({ answers }),
     });
   }
 
@@ -195,7 +195,7 @@ class APIClient {
   async calculateCompatibility(targetUserId) {
     return await this.request('/values/compatibility', {
       method: 'POST',
-      body: JSON.stringify({ targetUserId })
+      body: JSON.stringify({ targetUserId }),
     });
   }
 
@@ -206,15 +206,17 @@ class APIClient {
 
   async getMyMatches(status = null, page = 1, limit = 20) {
     const params = new URLSearchParams({ page, limit });
-    if (status) {params.append('status', status);}
-        
+    if (status) {
+      params.append('status', status);
+    }
+
     return await this.request(`/matching/my-matches?${params}`);
   }
 
   async respondToMatch(matchId, action, note = '') {
     return await this.request(`/matching/matches/${matchId}/respond`, {
       method: 'POST',
-      body: JSON.stringify({ action, note })
+      body: JSON.stringify({ action, note }),
     });
   }
 
@@ -235,20 +237,20 @@ class APIClient {
   async updateProfile(profileData) {
     return await this.request('/users/profile', {
       method: 'PUT',
-      body: JSON.stringify(profileData)
+      body: JSON.stringify(profileData),
     });
   }
 
   async uploadProfileImage(imageFile) {
     const formData = new FormData();
     formData.append('profileImage', imageFile);
-        
+
     return await this.request('/profile/upload-image', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${this.token}`
+        Authorization: `Bearer ${this.token}`,
       },
-      body: formData
+      body: formData,
     });
   }
 
@@ -258,12 +260,16 @@ class APIClient {
 
   async searchUsers(query = '', filters = {}, page = 1, limit = 20) {
     const params = new URLSearchParams({ page, limit });
-    if (query) {params.append('q', query);}
-        
+    if (query) {
+      params.append('q', query);
+    }
+
     Object.entries(filters).forEach(([key, value]) => {
-      if (value) {params.append(key, value);}
+      if (value) {
+        params.append(key, value);
+      }
     });
-        
+
     return await this.request(`/users/search?${params}`);
   }
 
@@ -276,21 +282,23 @@ class APIClient {
   async startConversation(matchId, initialMessage = '') {
     return await this.request('/chat/conversations/start', {
       method: 'POST',
-      body: JSON.stringify({ matchId, initialMessage })
+      body: JSON.stringify({ matchId, initialMessage }),
     });
   }
 
   async getMessages(conversationId, page = 1, limit = 50, before = null) {
     const params = new URLSearchParams({ page, limit });
-    if (before) {params.append('before', before);}
-        
+    if (before) {
+      params.append('before', before);
+    }
+
     return await this.request(`/chat/conversations/${conversationId}/messages?${params}`);
   }
 
   async sendMessage(conversationId, content, type = 'text', replyTo = null) {
     return await this.request(`/chat/conversations/${conversationId}/messages`, {
       method: 'POST',
-      body: JSON.stringify({ content, type, replyTo })
+      body: JSON.stringify({ content, type, replyTo }),
     });
   }
 
@@ -315,7 +323,7 @@ class APIClient {
   // Error handling helper
   showError(message, details = null) {
     console.error('API Error:', message, details);
-        
+
     // Show user-friendly error
     const errorDiv = document.createElement('div');
     errorDiv.className = 'api-error-toast';
@@ -332,7 +340,7 @@ class APIClient {
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             animation: slideIn 0.3s ease;
         `;
-        
+
     errorDiv.innerHTML = `
             <div style="font-weight: 600; margin-bottom: 0.5rem;">오류 발생</div>
             <div style="font-size: 0.9rem;">${message}</div>
@@ -347,9 +355,9 @@ class APIClient {
                 cursor: pointer;
             ">&times;</button>
         `;
-        
+
     document.body.appendChild(errorDiv);
-        
+
     // Auto remove after 5 seconds
     setTimeout(() => {
       if (errorDiv.parentNode) {
@@ -375,7 +383,7 @@ class APIClient {
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             animation: slideIn 0.3s ease;
         `;
-        
+
     successDiv.innerHTML = `
             <div style="font-weight: 600; margin-bottom: 0.5rem;">성공!</div>
             <div style="font-size: 0.9rem;">${message}</div>
@@ -390,9 +398,9 @@ class APIClient {
                 cursor: pointer;
             ">&times;</button>
         `;
-        
+
     document.body.appendChild(successDiv);
-        
+
     // Auto remove after 3 seconds
     setTimeout(() => {
       if (successDiv.parentNode) {

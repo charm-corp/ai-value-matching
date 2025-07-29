@@ -15,8 +15,8 @@ const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
     origin: ['http://localhost:3000', 'http://localhost:8080'],
-    methods: ['GET', 'POST']
-  }
+    methods: ['GET', 'POST'],
+  },
 });
 
 const PORT = process.env.PORT || 3000;
@@ -26,14 +26,16 @@ const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // limit each IP to 100 requests per windowMs
   message: {
-    error: 'Too many requests from this IP, please try again later.'
-  }
+    error: 'Too many requests from this IP, please try again later.',
+  },
 });
 
 // Security middleware
-app.use(helmet({
-  crossOriginEmbedderPolicy: false,
-}));
+app.use(
+  helmet({
+    crossOriginEmbedderPolicy: false,
+  })
+);
 app.use(compression());
 app.use(limiter);
 
@@ -41,7 +43,7 @@ app.use(limiter);
 const corsOptions = {
   origin: ['http://localhost:3000', 'http://localhost:8080'],
   credentials: true,
-  optionsSuccessStatus: 200
+  optionsSuccessStatus: 200,
 };
 
 app.use(cors(corsOptions));
@@ -69,23 +71,23 @@ const connectInMemoryDB = async () => {
     const mongod = await MongoMemoryServer.create({
       instance: {
         port: 27018, // 다른 포트 사용
-        dbName: 'charm_inyeon_inmemory'
-      }
+        dbName: 'charm_inyeon_inmemory',
+      },
     });
-    
+
     const uri = mongod.getUri();
     console.log('📦 In-Memory MongoDB URI:', uri);
-    
+
     const conn = await mongoose.connect(uri, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
 
     console.log(`✅ In-Memory MongoDB Connected: ${conn.connection.host}`);
-    
+
     // 테스트 데이터 생성
     await createTestData();
-    
+
     return mongod;
   } catch (error) {
     console.error('In-Memory database connection error:', error);
@@ -98,7 +100,7 @@ async function createTestData() {
   try {
     const User = require('./models/User');
     const ValuesAssessment = require('./models/ValuesAssessment');
-    
+
     // 테스트 사용자들 생성
     const testUsers = [
       {
@@ -112,8 +114,8 @@ async function createTestData() {
         isActive: true,
         isVerified: true,
         preferences: {
-          privacy: { allowSearch: true, showAge: true, showLocation: true }
-        }
+          privacy: { allowSearch: true, showAge: true, showLocation: true },
+        },
       },
       {
         _id: new mongoose.Types.ObjectId(),
@@ -126,51 +128,78 @@ async function createTestData() {
         isActive: true,
         isVerified: true,
         preferences: {
-          privacy: { allowSearch: true, showAge: true, showLocation: true }
-        }
-      }
+          privacy: { allowSearch: true, showAge: true, showLocation: true },
+        },
+      },
     ];
-    
+
     // 기존 데이터 삭제 후 새로 생성
     await User.deleteMany({});
     await User.insertMany(testUsers);
-    
+
     // 테스트 가치관 평가 생성
     const testAssessments = [
       {
         userId: testUsers[0]._id,
         answers: {
-          q1: 'family', q2: 'stability', q3: 'logic', q4: 'harmony', q5: 'growth',
-          q6: 'security', q7: 'tradition', q8: 'cooperation', q9: 'balance', q10: 'patience'
+          q1: 'family',
+          q2: 'stability',
+          q3: 'logic',
+          q4: 'harmony',
+          q5: 'growth',
+          q6: 'security',
+          q7: 'tradition',
+          q8: 'cooperation',
+          q9: 'balance',
+          q10: 'patience',
         },
         valueCategories: {
-          family: 85, career: 70, personal_growth: 75, health: 80, 
-          financial_security: 85, social_connection: 70, spiritual: 60, adventure: 45
+          family: 85,
+          career: 70,
+          personal_growth: 75,
+          health: 80,
+          financial_security: 85,
+          social_connection: 70,
+          spiritual: 60,
+          adventure: 45,
         },
         isCompleted: true,
-        completedAt: new Date()
+        completedAt: new Date(),
       },
       {
         userId: testUsers[1]._id,
         answers: {
-          q1: 'growth', q2: 'connection', q3: 'emotion', q4: 'creativity', q5: 'family',
-          q6: 'freedom', q7: 'innovation', q8: 'independence', q9: 'passion', q10: 'intuition'
+          q1: 'growth',
+          q2: 'connection',
+          q3: 'emotion',
+          q4: 'creativity',
+          q5: 'family',
+          q6: 'freedom',
+          q7: 'innovation',
+          q8: 'independence',
+          q9: 'passion',
+          q10: 'intuition',
         },
         valueCategories: {
-          family: 80, career: 65, personal_growth: 90, health: 75, 
-          financial_security: 60, social_connection: 85, spiritual: 70, adventure: 55
+          family: 80,
+          career: 65,
+          personal_growth: 90,
+          health: 75,
+          financial_security: 60,
+          social_connection: 85,
+          spiritual: 70,
+          adventure: 55,
         },
         isCompleted: true,
-        completedAt: new Date()
-      }
+        completedAt: new Date(),
+      },
     ];
-    
+
     await ValuesAssessment.deleteMany({});
     await ValuesAssessment.insertMany(testAssessments);
-    
+
     console.log('✅ 테스트 데이터 생성 완료');
     console.log('👥 테스트 사용자: 김세렌, 이매력');
-    
   } catch (error) {
     console.error('테스트 데이터 생성 오류:', error);
   }
@@ -241,7 +270,7 @@ app.get('/health', (req, res) => {
     database: 'In-Memory MongoDB Active',
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
-    environment: 'in-memory-development'
+    environment: 'in-memory-development',
   });
 });
 
@@ -252,7 +281,7 @@ app.get('/', (req, res) => {
     version: '1.0.0',
     documentation: '/api-docs',
     health: '/health',
-    database: 'In-Memory MongoDB Active'
+    database: 'In-Memory MongoDB Active',
   });
 });
 
@@ -260,7 +289,7 @@ app.get('/', (req, res) => {
 app.use('*', (req, res) => {
   res.status(404).json({
     error: 'Route not found',
-    message: `Cannot ${req.method} ${req.originalUrl}`
+    message: `Cannot ${req.method} ${req.originalUrl}`,
   });
 });
 
@@ -273,20 +302,20 @@ app.use((err, req, res, next) => {
     const errors = Object.values(err.errors).map(e => e.message);
     return res.status(400).json({
       error: 'Validation Error',
-      details: errors
+      details: errors,
     });
   }
 
   // JWT errors
   if (err.name === 'JsonWebTokenError') {
     return res.status(401).json({
-      error: 'Invalid token'
+      error: 'Invalid token',
     });
   }
 
   if (err.name === 'TokenExpiredError') {
     return res.status(401).json({
-      error: 'Token expired'
+      error: 'Token expired',
     });
   }
 
@@ -295,14 +324,14 @@ app.use((err, req, res, next) => {
     const field = Object.keys(err.keyValue)[0];
     return res.status(400).json({
       error: 'Duplicate value',
-      message: `${field} already exists`
+      message: `${field} already exists`,
     });
   }
 
   // Default error
   res.status(err.status || 500).json({
     error: err.message || 'Internal Server Error',
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
   });
 });
 
@@ -317,7 +346,7 @@ app.set('chatService', chatService);
 const startServer = async () => {
   try {
     const mongod = await connectInMemoryDB();
-    
+
     server.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
       console.log(`📚 API Documentation: http://localhost:${PORT}/api-docs`);
@@ -325,9 +354,11 @@ const startServer = async () => {
       console.log(`🧠 In-Memory MongoDB Active`);
       console.log('🎯 테스트용 API 엔드포인트:');
       console.log(`   - 사용자 조회: http://localhost:${PORT}/api/users/test-user-1`);
-      console.log(`   - 매칭 테스트: http://localhost:${PORT}/api/matching/test-user-1/test-user-2`);
+      console.log(
+        `   - 매칭 테스트: http://localhost:${PORT}/api/matching/test-user-1/test-user-2`
+      );
     });
-    
+
     // Graceful shutdown
     process.on('SIGTERM', async () => {
       console.log('SIGTERM received. Shutting down gracefully...');
@@ -350,7 +381,6 @@ const startServer = async () => {
         });
       });
     });
-    
   } catch (error) {
     console.error('Failed to start server:', error);
     process.exit(1);

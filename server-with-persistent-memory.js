@@ -19,8 +19,8 @@ const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
     origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'],
-    methods: ['GET', 'POST']
-  }
+    methods: ['GET', 'POST'],
+  },
 });
 
 const PORT = process.env.PORT || 3000;
@@ -59,12 +59,12 @@ class DataBackupSystem {
       }
 
       console.log('💾 데이터 백업 시작...');
-      
+
       // 모든 컬렉션 데이터 수집
       const collections = await mongoose.connection.db.listCollections().toArray();
       const backupData = {
         timestamp: new Date().toISOString(),
-        collections: {}
+        collections: {},
       };
 
       for (const collection of collections) {
@@ -77,7 +77,6 @@ class DataBackupSystem {
       // 백업 파일 저장
       await fs.writeFile(BACKUP_FILE, JSON.stringify(backupData, null, 2));
       console.log('✅ 데이터 백업 완료!');
-
     } catch (error) {
       console.error('❌ 백업 중 오류:', error);
     }
@@ -107,7 +106,7 @@ class DataBackupSystem {
             }
             return doc;
           });
-          
+
           await mongoose.connection.db.collection(collectionName).insertMany(processedDocuments);
           restoredCount += documents.length;
           console.log(`📋 ${collectionName}: ${documents.length}개 문서 복원됨`);
@@ -116,7 +115,6 @@ class DataBackupSystem {
 
       console.log(`✅ 총 ${restoredCount}개 문서 복원 완료!`);
       console.log(`📅 백업 일시: ${backupData.timestamp}`);
-
     } catch (error) {
       if (error.code === 'ENOENT') {
         console.log('📝 백업 파일이 없습니다. 새로운 데이터베이스로 시작합니다.');
@@ -128,10 +126,13 @@ class DataBackupSystem {
 
   startAutoBackup() {
     // 5분마다 자동 백업
-    this.backupInterval = setInterval(() => {
-      this.backupData();
-    }, 5 * 60 * 1000);
-    
+    this.backupInterval = setInterval(
+      () => {
+        this.backupData();
+      },
+      5 * 60 * 1000
+    );
+
     console.log('🔄 자동 백업 시작됨 (5분 간격)');
   }
 
@@ -151,14 +152,16 @@ const limiter = rateLimit({
   windowMs: parseInt(process.env.RATE_LIMIT_WINDOW || '15') * 60 * 1000,
   max: parseInt(process.env.RATE_LIMIT_MAX || '100'),
   message: {
-    error: 'Too many requests from this IP, please try again later.'
-  }
+    error: 'Too many requests from this IP, please try again later.',
+  },
 });
 
 // Security middleware
-app.use(helmet({
-  crossOriginEmbedderPolicy: false,
-}));
+app.use(
+  helmet({
+    crossOriginEmbedderPolicy: false,
+  })
+);
 app.use(compression());
 app.use(limiter);
 
@@ -173,7 +176,7 @@ const corsOptions = {
     }
   },
   credentials: true,
-  optionsSuccessStatus: 200
+  optionsSuccessStatus: 200,
 };
 
 app.use(cors(corsOptions));
@@ -196,21 +199,24 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // Serve static files
-app.use('/uploads', express.static('uploads', {
-  setHeaders: (res, path) => {
-    res.setHeader('X-Content-Type-Options', 'nosniff');
-    res.setHeader('Cache-Control', 'public, max-age=31536000');
-  }
-}));
+app.use(
+  '/uploads',
+  express.static('uploads', {
+    setHeaders: (res, path) => {
+      res.setHeader('X-Content-Type-Options', 'nosniff');
+      res.setHeader('Cache-Control', 'public, max-age=31536000');
+    },
+  })
+);
 
 // Database connection with Persistent In-Memory MongoDB
 const connectDB = async () => {
   try {
     console.log('🚀 영구 저장 In-Memory MongoDB 서버 시작 중...');
-    
+
     // 백업 디렉토리 확인
     await backupSystem.ensureBackupDirectory();
-    
+
     // In-Memory MongoDB 서버 시작
     mongoServer = await MongoMemoryServer.create({
       instance: {
@@ -218,10 +224,10 @@ const connectDB = async () => {
         port: 27017, // 고정 포트 사용
       },
     });
-    
+
     const mongoUri = mongoServer.getUri();
     console.log(`📦 In-Memory MongoDB URI: ${mongoUri}`);
-    
+
     // Mongoose 연결
     const conn = await mongoose.connect(mongoUri, {
       useNewUrlParser: true,
@@ -230,24 +236,24 @@ const connectDB = async () => {
 
     console.log(`🎯 MongoDB 연결 성공: ${conn.connection.host}`);
     console.log(`💾 데이터베이스명: ${conn.connection.name}`);
-    
+
     // 이전 데이터 복원
     await backupSystem.restoreData();
-    
+
     // 자동 백업 시작
     backupSystem.startAutoBackup();
-    
+
     // 연결 이벤트 리스너
-    mongoose.connection.on('error', (err) => {
+    mongoose.connection.on('error', err => {
       console.error('MongoDB 연결 오류:', err);
     });
-    
+
     mongoose.connection.on('disconnected', () => {
       console.log('MongoDB 연결이 끊어졌습니다');
     });
-    
+
     console.log('✨ 영구 저장 시스템 활성화됨!');
-    
+
     return conn;
   } catch (error) {
     console.error('❌ 데이터베이스 연결 실패:', error);
@@ -279,16 +285,16 @@ app.use('/api/privacy', privacyRoutes);
 app.post('/api/backup', async (req, res) => {
   try {
     await backupSystem.backupData();
-    res.json({ 
-      success: true, 
+    res.json({
+      success: true,
       message: '데이터 백업이 완료되었습니다.',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    res.status(500).json({ 
-      success: false, 
+    res.status(500).json({
+      success: false,
       error: '백업 중 오류가 발생했습니다.',
-      details: error.message
+      details: error.message,
     });
   }
 });
@@ -303,7 +309,10 @@ app.get('/api/backup/status', async (req, res) => {
       backupInfo = {
         timestamp: backupData.timestamp,
         collections: Object.keys(backupData.collections).length,
-        totalDocuments: Object.values(backupData.collections).reduce((sum, docs) => sum + docs.length, 0)
+        totalDocuments: Object.values(backupData.collections).reduce(
+          (sum, docs) => sum + docs.length,
+          0
+        ),
       };
     } catch (error) {
       // 백업 파일이 없는 경우
@@ -313,12 +322,12 @@ app.get('/api/backup/status', async (req, res) => {
       success: true,
       backupEnabled: backupSystem.isBackupEnabled,
       lastBackup: backupInfo,
-      backupDirectory: BACKUP_DIR
+      backupDirectory: BACKUP_DIR,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -355,10 +364,14 @@ const options = {
 };
 
 const specs = swaggerJsdoc(options);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, {
-  customCss: '.swagger-ui .topbar { display: none }',
-  customSiteTitle: 'CHARM_INYEON API 문서 (영구 저장 DB)'
-}));
+app.use(
+  '/api-docs',
+  swaggerUi.serve,
+  swaggerUi.setup(specs, {
+    customCss: '.swagger-ui .topbar { display: none }',
+    customSiteTitle: 'CHARM_INYEON API 문서 (영구 저장 DB)',
+  })
+);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -373,8 +386,8 @@ app.get('/health', (req, res) => {
       host: mongoose.connection.host,
       name: mongoose.connection.name,
       persistent: true,
-      backupEnabled: backupSystem.isBackupEnabled
-    }
+      backupEnabled: backupSystem.isBackupEnabled,
+    },
   });
 });
 
@@ -392,12 +405,12 @@ app.get('/', (req, res) => {
       '✅ 설치 불필요',
       '✅ 자동 백업 (5분 간격)',
       '✅ 서버 재시작 시 자동 복원',
-      '✅ 수동 백업 API'
+      '✅ 수동 백업 API',
     ],
     endpoints: {
       backup: 'POST /api/backup',
-      backupStatus: 'GET /api/backup/status'
-    }
+      backupStatus: 'GET /api/backup/status',
+    },
   });
 });
 
@@ -405,7 +418,7 @@ app.get('/', (req, res) => {
 app.use('*', (req, res) => {
   res.status(404).json({
     error: 'Route not found',
-    message: `Cannot ${req.method} ${req.originalUrl}`
+    message: `Cannot ${req.method} ${req.originalUrl}`,
   });
 });
 
@@ -417,19 +430,19 @@ app.use((err, req, res, next) => {
     const errors = Object.values(err.errors).map(e => e.message);
     return res.status(400).json({
       error: 'Validation Error',
-      details: errors
+      details: errors,
     });
   }
 
   if (err.name === 'JsonWebTokenError') {
     return res.status(401).json({
-      error: 'Invalid token'
+      error: 'Invalid token',
     });
   }
 
   if (err.name === 'TokenExpiredError') {
     return res.status(401).json({
-      error: 'Token expired'
+      error: 'Token expired',
     });
   }
 
@@ -437,13 +450,13 @@ app.use((err, req, res, next) => {
     const field = Object.keys(err.keyValue)[0];
     return res.status(400).json({
       error: 'Duplicate value',
-      message: `${field} already exists`
+      message: `${field} already exists`,
     });
   }
 
   res.status(err.status || 500).json({
     error: err.message || 'Internal Server Error',
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
   });
 });
 
@@ -456,10 +469,10 @@ app.set('chatService', chatService);
 const startServer = async () => {
   try {
     console.log('🚀 CHARM_INYEON 서버 시작 중...');
-    
+
     // 데이터베이스 연결
     await connectDB();
-    
+
     // 서버 시작
     server.listen(PORT, () => {
       console.log(`🎉 서버가 포트 ${PORT}에서 실행 중입니다!`);
@@ -479,28 +492,28 @@ const startServer = async () => {
 // Graceful shutdown
 const gracefulShutdown = async () => {
   console.log('🛑 서버 종료 중...');
-  
+
   // 종료 전 최종 백업
   await backupSystem.backupData();
   backupSystem.stopAutoBackup();
-  
+
   server.close(async () => {
     console.log('🔌 HTTP 서버 종료됨');
-    
+
     try {
       await mongoose.connection.close();
       console.log('📦 MongoDB 연결 종료됨');
-      
+
       if (mongoServer) {
         await mongoServer.stop();
         console.log('🗄️ In-Memory MongoDB 서버 종료됨');
       }
-      
+
       console.log('💾 데이터는 백업 파일에 안전하게 저장되었습니다!');
     } catch (error) {
       console.error('종료 중 오류:', error);
     }
-    
+
     process.exit(0);
   });
 };
@@ -513,7 +526,7 @@ process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
-process.on('uncaughtException', (error) => {
+process.on('uncaughtException', error => {
   console.error('Uncaught Exception:', error);
   gracefulShutdown();
 });

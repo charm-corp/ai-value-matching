@@ -16,5 +16,6 @@
       "Write"
     ],
     "deny": []
-  }
+  },
+  "includeCoAuthoredBy": false
 }

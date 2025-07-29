@@ -41,10 +41,14 @@ const swaggerOptions = {
 };
 
 const specs = swaggerJsdoc(swaggerOptions);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, {
-  customCss: '.swagger-ui .topbar { display: none }',
-  customSiteTitle: 'CHARM_INYEON API 문서 (테스트 모드)'
-}));
+app.use(
+  '/api-docs',
+  swaggerUi.serve,
+  swaggerUi.setup(specs, {
+    customCss: '.swagger-ui .topbar { display: none }',
+    customSiteTitle: 'CHARM_INYEON API 문서 (테스트 모드)',
+  })
+);
 
 /**
  * @swagger
@@ -83,7 +87,7 @@ app.get('/health', (req, res) => {
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
     environment: process.env.NODE_ENV || 'development',
-    message: '백엔드 서버가 정상 작동 중입니다 (DB 연결 없음)'
+    message: '백엔드 서버가 정상 작동 중입니다 (DB 연결 없음)',
   });
 });
 
@@ -94,7 +98,7 @@ app.get('/', (req, res) => {
     version: '1.0.0',
     documentation: '/api-docs',
     health: '/health',
-    testMode: true
+    testMode: true,
   });
 });
 
@@ -172,16 +176,16 @@ app.get('/', (req, res) => {
 // 테스트용 인증 API
 app.post('/api/auth/register', (req, res) => {
   console.log('회원가입 요청:', req.body);
-  
+
   // 간단한 검증
   const { email, password, name } = req.body;
   if (!email || !password || !name) {
     return res.status(400).json({
       error: 'Missing required fields',
-      details: ['이메일, 비밀번호, 이름은 필수입니다']
+      details: ['이메일, 비밀번호, 이름은 필수입니다'],
     });
   }
-  
+
   // 가짜 응답
   res.status(201).json({
     success: true,
@@ -190,22 +194,22 @@ app.post('/api/auth/register', (req, res) => {
       id: `test_${Date.now()}`,
       email: email,
       name: name,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     },
-    token: `test_token_${Date.now()}`
+    token: `test_token_${Date.now()}`,
   });
 });
 
 app.post('/api/auth/login', (req, res) => {
   console.log('로그인 요청:', req.body);
-  
+
   const { email, password } = req.body;
   if (!email || !password) {
     return res.status(400).json({
-      error: 'Missing credentials'
+      error: 'Missing credentials',
     });
   }
-  
+
   // 가짜 로그인 성공
   res.json({
     success: true,
@@ -213,16 +217,16 @@ app.post('/api/auth/login', (req, res) => {
     user: {
       id: 'test_user_123',
       email: email,
-      name: '테스트 사용자'
+      name: '테스트 사용자',
     },
-    token: `login_token_${Date.now()}`
+    token: `login_token_${Date.now()}`,
   });
 });
 
 // 테스트용 가치관 설문 API
 app.get('/api/values/questions', (req, res) => {
   console.log('가치관 설문 질문 요청');
-  
+
   res.json({
     success: true,
     questions: [
@@ -234,8 +238,8 @@ app.get('/api/values/questions', (req, res) => {
           { value: 'family', text: '가족과의 시간' },
           { value: 'growth', text: '성장과 도전' },
           { value: 'stability', text: '안정과 평화' },
-          { value: 'freedom', text: '자유와 독립' }
-        ]
+          { value: 'freedom', text: '자유와 독립' },
+        ],
       },
       {
         id: 2,
@@ -245,23 +249,23 @@ app.get('/api/values/questions', (req, res) => {
           { value: 'quiet', text: '조용한 곳에서 독서나 명상' },
           { value: 'social', text: '친구들과 함께 활동' },
           { value: 'active', text: '운동이나 야외활동' },
-          { value: 'creative', text: '예술이나 창작활동' }
-        ]
-      }
-    ]
+          { value: 'creative', text: '예술이나 창작활동' },
+        ],
+      },
+    ],
   });
 });
 
 app.post('/api/values/submit', (req, res) => {
   console.log('가치관 설문 제출:', req.body);
-  
+
   const { answers } = req.body;
   if (!answers || !Array.isArray(answers)) {
     return res.status(400).json({
-      error: 'Invalid answers format'
+      error: 'Invalid answers format',
     });
   }
-  
+
   // 가짜 분석 결과
   res.json({
     success: true,
@@ -273,10 +277,10 @@ app.post('/api/values/submit', (req, res) => {
         family: 85,
         stability: 78,
         growth: 72,
-        social: 65
+        social: 65,
       },
-      personality: '가족 중심적이며 안정을 추구하는 성향'
-    }
+      personality: '가족 중심적이며 안정을 추구하는 성향',
+    },
   });
 });
 
@@ -343,7 +347,7 @@ app.post('/api/values/submit', (req, res) => {
 // 테스트용 매칭 API
 app.post('/api/matching/find', (req, res) => {
   console.log('매칭 요청:', req.body);
-  
+
   // 가짜 매칭 결과
   res.json({
     success: true,
@@ -357,17 +361,17 @@ app.post('/api/matching/find', (req, res) => {
         age: '54세',
         location: '서울 강남구',
         compatibility: 92,
-        commonInterests: ['독서', '영화감상', '산책']
+        commonInterests: ['독서', '영화감상', '산책'],
       },
       {
-        id: 'match_002', 
+        id: 'match_002',
         name: '이영희',
         age: '48세',
         location: '서울 서초구',
         compatibility: 88,
-        commonInterests: ['요리', '여행', '음악감상']
-      }
-    ]
+        commonInterests: ['요리', '여행', '음악감상'],
+      },
+    ],
   });
 });
 
@@ -386,15 +390,15 @@ app.post('/api/matching/find', (req, res) => {
  */
 app.post('/api/matching/generate', (req, res) => {
   console.log('매칭 생성 요청');
-  
+
   res.json({
     success: true,
     message: '새로운 매칭이 생성되었습니다 (테스트 모드)',
     data: {
       matchesGenerated: 5,
       processingTime: 234,
-      nextUpdate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
-    }
+      nextUpdate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+    },
   });
 });
 
@@ -429,7 +433,7 @@ app.post('/api/matching/generate', (req, res) => {
  */
 app.get('/api/matching/my-matches', (req, res) => {
   console.log('내 매칭 조회:', req.query);
-  
+
   res.json({
     success: true,
     data: {
@@ -442,7 +446,7 @@ app.get('/api/matching/my-matches', (req, res) => {
           location: '서울 강남구',
           compatibility: 92,
           status: 'pending',
-          createdAt: new Date().toISOString()
+          createdAt: new Date().toISOString(),
         },
         {
           id: 'match_002',
@@ -452,16 +456,16 @@ app.get('/api/matching/my-matches', (req, res) => {
           location: '서울 서초구',
           compatibility: 88,
           status: 'liked',
-          createdAt: new Date().toISOString()
-        }
+          createdAt: new Date().toISOString(),
+        },
       ],
       pagination: {
         page: parseInt(req.query.page) || 1,
         limit: parseInt(req.query.limit) || 20,
         total: 15,
-        totalPages: 1
-      }
-    }
+        totalPages: 1,
+      },
+    },
   });
 });
 
@@ -480,7 +484,7 @@ app.get('/api/matching/my-matches', (req, res) => {
  */
 app.get('/api/matching/stats', (req, res) => {
   console.log('매칭 통계 요청');
-  
+
   res.json({
     success: true,
     data: {
@@ -490,8 +494,8 @@ app.get('/api/matching/stats', (req, res) => {
       mutualMatches: 2,
       averageCompatibility: 85.3,
       lastMatchedAt: new Date().toISOString(),
-      matchingEnabled: true
-    }
+      matchingEnabled: true,
+    },
   });
 });
 
@@ -499,7 +503,7 @@ app.get('/api/matching/stats', (req, res) => {
 app.use('*', (req, res) => {
   res.status(404).json({
     error: 'Route not found',
-    message: `Cannot ${req.method} ${req.originalUrl}`
+    message: `Cannot ${req.method} ${req.originalUrl}`,
   });
 });
 
@@ -508,7 +512,7 @@ app.use((err, req, res, next) => {
   console.error('Error:', err);
   res.status(500).json({
     error: 'Internal Server Error',
-    message: err.message
+    message: err.message,
   });
 });
 

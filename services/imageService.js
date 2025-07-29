@@ -12,7 +12,7 @@ class ImageService {
     this.profileSizes = {
       thumbnail: { width: 150, height: 150 },
       medium: { width: 400, height: 400 },
-      large: { width: 800, height: 800 }
+      large: { width: 800, height: 800 },
     };
   }
 
@@ -52,7 +52,7 @@ class ImageService {
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
@@ -81,7 +81,9 @@ class ImageService {
     try {
       // 원본 이미지 정보 가져오기
       const imageInfo = await sharp(inputPath).metadata();
-      console.log(`📷 Processing image: ${imageInfo.width}x${imageInfo.height}, format: ${imageInfo.format}`);
+      console.log(
+        `📷 Processing image: ${imageInfo.width}x${imageInfo.height}, format: ${imageInfo.format}`
+      );
 
       // 각 크기별로 이미지 생성
       for (const [sizeName, dimensions] of Object.entries(this.profileSizes)) {
@@ -91,18 +93,18 @@ class ImageService {
         await sharp(inputPath)
           .resize(dimensions.width, dimensions.height, {
             fit: 'cover',
-            position: 'center'
+            position: 'center',
           })
-          .jpeg({ 
+          .jpeg({
             quality: sizeName === 'thumbnail' ? 85 : 90,
-            progressive: true 
+            progressive: true,
           })
           .toFile(outputPath);
 
         results[sizeName] = {
           path: `/uploads/profiles/${userId}/${sizeFileName}`,
           filename: sizeFileName,
-          size: dimensions
+          size: dimensions,
         };
 
         console.log(`✅ Created ${sizeName} image: ${sizeFileName}`);
@@ -122,10 +124,9 @@ class ImageService {
           originalWidth: imageInfo.width,
           originalHeight: imageInfo.height,
           originalFormat: imageInfo.format,
-          processedAt: new Date().toISOString()
-        }
+          processedAt: new Date().toISOString(),
+        },
       };
-
     } catch (error) {
       // 실패 시 생성된 파일들 정리
       for (const [sizeName] of Object.entries(this.profileSizes)) {
@@ -172,7 +173,6 @@ class ImageService {
       } catch (error) {
         console.log('Directory cleanup warning:', error.message);
       }
-
     } catch (error) {
       console.error('Delete profile images error:', error);
     }
@@ -202,7 +202,7 @@ class ImageService {
         height: imageInfo.height,
         format: imageInfo.format,
         created: stats.birthtime,
-        modified: stats.mtime
+        modified: stats.mtime,
       };
     } catch (error) {
       throw new Error(`이미지 메타데이터 조회 실패: ${error.message}`);
@@ -214,18 +214,18 @@ class ImageService {
     try {
       const userDir = path.join(this.profilesDir, userId.toString());
       const files = await fs.readdir(userDir);
-      
+
       const images = [];
       for (const file of files) {
         const filePath = path.join(userDir, file);
         const stats = await fs.stat(filePath);
-        
+
         images.push({
           filename: file,
           path: `/uploads/profiles/${userId}/${file}`,
           size: stats.size,
           created: stats.birthtime,
-          modified: stats.mtime
+          modified: stats.mtime,
         });
       }
 
@@ -247,11 +247,11 @@ class ImageService {
 
       try {
         const files = await fs.readdir(tempDir);
-        
+
         for (const file of files) {
           const filePath = path.join(tempDir, file);
           const stats = await fs.stat(filePath);
-          
+
           if (now - stats.mtime.getTime() > maxAge) {
             await fs.unlink(filePath);
             console.log(`🧹 Cleaned up old temp file: ${file}`);
@@ -274,35 +274,35 @@ class ImageService {
         totalFiles: 0,
         totalSize: 0,
         userDirectories: 0,
-        breakdown: {}
+        breakdown: {},
       };
 
       const userDirs = await fs.readdir(this.profilesDir);
-      
+
       for (const userDir of userDirs) {
         const userPath = path.join(this.profilesDir, userDir);
         const userStat = await fs.stat(userPath);
-        
+
         if (userStat.isDirectory()) {
           stats.userDirectories++;
-          
+
           const files = await fs.readdir(userPath);
           let userSize = 0;
-          
+
           for (const file of files) {
             const filePath = path.join(userPath, file);
             const fileStat = await fs.stat(filePath);
-            
+
             if (fileStat.isFile()) {
               stats.totalFiles++;
               userSize += fileStat.size;
             }
           }
-          
+
           stats.totalSize += userSize;
           stats.breakdown[userDir] = {
             files: files.length,
-            size: userSize
+            size: userSize,
           };
         }
       }

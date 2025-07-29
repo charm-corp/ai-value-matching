@@ -16,15 +16,17 @@ const limiter = rateLimit({
   windowMs: parseInt(process.env.RATE_LIMIT_WINDOW || '15') * 60 * 1000,
   max: parseInt(process.env.RATE_LIMIT_MAX || '100'),
   message: {
-    error: 'Too many requests from this IP, please try again later.'
-  }
+    error: 'Too many requests from this IP, please try again later.',
+  },
 });
 
 // Security middleware (CSP 완전 비활성화로 디버깅)
-app.use(helmet({
-  crossOriginEmbedderPolicy: false,
-  contentSecurityPolicy: false  // CSP 완전 비활성화
-}));
+app.use(
+  helmet({
+    crossOriginEmbedderPolicy: false,
+    contentSecurityPolicy: false, // CSP 완전 비활성화
+  })
+);
 app.use(compression());
 app.use(limiter);
 
@@ -39,7 +41,7 @@ const corsOptions = {
     }
   },
   credentials: true,
-  optionsSuccessStatus: 200
+  optionsSuccessStatus: 200,
 };
 
 app.use(cors(corsOptions));
@@ -62,28 +64,37 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // Serve static files
-app.use('/uploads', express.static(path.join(__dirname, '../uploads'), {
-  setHeaders: (res, path) => {
-    res.setHeader('X-Content-Type-Options', 'nosniff');
-    res.setHeader('Cache-Control', 'public, max-age=31536000');
-  }
-}));
+app.use(
+  '/uploads',
+  express.static(path.join(__dirname, '../uploads'), {
+    setHeaders: (res, path) => {
+      res.setHeader('X-Content-Type-Options', 'nosniff');
+      res.setHeader('Cache-Control', 'public, max-age=31536000');
+    },
+  })
+);
 
 // Serve CSS files
-app.use('/styles', express.static(path.join(__dirname, '../styles'), {
-  setHeaders: (res, path) => {
-    res.setHeader('Content-Type', 'text/css');
-    res.setHeader('Cache-Control', 'public, max-age=3600');
-  }
-}));
+app.use(
+  '/styles',
+  express.static(path.join(__dirname, '../styles'), {
+    setHeaders: (res, path) => {
+      res.setHeader('Content-Type', 'text/css');
+      res.setHeader('Cache-Control', 'public, max-age=3600');
+    },
+  })
+);
 
 // Serve JavaScript files
-app.use('/js', express.static(path.join(__dirname, '../js'), {
-  setHeaders: (res, path) => {
-    res.setHeader('Content-Type', 'application/javascript');
-    res.setHeader('Cache-Control', 'public, max-age=3600');
-  }
-}));
+app.use(
+  '/js',
+  express.static(path.join(__dirname, '../js'), {
+    setHeaders: (res, path) => {
+      res.setHeader('Content-Type', 'application/javascript');
+      res.setHeader('Cache-Control', 'public, max-age=3600');
+    },
+  })
+);
 
 // Serve root-level JS files (script.js, api-client.js, signup.js)
 app.get('/script.js', (req, res) => {
@@ -127,7 +138,7 @@ const connectDB = async () => {
 
   try {
     let mongoUri;
-    
+
     if (process.env.MONGODB_ATLAS_URI) {
       console.log('🌍 MongoDB Atlas 연결 시도...');
       mongoUri = process.env.MONGODB_ATLAS_URI;
@@ -148,12 +159,11 @@ const connectDB = async () => {
 
     isConnected = true;
     console.log(`✅ MongoDB 연결 성공: ${conn.connection.host}`);
-    
+
     // 초기 데이터 생성 (개발/테스트 환경에서만)
     if (process.env.NODE_ENV !== 'production') {
       await initializeTestData();
     }
-    
   } catch (error) {
     console.error('❌ 데이터베이스 연결 실패:', error.message);
     // 데이터베이스 연결 실패해도 서버는 시작되도록 함
@@ -175,10 +185,10 @@ const bcrypt = require('bcryptjs');
 const initializeTestData = async () => {
   try {
     const userCount = await User.countDocuments();
-    
+
     if (userCount === 0) {
       console.log('👥 테스트 데이터 생성 중...');
-      
+
       // 김세렌 사용자
       const serenUser = new User({
         name: '김세렌',
@@ -189,7 +199,7 @@ const initializeTestData = async () => {
         bio: '운명적인 만남을 기다리는 사람입니다. 세렌디피티를 믿으며 진정한 인연을 찾고 있습니다.',
         location: {
           city: '서울',
-          district: '강남구'
+          district: '강남구',
         },
         interests: ['문화생활', '독서', '여행', '음악감상'],
         profileImage: 'male-classic.svg',
@@ -197,9 +207,9 @@ const initializeTestData = async () => {
         hasProfileImage: true,
         profileCompleteness: 85,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
-      
+
       // 이매력 사용자
       const maeryukUser = new User({
         name: '이매력',
@@ -210,7 +220,7 @@ const initializeTestData = async () => {
         bio: '진정한 인연을 찾고 있습니다. 함께 웃고 울 수 있는 따뜻한 사람을 만나고 싶어요.',
         location: {
           city: '서울',
-          district: '서초구'
+          district: '서초구',
         },
         interests: ['요리', '영화감상', '산책', '카페투어'],
         profileImage: 'female-friendly.svg',
@@ -218,62 +228,112 @@ const initializeTestData = async () => {
         hasProfileImage: true,
         profileCompleteness: 92,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
-      
+
       await serenUser.save();
       await maeryukUser.save();
-      
+
       console.log('✅ 테스트 사용자 생성 완료');
-      
+
       // 가치관 평가 데이터
       const serenAssessmentData = new Map();
-      serenAssessmentData.set('q1', { questionId: 1, value: '5', text: '매우 동의', category: 'values' });
-      serenAssessmentData.set('q2', { questionId: 2, value: '4', text: '동의', category: 'values' });
-      serenAssessmentData.set('q3', { questionId: 3, value: '5', text: '매우 동의', category: 'personality' });
-      serenAssessmentData.set('q4', { questionId: 4, value: '3', text: '보통', category: 'personality' });
-      serenAssessmentData.set('q5', { questionId: 5, value: '4', text: '동의', category: 'lifestyle' });
-      
+      serenAssessmentData.set('q1', {
+        questionId: 1,
+        value: '5',
+        text: '매우 동의',
+        category: 'values',
+      });
+      serenAssessmentData.set('q2', {
+        questionId: 2,
+        value: '4',
+        text: '동의',
+        category: 'values',
+      });
+      serenAssessmentData.set('q3', {
+        questionId: 3,
+        value: '5',
+        text: '매우 동의',
+        category: 'personality',
+      });
+      serenAssessmentData.set('q4', {
+        questionId: 4,
+        value: '3',
+        text: '보통',
+        category: 'personality',
+      });
+      serenAssessmentData.set('q5', {
+        questionId: 5,
+        value: '4',
+        text: '동의',
+        category: 'lifestyle',
+      });
+
       const serenAssessment = new ValuesAssessment({
         userId: serenUser._id,
         answers: serenAssessmentData,
         analysis: {
           personalityType: 'HARMONIOUS_SAGE',
           confidenceLevel: 0.88,
-          summary: '조화로운 지혜로운 성격으로 안정적인 관계를 선호합니다.'
+          summary: '조화로운 지혜로운 성격으로 안정적인 관계를 선호합니다.',
         },
         isCompleted: true,
         completedAt: new Date(),
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
-      
+
       const maeryukAssessmentData = new Map();
-      maeryukAssessmentData.set('q1', { questionId: 1, value: '4', text: '동의', category: 'values' });
-      maeryukAssessmentData.set('q2', { questionId: 2, value: '5', text: '매우 동의', category: 'values' });
-      maeryukAssessmentData.set('q3', { questionId: 3, value: '4', text: '동의', category: 'personality' });
-      maeryukAssessmentData.set('q4', { questionId: 4, value: '5', text: '매우 동의', category: 'personality' });
-      maeryukAssessmentData.set('q5', { questionId: 5, value: '3', text: '보통', category: 'lifestyle' });
-      
+      maeryukAssessmentData.set('q1', {
+        questionId: 1,
+        value: '4',
+        text: '동의',
+        category: 'values',
+      });
+      maeryukAssessmentData.set('q2', {
+        questionId: 2,
+        value: '5',
+        text: '매우 동의',
+        category: 'values',
+      });
+      maeryukAssessmentData.set('q3', {
+        questionId: 3,
+        value: '4',
+        text: '동의',
+        category: 'personality',
+      });
+      maeryukAssessmentData.set('q4', {
+        questionId: 4,
+        value: '5',
+        text: '매우 동의',
+        category: 'personality',
+      });
+      maeryukAssessmentData.set('q5', {
+        questionId: 5,
+        value: '3',
+        text: '보통',
+        category: 'lifestyle',
+      });
+
       const maeryukAssessment = new ValuesAssessment({
         userId: maeryukUser._id,
         answers: maeryukAssessmentData,
         analysis: {
           personalityType: 'WARM_COMPANION',
           confidenceLevel: 0.92,
-          summary: '따뜻한 동반자형으로 깊은 감정적 유대를 중요시합니다.'
+          summary: '따뜻한 동반자형으로 깊은 감정적 유대를 중요시합니다.',
         },
         isCompleted: true,
         completedAt: new Date(),
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
-      
+
       await serenAssessment.save();
       await maeryukAssessment.save();
-      
+
       console.log('✅ 가치관 평가 데이터 생성 완료');
-      
+
       // 매칭 데이터
       const testMatch = new Match({
         userId: serenUser._id,
@@ -283,21 +343,21 @@ const initializeTestData = async () => {
           values: 82,
           interests: 68,
           lifestyle: 74,
-          personality: 77
+          personality: 77,
         },
         serendipityScore: 64,
         status: 'pending',
         aiAnalysis: {
           strengths: ['가치관 일치도 높음', '감정적 안정성 우수', '생활 패턴 조화'],
           challenges: ['취미 영역 다양화 필요'],
-          recommendation: '편안한 카페에서 2-3시간 대화를 추천합니다.'
+          recommendation: '편안한 카페에서 2-3시간 대화를 추천합니다.',
         },
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
-      
+
       await testMatch.save();
-      
+
       console.log('✅ 매칭 데이터 생성 완료');
       console.log('💝 김세렌 ↔ 이매력 매칭 (75점)');
     }
@@ -325,12 +385,12 @@ app.get('/health', (req, res) => {
       timestamp: new Date().toISOString(),
       database: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected',
       environment: process.env.NODE_ENV || 'development',
-      version: '1.0.0'
+      version: '1.0.0',
     });
   } catch (error) {
     res.status(500).json({
       status: 'ERROR',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -352,13 +412,19 @@ app.use('/api/profile', profileRoutes);
 app.use('/api/privacy', privacyRoutes);
 
 // Serve static files (프론트엔드)
-app.use(express.static(path.join(__dirname, '..'), {
-  index: 'index.html'
-}));
+app.use(
+  express.static(path.join(__dirname, '..'), {
+    index: 'index.html',
+  })
+);
 
 // API 라우트가 아닌 경우 index.html 서빙 (SPA 지원)
 app.get('*', (req, res, next) => {
-  if (req.path.startsWith('/api') || req.path.startsWith('/health') || req.path.startsWith('/uploads')) {
+  if (
+    req.path.startsWith('/api') ||
+    req.path.startsWith('/health') ||
+    req.path.startsWith('/uploads')
+  ) {
     next();
   } else {
     res.sendFile(path.join(__dirname, '..', 'index.html'));
@@ -369,7 +435,7 @@ app.get('*', (req, res, next) => {
 app.use('/api/*', (req, res) => {
   res.status(404).json({
     error: 'API Route not found',
-    message: `Cannot ${req.method} ${req.originalUrl}`
+    message: `Cannot ${req.method} ${req.originalUrl}`,
   });
 });
 
@@ -381,19 +447,19 @@ app.use((err, req, res, next) => {
     const errors = Object.values(err.errors).map(e => e.message);
     return res.status(400).json({
       error: 'Validation Error',
-      details: errors
+      details: errors,
     });
   }
 
   if (err.name === 'JsonWebTokenError') {
     return res.status(401).json({
-      error: 'Invalid token'
+      error: 'Invalid token',
     });
   }
 
   if (err.name === 'TokenExpiredError') {
     return res.status(401).json({
-      error: 'Token expired'
+      error: 'Token expired',
     });
   }
 
@@ -401,13 +467,13 @@ app.use((err, req, res, next) => {
     const field = Object.keys(err.keyValue)[0];
     return res.status(400).json({
       error: 'Duplicate value',
-      message: `${field} already exists`
+      message: `${field} already exists`,
     });
   }
 
   res.status(err.status || 500).json({
     error: err.message || 'Internal Server Error',
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
   });
 });
 
@@ -430,7 +496,7 @@ module.exports = async (req, res) => {
     console.error('Serverless function error:', error);
     return res.status(500).json({
       error: 'Server initialization failed',
-      message: error.message
+      message: error.message,
     });
   }
 };

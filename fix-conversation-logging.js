@@ -8,30 +8,30 @@ class ConversationLoggingFixer {
     this.conversationDir = path.join(this.projectDir, 'dev-history', 'conversations');
     this.currentConversation = [];
   }
-    
+
   log(message, type = 'info') {
     const colors = {
       info: '\x1b[36m🔵',
       success: '\x1b[32m✅',
       warning: '\x1b[33m⚠️',
-      error: '\x1b[31m❌'
+      error: '\x1b[31m❌',
     };
-        
+
     console.log(`${colors[type]} ${message}\x1b[0m`);
   }
-    
+
   // 문제가 있는 파일들 정리
   cleanupBrokenLogs() {
     this.log('문제가 있는 로그 파일들 정리 중...');
-        
+
     const files = fs.readdirSync(this.conversationDir);
     let cleanedCount = 0;
-        
+
     for (const file of files) {
       if (file.includes('Auto_Session') || file.includes('______')) {
         const filePath = path.join(this.conversationDir, file);
         const content = fs.readFileSync(filePath, 'utf8');
-                
+
         // 반복되는 bash 명령어만 있는 파일인지 확인
         if (this.isBrokenLog(content)) {
           this.log(`삭제: ${file}`, 'warning');
@@ -40,35 +40,44 @@ class ConversationLoggingFixer {
         }
       }
     }
-        
+
     this.log(`${cleanedCount}개의 문제 파일 정리 완료`, 'success');
   }
-    
+
   isBrokenLog(content) {
     // bash 명령어 패턴만 반복되는지 확인
     const lines = content.split('\n');
     let bashCommandCount = 0;
     let totalLines = 0;
-        
+
     for (const line of lines) {
       if (line.trim()) {
         totalLines++;
-        if (line.includes('npm fund') || line.includes('claude --version') || line.includes('sudo npm update')) {
+        if (
+          line.includes('npm fund') ||
+          line.includes('claude --version') ||
+          line.includes('sudo npm update')
+        ) {
           bashCommandCount++;
         }
       }
     }
-        
+
     // 90% 이상이 bash 명령어면 문제 있는 로그로 판단
-    return totalLines > 10 && (bashCommandCount / totalLines) > 0.9;
+    return totalLines > 10 && bashCommandCount / totalLines > 0.9;
   }
-    
+
   // 올바른 대화 로깅 시스템 생성
   createProperConversationLogger() {
     this.log('올바른 대화 로깅 시스템 생성 중...');
-        
-    const loggerPath = path.join(this.projectDir, 'dev-history', 'scripts', 'proper-conversation-logger.js');
-        
+
+    const loggerPath = path.join(
+      this.projectDir,
+      'dev-history',
+      'scripts',
+      'proper-conversation-logger.js'
+    );
+
     const loggerContent = `// 개선된 대화 로깅 시스템
 const fs = require('fs');
 const path = require('path');
@@ -185,22 +194,22 @@ switch (command) {
 }
 
 module.exports = ProperConversationLogger;`;
-        
+
     fs.writeFileSync(loggerPath, loggerContent);
     fs.chmodSync(loggerPath, '755');
     this.log(`올바른 로거 생성: ${loggerPath}`, 'success');
-        
+
     return loggerPath;
   }
-    
+
   // 수동 대화 저장 기능
   saveCurrentConversation() {
     this.log('현재 대화 수동 저장 중...');
-        
+
     const timestamp = new Date().toISOString();
     const filename = `${timestamp.replace(/[:.]/g, '-')}_Manual_Conversation.md`;
     const filePath = path.join(this.conversationDir, filename);
-        
+
     const conversationContent = `# Claude Code 대화 - ${timestamp}
 
 **프로젝트**: AI 기반 가치관 매칭 플랫폼 (CHARM_INYEON)
@@ -255,52 +264,53 @@ module.exports = ProperConversationLogger;`;
 ---
 *이 대화는 수동으로 저장되었습니다.*
 `;
-        
+
     fs.writeFileSync(filePath, conversationContent);
     this.log(`대화 저장 완료: ${filePath}`, 'success');
-        
+
     return filePath;
   }
-    
+
   // VS Code 설정 개선
   improveVSCodeSettings() {
     this.log('VS Code 설정 개선 중...');
-        
+
     const packageJsonPath = path.join(this.projectDir, 'package.json');
     if (fs.existsSync(packageJsonPath)) {
       const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
-            
+
       // 개선된 스크립트 추가
       packageJson.scripts = {
         ...packageJson.scripts,
-        'save-conversation': 'node dev-history/scripts/proper-conversation-logger.js user \'Manual conversation save\'',
+        'save-conversation':
+          "node dev-history/scripts/proper-conversation-logger.js user 'Manual conversation save'",
         'start-session': 'node dev-history/scripts/proper-conversation-logger.js start',
         'end-session': 'node dev-history/scripts/proper-conversation-logger.js end',
-        'fix-logs': 'node fix-conversation-logging.js'
+        'fix-logs': 'node fix-conversation-logging.js',
       };
-            
+
       fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
       this.log('package.json 스크립트 개선 완료', 'success');
     }
   }
-    
+
   async fixAll() {
     this.log('=== 대화 로깅 시스템 문제 수정 시작 ===');
-        
+
     // 1. 문제 파일들 정리
     this.cleanupBrokenLogs();
-        
+
     // 2. 올바른 로거 생성
     const loggerPath = this.createProperConversationLogger();
-        
+
     // 3. 현재 대화 수동 저장
     const conversationPath = this.saveCurrentConversation();
-        
+
     // 4. VS Code 설정 개선
     this.improveVSCodeSettings();
-        
+
     this.log('=== 수정 완료 ===', 'success');
-        
+
     console.log(`
 🎉 대화 로깅 문제 수정 완료!
 

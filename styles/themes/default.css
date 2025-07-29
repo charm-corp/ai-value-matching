@@ -5,11 +5,11 @@
   /* 메인 브랜드 색상 */
   --theme-primary: #667eea;
   --theme-secondary: #764ba2;
-  
+
   /* 액센트 색상 */
   --theme-accent-warm: #ffd89b;
   --theme-accent-cool: #19547b;
-  
+
   /* 상태별 색상 */
   --theme-success: #10b981;
   --theme-warning: #f59e0b;
@@ -45,7 +45,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: 
+  background:
     radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
     radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
     linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.05) 50%, transparent 70%);
@@ -53,8 +53,13 @@
 }
 
 @keyframes themeShimmer {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.8; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
 }
 
 /* 섹션별 배경 테마 */
@@ -70,7 +75,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: 
+  background:
     radial-gradient(circle at 25% 25%, rgba(102, 126, 234, 0.05) 0%, transparent 50%),
     radial-gradient(circle at 75% 75%, rgba(118, 75, 162, 0.05) 0%, transparent 50%);
 }
@@ -199,14 +204,25 @@
 }
 
 @keyframes themePulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 /* 아이콘 색상 */
-.location-icon { color: var(--theme-primary); }
-.heart-icon { color: #e91e63; }
-.star-icon { color: #ff9800; }
+.location-icon {
+  color: var(--theme-primary);
+}
+.heart-icon {
+  color: #e91e63;
+}
+.star-icon {
+  color: #ff9800;
+}
 
 /* 특수 효과 */
 .shimmer-effect {
@@ -215,8 +231,12 @@
 }
 
 @keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 /* 호버 효과 */
@@ -297,7 +317,7 @@
   .hero::before {
     animation-duration: 6s;
   }
-  
+
   .brand-glow:hover::after {
     opacity: 0.05;
   }
@@ -309,16 +329,16 @@
     --theme-primary: #8b92ff;
     --theme-secondary: #a78bfa;
   }
-  
+
   .header {
     background: rgba(26, 32, 44, 0.95);
     border-bottom-color: rgba(139, 146, 255, 0.2);
   }
-  
+
   .about {
     background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
   }
-  
+
   .features {
     background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
   }
@@ -330,14 +350,14 @@
     --theme-primary: #0066cc;
     --theme-secondary: #004499;
   }
-  
+
   .brand-highlight,
   .gradient-text {
     background: var(--theme-primary);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
-  
+
   .primary-button,
   .auth-submit-btn {
     background: var(--theme-primary);

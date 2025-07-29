@@ -12,7 +12,7 @@ function showSimpleModal(title, message) {
   if (existingModal) {
     existingModal.remove();
   }
-  
+
   // 새 모달 생성
   const modalOverlay = document.createElement('div');
   modalOverlay.className = 'simple-modal-overlay';
@@ -28,7 +28,7 @@ function showSimpleModal(title, message) {
     align-items: center;
     z-index: 10000;
   `;
-  
+
   const modalContent = document.createElement('div');
   modalContent.style.cssText = `
     background: white;
@@ -39,7 +39,7 @@ function showSimpleModal(title, message) {
     text-align: center;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   `;
-  
+
   modalContent.innerHTML = `
     <h3 style="margin: 0 0 15px 0; color: #2563eb;">${title}</h3>
     <p style="margin: 0 0 20px 0; color: #64748b;">${message}</p>
@@ -52,12 +52,12 @@ function showSimpleModal(title, message) {
       cursor: pointer;
     ">확인</button>
   `;
-  
+
   modalOverlay.appendChild(modalContent);
   document.body.appendChild(modalOverlay);
-  
+
   // 클릭해서 닫기
-  modalOverlay.addEventListener('click', (e) => {
+  modalOverlay.addEventListener('click', e => {
     if (e.target === modalOverlay) {
       modalOverlay.remove();
     }
@@ -90,13 +90,13 @@ function closeHtmlModal(modalId) {
 // ===== 회원가입 모달 생성 함수 =====
 function createSignupModal() {
   console.log('회원가입 모달 생성');
-  
+
   // 기존 모달 제거
   const existingModal = document.querySelector('.signup-modal-overlay');
   if (existingModal) {
     existingModal.remove();
   }
-  
+
   // 새 모달 생성
   const modalOverlay = document.createElement('div');
   modalOverlay.className = 'signup-modal-overlay';
@@ -112,7 +112,7 @@ function createSignupModal() {
     align-items: center;
     z-index: 10000;
   `;
-  
+
   const modalContent = document.createElement('div');
   modalContent.style.cssText = `
     background: white;
@@ -124,7 +124,7 @@ function createSignupModal() {
     overflow-y: auto;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   `;
-  
+
   modalContent.innerHTML = `
     <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px 30px; border-bottom: 1px solid #e5e7eb;">
       <h2 style="margin: 0; color: #333;">회원가입</h2>
@@ -207,20 +207,20 @@ function createSignupModal() {
       ">회원가입</button>
     </form>
   `;
-  
+
   modalOverlay.appendChild(modalContent);
   document.body.appendChild(modalOverlay);
-  
+
   // 폼 제출 처리
   const form = modalContent.querySelector('form');
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', e => {
     e.preventDefault();
     modalOverlay.remove();
     showSimpleModal('가입 완료', '회원가입이 완료되었습니다!');
   });
-  
+
   // 클릭해서 닫기
-  modalOverlay.addEventListener('click', (e) => {
+  modalOverlay.addEventListener('click', e => {
     if (e.target === modalOverlay) {
       modalOverlay.remove();
     }
@@ -228,83 +228,83 @@ function createSignupModal() {
 }
 
 // ===== DOM 로드 후 이벤트 리스너 설정 =====
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   console.log('DOM 로드 완료 - 이벤트 리스너 설정');
-  
+
   // 1. 로그인 버튼
   const loginBtn = document.querySelector('.login-btn');
   if (loginBtn) {
-    loginBtn.addEventListener('click', function() {
+    loginBtn.addEventListener('click', function () {
       console.log('로그인 버튼 클릭됨');
       openHtmlModal('loginModal');
     });
     console.log('✅ 로그인 버튼 이벤트 등록됨');
   }
-  
+
   // 2. 회원가입 버튼
   const signupBtn = document.querySelector('.signup-btn');
   if (signupBtn) {
-    signupBtn.addEventListener('click', function() {
+    signupBtn.addEventListener('click', function () {
       console.log('회원가입 버튼 클릭됨');
       openHtmlModal('signupModal');
     });
     console.log('✅ 회원가입 버튼 이벤트 등록됨');
   }
-  
+
   // 3. 무료로 시작하기 버튼 (onclick 속성 대신 이벤트 리스너로)
   const startBtn = document.getElementById('signup-btn');
   if (startBtn) {
     // onclick 속성 제거
     startBtn.removeAttribute('onclick');
-    startBtn.addEventListener('click', function() {
+    startBtn.addEventListener('click', function () {
       console.log('무료로 시작하기 버튼 클릭됨');
       createSignupModal();
     });
     console.log('✅ 무료로 시작하기 버튼 이벤트 등록됨');
   }
-  
+
   // 4. 무료로 가입하기 버튼
   const signupBtn2 = document.getElementById('signup-btn-2');
   if (signupBtn2) {
     // onclick 속성 제거
     signupBtn2.removeAttribute('onclick');
-    signupBtn2.addEventListener('click', function() {
+    signupBtn2.addEventListener('click', function () {
       console.log('무료로 가입하기 버튼 클릭됨');
       createSignupModal();
     });
     console.log('✅ 무료로 가입하기 버튼 이벤트 등록됨');
   }
-  
+
   // 5. 소개 영상 보기 버튼 (일단 간단한 메시지만)
   const videoBtn = document.querySelector('.secondary-button');
   if (videoBtn) {
-    videoBtn.addEventListener('click', function() {
+    videoBtn.addEventListener('click', function () {
       console.log('소개 영상 보기 버튼 클릭됨');
       showSimpleModal('준비중', '소개 영상 기능은 곧 추가될 예정입니다.');
     });
     console.log('✅ 소개 영상 보기 버튼 이벤트 등록됨');
   }
-  
+
   // 6. 모달 닫기 버튼들
   document.querySelectorAll('.close').forEach(closeBtn => {
-    closeBtn.addEventListener('click', function() {
+    closeBtn.addEventListener('click', function () {
       const modalId = this.getAttribute('data-modal');
       if (modalId) {
         closeHtmlModal(modalId);
       }
     });
   });
-  
+
   // 7. 모달 바깥 클릭해서 닫기
   document.querySelectorAll('.modal').forEach(modal => {
-    modal.addEventListener('click', function(e) {
+    modal.addEventListener('click', function (e) {
       if (e.target === this) {
         this.style.display = 'none';
         document.body.classList.remove('modal-open');
       }
     });
   });
-  
+
   console.log('🎉 모든 이벤트 리스너 등록 완료!');
 });
 
@@ -315,7 +315,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     const target = document.querySelector(this.getAttribute('href'));
     if (target) {
       target.scrollIntoView({
-        behavior: 'smooth'
+        behavior: 'smooth',
       });
     }
   });
@@ -340,18 +340,18 @@ window.addEventListener('scroll', () => {
 // 위젯 클릭 처리 메인 함수
 function handleWidgetClick(widgetType) {
   console.log(`${widgetType} 위젯 클릭됨`);
-  
+
   // 클릭 피드백 애니메이션 적용
   const widget = document.getElementById(getWidgetId(widgetType));
   if (widget) {
     widget.style.transform = 'scale(0.95)';
     widget.style.transition = 'transform 0.1s ease';
-    
+
     setTimeout(() => {
       widget.style.transform = 'scale(1)';
     }, 100);
   }
-  
+
   // 인증 상태 확인 후 처리 (현재는 항상 게스트로 처리)
   showGuestWidgetModal(widgetType);
 }
@@ -367,9 +367,9 @@ function handleWidgetKeydown(event, widgetType) {
 // 위젯 ID 반환 함수
 function getWidgetId(widgetType) {
   const widgetIds = {
-    'values': 'valuesAnalysisWidget',
-    'matching': 'aiMatchingWidget',
-    'connections': 'newConnectionsWidget'
+    values: 'valuesAnalysisWidget',
+    matching: 'aiMatchingWidget',
+    connections: 'newConnectionsWidget',
   };
   return widgetIds[widgetType] || '';
 }
@@ -383,7 +383,7 @@ function showGuestWidgetModal(widgetType) {
 // 게스트용 모달 콘텐츠 생성
 function getGuestModalContent(widgetType) {
   const contents = {
-    'values': {
+    values: {
       title: '🎯 가치관 분석 미리보기',
       content: `
         <div style="text-align: left;">
@@ -420,10 +420,10 @@ function getGuestModalContent(widgetType) {
       `,
       actions: [
         { text: '회원가입하기', action: 'signup', primary: true },
-        { text: '로그인하기', action: 'login', primary: false }
-      ]
+        { text: '로그인하기', action: 'login', primary: false },
+      ],
     },
-    'matching': {
+    matching: {
       title: '💝 AI 매칭 미리보기',
       content: `
         <div style="text-align: left;">
@@ -460,10 +460,10 @@ function getGuestModalContent(widgetType) {
       `,
       actions: [
         { text: '무료 체험하기', action: 'signup', primary: true },
-        { text: '서비스 더 알아보기', action: 'learnMore', primary: false }
-      ]
+        { text: '서비스 더 알아보기', action: 'learnMore', primary: false },
+      ],
     },
-    'connections': {
+    connections: {
       title: '🌟 새로운 연결 미리보기',
       content: `
         <div style="text-align: left;">
@@ -500,11 +500,11 @@ function getGuestModalContent(widgetType) {
       `,
       actions: [
         { text: '지금 시작하기', action: 'signup', primary: true },
-        { text: '성공 사례 보기', action: 'viewSuccess', primary: false }
-      ]
-    }
+        { text: '성공 사례 보기', action: 'viewSuccess', primary: false },
+      ],
+    },
   };
-  
+
   return contents[widgetType] || contents['values'];
 }
 
@@ -515,7 +515,7 @@ function showAdvancedModal(title, content, actions) {
   if (existingModal) {
     existingModal.remove();
   }
-  
+
   // 모달 오버레이 생성
   const modalOverlay = document.createElement('div');
   modalOverlay.className = 'advanced-modal-overlay';
@@ -532,7 +532,7 @@ function showAdvancedModal(title, content, actions) {
     z-index: 10000;
     animation: fadeIn 0.3s ease-out;
   `;
-  
+
   // 모달 콘텐츠 생성
   const modalContent = document.createElement('div');
   modalContent.style.cssText = `
@@ -546,14 +546,17 @@ function showAdvancedModal(title, content, actions) {
     font-size: 16px;
     line-height: 1.6;
   `;
-  
+
   // 액션 버튼 생성
-  const actionButtons = actions.map(action => 
-    `<button onclick="handleModalAction('${action.action}')"
+  const actionButtons = actions
+    .map(
+      action =>
+        `<button onclick="handleModalAction('${action.action}')"
              style="
-               ${action.primary ? 
-                 'background: #667eea; color: white; border: none;' : 
-                 'background: transparent; color: #667eea; border: 2px solid #667eea;'
+               ${
+                 action.primary
+                   ? 'background: #667eea; color: white; border: none;'
+                   : 'background: transparent; color: #667eea; border: 2px solid #667eea;'
                }
                padding: 12px 24px;
                border-radius: 8px;
@@ -566,8 +569,9 @@ function showAdvancedModal(title, content, actions) {
              ">
       ${action.text}
     </button>`
-  ).join('');
-  
+    )
+    .join('');
+
   modalContent.innerHTML = `
     <div style="padding: 24px 24px 16px; border-bottom: 1px solid #e2e8f0;">
       <h3 style="margin: 0; font-size: 1.5em; color: #1e293b; display: flex; align-items: center; justify-content: space-between;">
@@ -595,19 +599,19 @@ function showAdvancedModal(title, content, actions) {
       ${actionButtons}
     </div>
   `;
-  
+
   modalOverlay.appendChild(modalContent);
   document.body.appendChild(modalOverlay);
-  
+
   // 모달 닫기 기능
-  modalOverlay.addEventListener('click', (e) => {
+  modalOverlay.addEventListener('click', e => {
     if (e.target === modalOverlay) {
       modalOverlay.remove();
     }
   });
-  
+
   // 키보드 지원 (ESC 키로 닫기)
-  const handleKeyPress = (e) => {
+  const handleKeyPress = e => {
     if (e.key === 'Escape') {
       modalOverlay.remove();
       document.removeEventListener('keydown', handleKeyPress);
@@ -619,8 +623,8 @@ function showAdvancedModal(title, content, actions) {
 // 모달 액션 처리 함수
 function handleModalAction(action) {
   console.log(`Modal action: ${action}`);
-  
-  switch(action) {
+
+  switch (action) {
     case 'signup':
       // 기존 모달 닫기
       document.querySelector('.advanced-modal-overlay')?.remove();

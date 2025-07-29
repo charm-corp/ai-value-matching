@@ -1,278 +1,323 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>버튼 테스트</title>
     <style>
-        body {
-            font-family: "Noto Sans KR", sans-serif;
-            padding: 20px;
-            background: #f5f5f5;
-        }
-        .test-container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        }
-        .test-section {
-            margin-bottom: 30px;
-            padding: 20px;
-            border: 2px solid #e5e5e5;
-            border-radius: 8px;
-        }
-        .test-section h3 {
-            color: #333;
-            margin-bottom: 15px;
-        }
-        .test-result {
-            margin-top: 10px;
-            padding: 10px;
-            border-radius: 4px;
-            display: none;
-        }
-        .success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        .error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        
-        /* 기본 버튼 스타일 */
-        .primary-button, .secondary-button, .login-btn, .signup-btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s ease;
-            margin: 5px;
-            font-size: 14px;
-        }
-        
-        .primary-button {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-        }
-        
-        .secondary-button {
-            background: transparent;
-            color: #667eea;
-            border: 2px solid #667eea;
-        }
-        
-        .login-btn, .signup-btn {
-            background: #667eea;
-            color: white;
-        }
-        
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
+      body {
+        font-family: 'Noto Sans KR', sans-serif;
+        padding: 20px;
+        background: #f5f5f5;
+      }
+      .test-container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      }
+      .test-section {
+        margin-bottom: 30px;
+        padding: 20px;
+        border: 2px solid #e5e5e5;
+        border-radius: 8px;
+      }
+      .test-section h3 {
+        color: #333;
+        margin-bottom: 15px;
+      }
+      .test-result {
+        margin-top: 10px;
+        padding: 10px;
+        border-radius: 4px;
+        display: none;
+      }
+      .success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+      .error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+
+      /* 기본 버튼 스타일 */
+      .primary-button,
+      .secondary-button,
+      .login-btn,
+      .signup-btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s ease;
+        margin: 5px;
+        font-size: 14px;
+      }
+
+      .primary-button {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+      }
+
+      .secondary-button {
+        background: transparent;
+        color: #667eea;
+        border: 2px solid #667eea;
+      }
+
+      .login-btn,
+      .signup-btn {
+        background: #667eea;
+        color: white;
+      }
+
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="test-container">
-        <h1>🧪 CHARM_INYEON 버튼 기능 테스트</h1>
-        
-        <div class="test-section">
-            <h3>1. 로그인 버튼 테스트</h3>
-            <button class="login-btn" id="test-login">로그인</button>
-            <div class="test-result" id="login-result"></div>
-        </div>
-        
-        <div class="test-section">
-            <h3>2. 회원가입 버튼 테스트</h3>
-            <button class="signup-btn" id="test-signup">회원가입</button>
-            <div class="test-result" id="signup-result"></div>
-        </div>
-        
-        <div class="test-section">
-            <h3>3. 무료로 시작하기 버튼 테스트</h3>
-            <button class="primary-button" id="signup-btn">무료로 시작하기</button>
-            <div class="test-result" id="start-result"></div>
-        </div>
-        
-        <div class="test-section">
-            <h3>4. 소개 영상 보기 버튼 테스트</h3>
-            <button class="secondary-button" id="test-video">
-                <span>▶</span> 소개 영상 보기
-            </button>
-            <div class="test-result" id="video-result"></div>
-        </div>
-        
-        <div class="test-section">
-            <h3>5. 우측 사이드바 위젯 테스트</h3>
-            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                <div class="floating-card card-1" id="test-values-widget" style="position: relative; top: 0; left: 0; min-width: 180px;">
-                    <div class="card-header">가치관 분석</div>
-                    <div class="card-content">
-                        <div class="progress-bar" style="width: 100%; height: 8px; background: #e5e5e5; border-radius: 4px; margin: 8px 0;">
-                            <div class="progress-fill" style="width: 85%; height: 100%; background: #667eea; border-radius: 4px;"></div>
-                        </div>
-                        <span>85% 일치</span>
-                    </div>
-                </div>
-                <div class="floating-card card-2" id="test-matching-widget" style="position: relative; top: 0; left: 0; min-width: 180px;">
-                    <div class="card-header">AI 매칭</div>
-                    <div class="card-content">
-                        <div class="matching-dots" style="display: flex; gap: 5px; margin: 8px 0;">
-                            <div class="dot active" style="width: 8px; height: 8px; border-radius: 50%; background: #667eea;"></div>
-                            <div class="dot active" style="width: 8px; height: 8px; border-radius: 50%; background: #667eea;"></div>
-                            <div class="dot" style="width: 8px; height: 8px; border-radius: 50%; background: #e5e5e5;"></div>
-                        </div>
-                        <span>매칭 중...</span>
-                    </div>
-                </div>
-                <div class="floating-card card-3" id="test-connections-widget" style="position: relative; top: 0; left: 0; min-width: 180px;">
-                    <div class="card-header">새로운 연결</div>
-                    <div class="card-content">
-                        <div class="profile-pics" style="display: flex; gap: 5px; margin: 8px 0;">
-                            <div class="profile-pic pic-1" style="width: 20px; height: 20px; border-radius: 50%; background: #f0f0f0;"></div>
-                            <div class="profile-pic pic-2" style="width: 20px; height: 20px; border-radius: 50%; background: #f0f0f0;"></div>
-                        </div>
-                        <span>3명의 새로운 매치</span>
-                    </div>
-                </div>
+      <h1>🧪 CHARM_INYEON 버튼 기능 테스트</h1>
+
+      <div class="test-section">
+        <h3>1. 로그인 버튼 테스트</h3>
+        <button class="login-btn" id="test-login">로그인</button>
+        <div class="test-result" id="login-result"></div>
+      </div>
+
+      <div class="test-section">
+        <h3>2. 회원가입 버튼 테스트</h3>
+        <button class="signup-btn" id="test-signup">회원가입</button>
+        <div class="test-result" id="signup-result"></div>
+      </div>
+
+      <div class="test-section">
+        <h3>3. 무료로 시작하기 버튼 테스트</h3>
+        <button class="primary-button" id="signup-btn">무료로 시작하기</button>
+        <div class="test-result" id="start-result"></div>
+      </div>
+
+      <div class="test-section">
+        <h3>4. 소개 영상 보기 버튼 테스트</h3>
+        <button class="secondary-button" id="test-video"><span>▶</span> 소개 영상 보기</button>
+        <div class="test-result" id="video-result"></div>
+      </div>
+
+      <div class="test-section">
+        <h3>5. 우측 사이드바 위젯 테스트</h3>
+        <div style="display: flex; gap: 15px; flex-wrap: wrap">
+          <div
+            class="floating-card card-1"
+            id="test-values-widget"
+            style="position: relative; top: 0; left: 0; min-width: 180px"
+          >
+            <div class="card-header">가치관 분석</div>
+            <div class="card-content">
+              <div
+                class="progress-bar"
+                style="
+                  width: 100%;
+                  height: 8px;
+                  background: #e5e5e5;
+                  border-radius: 4px;
+                  margin: 8px 0;
+                "
+              >
+                <div
+                  class="progress-fill"
+                  style="width: 85%; height: 100%; background: #667eea; border-radius: 4px"
+                ></div>
+              </div>
+              <span>85% 일치</span>
             </div>
-            <div class="test-result" id="widgets-result"></div>
+          </div>
+          <div
+            class="floating-card card-2"
+            id="test-matching-widget"
+            style="position: relative; top: 0; left: 0; min-width: 180px"
+          >
+            <div class="card-header">AI 매칭</div>
+            <div class="card-content">
+              <div class="matching-dots" style="display: flex; gap: 5px; margin: 8px 0">
+                <div
+                  class="dot active"
+                  style="width: 8px; height: 8px; border-radius: 50%; background: #667eea"
+                ></div>
+                <div
+                  class="dot active"
+                  style="width: 8px; height: 8px; border-radius: 50%; background: #667eea"
+                ></div>
+                <div
+                  class="dot"
+                  style="width: 8px; height: 8px; border-radius: 50%; background: #e5e5e5"
+                ></div>
+              </div>
+              <span>매칭 중...</span>
+            </div>
+          </div>
+          <div
+            class="floating-card card-3"
+            id="test-connections-widget"
+            style="position: relative; top: 0; left: 0; min-width: 180px"
+          >
+            <div class="card-header">새로운 연결</div>
+            <div class="card-content">
+              <div class="profile-pics" style="display: flex; gap: 5px; margin: 8px 0">
+                <div
+                  class="profile-pic pic-1"
+                  style="width: 20px; height: 20px; border-radius: 50%; background: #f0f0f0"
+                ></div>
+                <div
+                  class="profile-pic pic-2"
+                  style="width: 20px; height: 20px; border-radius: 50%; background: #f0f0f0"
+                ></div>
+              </div>
+              <span>3명의 새로운 매치</span>
+            </div>
+          </div>
         </div>
-        
-        <div class="test-section">
-            <h3>📋 테스트 결과 요약</h3>
-            <div id="summary"></div>
-        </div>
+        <div class="test-result" id="widgets-result"></div>
+      </div>
+
+      <div class="test-section">
+        <h3>📋 테스트 결과 요약</h3>
+        <div id="summary"></div>
+      </div>
     </div>
 
     <script>
-        // 테스트용 간단한 함수들
-        let testResults = {};
-        
-        function showTestResult(buttonId, success, message) {
-            const resultDiv = document.getElementById(buttonId + '-result');
-            resultDiv.className = 'test-result ' + (success ? 'success' : 'error');
-            resultDiv.textContent = (success ? '✅ ' : '❌ ') + message;
-            resultDiv.style.display = 'block';
-            
-            testResults[buttonId] = success;
-            updateSummary();
-        }
-        
-        function updateSummary() {
-            const total = Object.keys(testResults).length;
-            const passed = Object.values(testResults).filter(r => r).length;
-            const summary = document.getElementById('summary');
-            
-            summary.innerHTML = `
+      // 테스트용 간단한 함수들
+      let testResults = {};
+
+      function showTestResult(buttonId, success, message) {
+        const resultDiv = document.getElementById(buttonId + '-result');
+        resultDiv.className = 'test-result ' + (success ? 'success' : 'error');
+        resultDiv.textContent = (success ? '✅ ' : '❌ ') + message;
+        resultDiv.style.display = 'block';
+
+        testResults[buttonId] = success;
+        updateSummary();
+      }
+
+      function updateSummary() {
+        const total = Object.keys(testResults).length;
+        const passed = Object.values(testResults).filter(r => r).length;
+        const summary = document.getElementById('summary');
+
+        summary.innerHTML = `
                 <strong>총 ${total}개 버튼 중 ${passed}개 통과</strong><br>
-                성공률: ${total > 0 ? Math.round((passed/total) * 100) : 0}%
+                성공률: ${total > 0 ? Math.round((passed / total) * 100) : 0}%
             `;
-            
-            if (passed === total && total > 0) {
-                summary.style.color = '#155724';
-                summary.style.background = '#d4edda';
-                summary.style.padding = '10px';
-                summary.style.borderRadius = '4px';
-            }
+
+        if (passed === total && total > 0) {
+          summary.style.color = '#155724';
+          summary.style.background = '#d4edda';
+          summary.style.padding = '10px';
+          summary.style.borderRadius = '4px';
+        }
+      }
+
+      // 테스트 이벤트 리스너
+      document.addEventListener('DOMContentLoaded', function () {
+        // 로그인 버튼 테스트
+        document.getElementById('test-login').addEventListener('click', function () {
+          try {
+            console.log('로그인 버튼 클릭됨');
+            showTestResult('login', true, '로그인 버튼이 정상적으로 클릭되었습니다');
+          } catch (e) {
+            showTestResult('login', false, '로그인 버튼 오류: ' + e.message);
+          }
+        });
+
+        // 회원가입 버튼 테스트
+        document.getElementById('test-signup').addEventListener('click', function () {
+          try {
+            console.log('회원가입 버튼 클릭됨');
+            showTestResult('signup', true, '회원가입 버튼이 정상적으로 클릭되었습니다');
+          } catch (e) {
+            showTestResult('signup', false, '회원가입 버튼 오류: ' + e.message);
+          }
+        });
+
+        // 무료로 시작하기 버튼 테스트
+        document.getElementById('signup-btn').addEventListener('click', function () {
+          try {
+            console.log('무료로 시작하기 버튼 클릭됨');
+            showTestResult('start', true, '무료로 시작하기 버튼이 정상적으로 클릭되었습니다');
+          } catch (e) {
+            showTestResult('start', false, '무료로 시작하기 버튼 오류: ' + e.message);
+          }
+        });
+
+        // 소개 영상 보기 버튼 테스트
+        document.getElementById('test-video').addEventListener('click', function () {
+          try {
+            console.log('소개 영상 보기 버튼 클릭됨');
+            showTestResult('video', true, '소개 영상 보기 버튼이 정상적으로 클릭되었습니다');
+          } catch (e) {
+            showTestResult('video', false, '소개 영상 보기 버튼 오류: ' + e.message);
+          }
+        });
+
+        // 위젯 테스트
+        let widgetTestCount = 0;
+        const totalWidgets = 3;
+
+        document.getElementById('test-values-widget').addEventListener('click', function () {
+          try {
+            console.log('가치관 분석 위젯 클릭됨');
+            widgetTestCount++;
+            updateWidgetTestResult();
+          } catch (e) {
+            showTestResult('widgets', false, '가치관 분석 위젯 오류: ' + e.message);
+          }
+        });
+
+        document.getElementById('test-matching-widget').addEventListener('click', function () {
+          try {
+            console.log('AI 매칭 위젯 클릭됨');
+            widgetTestCount++;
+            updateWidgetTestResult();
+          } catch (e) {
+            showTestResult('widgets', false, 'AI 매칭 위젯 오류: ' + e.message);
+          }
+        });
+
+        document.getElementById('test-connections-widget').addEventListener('click', function () {
+          try {
+            console.log('새로운 연결 위젯 클릭됨');
+            widgetTestCount++;
+            updateWidgetTestResult();
+          } catch (e) {
+            showTestResult('widgets', false, '새로운 연결 위젯 오류: ' + e.message);
+          }
+        });
+
+        function updateWidgetTestResult() {
+          if (widgetTestCount >= totalWidgets) {
+            showTestResult(
+              'widgets',
+              true,
+              `모든 위젯(${totalWidgets}개)이 정상적으로 클릭되었습니다`
+            );
+          } else {
+            const resultDiv = document.getElementById('widgets-result');
+            resultDiv.className = 'test-result success';
+            resultDiv.textContent = `✅ ${widgetTestCount}/${totalWidgets} 위젯 테스트 완료`;
+            resultDiv.style.display = 'block';
+          }
         }
 
-        // 테스트 이벤트 리스너
-        document.addEventListener('DOMContentLoaded', function() {
-            // 로그인 버튼 테스트
-            document.getElementById('test-login').addEventListener('click', function() {
-                try {
-                    console.log('로그인 버튼 클릭됨');
-                    showTestResult('login', true, '로그인 버튼이 정상적으로 클릭되었습니다');
-                } catch(e) {
-                    showTestResult('login', false, '로그인 버튼 오류: ' + e.message);
-                }
-            });
-            
-            // 회원가입 버튼 테스트
-            document.getElementById('test-signup').addEventListener('click', function() {
-                try {
-                    console.log('회원가입 버튼 클릭됨');
-                    showTestResult('signup', true, '회원가입 버튼이 정상적으로 클릭되었습니다');
-                } catch(e) {
-                    showTestResult('signup', false, '회원가입 버튼 오류: ' + e.message);
-                }
-            });
-            
-            // 무료로 시작하기 버튼 테스트
-            document.getElementById('signup-btn').addEventListener('click', function() {
-                try {
-                    console.log('무료로 시작하기 버튼 클릭됨');
-                    showTestResult('start', true, '무료로 시작하기 버튼이 정상적으로 클릭되었습니다');
-                } catch(e) {
-                    showTestResult('start', false, '무료로 시작하기 버튼 오류: ' + e.message);
-                }
-            });
-            
-            // 소개 영상 보기 버튼 테스트
-            document.getElementById('test-video').addEventListener('click', function() {
-                try {
-                    console.log('소개 영상 보기 버튼 클릭됨');
-                    showTestResult('video', true, '소개 영상 보기 버튼이 정상적으로 클릭되었습니다');
-                } catch(e) {
-                    showTestResult('video', false, '소개 영상 보기 버튼 오류: ' + e.message);
-                }
-            });
-            
-            // 위젯 테스트
-            let widgetTestCount = 0;
-            const totalWidgets = 3;
-            
-            document.getElementById('test-values-widget').addEventListener('click', function() {
-                try {
-                    console.log('가치관 분석 위젯 클릭됨');
-                    widgetTestCount++;
-                    updateWidgetTestResult();
-                } catch(e) {
-                    showTestResult('widgets', false, '가치관 분석 위젯 오류: ' + e.message);
-                }
-            });
-            
-            document.getElementById('test-matching-widget').addEventListener('click', function() {
-                try {
-                    console.log('AI 매칭 위젯 클릭됨');
-                    widgetTestCount++;
-                    updateWidgetTestResult();
-                } catch(e) {
-                    showTestResult('widgets', false, 'AI 매칭 위젯 오류: ' + e.message);
-                }
-            });
-            
-            document.getElementById('test-connections-widget').addEventListener('click', function() {
-                try {
-                    console.log('새로운 연결 위젯 클릭됨');
-                    widgetTestCount++;
-                    updateWidgetTestResult();
-                } catch(e) {
-                    showTestResult('widgets', false, '새로운 연결 위젯 오류: ' + e.message);
-                }
-            });
-            
-            function updateWidgetTestResult() {
-                if (widgetTestCount >= totalWidgets) {
-                    showTestResult('widgets', true, `모든 위젯(${totalWidgets}개)이 정상적으로 클릭되었습니다`);
-                } else {
-                    const resultDiv = document.getElementById('widgets-result');
-                    resultDiv.className = 'test-result success';
-                    resultDiv.textContent = `✅ ${widgetTestCount}/${totalWidgets} 위젯 테스트 완료`;
-                    resultDiv.style.display = 'block';
-                }
-            }
-            
-            console.log('테스트 페이지가 로드되었습니다');
-        });
+        console.log('테스트 페이지가 로드되었습니다');
+      });
     </script>
-</body>
+  </body>
 </html>

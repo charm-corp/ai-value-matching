@@ -3,14 +3,14 @@ const { body, param, validationResult } = require('express-validator');
 const User = require('../models/User');
 const ValuesAssessment = require('../models/ValuesAssessment');
 const { authenticate } = require('../middleware/auth');
-const { 
+const {
   checkPrivacyConsent,
   logSensitiveDataAccess,
   maskPersonalData,
   sanitizeInput,
   checkDataAccess,
   specifyDataPurpose,
-  anonymizeData
+  anonymizeData,
 } = require('../middleware/privacy');
 const { encryptionService } = require('../utils/encryption');
 
@@ -52,7 +52,8 @@ const router = express.Router();
  *       401:
  *         description: 인증 필요
  */
-router.post('/consent',
+router.post(
+  '/consent',
   authenticate,
   sanitizeInput,
   logSensitiveDataAccess('privacy_consent'),
@@ -66,7 +67,7 @@ router.post('/consent',
         return res.status(400).json({
           success: false,
           message: '유효성 검사 실패',
-          errors: errors.array()
+          errors: errors.array(),
         });
       }
 
@@ -74,20 +75,25 @@ router.post('/consent',
       const userId = req.user.id;
 
       const updateData = {};
-      if (agreePrivacy !== undefined) {updateData.agreePrivacy = agreePrivacy;}
-      if (agreeMarketing !== undefined) {updateData.agreeMarketing = agreeMarketing;}
-      if (agreeTerms !== undefined) {updateData.agreeTerms = agreeTerms;}
+      if (agreePrivacy !== undefined) {
+        updateData.agreePrivacy = agreePrivacy;
+      }
+      if (agreeMarketing !== undefined) {
+        updateData.agreeMarketing = agreeMarketing;
+      }
+      if (agreeTerms !== undefined) {
+        updateData.agreeTerms = agreeTerms;
+      }
 
-      const user = await User.findByIdAndUpdate(
-        userId,
-        updateData,
-        { new: true, select: 'agreePrivacy agreeMarketing agreeTerms' }
-      );
+      const user = await User.findByIdAndUpdate(userId, updateData, {
+        new: true,
+        select: 'agreePrivacy agreeMarketing agreeTerms',
+      });
 
       if (!user) {
         return res.status(404).json({
           success: false,
-          message: '사용자를 찾을 수 없습니다'
+          message: '사용자를 찾을 수 없습니다',
         });
       }
 
@@ -98,15 +104,14 @@ router.post('/consent',
           agreePrivacy: user.agreePrivacy,
           agreeMarketing: user.agreeMarketing,
           agreeTerms: user.agreeTerms,
-          updatedAt: new Date().toISOString()
-        }
+          updatedAt: new Date().toISOString(),
+        },
       });
-
     } catch (error) {
       console.error('Privacy consent update error:', error);
       res.status(500).json({
         success: false,
-        message: '동의 설정 업데이트 중 오류가 발생했습니다'
+        message: '동의 설정 업데이트 중 오류가 발생했습니다',
       });
     }
   }
@@ -126,7 +131,8 @@ router.post('/consent',
  *       401:
  *         description: 인증 필요
  */
-router.get('/data-export',
+router.get(
+  '/data-export',
   authenticate,
   checkPrivacyConsent(['privacy']),
   logSensitiveDataAccess('data_export'),
@@ -136,8 +142,9 @@ router.get('/data-export',
       const userId = req.user.id;
 
       // 사용자 기본 정보
-      const user = await User.findById(userId)
-        .select('-password -emailVerificationToken -passwordResetToken');
+      const user = await User.findById(userId).select(
+        '-password -emailVerificationToken -passwordResetToken'
+      );
 
       // 가치관 평가 데이터
       const assessment = await ValuesAssessment.findOne({ userId });
@@ -154,41 +161,45 @@ router.get('/data-export',
           bio: user.bio,
           preferences: user.preferences,
           created_at: user.createdAt,
-          updated_at: user.updatedAt
+          updated_at: user.updatedAt,
         },
-        values_assessment: assessment ? {
-          personality_scores: assessment.personalityScores,
-          value_categories: assessment.valueCategories,
-          interests: assessment.interests,
-          lifestyle: assessment.lifestyle,
-          completed_at: assessment.completedAt
-        } : null,
+        values_assessment: assessment
+          ? {
+              personality_scores: assessment.personalityScores,
+              value_categories: assessment.valueCategories,
+              interests: assessment.interests,
+              lifestyle: assessment.lifestyle,
+              completed_at: assessment.completedAt,
+            }
+          : null,
         consent_history: {
           privacy_consent: user.agreePrivacy,
           marketing_consent: user.agreeMarketing,
-          terms_consent: user.agreeTerms
+          terms_consent: user.agreeTerms,
         },
         export_info: {
           requested_at: new Date().toISOString(),
           format: 'JSON',
-          gdpr_compliance: true
-        }
+          gdpr_compliance: true,
+        },
       };
 
-      res.setHeader('Content-Disposition', `attachment; filename="personal_data_${userId}_${Date.now()}.json"`);
+      res.setHeader(
+        'Content-Disposition',
+        `attachment; filename="personal_data_${userId}_${Date.now()}.json"`
+      );
       res.setHeader('Content-Type', 'application/json');
 
       res.json({
         success: true,
         message: '개인정보 내보내기가 완료되었습니다',
-        data: exportData
+        data: exportData,
       });
-
     } catch (error) {
       console.error('Data export error:', error);
       res.status(500).json({
         success: false,
-        message: '데이터 내보내기 중 오류가 발생했습니다'
+        message: '데이터 내보내기 중 오류가 발생했습니다',
       });
     }
   }
@@ -208,7 +219,8 @@ router.get('/data-export',
  *       401:
  *         description: 인증 필요
  */
-router.delete('/data-deletion',
+router.delete(
+  '/data-deletion',
   authenticate,
   logSensitiveDataAccess('data_deletion'),
   specifyDataPurpose('data_erasure'),
@@ -218,16 +230,18 @@ router.delete('/data-deletion',
 
       // 실제 운영에서는 즉시 삭제하지 않고 삭제 요청을 기록하여
       // 관리자 검토 후 처리하는 것이 좋습니다
-      
+
       // 계정 비활성화
       await User.findByIdAndUpdate(userId, {
         isActive: false,
         deletionRequested: true,
-        deletionRequestedAt: new Date()
+        deletionRequestedAt: new Date(),
       });
 
       // 삭제 요청 로그 기록
-      console.log(`DATA_DELETION_REQUESTED: userId=${userId}, timestamp=${new Date().toISOString()}`);
+      console.log(
+        `DATA_DELETION_REQUESTED: userId=${userId}, timestamp=${new Date().toISOString()}`
+      );
 
       res.json({
         success: true,
@@ -235,15 +249,14 @@ router.delete('/data-deletion',
         data: {
           request_id: `DEL_${userId}_${Date.now()}`,
           requested_at: new Date().toISOString(),
-          processing_time: '최대 30일'
-        }
+          processing_time: '최대 30일',
+        },
       });
-
     } catch (error) {
       console.error('Data deletion request error:', error);
       res.status(500).json({
         success: false,
-        message: '삭제 요청 처리 중 오류가 발생했습니다'
+        message: '삭제 요청 처리 중 오류가 발생했습니다',
       });
     }
   }
@@ -263,7 +276,8 @@ router.delete('/data-deletion',
  *       401:
  *         description: 인증 필요
  */
-router.get('/data-access',
+router.get(
+  '/data-access',
   authenticate,
   checkPrivacyConsent(['privacy']),
   logSensitiveDataAccess('access_log_query'),
@@ -280,15 +294,15 @@ router.get('/data-access',
           action: 'profile_view',
           ip: '192.168.1.***',
           location: '서울, 대한민국',
-          device: 'Desktop'
+          device: 'Desktop',
         },
         {
           date: new Date(Date.now() - 86400000).toISOString(),
           action: 'data_update',
           ip: '192.168.1.***',
           location: '서울, 대한민국',
-          device: 'Mobile'
-        }
+          device: 'Mobile',
+        },
       ];
 
       res.json({
@@ -298,15 +312,14 @@ router.get('/data-access',
           user_id: userId,
           access_history: accessHistory,
           total_accesses: accessHistory.length,
-          query_date: new Date().toISOString()
-        }
+          query_date: new Date().toISOString(),
+        },
       });
-
     } catch (error) {
       console.error('Access history query error:', error);
       res.status(500).json({
         success: false,
-        message: '접근 내역 조회 중 오류가 발생했습니다'
+        message: '접근 내역 조회 중 오류가 발생했습니다',
       });
     }
   }
@@ -332,15 +345,14 @@ router.get('/data-access',
  *       403:
  *         description: 접근 권한 없음
  */
-router.get('/anonymized-profile/:userId',
+router.get(
+  '/anonymized-profile/:userId',
   authenticate,
   checkPrivacyConsent(['privacy']),
   logSensitiveDataAccess('anonymized_profile'),
   specifyDataPurpose('matching'),
   anonymizeData(['name', 'email', 'phone']),
-  [
-    param('userId').isMongoId().withMessage('유효한 사용자 ID가 필요합니다')
-  ],
+  [param('userId').isMongoId().withMessage('유효한 사용자 ID가 필요합니다')],
   async (req, res) => {
     try {
       const errors = validationResult(req);
@@ -348,7 +360,7 @@ router.get('/anonymized-profile/:userId',
         return res.status(400).json({
           success: false,
           message: '유효성 검사 실패',
-          errors: errors.array()
+          errors: errors.array(),
         });
       }
 
@@ -359,7 +371,7 @@ router.get('/anonymized-profile/:userId',
       if (userId === requesterId) {
         return res.status(400).json({
           success: false,
-          message: '자신의 익명화된 프로필은 조회할 수 없습니다'
+          message: '자신의 익명화된 프로필은 조회할 수 없습니다',
         });
       }
 
@@ -370,7 +382,7 @@ router.get('/anonymized-profile/:userId',
       if (!user) {
         return res.status(404).json({
           success: false,
-          message: '사용자를 찾을 수 없습니다'
+          message: '사용자를 찾을 수 없습니다',
         });
       }
 
@@ -378,7 +390,7 @@ router.get('/anonymized-profile/:userId',
       if (!user.preferences?.privacy?.allowSearch) {
         return res.status(403).json({
           success: false,
-          message: '이 사용자는 검색을 허용하지 않습니다'
+          message: '이 사용자는 검색을 허용하지 않습니다',
         });
       }
 
@@ -392,25 +404,24 @@ router.get('/anonymized-profile/:userId',
         profileImage: user.profileImage,
         isVerified: true, // 검증된 사용자만 매칭 대상
         lastActive: '최근 활동',
-        compatibility_hint: '가치관 분석 결과 기반 매칭'
+        compatibility_hint: '가치관 분석 결과 기반 매칭',
       };
 
       // 프로필 조회수 증가
       await User.findByIdAndUpdate(userId, {
-        $inc: { 'stats.profileViews': 1 }
+        $inc: { 'stats.profileViews': 1 },
       });
 
       res.json({
         success: true,
         message: '익명화된 프로필 조회 완료',
-        data: anonymizedProfile
+        data: anonymizedProfile,
       });
-
     } catch (error) {
       console.error('Anonymized profile query error:', error);
       res.status(500).json({
         success: false,
-        message: '프로필 조회 중 오류가 발생했습니다'
+        message: '프로필 조회 중 오류가 발생했습니다',
       });
     }
   }
@@ -428,36 +439,32 @@ router.get('/anonymized-profile/:userId',
  *       200:
  *         description: 암호화 상태 확인 완료
  */
-router.get('/encryption-status',
-  authenticate,
-  async (req, res) => {
-    try {
-      const encryptionStatus = encryptionService.validateEncryption();
-      
-      res.json({
-        success: true,
-        message: '암호화 상태 확인 완료',
-        data: {
-          encryption_active: encryptionStatus.isValid,
-          algorithm: encryptionStatus.algorithm,
-          key_length: encryptionStatus.keyLength,
-          last_check: encryptionStatus.timestamp,
-          compliance: {
-            gdpr: true,
-            ccpa: true,
-            korean_pipa: true
-          }
-        }
-      });
+router.get('/encryption-status', authenticate, async (req, res) => {
+  try {
+    const encryptionStatus = encryptionService.validateEncryption();
 
-    } catch (error) {
-      console.error('Encryption status check error:', error);
-      res.status(500).json({
-        success: false,
-        message: '암호화 상태 확인 중 오류가 발생했습니다'
-      });
-    }
+    res.json({
+      success: true,
+      message: '암호화 상태 확인 완료',
+      data: {
+        encryption_active: encryptionStatus.isValid,
+        algorithm: encryptionStatus.algorithm,
+        key_length: encryptionStatus.keyLength,
+        last_check: encryptionStatus.timestamp,
+        compliance: {
+          gdpr: true,
+          ccpa: true,
+          korean_pipa: true,
+        },
+      },
+    });
+  } catch (error) {
+    console.error('Encryption status check error:', error);
+    res.status(500).json({
+      success: false,
+      message: '암호화 상태 확인 중 오류가 발생했습니다',
+    });
   }
-);
+});
 
 module.exports = router;

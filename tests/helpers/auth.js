@@ -13,10 +13,10 @@ const generateTestToken = (userId = 'test-user-id') => {
  */
 const generateAdminToken = (userId = 'test-admin-id') => {
   return jwt.sign(
-    { 
-      userId, 
+    {
+      userId,
       role: 'admin',
-      isAdmin: true 
+      isAdmin: true,
     },
     process.env.JWT_SECRET || 'test-secret',
     { expiresIn: '1h' }
@@ -26,7 +26,7 @@ const generateAdminToken = (userId = 'test-admin-id') => {
 /**
  * 토큰에서 사용자 ID 추출
  */
-const extractUserIdFromToken = (token) => {
+const extractUserIdFromToken = token => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'test-secret');
     return decoded.userId;
@@ -38,5 +38,5 @@ const extractUserIdFromToken = (token) => {
 module.exports = {
   generateTestToken,
   generateAdminToken,
-  extractUserIdFromToken
+  extractUserIdFromToken,
 };

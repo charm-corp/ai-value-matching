@@ -1,15 +1,15 @@
 // CHARM_INYEON 메인 스크립트 - 통합 및 정리된 버전
 
 // 페이지 로드 시 모든 기능 초기화
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   console.log('🚀 CHARM_INYEON 초기화 시작');
-  
+
   initializeNavigation();
   initializeContactForm();
   initializeMobileMenu();
   initializeButtons();
   initializeModals();
-  
+
   console.log('✅ 모든 기능 초기화 완료');
 });
 
@@ -17,25 +17,25 @@ document.addEventListener('DOMContentLoaded', function() {
 function initializeNavigation() {
   // 네비게이션 링크 클릭 이벤트
   const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
-  
+
   navLinks.forEach(link => {
-    link.addEventListener('click', function(e) {
+    link.addEventListener('click', function (e) {
       e.preventDefault();
-      
+
       const targetId = this.getAttribute('href').substring(1);
       const targetSection = document.getElementById(targetId);
-      
+
       if (targetSection) {
         targetSection.scrollIntoView({
           behavior: 'smooth',
-          block: 'start'
+          block: 'start',
         });
-        
+
         updateActiveNavLink(this);
       }
     });
   });
-  
+
   // 스크롤 시 활성 네비게이션 업데이트
   window.addEventListener('scroll', throttle(updateActiveNavOnScroll, 100));
 }
@@ -50,18 +50,18 @@ function updateActiveNavLink(activeLink) {
 function updateActiveNavOnScroll() {
   const sections = document.querySelectorAll('section[id]');
   const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
-  
+
   let current = '';
-  
+
   sections.forEach(section => {
     const sectionTop = section.getBoundingClientRect().top;
     const sectionHeight = section.offsetHeight;
-    
+
     if (sectionTop <= 100 && sectionTop + sectionHeight > 100) {
       current = section.getAttribute('id');
     }
   });
-  
+
   navLinks.forEach(link => {
     link.classList.remove('active');
     if (link.getAttribute('href') === `#${current}`) {
@@ -72,30 +72,30 @@ function updateActiveNavOnScroll() {
 
 function throttle(func, limit) {
   let inThrottle;
-  return function() {
+  return function () {
     const args = arguments;
     const context = this;
     if (!inThrottle) {
       func.apply(context, args);
       inThrottle = true;
-      setTimeout(() => inThrottle = false, limit);
+      setTimeout(() => (inThrottle = false), limit);
     }
-  }
+  };
 }
 
 // ========== 모바일 메뉴 ==========
 function initializeMobileMenu() {
   const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
   const navLinks = document.querySelector('.nav-links');
-  
+
   if (mobileMenuToggle && navLinks) {
-    mobileMenuToggle.addEventListener('click', function() {
+    mobileMenuToggle.addEventListener('click', function () {
       navLinks.classList.toggle('active');
       this.classList.toggle('active');
     });
-    
+
     navLinks.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', function() {
+      link.addEventListener('click', function () {
         navLinks.classList.remove('active');
         mobileMenuToggle.classList.remove('active');
       });
@@ -106,44 +106,46 @@ function initializeMobileMenu() {
 // ========== 버튼 기능 통합 ==========
 function initializeButtons() {
   console.log('🔘 버튼 초기화 시작');
-  
+
   // 1. 새로운 인연 시작하기 버튼 → 3단계 회원가입 페이지 (ID로 정확히 선택)
   const startButton = document.getElementById('signup-btn');
   if (startButton && startButton.textContent.includes('새로운 인연 시작하기')) {
-    startButton.addEventListener('click', function(e) {
+    startButton.addEventListener('click', function (e) {
       e.preventDefault();
       console.log('💝 새로운 인연 시작 - 회원가입 페이지로 이동');
       window.location.href = '/signup.html';
     });
     console.log('✅ 새로운 인연 시작하기 버튼 연결됨');
   }
-  
+
   // 2. 회원가입 버튼들 → 회원가입 모달 (단, #signup-btn은 제외)
-  const signupButtons = document.querySelectorAll('.signup-btn, #signup-btn-2, .cta-large-button, #showSignup');
+  const signupButtons = document.querySelectorAll(
+    '.signup-btn, #signup-btn-2, .cta-large-button, #showSignup'
+  );
   signupButtons.forEach(button => {
-    button.addEventListener('click', function(e) {
+    button.addEventListener('click', function (e) {
       e.preventDefault();
       console.log('📝 회원가입 모달 열기');
       openSignupModal();
     });
   });
   console.log('✅ 회원가입 버튼들 연결됨');
-  
+
   // 3. 소개 영상 보기 버튼 → 애니메이션
   const videoButton = document.querySelector('.secondary-button');
   if (videoButton) {
-    videoButton.addEventListener('click', function(e) {
+    videoButton.addEventListener('click', function (e) {
       e.preventDefault();
       console.log('🎬 소개 애니메이션 실행');
       openIntroAnimation();
     });
     console.log('✅ 소개 영상 버튼 연결됨');
   }
-  
+
   // 4. 로그인 버튼 → 로그인 모달
   const loginButtons = document.querySelectorAll('.login-btn');
   loginButtons.forEach(button => {
-    button.addEventListener('click', function(e) {
+    button.addEventListener('click', function (e) {
       e.preventDefault();
       console.log('🔑 로그인 모달 실행');
       openLoginModal();
@@ -155,28 +157,28 @@ function initializeButtons() {
 // ========== 모달 관리 시스템 ==========
 function initializeModals() {
   console.log('🖼️ 모달 시스템 초기화');
-  
+
   // 모든 모달 닫기 버튼
   const closeButtons = document.querySelectorAll('.close[data-modal]');
   closeButtons.forEach(button => {
-    button.addEventListener('click', function() {
+    button.addEventListener('click', function () {
       const modalId = this.getAttribute('data-modal');
       closeModal(modalId);
     });
   });
-  
+
   // 모달 배경 클릭 시 닫기
   const modals = document.querySelectorAll('.modal');
   modals.forEach(modal => {
-    modal.addEventListener('click', function(e) {
+    modal.addEventListener('click', function (e) {
       if (e.target === modal) {
         closeModal(modal.id);
       }
     });
   });
-  
+
   // ESC 키로 모달 닫기
-  document.addEventListener('keydown', function(e) {
+  document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
       const openModals = document.querySelectorAll('.modal[style*="display: block"]');
       openModals.forEach(modal => {
@@ -184,39 +186,39 @@ function initializeModals() {
       });
     }
   });
-  
+
   // 회원가입 <-> 로그인 전환
   const showSignupLink = document.getElementById('showSignup');
   const showLoginLink = document.getElementById('showLogin');
-  
+
   if (showSignupLink) {
-    showSignupLink.addEventListener('click', function(e) {
+    showSignupLink.addEventListener('click', function (e) {
       e.preventDefault();
       closeModal('loginModal');
       setTimeout(() => openSignupModal(), 300);
     });
   }
-  
+
   if (showLoginLink) {
-    showLoginLink.addEventListener('click', function(e) {
+    showLoginLink.addEventListener('click', function (e) {
       e.preventDefault();
       closeModal('signupModal');
       setTimeout(() => openLoginModal(), 300);
     });
   }
-  
+
   // 로그인 폼 제출
   const loginForm = document.getElementById('loginForm');
   if (loginForm) {
     loginForm.addEventListener('submit', handleLoginSubmit);
   }
-  
+
   // 회원가입 폼 제출
   const signupForm = document.getElementById('signupForm');
   if (signupForm) {
     signupForm.addEventListener('submit', handleSignupSubmit);
   }
-  
+
   console.log('✅ 모달 시스템 초기화 완료');
 }
 
@@ -235,7 +237,7 @@ function openSignupModal() {
   if (signupModal) {
     signupModal.style.display = 'block';
     document.body.style.overflow = 'hidden';
-    
+
     setTimeout(() => {
       signupModal.style.opacity = '1';
     }, 10);
@@ -245,34 +247,34 @@ function openSignupModal() {
 async function handleLoginSubmit(e) {
   e.preventDefault();
   console.log('🔐 로그인 시도');
-  
+
   const formData = new FormData(e.target);
   const email = formData.get('email');
   const password = formData.get('password');
-  
+
   // 기본 검증
   if (!email || !password) {
     showModal('입력 오류', '이메일과 비밀번호를 모두 입력해주세요.');
     return;
   }
-  
+
   try {
     // 로딩 표시
     const submitButton = e.target.querySelector('button[type="submit"]');
     const originalText = submitButton.textContent;
     submitButton.textContent = '로그인 중...';
     submitButton.disabled = true;
-    
+
     // 백엔드 API 호출
     const response = await window.apiClient.login(email, password);
-    
+
     if (response.success) {
       showModal('로그인 성공', `환영합니다! ${response.user.name}님\n\n로그인이 완료되었습니다.`);
       closeModal('loginModal');
-      
+
       // 폼 초기화
       e.target.reset();
-      
+
       console.log('✅ 로그인 성공:', response.user);
     } else {
       showModal('로그인 실패', response.message || '로그인에 실패했습니다.');
@@ -291,45 +293,48 @@ async function handleLoginSubmit(e) {
 async function handleSignupSubmit(e) {
   e.preventDefault();
   console.log('📝 회원가입 시도');
-  
+
   const formData = new FormData(e.target);
   const name = formData.get('name');
   const email = formData.get('email');
   const password = formData.get('password');
   const confirmPassword = formData.get('confirmPassword');
-  
+
   // 기본 검증
   if (!name || !email || !password || !confirmPassword) {
     showModal('입력 오류', '모든 필수 항목을 입력해주세요.');
     return;
   }
-  
+
   if (password !== confirmPassword) {
     showModal('비밀번호 오류', '비밀번호와 비밀번호 확인이 일치하지 않습니다.');
     return;
   }
-  
+
   try {
     // 로딩 표시
     const submitButton = e.target.querySelector('button[type="submit"]');
     const originalText = submitButton.textContent;
     submitButton.textContent = '회원가입 중...';
     submitButton.disabled = true;
-    
+
     // 백엔드 API 호출
     const response = await window.apiClient.register({
       name,
       email,
-      password
+      password,
     });
-    
+
     if (response.success) {
-      showModal('회원가입 완료', `환영합니다, ${response.user.name}님!\n\n회원가입이 완료되었습니다.`);
+      showModal(
+        '회원가입 완료',
+        `환영합니다, ${response.user.name}님!\n\n회원가입이 완료되었습니다.`
+      );
       closeModal('signupModal');
-      
+
       // 폼 초기화
       e.target.reset();
-      
+
       console.log('✅ 회원가입 성공:', response.user);
     } else {
       showModal('회원가입 실패', response.message || '회원가입에 실패했습니다.');
@@ -351,7 +356,7 @@ function showModal(title, message) {
   if (existingModal) {
     existingModal.remove();
   }
-  
+
   const modalOverlay = document.createElement('div');
   modalOverlay.className = 'modal-overlay';
   modalOverlay.style.cssText = `
@@ -367,7 +372,7 @@ function showModal(title, message) {
     z-index: 10000;
     animation: fadeIn 0.2s ease-out;
   `;
-  
+
   const modalContent = document.createElement('div');
   modalContent.className = 'modal-content';
   modalContent.style.cssText = `
@@ -380,7 +385,7 @@ function showModal(title, message) {
     animation: slideUp 0.3s ease-out;
     text-align: center;
   `;
-  
+
   modalContent.innerHTML = `
     <h3 style="margin: 0 0 15px 0; color: #2563eb; font-size: 1.2em;">${title}</h3>
     <p style="margin: 0 0 20px 0; color: #64748b; line-height: 1.5;">${message}</p>
@@ -396,21 +401,21 @@ function showModal(title, message) {
       transition: background 0.2s;
     ">확인</button>
   `;
-  
+
   modalOverlay.appendChild(modalContent);
   document.body.appendChild(modalOverlay);
-  
+
   const closeBtn = modalContent.querySelector('.modal-close-btn');
   const closeModal = () => {
     modalOverlay.style.animation = 'fadeOut 0.2s ease-out';
     setTimeout(() => modalOverlay.remove(), 200);
   };
-  
+
   closeBtn.addEventListener('click', closeModal);
-  modalOverlay.addEventListener('click', (e) => {
+  modalOverlay.addEventListener('click', e => {
     if (e.target === modalOverlay) closeModal();
   });
-  
+
   document.addEventListener('keydown', function handleKeyPress(e) {
     if (e.key === 'Escape') {
       closeModal();
@@ -425,7 +430,7 @@ function openLoginModal() {
   if (loginModal) {
     loginModal.style.display = 'block';
     document.body.style.overflow = 'hidden'; // 배경 스크롤 방지
-    
+
     // 모달 애니메이션
     setTimeout(() => {
       loginModal.style.opacity = '1';
@@ -439,7 +444,7 @@ function openLoginModal() {
 // ========== 가치관 평가 시작 ==========
 function startValuesAssessment() {
   console.log('🌟 가치관 평가 시작!');
-  
+
   // 가치관 평가 페이지로 이동
   window.location.href = '/values-assessment.html';
 }
@@ -447,7 +452,7 @@ function startValuesAssessment() {
 // ========== 소개 애니메이션 ==========
 function openIntroAnimation() {
   console.log('🎭 소개 애니메이션 모달 열기');
-  
+
   const modalOverlay = document.createElement('div');
   modalOverlay.className = 'intro-modal-overlay';
   modalOverlay.style.cssText = `
@@ -582,7 +587,7 @@ function openIntroAnimation() {
   };
 
   closeButton.addEventListener('click', closeModal);
-  modalOverlay.addEventListener('click', (e) => {
+  modalOverlay.addEventListener('click', e => {
     if (e.target === modalOverlay) closeModal();
   });
 
@@ -602,8 +607,10 @@ function initializeContactForm() {
   const contactForm = document.getElementById('contactForm');
   if (contactForm) {
     contactForm.addEventListener('submit', handleContactFormSubmit);
-    
-    const requiredFields = contactForm.querySelectorAll('input[required], select[required], textarea[required]');
+
+    const requiredFields = contactForm.querySelectorAll(
+      'input[required], select[required], textarea[required]'
+    );
     requiredFields.forEach(field => {
       field.addEventListener('blur', validateField);
       field.addEventListener('input', clearFieldError);
@@ -613,19 +620,19 @@ function initializeContactForm() {
 
 function handleContactFormSubmit(e) {
   e.preventDefault();
-  
+
   const form = e.target;
   const formData = new FormData(form);
-  
+
   if (!validateForm(form)) {
     return;
   }
-  
+
   const submitBtn = form.querySelector('button[type="submit"]');
   const originalText = submitBtn.textContent;
   submitBtn.disabled = true;
   submitBtn.textContent = '전송 중...';
-  
+
   setTimeout(() => {
     showContactSuccessModal();
     form.reset();
@@ -640,7 +647,7 @@ function showContactSuccessModal() {
   if (existingModal) {
     existingModal.remove();
   }
-  
+
   const modalOverlay = document.createElement('div');
   modalOverlay.className = 'modal-overlay';
   modalOverlay.style.cssText = `
@@ -656,7 +663,7 @@ function showContactSuccessModal() {
     z-index: 10000;
     animation: fadeIn 0.2s ease-out;
   `;
-  
+
   const modalContent = document.createElement('div');
   modalContent.className = 'modal-content';
   modalContent.style.cssText = `
@@ -669,7 +676,7 @@ function showContactSuccessModal() {
     animation: slideUp 0.3s ease-out;
     text-align: center;
   `;
-  
+
   modalContent.innerHTML = `
     <div style="font-size: 3rem; margin-bottom: 1rem;">✅</div>
     <h3 style="margin: 0 0 1rem 0; color: #2563eb; font-size: 1.4em;">문의 접수 완료!</h3>
@@ -724,25 +731,27 @@ function showContactSuccessModal() {
       width: 100%;
     ">확인</button>
   `;
-  
+
   modalOverlay.appendChild(modalContent);
   document.body.appendChild(modalOverlay);
-  
+
   const closeBtn = modalContent.querySelector('.modal-close-btn');
   const closeModal = () => {
     modalOverlay.style.animation = 'fadeOut 0.2s ease-out';
     setTimeout(() => modalOverlay.remove(), 200);
   };
-  
+
   closeBtn.addEventListener('click', closeModal);
-  modalOverlay.addEventListener('click', (e) => {
+  modalOverlay.addEventListener('click', e => {
     if (e.target === modalOverlay) closeModal();
   });
-  
+
   // 전역 함수들
-  window.openKakaoTalk = function() {
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
+  window.openKakaoTalk = function () {
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      navigator.userAgent
+    );
+
     if (isMobile) {
       window.location.href = 'kakaotalk://plusfriend/home/@charm_inyeon';
       setTimeout(() => {
@@ -751,16 +760,21 @@ function showContactSuccessModal() {
     } else {
       window.open('https://pf.kakao.com/_xmwxmxl', '_blank');
     }
-    
-    showModal('카카오톡 상담', '카카오톡 채널 "@CHARM_INYEON"을 검색하시거나\n준비 중인 링크로 곧 연결됩니다!');
+
+    showModal(
+      '카카오톡 상담',
+      '카카오톡 채널 "@CHARM_INYEON"을 검색하시거나\n준비 중인 링크로 곧 연결됩니다!'
+    );
   };
-  
-  window.openEmail = function() {
+
+  window.openEmail = function () {
     const subject = encodeURIComponent('CHARM_INYEON 문의사항');
-    const body = encodeURIComponent('안녕하세요, CHARM_INYEON 담당자님\n\n다음과 같이 문의드립니다:\n\n[문의 내용을 작성해주세요]\n\n감사합니다.');
-    
+    const body = encodeURIComponent(
+      '안녕하세요, CHARM_INYEON 담당자님\n\n다음과 같이 문의드립니다:\n\n[문의 내용을 작성해주세요]\n\n감사합니다.'
+    );
+
     window.location.href = `mailto:hello@valuematch.co.kr?subject=${subject}&body=${body}`;
-    
+
     setTimeout(() => {
       const emailAddress = 'hello@valuematch.co.kr';
       if (navigator.clipboard) {
@@ -777,14 +791,16 @@ function showContactSuccessModal() {
 // ========== 폼 검증 유틸리티 ==========
 function validateForm(form) {
   let isValid = true;
-  const requiredFields = form.querySelectorAll('input[required], select[required], textarea[required]');
-  
+  const requiredFields = form.querySelectorAll(
+    'input[required], select[required], textarea[required]'
+  );
+
   requiredFields.forEach(field => {
     if (!validateField({ target: field })) {
       isValid = false;
     }
   });
-  
+
   return isValid;
 }
 
@@ -793,12 +809,12 @@ function validateField(e) {
   const value = field.value.trim();
   let isValid = true;
   let errorMessage = '';
-  
+
   if (field.hasAttribute('required') && !value) {
     isValid = false;
     errorMessage = '필수 입력 항목입니다.';
   }
-  
+
   if (field.type === 'email' && value) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(value)) {
@@ -806,7 +822,7 @@ function validateField(e) {
       errorMessage = '올바른 이메일 형식을 입력해주세요.';
     }
   }
-  
+
   if (field.type === 'tel' && value) {
     const phoneRegex = /^[0-9-+\s()]+$/;
     if (!phoneRegex.test(value)) {
@@ -814,24 +830,24 @@ function validateField(e) {
       errorMessage = '올바른 전화번호 형식을 입력해주세요.';
     }
   }
-  
+
   if (field.name === 'message' && value && value.length < 10) {
     isValid = false;
     errorMessage = '메시지는 10자 이상 입력해주세요.';
   }
-  
+
   if (!isValid) {
     showFieldError(field, errorMessage);
   } else {
     clearFieldError(field);
   }
-  
+
   return isValid;
 }
 
 function showFieldError(field, message) {
   clearFieldError(field);
-  
+
   const errorElement = document.createElement('div');
   errorElement.className = 'field-error';
   errorElement.textContent = message;
@@ -841,7 +857,7 @@ function showFieldError(field, message) {
     margin-top: 0.25rem;
     display: block;
   `;
-  
+
   field.style.borderColor = '#dc2626';
   field.parentNode.insertBefore(errorElement, field.nextSibling);
 }
@@ -857,7 +873,7 @@ function clearFieldError(field) {
 function clearAllErrors(form) {
   const errorElements = form.querySelectorAll('.field-error');
   errorElements.forEach(error => error.remove());
-  
+
   const fields = form.querySelectorAll('input, select, textarea');
   fields.forEach(field => {
     field.style.borderColor = '';
@@ -867,9 +883,9 @@ function clearAllErrors(form) {
 // ========== 위젯 클릭 기능 ==========
 function handleWidgetClick(widgetType) {
   console.log(`🎯 위젯 클릭: ${widgetType}`);
-  
+
   // 위젯별 액션 분기
-  switch(widgetType) {
+  switch (widgetType) {
     case 'values':
       openValuesAnalysisModal();
       break;
@@ -950,7 +966,7 @@ function openValuesAnalysisModal() {
         action: () => {
           closeAllModals();
           window.location.href = 'values-assessment.html';
-        }
+        },
       },
       {
         text: '매칭 확인하기',
@@ -958,9 +974,9 @@ function openValuesAnalysisModal() {
         action: () => {
           closeAllModals();
           setTimeout(() => openMatchingModal(), 300);
-        }
-      }
-    ]
+        },
+      },
+    ],
   });
 }
 
@@ -1033,17 +1049,20 @@ function openMatchingModal() {
         action: () => {
           closeAllModals();
           setTimeout(() => openConnectionsModal(), 300);
-        }
+        },
       },
       {
         text: '더 정확한 매칭',
         class: 'secondary',
         action: () => {
           closeAllModals();
-          showModal('더 정확한 매칭', '추가 질문을 통해 더욱 정확한 매칭을 받아보세요!\n곧 추가 설문 기능이 제공됩니다.');
-        }
-      }
-    ]
+          showModal(
+            '더 정확한 매칭',
+            '추가 질문을 통해 더욱 정확한 매칭을 받아보세요!\n곧 추가 설문 기능이 제공됩니다.'
+          );
+        },
+      },
+    ],
   });
 }
 
@@ -1118,17 +1137,20 @@ function openConnectionsModal() {
         action: () => {
           closeAllModals();
           showModal('메시지 보내기', '곧 실시간 채팅 기능이 추가됩니다!\n지금은 체험 버전입니다.');
-        }
+        },
       },
       {
         text: '프로필 상세보기',
         class: 'secondary',
         action: () => {
           closeAllModals();
-          showModal('프로필 보기', '상세 프로필 보기 기능이 곧 추가됩니다!\n더 많은 정보를 확인할 수 있을 예정입니다.');
-        }
-      }
-    ]
+          showModal(
+            '프로필 보기',
+            '상세 프로필 보기 기능이 곧 추가됩니다!\n더 많은 정보를 확인할 수 있을 예정입니다.'
+          );
+        },
+      },
+    ],
   });
 }
 
@@ -1138,7 +1160,7 @@ function showWidgetModal(title, type, config) {
   if (existingModal) {
     existingModal.remove();
   }
-  
+
   const modalOverlay = document.createElement('div');
   modalOverlay.className = 'widget-modal-overlay';
   modalOverlay.style.cssText = `
@@ -1155,7 +1177,7 @@ function showWidgetModal(title, type, config) {
     animation: fadeIn 0.3s ease-out;
     backdrop-filter: blur(5px);
   `;
-  
+
   const modalContent = document.createElement('div');
   modalContent.className = 'widget-modal-content';
   modalContent.style.cssText = `
@@ -1169,14 +1191,17 @@ function showWidgetModal(title, type, config) {
     animation: slideUp 0.4s ease-out;
     position: relative;
   `;
-  
+
   const actions = config.actions || [];
-  const actionButtons = actions.map(action => 
-    `<button class="modal-action-btn ${action.class}" data-action="${actions.indexOf(action)}">
+  const actionButtons = actions
+    .map(
+      action =>
+        `<button class="modal-action-btn ${action.class}" data-action="${actions.indexOf(action)}">
       ${action.text}
     </button>`
-  ).join('');
-  
+    )
+    .join('');
+
   modalContent.innerHTML = `
     <div class="modal-header" style="
       background: linear-gradient(135deg, #667eea, #764ba2);
@@ -1223,10 +1248,10 @@ function showWidgetModal(title, type, config) {
       ${actionButtons}
     </div>
   `;
-  
+
   modalOverlay.appendChild(modalContent);
   document.body.appendChild(modalOverlay);
-  
+
   // 버튼 스타일 추가
   const style = document.createElement('style');
   style.textContent = `
@@ -1257,7 +1282,7 @@ function showWidgetModal(title, type, config) {
     }
   `;
   document.head.appendChild(style);
-  
+
   // 이벤트 리스너 추가
   const closeBtn = modalContent.querySelector('.modal-close-btn');
   const closeModal = () => {
@@ -1267,12 +1292,12 @@ function showWidgetModal(title, type, config) {
       style.remove();
     }, 300);
   };
-  
+
   closeBtn.addEventListener('click', closeModal);
-  modalOverlay.addEventListener('click', (e) => {
+  modalOverlay.addEventListener('click', e => {
     if (e.target === modalOverlay) closeModal();
   });
-  
+
   // 액션 버튼 이벤트
   actions.forEach((action, index) => {
     const btn = modalContent.querySelector(`[data-action="${index}"]`);
@@ -1280,7 +1305,7 @@ function showWidgetModal(title, type, config) {
       btn.addEventListener('click', action.action);
     }
   });
-  
+
   // ESC 키 처리
   document.addEventListener('keydown', function handleKeyPress(e) {
     if (e.key === 'Escape') {
@@ -1298,9 +1323,9 @@ function closeAllModals() {
 // ========== Features 카드 클릭 기능 ==========
 function handleFeatureClick(featureType) {
   console.log(`🎯 Feature 카드 클릭: ${featureType}`);
-  
+
   // 특징별 액션 분기
-  switch(featureType) {
+  switch (featureType) {
     case 'deepAnalysis':
       openDeepAnalysisModal();
       break;
@@ -1420,7 +1445,7 @@ function openDeepAnalysisModal() {
         action: () => {
           closeAllModals();
           window.location.href = 'values-assessment.html';
-        }
+        },
       },
       {
         text: '샘플 결과 보기',
@@ -1428,9 +1453,9 @@ function openDeepAnalysisModal() {
         action: () => {
           closeAllModals();
           setTimeout(() => openValuesAnalysisModal(), 300);
-        }
-      }
-    ]
+        },
+      },
+    ],
   });
 }
 
@@ -1537,17 +1562,20 @@ function openAIMatchingModal() {
         action: () => {
           closeAllModals();
           setTimeout(() => openMatchingModal(), 300);
-        }
+        },
       },
       {
         text: '매칭 과정 체험',
         class: 'secondary',
         action: () => {
           closeAllModals();
-          showModal('매칭 체험', '🔄 AI 매칭 과정 체험하기\n\n실제 매칭 과정을 단계별로 체험해볼 수 있는\n데모 모드가 곧 추가됩니다!\n\n현재는 가치관 분석 완료 후 자동으로\n매칭 과정이 시작됩니다.');
-        }
-      }
-    ]
+          showModal(
+            '매칭 체험',
+            '🔄 AI 매칭 과정 체험하기\n\n실제 매칭 과정을 단계별로 체험해볼 수 있는\n데모 모드가 곧 추가됩니다!\n\n현재는 가치관 분석 완료 후 자동으로\n매칭 과정이 시작됩니다.'
+          );
+        },
+      },
+    ],
   });
 }
 
@@ -1678,18 +1706,24 @@ function openChatGuideModal() {
         class: 'primary',
         action: () => {
           closeAllModals();
-          showModal('대화 가이드 체험', '💬 AI 대화 가이드 체험판\n\n실제 대화 상황에서 AI가 어떻게 도움을 주는지\n체험해볼 수 있는 기능이 곧 추가됩니다!\n\n현재는 매칭 완료 후 이용 가능합니다.');
-        }
+          showModal(
+            '대화 가이드 체험',
+            '💬 AI 대화 가이드 체험판\n\n실제 대화 상황에서 AI가 어떻게 도움을 주는지\n체험해볼 수 있는 기능이 곧 추가됩니다!\n\n현재는 매칭 완료 후 이용 가능합니다.'
+          );
+        },
       },
       {
         text: '대화 팁 모음 보기',
         class: 'secondary',
         action: () => {
           closeAllModals();
-          showModal('중장년층 대화 팁', '💡 성공적인 첫 대화를 위한 팁\n\n1. 진정성 있게 접근하기\n2. 공통 관심사부터 시작\n3. 상대방 이야기에 집중\n4. 자연스러운 질문하기\n5. 너무 개인적인 질문은 피하기\n\n경험과 지혜가 있는 만큼 여유롭게!');
-        }
-      }
-    ]
+          showModal(
+            '중장년층 대화 팁',
+            '💡 성공적인 첫 대화를 위한 팁\n\n1. 진정성 있게 접근하기\n2. 공통 관심사부터 시작\n3. 상대방 이야기에 집중\n4. 자연스러운 질문하기\n5. 너무 개인적인 질문은 피하기\n\n경험과 지혜가 있는 만큼 여유롭게!'
+          );
+        },
+      },
+    ],
   });
 }
 
@@ -1798,27 +1832,33 @@ function openSafeEnvironmentModal() {
         class: 'primary',
         action: () => {
           closeAllModals();
-          showModal('안전 신고', '🚨 의심스러운 활동을 발견하셨나요?\n\n• 신고 이메일: safety@charm-inyeon.com\n• 신고 전화: 1588-0000 (24시간)\n• 앱 내 신고 버튼 이용\n\n모든 신고는 24시간 내 처리됩니다.');
-        }
+          showModal(
+            '안전 신고',
+            '🚨 의심스러운 활동을 발견하셨나요?\n\n• 신고 이메일: safety@charm-inyeon.com\n• 신고 전화: 1588-0000 (24시간)\n• 앱 내 신고 버튼 이용\n\n모든 신고는 24시간 내 처리됩니다.'
+          );
+        },
       },
       {
         text: '안전 가이드 전체보기',
         class: 'secondary',
         action: () => {
           closeAllModals();
-          showModal('안전 가이드', '📋 CHARM_INYEON 안전 가이드\n\n1. 계정 보안 관리\n2. 첫 만남 안전 수칙\n3. 개인정보 보호 방법\n4. 의심스러운 상황 대처법\n5. 신고 및 차단 방법\n\n자세한 가이드는 곧 업데이트됩니다!');
-        }
-      }
-    ]
+          showModal(
+            '안전 가이드',
+            '📋 CHARM_INYEON 안전 가이드\n\n1. 계정 보안 관리\n2. 첫 만남 안전 수칙\n3. 개인정보 보호 방법\n4. 의심스러운 상황 대처법\n5. 신고 및 차단 방법\n\n자세한 가이드는 곧 업데이트됩니다!'
+          );
+        },
+      },
+    ],
   });
 }
 
 // ========== How It Works 단계 클릭 기능 ==========
 function handleStepClick(stepType) {
   console.log(`👣 How It Works 단계 클릭: ${stepType}`);
-  
+
   // 단계별 액션 분기
-  switch(stepType) {
+  switch (stepType) {
     case 'valuesAssessment':
       openValuesAssessmentStepModal();
       break;
@@ -1954,7 +1994,7 @@ function openValuesAssessmentStepModal() {
         action: () => {
           closeAllModals();
           window.location.href = 'values-assessment.html';
-        }
+        },
       },
       {
         text: '진단 예시 보기',
@@ -1962,9 +2002,9 @@ function openValuesAssessmentStepModal() {
         action: () => {
           closeAllModals();
           setTimeout(() => openValuesAnalysisModal(), 300);
-        }
-      }
-    ]
+        },
+      },
+    ],
   });
 }
 
@@ -2085,7 +2125,7 @@ function openSmartMatchingStepModal() {
         action: () => {
           closeAllModals();
           setTimeout(() => openMatchingModal(), 300);
-        }
+        },
       },
       {
         text: '매칭 기준 자세히',
@@ -2093,9 +2133,9 @@ function openSmartMatchingStepModal() {
         action: () => {
           closeAllModals();
           setTimeout(() => openAIMatchingModal(), 300);
-        }
-      }
-    ]
+        },
+      },
+    ],
   });
 }
 
@@ -2217,26 +2257,29 @@ function openMeaningfulMeetingStepModal() {
         action: () => {
           closeAllModals();
           setTimeout(() => openChatGuideModal(), 300);
-        }
+        },
       },
       {
         text: '만남 준비 팁',
         class: 'secondary',
         action: () => {
           closeAllModals();
-          showModal('만남 준비 가이드', '☕ 성공적인 첫 만남을 위한 팁\n\n1. 첫 만남은 카페나 레스토랑에서\n2. 1-2시간 정도의 적당한 시간\n3. 청결한 옵장과 자연스러운 모습\n4. 핸드폰은 매너모드로\n5. 과도한 기대보다 여유로운 마음\n\n자연스러운 만남이 최고입니다!');
-        }
-      }
-    ]
+          showModal(
+            '만남 준비 가이드',
+            '☕ 성공적인 첫 만남을 위한 팁\n\n1. 첫 만남은 카페나 레스토랑에서\n2. 1-2시간 정도의 적당한 시간\n3. 청결한 옵장과 자연스러운 모습\n4. 핸드폰은 매너모드로\n5. 과도한 기대보다 여유로운 마음\n\n자연스러운 만남이 최고입니다!'
+          );
+        },
+      },
+    ],
   });
 }
 
 // ========== About 카드 클릭 기능 ==========
 function handleAboutCardClick(cardType) {
   console.log(`📋 About 카드 클릭: ${cardType}`);
-  
+
   // 카드별 액션 분기
-  switch(cardType) {
+  switch (cardType) {
     case 'values':
       openValuesAnalysisDetailModal();
       break;
@@ -2321,7 +2364,7 @@ function openValuesAnalysisDetailModal() {
         action: () => {
           closeAllModals();
           window.location.href = 'values-assessment.html';
-        }
+        },
       },
       {
         text: '샘플 결과 보기',
@@ -2329,9 +2372,9 @@ function openValuesAnalysisDetailModal() {
         action: () => {
           closeAllModals();
           setTimeout(() => openValuesAnalysisModal(), 300);
-        }
-      }
-    ]
+        },
+      },
+    ],
   });
 }
 
@@ -2415,17 +2458,20 @@ function openMatchingDetailModal() {
         action: () => {
           closeAllModals();
           setTimeout(() => openMatchingModal(), 300);
-        }
+        },
       },
       {
         text: '성공 사례 보기',
         class: 'secondary',
         action: () => {
           closeAllModals();
-          showModal('성공 사례', '실제 CHARM_INYEON을 통해 만난 커플들의 감동적인 이야기들을 곧 공개할 예정입니다!\n\n지금까지 200여 쌍의 성공적인 매칭이 이루어졌습니다.');
-        }
-      }
-    ]
+          showModal(
+            '성공 사례',
+            '실제 CHARM_INYEON을 통해 만난 커플들의 감동적인 이야기들을 곧 공개할 예정입니다!\n\n지금까지 200여 쌍의 성공적인 매칭이 이루어졌습니다.'
+          );
+        },
+      },
+    ],
   });
 }
 
@@ -2507,26 +2553,29 @@ function openSeniorSpecializedModal() {
         action: () => {
           closeAllModals();
           window.location.href = 'signup.html';
-        }
+        },
       },
       {
         text: '연령대별 통계 보기',
         class: 'secondary',
         action: () => {
           closeAllModals();
-          showModal('연령대별 통계', '📊 연령대별 상세 통계\n\n• 40-45세: 32%\n• 46-50세: 28%\n• 51-55세: 23%\n• 56-60세: 17%\n\n가장 활발한 연령대는 46-50세입니다!');
-        }
-      }
-    ]
+          showModal(
+            '연령대별 통계',
+            '📊 연령대별 상세 통계\n\n• 40-45세: 32%\n• 46-50세: 28%\n• 51-55세: 23%\n• 56-60세: 17%\n\n가장 활발한 연령대는 46-50세입니다!'
+          );
+        },
+      },
+    ],
   });
 }
 
 // ========== Feature 카드 클릭 기능 ==========
 function handleFeatureClick(featureType) {
   console.log(`🎯 Feature 카드 클릭: ${featureType}`);
-  
+
   // 기능별 액션 분기
-  switch(featureType) {
+  switch (featureType) {
     case 'deepAnalysis':
       openDeepAnalysisModal();
       break;
@@ -2645,7 +2694,7 @@ function openDeepAnalysisModal() {
         action: () => {
           closeAllModals();
           window.location.href = 'values-assessment.html';
-        }
+        },
       },
       {
         text: '샘플 결과 미리보기',
@@ -2653,9 +2702,9 @@ function openDeepAnalysisModal() {
         action: () => {
           closeAllModals();
           setTimeout(() => openValuesAnalysisModal(), 300);
-        }
-      }
-    ]
+        },
+      },
+    ],
   });
 }
 
@@ -2746,17 +2795,20 @@ function openAIMatchingModal() {
         action: () => {
           closeAllModals();
           setTimeout(() => openMatchingModal(), 300);
-        }
+        },
       },
       {
         text: '매칭 알고리즘 더보기',
         class: 'secondary',
         action: () => {
           closeAllModals();
-          showModal('매칭 알고리즘', '🔬 CHARM_INYEON 매칭 시스템\n\n• 벡터 공간 분석\n• 코사인 유사도 계산\n• 가중치 기반 점수화\n• 실시간 학습 업데이트\n\n지속적으로 개선되는 AI 매칭 엔진입니다!');
-        }
-      }
-    ]
+          showModal(
+            '매칭 알고리즘',
+            '🔬 CHARM_INYEON 매칭 시스템\n\n• 벡터 공간 분석\n• 코사인 유사도 계산\n• 가중치 기반 점수화\n• 실시간 학습 업데이트\n\n지속적으로 개선되는 AI 매칭 엔진입니다!'
+          );
+        },
+      },
+    ],
   });
 }
 
@@ -2854,18 +2906,24 @@ function openChatGuideModal() {
         class: 'primary',
         action: () => {
           closeAllModals();
-          showModal('대화 가이드 체험', '💬 AI 대화 가이드 체험판\n\n실제 대화 상황에서 AI가 어떻게 도움을 주는지\n체험해볼 수 있는 기능이 곧 추가됩니다!\n\n현재는 매칭 완료 후 이용 가능합니다.');
-        }
+          showModal(
+            '대화 가이드 체험',
+            '💬 AI 대화 가이드 체험판\n\n실제 대화 상황에서 AI가 어떻게 도움을 주는지\n체험해볼 수 있는 기능이 곧 추가됩니다!\n\n현재는 매칭 완료 후 이용 가능합니다.'
+          );
+        },
       },
       {
         text: '대화 팁 모음 보기',
         class: 'secondary',
         action: () => {
           closeAllModals();
-          showModal('중장년층 대화 팁', '💡 성공적인 첫 대화를 위한 팁\n\n1. 진정성 있게 접근하기\n2. 공통 관심사부터 시작\n3. 상대방 이야기에 집중\n4. 자연스러운 질문하기\n5. 너무 개인적인 질문은 피하기\n\n경험과 지혜가 있는 만큼 여유롭게!');
-        }
-      }
-    ]
+          showModal(
+            '중장년층 대화 팁',
+            '💡 성공적인 첫 대화를 위한 팁\n\n1. 진정성 있게 접근하기\n2. 공통 관심사부터 시작\n3. 상대방 이야기에 집중\n4. 자연스러운 질문하기\n5. 너무 개인적인 질문은 피하기\n\n경험과 지혜가 있는 만큼 여유롭게!'
+          );
+        },
+      },
+    ],
   });
 }
 
@@ -2974,18 +3032,24 @@ function openSafeEnvironmentModal() {
         class: 'primary',
         action: () => {
           closeAllModals();
-          showModal('안전 신고', '🚨 의심스러운 활동을 발견하셨나요?\n\n• 신고 이메일: safety@charm-inyeon.com\n• 신고 전화: 1588-0000 (24시간)\n• 앱 내 신고 버튼 이용\n\n모든 신고는 24시간 내 처리됩니다.');
-        }
+          showModal(
+            '안전 신고',
+            '🚨 의심스러운 활동을 발견하셨나요?\n\n• 신고 이메일: safety@charm-inyeon.com\n• 신고 전화: 1588-0000 (24시간)\n• 앱 내 신고 버튼 이용\n\n모든 신고는 24시간 내 처리됩니다.'
+          );
+        },
       },
       {
         text: '안전 가이드 전체보기',
         class: 'secondary',
         action: () => {
           closeAllModals();
-          showModal('안전 가이드', '📋 CHARM_INYEON 안전 가이드\n\n1. 계정 보안 관리\n2. 첫 만남 안전 수칙\n3. 개인정보 보호 방법\n4. 의심스러운 상황 대처법\n5. 신고 및 차단 방법\n\n자세한 가이드는 곧 업데이트됩니다!');
-        }
-      }
-    ]
+          showModal(
+            '안전 가이드',
+            '📋 CHARM_INYEON 안전 가이드\n\n1. 계정 보안 관리\n2. 첫 만남 안전 수칙\n3. 개인정보 보호 방법\n4. 의심스러운 상황 대처법\n5. 신고 및 차단 방법\n\n자세한 가이드는 곧 업데이트됩니다!'
+          );
+        },
+      },
+    ],
   });
 }
 

@@ -337,57 +337,57 @@ body.loaded {
     text-align: center;
     padding: var(--spacing-xl) var(--spacing-md);
   }
-  
+
   .hero-title {
     font-size: var(--font-4xl);
   }
-  
+
   .hero-buttons {
     flex-direction: column;
     gap: var(--spacing-md);
   }
-  
+
   .hero-visual {
     height: 300px;
   }
-  
+
   .section-header h2 {
     font-size: var(--font-3xl);
   }
-  
+
   .about-grid,
   .features-grid {
     grid-template-columns: 1fr;
     gap: var(--spacing-xl);
   }
-  
+
   .about-card {
     padding: var(--spacing-2xl) var(--spacing-lg);
   }
-  
+
   .steps {
     grid-template-columns: 1fr;
   }
-  
+
   .step {
     flex-direction: column;
     text-align: center;
     gap: var(--spacing-md);
   }
-  
+
   .contact-content {
     grid-template-columns: 1fr;
     gap: var(--spacing-xl);
   }
-  
+
   .contact-item {
     padding: var(--spacing-lg);
   }
-  
+
   .contact-form-container {
     padding: var(--spacing-xl);
   }
-  
+
   .contact-icon {
     width: 50px;
     height: 50px;
@@ -398,11 +398,11 @@ body.loaded {
   .hero-title {
     font-size: var(--font-3xl);
   }
-  
+
   .cta-content h2 {
     font-size: var(--font-3xl);
   }
-  
+
   .container {
     padding: 0 var(--spacing-md);
   }
@@ -423,7 +423,7 @@ body.loaded {
     opacity: 1;
     transform: none;
   }
-  
+
   .floating-card {
     animation: none;
   }
@@ -435,12 +435,12 @@ body.loaded {
     min-height: auto;
     page-break-inside: avoid;
   }
-  
+
   .floating-card {
     position: static;
     box-shadow: none;
   }
-  
+
   .cta,
   .contact {
     page-break-inside: avoid;

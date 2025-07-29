@@ -1,231 +1,636 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>테스트 요구사항 수집 - CHARM_INYEON</title>
-    <meta name="description" content="테스트 요구사항을 쉽게 수집하고 관리할 수 있는 도구입니다.">
-    
+    <meta name="description" content="테스트 요구사항을 쉽게 수집하고 관리할 수 있는 도구입니다." />
+
     <!-- DNS 프리페치 최적화 -->
-    <link rel="dns-prefetch" href="//fonts.googleapis.com">
-    <link rel="dns-prefetch" href="//fonts.gstatic.com">
-    
+    <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="//fonts.gstatic.com" />
+
     <!-- Critical CSS 인라인 (중장년층 특화) -->
     <style data-critical-senior>
-        /* 중장년층 특화 Critical CSS */
-        :root{--primary-color:#667eea;--secondary-color:#764ba2;--text-primary:#333333;--text-secondary:#666666;--text-white:#ffffff;--bg-primary:#ffffff;--bg-secondary:#f8fafc;--bg-warm:#fefcfb;--font-size-small:1rem;--font-size-normal:1.125rem;--font-size-large:1.25rem;--font-size-xl:1.5rem;--font-size-xxl:2rem;--spacing-xs:0.25rem;--spacing-sm:0.5rem;--spacing-md:1rem;--spacing-lg:1.5rem;--spacing-xl:2rem;--spacing-xxl:3rem;--radius-md:12px;--radius-lg:16px;--shadow-sm:0 2px 8px rgba(0,0,0,0.08);--transition-normal:0.3s ease}
-        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-        html{font-size:18px;line-height:1.6;scroll-behavior:smooth}
-        body{font-family:'Noto Sans KR',-apple-system,BlinkMacSystemFont,sans-serif;color:var(--text-primary);background:var(--bg-warm);min-height:100vh;-webkit-font-smoothing:antialiased}
-        *:focus{outline:4px solid var(--primary-color);outline-offset:4px;border-radius:4px}
-        .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
-        .voice-controller{position:fixed;top:20px;right:20px;z-index:1000;background:var(--bg-primary);border-radius:var(--radius-lg);padding:var(--spacing-md);box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:var(--spacing-sm)}
-        .voice-toggle{background:var(--primary-color);color:var(--text-white);border:none;padding:var(--spacing-sm) var(--spacing-md);border-radius:var(--radius-md);font-size:var(--font-size-normal);cursor:pointer;display:flex;align-items:center;gap:var(--spacing-xs);min-height:48px}
-        .font-size-controller{position:fixed;top:20px;left:20px;z-index:1000;background:var(--bg-primary);border-radius:var(--radius-lg);padding:var(--spacing-sm);box-shadow:var(--shadow-sm);display:flex;gap:var(--spacing-xs)}
-        .font-size-btn{width:48px;height:48px;border:2px solid var(--text-secondary);background:transparent;border-radius:var(--radius-md);cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:600;transition:var(--transition-normal)}
-        .font-size-btn.active{background:var(--primary-color);color:var(--text-white);border-color:var(--primary-color)}
-        .container{max-width:1200px;margin:0 auto;padding:var(--spacing-xl) var(--spacing-md)}
-        .card{background:var(--bg-primary);border-radius:var(--radius-lg);padding:var(--spacing-xl);box-shadow:var(--shadow-sm);margin-bottom:var(--spacing-lg)}
-        .card-header{margin-bottom:var(--spacing-xl);text-align:center}
-        .card-title{font-size:var(--font-size-xxl);font-weight:700;color:var(--text-primary);margin-bottom:var(--spacing-sm)}
-        .card-subtitle{font-size:var(--font-size-large);color:var(--text-secondary);line-height:1.6}
-        .card-content{margin-top:var(--spacing-lg)}
-        .form-group{margin-bottom:var(--spacing-lg)}
-        .form-label{display:block;font-size:var(--font-size-normal);font-weight:600;color:var(--text-primary);margin-bottom:var(--spacing-sm)}
-        .form-label.required::after{content:" *";color:#e53e3e;margin-left:var(--spacing-xs)}
-        .form-input{width:100%;padding:var(--spacing-md);border:2px solid var(--text-secondary);border-radius:var(--radius-md);font-size:var(--font-size-normal);background:var(--bg-primary);color:var(--text-primary);transition:var(--transition-normal);min-height:48px}
-        .form-input:focus{border-color:var(--primary-color);outline:none;box-shadow:0 0 0 3px rgba(102,126,234,0.2)}
-        .form-input.error{border-color:#e53e3e;background:#fef5f5}
-        .form-select{appearance:none;background-image:url("data:image/svg+xml;charset=UTF-8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><polyline points='6,9 12,15 18,9'/></svg>");background-repeat:no-repeat;background-position:right var(--spacing-md) center;background-size:20px;padding-right:var(--spacing-xxl)}
-        .form-textarea{resize:vertical;min-height:120px;font-family:inherit}
-        .form-help{font-size:var(--font-size-small);color:var(--text-secondary);margin-top:var(--spacing-xs)}
-        .form-error{font-size:var(--font-size-small);color:#e53e3e;margin-top:var(--spacing-xs);display:none}
-        .form-error.show{display:block}
-        .btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--spacing-sm);padding:var(--spacing-md) var(--spacing-xl);border-radius:var(--radius-lg);font-size:var(--font-size-normal);font-weight:600;text-decoration:none;transition:var(--transition-normal);cursor:pointer;border:none;min-height:56px;min-width:120px}
-        .btn-primary{background:linear-gradient(135deg,var(--primary-color),var(--secondary-color));color:var(--text-white);box-shadow:var(--shadow-sm)}
-        .btn-primary:hover,.btn-primary:focus{transform:translateY(-3px);box-shadow:0 8px 25px rgba(102,126,234,0.4)}
-        .btn-secondary{background:transparent;color:var(--primary-color);border:3px solid var(--primary-color)}
-        .btn-secondary:hover,.btn-secondary:focus{background:var(--primary-color);color:var(--text-white)}
-        .btn-large{padding:var(--spacing-lg) var(--spacing-xxl);font-size:var(--font-size-large);min-height:64px}
-        .btn:disabled{opacity:0.6;cursor:not-allowed;transform:none!important}
-        .btn-group{display:flex;gap:var(--spacing-md);justify-content:center;margin-top:var(--spacing-xl)}
-        .step-list{list-style:none;margin:0;padding:0}
-        .step-item{display:flex;align-items:flex-start;gap:var(--spacing-sm);margin-bottom:var(--spacing-sm)}
-        .step-number{background:var(--primary-color);color:var(--text-white);width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:var(--font-size-small);font-weight:600;flex-shrink:0}
-        .step-input{flex:1;padding:var(--spacing-sm);border:2px solid var(--text-secondary);border-radius:var(--radius-md);font-size:var(--font-size-normal)}
-        .step-controls{display:flex;gap:var(--spacing-sm);margin-top:var(--spacing-md)}
-        .btn-add{background:var(--primary-color);color:var(--text-white);border:none;padding:var(--spacing-sm) var(--spacing-md);border-radius:var(--radius-md);cursor:pointer;font-size:var(--font-size-normal)}
-        .btn-remove{background:#e53e3e;color:var(--text-white);border:none;padding:var(--spacing-sm);border-radius:var(--radius-md);cursor:pointer;width:32px;height:32px;display:flex;align-items:center;justify-content:center}
-        .success-message{background:#f0f9f0;border:2px solid #4caf50;color:#2e7d32;padding:var(--spacing-md);border-radius:var(--radius-md);margin-top:var(--spacing-md);display:none}
-        .success-message.show{display:block}
-        .requirements-list{margin-top:var(--spacing-lg)}
-        .requirement-item{background:var(--bg-secondary);padding:var(--spacing-md);border-radius:var(--radius-md);margin-bottom:var(--spacing-md);border-left:4px solid var(--primary-color)}
-        .requirement-title{font-weight:600;color:var(--text-primary);margin-bottom:var(--spacing-sm)}
-        .requirement-meta{font-size:var(--font-size-small);color:var(--text-secondary);display:flex;gap:var(--spacing-md);margin-bottom:var(--spacing-sm)}
-        .requirement-description{color:var(--text-primary);line-height:1.6}
-        @media(max-width:767px){html{font-size:16px}.container{padding:var(--spacing-lg) var(--spacing-md)}.card{padding:var(--spacing-lg)}.btn-group{flex-direction:column}.btn{width:100%}.voice-controller,.font-size-controller{position:relative;top:auto;right:auto;left:auto;margin:var(--spacing-md) auto;justify-content:center}}
-        @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important}}
-        @media(prefers-contrast:high){:root{--text-primary:#000000;--bg-primary:#ffffff;--primary-color:#0066cc}}
+      /* 중장년층 특화 Critical CSS */
+      :root {
+        --primary-color: #667eea;
+        --secondary-color: #764ba2;
+        --text-primary: #333333;
+        --text-secondary: #666666;
+        --text-white: #ffffff;
+        --bg-primary: #ffffff;
+        --bg-secondary: #f8fafc;
+        --bg-warm: #fefcfb;
+        --font-size-small: 1rem;
+        --font-size-normal: 1.125rem;
+        --font-size-large: 1.25rem;
+        --font-size-xl: 1.5rem;
+        --font-size-xxl: 2rem;
+        --spacing-xs: 0.25rem;
+        --spacing-sm: 0.5rem;
+        --spacing-md: 1rem;
+        --spacing-lg: 1.5rem;
+        --spacing-xl: 2rem;
+        --spacing-xxl: 3rem;
+        --radius-md: 12px;
+        --radius-lg: 16px;
+        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+        --transition-normal: 0.3s ease;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        font-size: 18px;
+        line-height: 1.6;
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family:
+          'Noto Sans KR',
+          -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
+        color: var(--text-primary);
+        background: var(--bg-warm);
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+      }
+      *:focus {
+        outline: 4px solid var(--primary-color);
+        outline-offset: 4px;
+        border-radius: 4px;
+      }
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        border: 0;
+      }
+      .voice-controller {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        background: var(--bg-primary);
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-md);
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+      }
+      .voice-toggle {
+        background: var(--primary-color);
+        color: var(--text-white);
+        border: none;
+        padding: var(--spacing-sm) var(--spacing-md);
+        border-radius: var(--radius-md);
+        font-size: var(--font-size-normal);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-xs);
+        min-height: 48px;
+      }
+      .font-size-controller {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 1000;
+        background: var(--bg-primary);
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-sm);
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        gap: var(--spacing-xs);
+      }
+      .font-size-btn {
+        width: 48px;
+        height: 48px;
+        border: 2px solid var(--text-secondary);
+        background: transparent;
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        transition: var(--transition-normal);
+      }
+      .font-size-btn.active {
+        background: var(--primary-color);
+        color: var(--text-white);
+        border-color: var(--primary-color);
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: var(--spacing-xl) var(--spacing-md);
+      }
+      .card {
+        background: var(--bg-primary);
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-xl);
+        box-shadow: var(--shadow-sm);
+        margin-bottom: var(--spacing-lg);
+      }
+      .card-header {
+        margin-bottom: var(--spacing-xl);
+        text-align: center;
+      }
+      .card-title {
+        font-size: var(--font-size-xxl);
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: var(--spacing-sm);
+      }
+      .card-subtitle {
+        font-size: var(--font-size-large);
+        color: var(--text-secondary);
+        line-height: 1.6;
+      }
+      .card-content {
+        margin-top: var(--spacing-lg);
+      }
+      .form-group {
+        margin-bottom: var(--spacing-lg);
+      }
+      .form-label {
+        display: block;
+        font-size: var(--font-size-normal);
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: var(--spacing-sm);
+      }
+      .form-label.required::after {
+        content: ' *';
+        color: #e53e3e;
+        margin-left: var(--spacing-xs);
+      }
+      .form-input {
+        width: 100%;
+        padding: var(--spacing-md);
+        border: 2px solid var(--text-secondary);
+        border-radius: var(--radius-md);
+        font-size: var(--font-size-normal);
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        transition: var(--transition-normal);
+        min-height: 48px;
+      }
+      .form-input:focus {
+        border-color: var(--primary-color);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+      }
+      .form-input.error {
+        border-color: #e53e3e;
+        background: #fef5f5;
+      }
+      .form-select {
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><polyline points='6,9 12,15 18,9'/></svg>");
+        background-repeat: no-repeat;
+        background-position: right var(--spacing-md) center;
+        background-size: 20px;
+        padding-right: var(--spacing-xxl);
+      }
+      .form-textarea {
+        resize: vertical;
+        min-height: 120px;
+        font-family: inherit;
+      }
+      .form-help {
+        font-size: var(--font-size-small);
+        color: var(--text-secondary);
+        margin-top: var(--spacing-xs);
+      }
+      .form-error {
+        font-size: var(--font-size-small);
+        color: #e53e3e;
+        margin-top: var(--spacing-xs);
+        display: none;
+      }
+      .form-error.show {
+        display: block;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--spacing-sm);
+        padding: var(--spacing-md) var(--spacing-xl);
+        border-radius: var(--radius-lg);
+        font-size: var(--font-size-normal);
+        font-weight: 600;
+        text-decoration: none;
+        transition: var(--transition-normal);
+        cursor: pointer;
+        border: none;
+        min-height: 56px;
+        min-width: 120px;
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: var(--text-white);
+        box-shadow: var(--shadow-sm);
+      }
+      .btn-primary:hover,
+      .btn-primary:focus {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+      }
+      .btn-secondary {
+        background: transparent;
+        color: var(--primary-color);
+        border: 3px solid var(--primary-color);
+      }
+      .btn-secondary:hover,
+      .btn-secondary:focus {
+        background: var(--primary-color);
+        color: var(--text-white);
+      }
+      .btn-large {
+        padding: var(--spacing-lg) var(--spacing-xxl);
+        font-size: var(--font-size-large);
+        min-height: 64px;
+      }
+      .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none !important;
+      }
+      .btn-group {
+        display: flex;
+        gap: var(--spacing-md);
+        justify-content: center;
+        margin-top: var(--spacing-xl);
+      }
+      .step-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .step-item {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--spacing-sm);
+        margin-bottom: var(--spacing-sm);
+      }
+      .step-number {
+        background: var(--primary-color);
+        color: var(--text-white);
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: var(--font-size-small);
+        font-weight: 600;
+        flex-shrink: 0;
+      }
+      .step-input {
+        flex: 1;
+        padding: var(--spacing-sm);
+        border: 2px solid var(--text-secondary);
+        border-radius: var(--radius-md);
+        font-size: var(--font-size-normal);
+      }
+      .step-controls {
+        display: flex;
+        gap: var(--spacing-sm);
+        margin-top: var(--spacing-md);
+      }
+      .btn-add {
+        background: var(--primary-color);
+        color: var(--text-white);
+        border: none;
+        padding: var(--spacing-sm) var(--spacing-md);
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        font-size: var(--font-size-normal);
+      }
+      .btn-remove {
+        background: #e53e3e;
+        color: var(--text-white);
+        border: none;
+        padding: var(--spacing-sm);
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .success-message {
+        background: #f0f9f0;
+        border: 2px solid #4caf50;
+        color: #2e7d32;
+        padding: var(--spacing-md);
+        border-radius: var(--radius-md);
+        margin-top: var(--spacing-md);
+        display: none;
+      }
+      .success-message.show {
+        display: block;
+      }
+      .requirements-list {
+        margin-top: var(--spacing-lg);
+      }
+      .requirement-item {
+        background: var(--bg-secondary);
+        padding: var(--spacing-md);
+        border-radius: var(--radius-md);
+        margin-bottom: var(--spacing-md);
+        border-left: 4px solid var(--primary-color);
+      }
+      .requirement-title {
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: var(--spacing-sm);
+      }
+      .requirement-meta {
+        font-size: var(--font-size-small);
+        color: var(--text-secondary);
+        display: flex;
+        gap: var(--spacing-md);
+        margin-bottom: var(--spacing-sm);
+      }
+      .requirement-description {
+        color: var(--text-primary);
+        line-height: 1.6;
+      }
+      @media (max-width: 767px) {
+        html {
+          font-size: 16px;
+        }
+        .container {
+          padding: var(--spacing-lg) var(--spacing-md);
+        }
+        .card {
+          padding: var(--spacing-lg);
+        }
+        .btn-group {
+          flex-direction: column;
+        }
+        .btn {
+          width: 100%;
+        }
+        .voice-controller,
+        .font-size-controller {
+          position: relative;
+          top: auto;
+          right: auto;
+          left: auto;
+          margin: var(--spacing-md) auto;
+          justify-content: center;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+      @media (prefers-contrast: high) {
+        :root {
+          --text-primary: #000000;
+          --bg-primary: #ffffff;
+          --primary-color: #0066cc;
+        }
+      }
     </style>
-    
+
     <!-- 폰트 로딩 최적화 -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" as="style">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
-</head>
-<body>
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap"
+      as="style"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap"
+      media="print"
+      onload="this.media='all'"
+    />
+  </head>
+  <body>
     <!-- 음성 안내 컨트롤러 -->
     <div class="voice-controller" role="banner" aria-label="음성 안내 설정">
-        <button class="voice-toggle" id="voiceToggle" aria-pressed="false">
-            <span class="voice-icon" aria-hidden="true">🔊</span>
-            <span>음성 안내</span>
-        </button>
-        <div class="voice-status" id="voiceStatus">꺼짐</div>
+      <button class="voice-toggle" id="voiceToggle" aria-pressed="false">
+        <span class="voice-icon" aria-hidden="true">🔊</span>
+        <span>음성 안내</span>
+      </button>
+      <div class="voice-status" id="voiceStatus">꺼짐</div>
     </div>
 
     <!-- 글씨 크기 조절 -->
     <div class="font-size-controller" role="toolbar" aria-label="글씨 크기 조절">
-        <button class="font-size-btn" data-size="small" aria-label="작은 글씨">A</button>
-        <button class="font-size-btn active" data-size="normal" aria-label="보통 글씨">A</button>
-        <button class="font-size-btn" data-size="large" aria-label="큰 글씨">A</button>
+      <button class="font-size-btn" data-size="small" aria-label="작은 글씨">A</button>
+      <button class="font-size-btn active" data-size="normal" aria-label="보통 글씨">A</button>
+      <button class="font-size-btn" data-size="large" aria-label="큰 글씨">A</button>
     </div>
 
     <div class="container">
-        <!-- 메인 카드 -->
-        <div class="card">
-            <div class="card-header">
-                <h1 class="card-title">테스트 요구사항 수집</h1>
-                <p class="card-subtitle">
-                    테스트가 필요한 기능의 요구사항을 입력하여 체계적으로 관리하세요.<br>
-                    모든 필드를 입력한 후 JSON 파일로 내보낼 수 있습니다.
-                </p>
-            </div>
-            
-            <div class="card-content">
-                <form id="requirementsForm" novalidate>
-                    <!-- 기본 정보 -->
-                    <div class="form-group">
-                        <label for="testTitle" class="form-label required">테스트 제목</label>
-                        <input type="text" id="testTitle" class="form-input" required 
-                               aria-describedby="testTitleHelp testTitleError">
-                        <div id="testTitleHelp" class="form-help">테스트할 기능이나 시나리오의 제목을 입력하세요</div>
-                        <div id="testTitleError" class="form-error"></div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="testDescription" class="form-label required">테스트 설명</label>
-                        <textarea id="testDescription" class="form-input form-textarea" required 
-                                  aria-describedby="testDescriptionHelp testDescriptionError"></textarea>
-                        <div id="testDescriptionHelp" class="form-help">테스트의 목적과 범위를 자세히 설명하세요</div>
-                        <div id="testDescriptionError" class="form-error"></div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="testPriority" class="form-label required">우선순위</label>
-                        <select id="testPriority" class="form-input form-select" required 
-                                aria-describedby="testPriorityHelp testPriorityError">
-                            <option value="">선택하세요</option>
-                            <option value="high">높음 (High)</option>
-                            <option value="medium">보통 (Medium)</option>
-                            <option value="low">낮음 (Low)</option>
-                        </select>
-                        <div id="testPriorityHelp" class="form-help">테스트의 중요도를 선택하세요</div>
-                        <div id="testPriorityError" class="form-error"></div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="testCategory" class="form-label required">테스트 분류</label>
-                        <select id="testCategory" class="form-input form-select" required 
-                                aria-describedby="testCategoryHelp testCategoryError">
-                            <option value="">선택하세요</option>
-                            <option value="functional">기능 테스트 (Functional)</option>
-                            <option value="security">보안 테스트 (Security)</option>
-                            <option value="performance">성능 테스트 (Performance)</option>
-                            <option value="ui">사용자 인터페이스 테스트 (UI)</option>
-                            <option value="integration">통합 테스트 (Integration)</option>
-                        </select>
-                        <div id="testCategoryHelp" class="form-help">테스트 유형을 선택하세요</div>
-                        <div id="testCategoryError" class="form-error"></div>
-                    </div>
-
-                    <!-- 테스트 시나리오 세부사항 -->
-                    <div class="form-group">
-                        <label for="testPreconditions" class="form-label required">사전 조건</label>
-                        <textarea id="testPreconditions" class="form-input form-textarea" required 
-                                  aria-describedby="testPreconditionsHelp testPreconditionsError"></textarea>
-                        <div id="testPreconditionsHelp" class="form-help">테스트 실행 전 필요한 조건들을 입력하세요</div>
-                        <div id="testPreconditionsError" class="form-error"></div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label required">테스트 단계</label>
-                        <div id="testStepsHelp" class="form-help">테스트 실행 단계를 순서대로 입력하세요</div>
-                        <ol class="step-list" id="testSteps">
-                            <li class="step-item">
-                                <span class="step-number">1</span>
-                                <input type="text" class="step-input" placeholder="첫 번째 단계를 입력하세요" required>
-                                <button type="button" class="btn-remove" aria-label="단계 삭제">×</button>
-                            </li>
-                        </ol>
-                        <div class="step-controls">
-                            <button type="button" class="btn-add" id="addStep">+ 단계 추가</button>
-                        </div>
-                        <div id="testStepsError" class="form-error"></div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="testExpectedResults" class="form-label required">예상 결과</label>
-                        <textarea id="testExpectedResults" class="form-input form-textarea" required 
-                                  aria-describedby="testExpectedResultsHelp testExpectedResultsError"></textarea>
-                        <div id="testExpectedResultsHelp" class="form-help">테스트 성공 시 기대되는 결과를 입력하세요</div>
-                        <div id="testExpectedResultsError" class="form-error"></div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="testEnvironment" class="form-label">테스트 환경</label>
-                        <input type="text" id="testEnvironment" class="form-input" 
-                               aria-describedby="testEnvironmentHelp">
-                        <div id="testEnvironmentHelp" class="form-help">테스트 실행 환경 정보를 입력하세요 (선택사항)</div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="testNotes" class="form-label">추가 메모</label>
-                        <textarea id="testNotes" class="form-input form-textarea" 
-                                  aria-describedby="testNotesHelp"></textarea>
-                        <div id="testNotesHelp" class="form-help">추가적인 주의사항이나 참고사항을 입력하세요 (선택사항)</div>
-                    </div>
-
-                    <!-- 버튼 그룹 -->
-                    <div class="btn-group">
-                        <button type="submit" class="btn btn-primary btn-large">
-                            <span aria-hidden="true">📋</span>
-                            요구사항 추가
-                        </button>
-                        <button type="button" class="btn btn-secondary btn-large" id="exportBtn" disabled>
-                            <span aria-hidden="true">📥</span>
-                            JSON 파일 내보내기
-                        </button>
-                        <button type="button" class="btn btn-secondary" id="clearBtn">
-                            <span aria-hidden="true">🗑️</span>
-                            전체 초기화
-                        </button>
-                    </div>
-                </form>
-
-                <!-- 성공 메시지 -->
-                <div class="success-message" id="successMessage">
-                    <strong>✅ 요구사항이 성공적으로 추가되었습니다!</strong><br>
-                    계속해서 요구사항을 추가하거나 파일로 내보내기 할 수 있습니다.
-                </div>
-
-                <!-- 수집된 요구사항 목록 -->
-                <div class="requirements-list" id="requirementsList" style="display: none;">
-                    <h3>수집된 요구사항 목록</h3>
-                    <div id="requirementsItems"></div>
-                </div>
-            </div>
+      <!-- 메인 카드 -->
+      <div class="card">
+        <div class="card-header">
+          <h1 class="card-title">테스트 요구사항 수집</h1>
+          <p class="card-subtitle">
+            테스트가 필요한 기능의 요구사항을 입력하여 체계적으로 관리하세요.<br />
+            모든 필드를 입력한 후 JSON 파일로 내보낼 수 있습니다.
+          </p>
         </div>
+
+        <div class="card-content">
+          <form id="requirementsForm" novalidate>
+            <!-- 기본 정보 -->
+            <div class="form-group">
+              <label for="testTitle" class="form-label required">테스트 제목</label>
+              <input
+                type="text"
+                id="testTitle"
+                class="form-input"
+                required
+                aria-describedby="testTitleHelp testTitleError"
+              />
+              <div id="testTitleHelp" class="form-help">
+                테스트할 기능이나 시나리오의 제목을 입력하세요
+              </div>
+              <div id="testTitleError" class="form-error"></div>
+            </div>
+
+            <div class="form-group">
+              <label for="testDescription" class="form-label required">테스트 설명</label>
+              <textarea
+                id="testDescription"
+                class="form-input form-textarea"
+                required
+                aria-describedby="testDescriptionHelp testDescriptionError"
+              ></textarea>
+              <div id="testDescriptionHelp" class="form-help">
+                테스트의 목적과 범위를 자세히 설명하세요
+              </div>
+              <div id="testDescriptionError" class="form-error"></div>
+            </div>
+
+            <div class="form-group">
+              <label for="testPriority" class="form-label required">우선순위</label>
+              <select
+                id="testPriority"
+                class="form-input form-select"
+                required
+                aria-describedby="testPriorityHelp testPriorityError"
+              >
+                <option value="">선택하세요</option>
+                <option value="high">높음 (High)</option>
+                <option value="medium">보통 (Medium)</option>
+                <option value="low">낮음 (Low)</option>
+              </select>
+              <div id="testPriorityHelp" class="form-help">테스트의 중요도를 선택하세요</div>
+              <div id="testPriorityError" class="form-error"></div>
+            </div>
+
+            <div class="form-group">
+              <label for="testCategory" class="form-label required">테스트 분류</label>
+              <select
+                id="testCategory"
+                class="form-input form-select"
+                required
+                aria-describedby="testCategoryHelp testCategoryError"
+              >
+                <option value="">선택하세요</option>
+                <option value="functional">기능 테스트 (Functional)</option>
+                <option value="security">보안 테스트 (Security)</option>
+                <option value="performance">성능 테스트 (Performance)</option>
+                <option value="ui">사용자 인터페이스 테스트 (UI)</option>
+                <option value="integration">통합 테스트 (Integration)</option>
+              </select>
+              <div id="testCategoryHelp" class="form-help">테스트 유형을 선택하세요</div>
+              <div id="testCategoryError" class="form-error"></div>
+            </div>
+
+            <!-- 테스트 시나리오 세부사항 -->
+            <div class="form-group">
+              <label for="testPreconditions" class="form-label required">사전 조건</label>
+              <textarea
+                id="testPreconditions"
+                class="form-input form-textarea"
+                required
+                aria-describedby="testPreconditionsHelp testPreconditionsError"
+              ></textarea>
+              <div id="testPreconditionsHelp" class="form-help">
+                테스트 실행 전 필요한 조건들을 입력하세요
+              </div>
+              <div id="testPreconditionsError" class="form-error"></div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label required">테스트 단계</label>
+              <div id="testStepsHelp" class="form-help">테스트 실행 단계를 순서대로 입력하세요</div>
+              <ol class="step-list" id="testSteps">
+                <li class="step-item">
+                  <span class="step-number">1</span>
+                  <input
+                    type="text"
+                    class="step-input"
+                    placeholder="첫 번째 단계를 입력하세요"
+                    required
+                  />
+                  <button type="button" class="btn-remove" aria-label="단계 삭제">×</button>
+                </li>
+              </ol>
+              <div class="step-controls">
+                <button type="button" class="btn-add" id="addStep">+ 단계 추가</button>
+              </div>
+              <div id="testStepsError" class="form-error"></div>
+            </div>
+
+            <div class="form-group">
+              <label for="testExpectedResults" class="form-label required">예상 결과</label>
+              <textarea
+                id="testExpectedResults"
+                class="form-input form-textarea"
+                required
+                aria-describedby="testExpectedResultsHelp testExpectedResultsError"
+              ></textarea>
+              <div id="testExpectedResultsHelp" class="form-help">
+                테스트 성공 시 기대되는 결과를 입력하세요
+              </div>
+              <div id="testExpectedResultsError" class="form-error"></div>
+            </div>
+
+            <div class="form-group">
+              <label for="testEnvironment" class="form-label">테스트 환경</label>
+              <input
+                type="text"
+                id="testEnvironment"
+                class="form-input"
+                aria-describedby="testEnvironmentHelp"
+              />
+              <div id="testEnvironmentHelp" class="form-help">
+                테스트 실행 환경 정보를 입력하세요 (선택사항)
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="testNotes" class="form-label">추가 메모</label>
+              <textarea
+                id="testNotes"
+                class="form-input form-textarea"
+                aria-describedby="testNotesHelp"
+              ></textarea>
+              <div id="testNotesHelp" class="form-help">
+                추가적인 주의사항이나 참고사항을 입력하세요 (선택사항)
+              </div>
+            </div>
+
+            <!-- 버튼 그룹 -->
+            <div class="btn-group">
+              <button type="submit" class="btn btn-primary btn-large">
+                <span aria-hidden="true">📋</span>
+                요구사항 추가
+              </button>
+              <button type="button" class="btn btn-secondary btn-large" id="exportBtn" disabled>
+                <span aria-hidden="true">📥</span>
+                JSON 파일 내보내기
+              </button>
+              <button type="button" class="btn btn-secondary" id="clearBtn">
+                <span aria-hidden="true">🗑️</span>
+                전체 초기화
+              </button>
+            </div>
+          </form>
+
+          <!-- 성공 메시지 -->
+          <div class="success-message" id="successMessage">
+            <strong>✅ 요구사항이 성공적으로 추가되었습니다!</strong><br />
+            계속해서 요구사항을 추가하거나 파일로 내보내기 할 수 있습니다.
+          </div>
+
+          <!-- 수집된 요구사항 목록 -->
+          <div class="requirements-list" id="requirementsList" style="display: none">
+            <h3>수집된 요구사항 목록</h3>
+            <div id="requirementsItems"></div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script src="js/test-requirements.js"></script>
-</body>
+  </body>
 </html>

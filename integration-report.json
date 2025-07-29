@@ -182,10 +182,7 @@
       "senior-ui-original.html (기존 senior-ui.html 백업)",
       "index-unified.html (통합 파일 원본)"
     ],
-    "newFiles": [
-      "index.html (통합된 메인 파일)",
-      "js/theme-switcher.js (테마 전환 시스템)"
-    ],
+    "newFiles": ["index.html (통합된 메인 파일)", "js/theme-switcher.js (테마 전환 시스템)"],
     "urlChanges": [
       "기본 접근: index.html",
       "중장년층 모드: index.html?theme=senior",

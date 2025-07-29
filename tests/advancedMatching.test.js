@@ -25,25 +25,25 @@ describe('Advanced Matching System', () => {
           number: 2,
           ages: ['teen', 'adult'],
           custody: 'shared',
-          livingWith: false
+          livingWith: false,
         },
         occupation: {
           industry: 'finance',
           position: 'senior',
           workSchedule: 'full_time',
-          income: '70_100'
+          income: '70_100',
         },
         lifestyle: {
           livingArrangement: 'alone',
           homeOwnership: 'own',
           fitnessLevel: 'active',
           socialLevel: 'ambivert',
-          travelFrequency: 'occasionally'
+          travelFrequency: 'occasionally',
         },
         location: {
           city: '서울시',
           district: '강남구',
-          coordinates: [127.047, 37.517]
+          coordinates: [127.047, 37.517],
         },
         preferences: {
           matching: {
@@ -53,11 +53,11 @@ describe('Advanced Matching System', () => {
             maritalStatusPreference: ['divorced', 'widowed'],
             childrenPreference: 'has_children',
             occupationImportance: 3,
-            lifestyleImportance: 4
-          }
+            lifestyleImportance: 4,
+          },
         },
         isVerified: true,
-        isActive: true
+        isActive: true,
       },
       {
         email: 'user2@test.com',
@@ -71,25 +71,25 @@ describe('Advanced Matching System', () => {
           number: 1,
           ages: ['adult'],
           custody: 'full',
-          livingWith: false
+          livingWith: false,
         },
         occupation: {
           industry: 'education',
           position: 'senior',
           workSchedule: 'full_time',
-          income: '50_70'
+          income: '50_70',
         },
         lifestyle: {
           livingArrangement: 'alone',
           homeOwnership: 'own',
           fitnessLevel: 'moderate',
           socialLevel: 'ambivert',
-          travelFrequency: 'frequently'
+          travelFrequency: 'frequently',
         },
         location: {
           city: '서울시',
           district: '서초구',
-          coordinates: [127.032, 37.485]
+          coordinates: [127.032, 37.485],
         },
         preferences: {
           matching: {
@@ -99,11 +99,11 @@ describe('Advanced Matching System', () => {
             maritalStatusPreference: ['divorced', 'single'],
             childrenPreference: 'no_preference',
             occupationImportance: 4,
-            lifestyleImportance: 3
-          }
+            lifestyleImportance: 3,
+          },
         },
         isVerified: true,
-        isActive: true
+        isActive: true,
       },
       {
         email: 'user3@test.com',
@@ -116,19 +116,19 @@ describe('Advanced Matching System', () => {
         occupation: {
           industry: 'retired',
           position: 'retired',
-          workSchedule: 'retired'
+          workSchedule: 'retired',
         },
         lifestyle: {
           livingArrangement: 'alone',
           homeOwnership: 'own',
           fitnessLevel: 'moderate',
           socialLevel: 'introvert',
-          travelFrequency: 'rarely'
+          travelFrequency: 'rarely',
         },
         location: {
           city: '서울시',
           district: '마포구',
-          coordinates: [126.905, 37.556]
+          coordinates: [126.905, 37.556],
         },
         preferences: {
           matching: {
@@ -138,12 +138,12 @@ describe('Advanced Matching System', () => {
             maritalStatusPreference: ['widowed', 'divorced'],
             childrenPreference: 'no_children',
             occupationImportance: 2,
-            lifestyleImportance: 5
-          }
+            lifestyleImportance: 5,
+          },
         },
         isVerified: true,
-        isActive: true
-      }
+        isActive: true,
+      },
     ];
 
     // 사용자 생성
@@ -168,7 +168,7 @@ describe('Advanced Matching System', () => {
           health: 8,
           creativity: 5,
           spirituality: 4,
-          adventure: 6
+          adventure: 6,
         },
         personalityScores: {
           openness: 6,
@@ -180,7 +180,7 @@ describe('Advanced Matching System', () => {
           emotionalStability: 8,
           adventurousness: 5,
           intellectualCuriosity: 7,
-          empathy: 8
+          empathy: 8,
         },
         lifestyle: {
           socialLevel: 'ambivert',
@@ -189,9 +189,9 @@ describe('Advanced Matching System', () => {
           communicationStyle: 'direct',
           conflictResolution: 'collaborative',
           decisionMaking: 'analytical',
-          stressManagement: 'exercise'
+          stressManagement: 'exercise',
         },
-        isCompleted: true
+        isCompleted: true,
       },
       {
         userId: testUsers[1]._id,
@@ -205,7 +205,7 @@ describe('Advanced Matching System', () => {
           health: 7,
           creativity: 7,
           spirituality: 6,
-          adventure: 7
+          adventure: 7,
         },
         personalityScores: {
           openness: 7,
@@ -217,7 +217,7 @@ describe('Advanced Matching System', () => {
           emotionalStability: 8,
           adventurousness: 7,
           intellectualCuriosity: 8,
-          empathy: 9
+          empathy: 9,
         },
         lifestyle: {
           socialLevel: 'ambivert',
@@ -226,9 +226,9 @@ describe('Advanced Matching System', () => {
           communicationStyle: 'supportive',
           conflictResolution: 'collaborative',
           decisionMaking: 'intuitive',
-          stressManagement: 'meditation'
+          stressManagement: 'meditation',
         },
-        isCompleted: true
+        isCompleted: true,
       },
       {
         userId: testUsers[2]._id,
@@ -242,7 +242,7 @@ describe('Advanced Matching System', () => {
           health: 9,
           creativity: 4,
           spirituality: 8,
-          adventure: 4
+          adventure: 4,
         },
         personalityScores: {
           openness: 5,
@@ -254,7 +254,7 @@ describe('Advanced Matching System', () => {
           emotionalStability: 7,
           adventurousness: 3,
           intellectualCuriosity: 6,
-          empathy: 7
+          empathy: 7,
         },
         lifestyle: {
           socialLevel: 'introvert',
@@ -263,10 +263,10 @@ describe('Advanced Matching System', () => {
           communicationStyle: 'analytical',
           conflictResolution: 'avoidant',
           decisionMaking: 'analytical',
-          stressManagement: 'reading'
+          stressManagement: 'reading',
         },
-        isCompleted: true
-      }
+        isCompleted: true,
+      },
     ];
 
     for (const data of assessmentData) {
@@ -283,10 +283,10 @@ describe('Advanced Matching System', () => {
       await Match.deleteMany({
         $or: [
           { user1: { $in: testUsers.map(u => u._id) } },
-          { user2: { $in: testUsers.map(u => u._id) } }
-        ]
+          { user2: { $in: testUsers.map(u => u._id) } },
+        ],
       });
-      
+
       // MongoDB 연결 정리
       const mongoose = require('mongoose');
       if (mongoose.connection.readyState === 1) {
@@ -318,12 +318,19 @@ describe('Advanced Matching System', () => {
       const user2 = testUsers[1]; // divorced
       const user3 = testUsers[2]; // widowed
 
-      const compatibility1_2 = await advancedMatchingService.calculateCompatibilityScore(user1, user2);
-      const compatibility1_3 = await advancedMatchingService.calculateCompatibilityScore(user1, user3);
+      const compatibility1_2 = await advancedMatchingService.calculateCompatibilityScore(
+        user1,
+        user2
+      );
+      const compatibility1_3 = await advancedMatchingService.calculateCompatibilityScore(
+        user1,
+        user3
+      );
 
       // 같은 결혼 상태끼리 더 높은 점수
-      expect(compatibility1_2.breakdown.maritalStatusCompatibility)
-        .toBeGreaterThan(compatibility1_3.breakdown.maritalStatusCompatibility);
+      expect(compatibility1_2.breakdown.maritalStatusCompatibility).toBeGreaterThan(
+        compatibility1_3.breakdown.maritalStatusCompatibility
+      );
     });
 
     test('자녀 유무 호환성이 올바르게 계산되어야 함', async () => {
@@ -331,12 +338,19 @@ describe('Advanced Matching System', () => {
       const user2 = testUsers[1]; // 자녀 있음
       const user3 = testUsers[2]; // 자녀 없음
 
-      const compatibility1_2 = await advancedMatchingService.calculateCompatibilityScore(user1, user2);
-      const compatibility1_3 = await advancedMatchingService.calculateCompatibilityScore(user1, user3);
+      const compatibility1_2 = await advancedMatchingService.calculateCompatibilityScore(
+        user1,
+        user2
+      );
+      const compatibility1_3 = await advancedMatchingService.calculateCompatibilityScore(
+        user1,
+        user3
+      );
 
       // 자녀 유무가 같을 때 더 높은 점수
-      expect(compatibility1_2.breakdown.childrenCompatibility)
-        .toBeGreaterThan(compatibility1_3.breakdown.childrenCompatibility);
+      expect(compatibility1_2.breakdown.childrenCompatibility).toBeGreaterThan(
+        compatibility1_3.breakdown.childrenCompatibility
+      );
     });
 
     test('지역 접근성이 올바르게 계산되어야 함', async () => {
@@ -344,12 +358,19 @@ describe('Advanced Matching System', () => {
       const user2 = testUsers[1]; // 서초구 (근거리)
       const user3 = testUsers[2]; // 마포구 (원거리)
 
-      const compatibility1_2 = await advancedMatchingService.calculateCompatibilityScore(user1, user2);
-      const compatibility1_3 = await advancedMatchingService.calculateCompatibilityScore(user1, user3);
+      const compatibility1_2 = await advancedMatchingService.calculateCompatibilityScore(
+        user1,
+        user2
+      );
+      const compatibility1_3 = await advancedMatchingService.calculateCompatibilityScore(
+        user1,
+        user3
+      );
 
       // 더 가까운 거리일 때 더 높은 점수
-      expect(compatibility1_2.breakdown.locationCompatibility)
-        .toBeGreaterThan(compatibility1_3.breakdown.locationCompatibility);
+      expect(compatibility1_2.breakdown.locationCompatibility).toBeGreaterThan(
+        compatibility1_3.breakdown.locationCompatibility
+      );
     });
   });
 
@@ -359,7 +380,7 @@ describe('Advanced Matching System', () => {
       const potentialMatches = await advancedMatchingService.findPotentialMatches(user1._id, 10);
 
       expect(Array.isArray(potentialMatches)).toBe(true);
-      
+
       potentialMatches.forEach(match => {
         expect(match).toHaveProperty('user');
         expect(match).toHaveProperty('compatibilityScore');
@@ -374,12 +395,12 @@ describe('Advanced Matching System', () => {
 
       potentialMatches.forEach(match => {
         const candidate = match.user;
-        
+
         // 성별 필터링 확인
         if (user1.preferences.matching.genderPreference !== 'both') {
           expect(candidate.gender).toBe(user1.preferences.matching.genderPreference);
         }
-        
+
         // 자신은 제외되어야 함
         expect(candidate._id.toString()).not.toBe(user1._id.toString());
       });
@@ -460,12 +481,12 @@ describe('Advanced Matching System', () => {
   describe('매칭 알고리즘 성능 테스트', () => {
     test('대량의 사용자에 대한 매칭 성능', async () => {
       const startTime = Date.now();
-      
+
       const potentialMatches = await advancedMatchingService.findPotentialMatches(
-        testUsers[0]._id, 
+        testUsers[0]._id,
         20
       );
-      
+
       const endTime = Date.now();
       const executionTime = endTime - startTime;
 
@@ -477,11 +498,11 @@ describe('Advanced Matching System', () => {
     test('호환성 점수 계산 성능', async () => {
       const user1 = testUsers[0];
       const user2 = testUsers[1];
-      
+
       const startTime = Date.now();
-      
+
       await advancedMatchingService.calculateCompatibilityScore(user1, user2);
-      
+
       const endTime = Date.now();
       const executionTime = endTime - startTime;
 
@@ -500,15 +521,15 @@ describe('Advanced Matching System', () => {
         age: '46-50',
         gender: 'male',
         isVerified: true,
-        isActive: true
+        isActive: true,
       });
       await newUser.save();
 
       const potentialMatches = await advancedMatchingService.findPotentialMatches(newUser._id, 5);
-      
+
       // 가치관 평가가 없어도 기본적인 매칭은 가능해야 함
       expect(Array.isArray(potentialMatches)).toBe(true);
-      
+
       await User.findByIdAndDelete(newUser._id);
     });
 
@@ -520,20 +541,20 @@ describe('Advanced Matching System', () => {
         age: '46-50',
         gender: 'female',
         isVerified: true,
-        isActive: true
+        isActive: true,
       });
       await userWithoutLocation.save();
 
       const user1 = testUsers[0];
       const compatibility = await advancedMatchingService.calculateCompatibilityScore(
-        user1, 
+        user1,
         userWithoutLocation
       );
 
       // 위치 정보가 없어도 호환성 계산이 가능해야 함
       expect(compatibility.totalScore).toBeGreaterThan(0);
       expect(compatibility.breakdown.locationCompatibility).toBeDefined();
-      
+
       await User.findByIdAndDelete(userWithoutLocation._id);
     });
   });

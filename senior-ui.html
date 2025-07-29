@@ -1,18 +1,27 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CHARM_INYEON - 세렌디피티가 만든 특별한 인연</title>
-    
+
     <!-- SEO 메타데이터 -->
-    <meta name="description" content="세렌디피티가 만든 특별한 인연, 4060세대를 위한 AI 기반 가치관 매칭 플랫폼. 우연한 만남에서 시작되는 진정한 인연을 경험해보세요." />
-    <meta name="keywords" content="세렌디피티, 인연, 4060세대, 매칭, 가치관, AI 매칭, 운명적 만남, 중년, 연애, 결혼, 우연한 만남, CHARM_INYEON" />
+    <meta
+      name="description"
+      content="세렌디피티가 만든 특별한 인연, 4060세대를 위한 AI 기반 가치관 매칭 플랫폼. 우연한 만남에서 시작되는 진정한 인연을 경험해보세요."
+    />
+    <meta
+      name="keywords"
+      content="세렌디피티, 인연, 4060세대, 매칭, 가치관, AI 매칭, 운명적 만남, 중년, 연애, 결혼, 우연한 만남, CHARM_INYEON"
+    />
     <meta name="author" content="CHARM_INYEON" />
 
     <!-- Open Graph 메타데이터 -->
     <meta property="og:title" content="CHARM_INYEON - 세렌디피티가 만든 특별한 인연" />
-    <meta property="og:description" content="우연한 만남에서 시작되는 진정한 인연. 4060세대를 위한 AI 기반 가치관 매칭 플랫폼에서 세렌디피티를 경험해보세요." />
+    <meta
+      property="og:description"
+      content="우연한 만남에서 시작되는 진정한 인연. 4060세대를 위한 AI 기반 가치관 매칭 플랫폼에서 세렌디피티를 경험해보세요."
+    />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://charm-inyeon.com" />
     <meta property="og:image" content="https://charm-inyeon.com/images/og-image.jpg" />
@@ -21,643 +30,1627 @@
     <!-- Twitter Card 메타데이터 -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="CHARM_INYEON - 세렌디피티가 만든 특별한 인연" />
-    <meta name="twitter:description" content="우연한 만남에서 시작되는 진정한 인연. 4060세대 가치관 매칭 플랫폼에서 세렌디피티를 경험해보세요." />
+    <meta
+      name="twitter:description"
+      content="우연한 만남에서 시작되는 진정한 인연. 4060세대 가치관 매칭 플랫폼에서 세렌디피티를 경험해보세요."
+    />
     <meta name="twitter:image" content="https://charm-inyeon.com/images/twitter-card.jpg" />
-    
+
     <!-- DNS 프리페치 최적화 -->
-    <link rel="dns-prefetch" href="//fonts.googleapis.com">
-    <link rel="dns-prefetch" href="//fonts.gstatic.com">
-    
+    <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="//fonts.gstatic.com" />
+
     <!-- Critical CSS 인라인 (중장년층 특화) -->
     <style data-critical-senior>
-        /* 중장년층 특화 Critical CSS */
-        :root{--primary-color:#667eea;--secondary-color:#764ba2;--text-primary:#333333;--text-secondary:#666666;--text-white:#ffffff;--bg-primary:#ffffff;--bg-secondary:#f8fafc;--bg-warm:#fefcfb;--font-size-small:1rem;--font-size-normal:1.125rem;--font-size-large:1.25rem;--font-size-xl:1.5rem;--font-size-xxl:2rem;--spacing-xs:0.25rem;--spacing-sm:0.5rem;--spacing-md:1rem;--spacing-lg:1.5rem;--spacing-xl:2rem;--spacing-xxl:3rem;--radius-md:12px;--radius-lg:16px;--shadow-sm:0 2px 8px rgba(0,0,0,0.08);--transition-normal:0.3s ease}
-        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-        html{font-size:18px;line-height:1.6;scroll-behavior:smooth}
-        body{font-family:'Noto Sans KR',-apple-system,BlinkMacSystemFont,sans-serif;color:var(--text-primary);background:var(--bg-warm);min-height:100vh;-webkit-font-smoothing:antialiased}
-        *:focus{outline:4px solid var(--primary-color);outline-offset:4px;border-radius:4px}
-        .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
-        .voice-controller{position:fixed;top:20px;right:20px;z-index:1000;background:var(--bg-primary);border-radius:var(--radius-lg);padding:var(--spacing-md);box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:var(--spacing-sm)}
-        .voice-toggle{background:var(--primary-color);color:var(--text-white);border:none;padding:var(--spacing-sm) var(--spacing-md);border-radius:var(--radius-md);font-size:var(--font-size-normal);cursor:pointer;display:flex;align-items:center;gap:var(--spacing-xs);min-height:48px}
-        .font-size-controller{position:fixed;top:20px;left:20px;z-index:1000;background:var(--bg-primary);border-radius:var(--radius-lg);padding:var(--spacing-sm);box-shadow:var(--shadow-sm);display:flex;gap:var(--spacing-xs)}
-        .font-size-btn{width:48px;height:48px;border:2px solid var(--text-secondary);background:transparent;border-radius:var(--radius-md);cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:600;transition:var(--transition-normal)}
-        .font-size-btn.active{background:var(--primary-color);color:var(--text-white);border-color:var(--primary-color)}
-        .senior-nav{background:var(--bg-primary);box-shadow:var(--shadow-sm);padding:var(--spacing-lg) 0}
-        .nav-container{max-width:1200px;margin:0 auto;padding:0 var(--spacing-md);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:var(--spacing-md)}
-        .logo{font-size:var(--font-size-xxl);font-weight:700;color:var(--primary-color);text-decoration:none;display:flex;align-items:center;gap:var(--spacing-sm)}
-        .nav-menu{display:flex;list-style:none;gap:var(--spacing-lg);flex-wrap:wrap}
-        .nav-item a{display:flex;align-items:center;gap:var(--spacing-sm);padding:var(--spacing-md) var(--spacing-lg);color:var(--text-primary);text-decoration:none;border-radius:var(--radius-lg);font-size:var(--font-size-normal);font-weight:500;transition:var(--transition-normal);min-height:56px}
-        .nav-item a:hover,.nav-item a:focus{background:linear-gradient(135deg,var(--primary-color),var(--secondary-color));color:var(--text-white);transform:translateY(-2px)}
-        .nav-icon{width:24px;height:24px;stroke-width:2}
-        .welcome-section{padding:var(--spacing-xxl) var(--spacing-md);background:linear-gradient(135deg,var(--bg-warm) 0%,var(--bg-secondary) 100%);text-align:center}
-        .welcome-section h1{font-size:var(--font-size-xxl);font-weight:700;line-height:1.3;margin-bottom:var(--spacing-lg);color:var(--text-primary)}
-        .welcome-section p{font-size:var(--font-size-large);color:var(--text-secondary);margin-bottom:var(--spacing-xl);line-height:1.8}
-        .btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--spacing-sm);padding:var(--spacing-md) var(--spacing-xl);border-radius:var(--radius-lg);font-size:var(--font-size-normal);font-weight:600;text-decoration:none;transition:var(--transition-normal);cursor:pointer;border:none;min-height:56px;min-width:120px}
-        .btn-primary{background:linear-gradient(135deg,var(--primary-color),var(--secondary-color));color:var(--text-white);box-shadow:var(--shadow-sm)}
-        .btn-primary:hover,.btn-primary:focus{transform:translateY(-3px);box-shadow:0 8px 25px rgba(102,126,234,0.4)}
-        .btn-secondary{background:transparent;color:var(--primary-color);border:3px solid var(--primary-color)}
-        .btn-secondary:hover,.btn-secondary:focus{background:var(--primary-color);color:var(--text-white)}
-        .btn-large{padding:var(--spacing-lg) var(--spacing-xxl);font-size:var(--font-size-large);min-height:64px}
-        .btn-icon{width:20px;height:20px;stroke-width:2.5}
-        @media(max-width:767px){html{font-size:16px}.nav-container{flex-direction:column;text-align:center}.nav-menu{justify-content:center}.welcome-section h1{font-size:var(--font-size-xl)}.btn{padding:var(--spacing-md) var(--spacing-lg);min-height:52px}.voice-controller,.font-size-controller{position:relative;top:auto;right:auto;left:auto;margin:var(--spacing-md) auto;justify-content:center}}
-        @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important}}
-        @media(prefers-contrast:high){:root{--text-primary:#000000;--bg-primary:#ffffff;--primary-color:#0066cc}}
+      /* 중장년층 특화 Critical CSS */
+      :root {
+        --primary-color: #667eea;
+        --secondary-color: #764ba2;
+        --text-primary: #333333;
+        --text-secondary: #666666;
+        --text-white: #ffffff;
+        --bg-primary: #ffffff;
+        --bg-secondary: #f8fafc;
+        --bg-warm: #fefcfb;
+        --font-size-small: 1rem;
+        --font-size-normal: 1.125rem;
+        --font-size-large: 1.25rem;
+        --font-size-xl: 1.5rem;
+        --font-size-xxl: 2rem;
+        --spacing-xs: 0.25rem;
+        --spacing-sm: 0.5rem;
+        --spacing-md: 1rem;
+        --spacing-lg: 1.5rem;
+        --spacing-xl: 2rem;
+        --spacing-xxl: 3rem;
+        --radius-md: 12px;
+        --radius-lg: 16px;
+        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+        --transition-normal: 0.3s ease;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        font-size: 18px;
+        line-height: 1.6;
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family:
+          'Noto Sans KR',
+          -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
+        color: var(--text-primary);
+        background: var(--bg-warm);
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+      }
+      *:focus {
+        outline: 4px solid var(--primary-color);
+        outline-offset: 4px;
+        border-radius: 4px;
+      }
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        border: 0;
+      }
+      .voice-controller {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        background: var(--bg-primary);
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-md);
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+      }
+      .voice-toggle {
+        background: var(--primary-color);
+        color: var(--text-white);
+        border: none;
+        padding: var(--spacing-sm) var(--spacing-md);
+        border-radius: var(--radius-md);
+        font-size: var(--font-size-normal);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-xs);
+        min-height: 48px;
+      }
+      .font-size-controller {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 1000;
+        background: var(--bg-primary);
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-sm);
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        gap: var(--spacing-xs);
+      }
+      .font-size-btn {
+        width: 48px;
+        height: 48px;
+        border: 2px solid var(--text-secondary);
+        background: transparent;
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        transition: var(--transition-normal);
+      }
+      .font-size-btn.active {
+        background: var(--primary-color);
+        color: var(--text-white);
+        border-color: var(--primary-color);
+      }
+      .senior-nav {
+        background: var(--bg-primary);
+        box-shadow: var(--shadow-sm);
+        padding: var(--spacing-lg) 0;
+      }
+      .nav-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 var(--spacing-md);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: var(--spacing-md);
+      }
+      .logo {
+        font-size: var(--font-size-xxl);
+        font-weight: 700;
+        color: var(--primary-color);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+      }
+      .nav-menu {
+        display: flex;
+        list-style: none;
+        gap: var(--spacing-lg);
+        flex-wrap: wrap;
+      }
+      .nav-item a {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+        padding: var(--spacing-md) var(--spacing-lg);
+        color: var(--text-primary);
+        text-decoration: none;
+        border-radius: var(--radius-lg);
+        font-size: var(--font-size-normal);
+        font-weight: 500;
+        transition: var(--transition-normal);
+        min-height: 56px;
+      }
+      .nav-item a:hover,
+      .nav-item a:focus {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: var(--text-white);
+        transform: translateY(-2px);
+      }
+      .nav-icon {
+        width: 24px;
+        height: 24px;
+        stroke-width: 2;
+      }
+      .welcome-section {
+        padding: var(--spacing-xxl) var(--spacing-md);
+        background: linear-gradient(135deg, var(--bg-warm) 0%, var(--bg-secondary) 100%);
+        text-align: center;
+      }
+      .welcome-section h1 {
+        font-size: var(--font-size-xxl);
+        font-weight: 700;
+        line-height: 1.3;
+        margin-bottom: var(--spacing-lg);
+        color: var(--text-primary);
+      }
+      .welcome-section p {
+        font-size: var(--font-size-large);
+        color: var(--text-secondary);
+        margin-bottom: var(--spacing-xl);
+        line-height: 1.8;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--spacing-sm);
+        padding: var(--spacing-md) var(--spacing-xl);
+        border-radius: var(--radius-lg);
+        font-size: var(--font-size-normal);
+        font-weight: 600;
+        text-decoration: none;
+        transition: var(--transition-normal);
+        cursor: pointer;
+        border: none;
+        min-height: 56px;
+        min-width: 120px;
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: var(--text-white);
+        box-shadow: var(--shadow-sm);
+      }
+      .btn-primary:hover,
+      .btn-primary:focus {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+      }
+      .btn-secondary {
+        background: transparent;
+        color: var(--primary-color);
+        border: 3px solid var(--primary-color);
+      }
+      .btn-secondary:hover,
+      .btn-secondary:focus {
+        background: var(--primary-color);
+        color: var(--text-white);
+      }
+      .btn-large {
+        padding: var(--spacing-lg) var(--spacing-xxl);
+        font-size: var(--font-size-large);
+        min-height: 64px;
+      }
+      .btn-icon {
+        width: 20px;
+        height: 20px;
+        stroke-width: 2.5;
+      }
+      @media (max-width: 767px) {
+        html {
+          font-size: 16px;
+        }
+        .nav-container {
+          flex-direction: column;
+          text-align: center;
+        }
+        .nav-menu {
+          justify-content: center;
+        }
+        .welcome-section h1 {
+          font-size: var(--font-size-xl);
+        }
+        .btn {
+          padding: var(--spacing-md) var(--spacing-lg);
+          min-height: 52px;
+        }
+        .voice-controller,
+        .font-size-controller {
+          position: relative;
+          top: auto;
+          right: auto;
+          left: auto;
+          margin: var(--spacing-md) auto;
+          justify-content: center;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+      @media (prefers-contrast: high) {
+        :root {
+          --text-primary: #000000;
+          --bg-primary: #ffffff;
+          --primary-color: #0066cc;
+        }
+      }
     </style>
-    
+
     <!-- 폰트 로딩 최적화 -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" as="style">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
-    
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap"
+      as="style"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap"
+      media="print"
+      onload="this.media='all'"
+    />
+
     <!-- 적응형 로딩 스크립트 (중장년층 특화) -->
     <script>
-        (function() {
-            const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-            const isSlowNetwork = connection && (connection.effectiveType === '3g' || connection.effectiveType === 'slow-2g' || connection.saveData);
-            
-            // 중장년층 특화 CSS 지연 로딩
-            if (!isSlowNetwork) {
-                const link = document.createElement('link');
-                link.rel = 'stylesheet';
-                link.href = 'senior-styles.css';
-                link.media = 'print';
-                link.onload = () => link.media = 'all';
-                document.head.appendChild(link);
-            }
-        })();
+      (function () {
+        const connection =
+          navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+        const isSlowNetwork =
+          connection &&
+          (connection.effectiveType === '3g' ||
+            connection.effectiveType === 'slow-2g' ||
+            connection.saveData);
+
+        // 중장년층 특화 CSS 지연 로딩
+        if (!isSlowNetwork) {
+          const link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.href = 'senior-styles.css';
+          link.media = 'print';
+          link.onload = () => (link.media = 'all');
+          document.head.appendChild(link);
+        }
+      })();
     </script>
-</head>
-<body>
+  </head>
+  <body>
     <!-- 음성 안내 컨트롤러 -->
     <div class="voice-controller" role="banner" aria-label="음성 안내 설정">
-        <button class="voice-toggle" id="voiceToggle" aria-pressed="false">
-            <span class="voice-icon" aria-hidden="true">🔊</span>
-            <span>음성 안내</span>
-        </button>
-        <div class="voice-status" id="voiceStatus">꺼짐</div>
+      <button class="voice-toggle" id="voiceToggle" aria-pressed="false">
+        <span class="voice-icon" aria-hidden="true">🔊</span>
+        <span>음성 안내</span>
+      </button>
+      <div class="voice-status" id="voiceStatus">꺼짐</div>
     </div>
 
     <!-- 글씨 크기 조절 -->
     <div class="font-size-controller" role="toolbar" aria-label="글씨 크기 조절">
-        <button class="font-size-btn" data-size="small" aria-label="작은 글씨">A</button>
-        <button class="font-size-btn active" data-size="normal" aria-label="보통 글씨">A</button>
-        <button class="font-size-btn" data-size="large" aria-label="큰 글씨">A</button>
+      <button class="font-size-btn" data-size="small" aria-label="작은 글씨">A</button>
+      <button class="font-size-btn active" data-size="normal" aria-label="보통 글씨">A</button>
+      <button class="font-size-btn" data-size="large" aria-label="큰 글씨">A</button>
     </div>
 
     <!-- 메인 네비게이션 -->
     <nav class="senior-nav" role="navigation" aria-label="메인 메뉴">
-        <div class="nav-container">
-            <a href="#" class="logo" tabindex="0">
-                <span aria-hidden="true">💝</span>
-                <span>CHARM_INYEON</span>
+      <div class="nav-container">
+        <a href="#" class="logo" tabindex="0">
+          <span aria-hidden="true">💝</span>
+          <span>CHARM_INYEON</span>
+        </a>
+        <ul class="nav-menu">
+          <li class="nav-item">
+            <a href="#home" tabindex="0" data-voice="홈페이지로 이동">
+              <svg
+                class="nav-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path d="M12 2L2 7V22H22V7L12 2Z" />
+                <path d="M9 22V12H15V22" />
+              </svg>
+              <span>홈</span>
             </a>
-            <ul class="nav-menu">
-                <li class="nav-item">
-                    <a href="#home" tabindex="0" data-voice="홈페이지로 이동">
-                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-                            <path d="M12 2L2 7V22H22V7L12 2Z"/>
-                            <path d="M9 22V12H15V22"/>
-                        </svg>
-                        <span>홈</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#about" tabindex="0" data-voice="서비스 소개 보기">
-                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-                            <circle cx="12" cy="12" r="10"/>
-                            <path d="M9.09 9A3 3 0 0 1 12 6"/>
-                            <path d="M12 17V11"/>
-                        </svg>
-                        <span>소개</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#matching" tabindex="0" data-voice="매칭 시작하기">
-                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                        </svg>
-                        <span>매칭</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#help" tabindex="0" data-voice="도움말 보기">
-                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-                            <path d="M9 11A3 3 0 1 1 12 8"/>
-                            <path d="M21 12C21 16.97 16.97 21 12 21S3 16.97 3 12 7.03 3 12 3"/>
-                        </svg>
-                        <span>도움말</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
+          </li>
+          <li class="nav-item">
+            <a href="#about" tabindex="0" data-voice="서비스 소개 보기">
+              <svg
+                class="nav-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <path d="M9.09 9A3 3 0 0 1 12 6" />
+                <path d="M12 17V11" />
+              </svg>
+              <span>소개</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#matching" tabindex="0" data-voice="매칭 시작하기">
+              <svg
+                class="nav-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                />
+              </svg>
+              <span>매칭</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#help" tabindex="0" data-voice="도움말 보기">
+              <svg
+                class="nav-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path d="M9 11A3 3 0 1 1 12 8" />
+                <path d="M21 12C21 16.97 16.97 21 12 21S3 16.97 3 12 7.03 3 12 3" />
+              </svg>
+              <span>도움말</span>
+            </a>
+          </li>
+        </ul>
+      </div>
     </nav>
 
     <main role="main">
-        <!-- 환영 섹션 -->
-        <section id="home" class="welcome-section" style="padding: var(--spacing-xxl) var(--spacing-md); background: linear-gradient(135deg, var(--bg-warm) 0%, var(--bg-secondary) 100%);">
-            <div class="container" style="max-width: 1000px; margin: 0 auto; text-align: center;">
-                <h1 data-voice="인생의 황금기, 새로운 만남을 시작해보세요" style="color: var(--text-primary); margin-bottom: var(--spacing-lg);">
-                    <span style="display: block; margin-bottom: var(--spacing-sm);">인생의 황금기,</span>
-                    <span style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">새로운 만남</span>을 시작해보세요
-                </h1>
-                <p style="font-size: var(--font-size-large); color: var(--text-secondary); margin-bottom: var(--spacing-xl); line-height: 1.8;">
-                    우연한 만남에서 시작되는 진정한 인연을 경험해보세요.<br>
-                    세렌디피티가 만든 특별한 4060세대 가치관 매칭 플랫폼입니다.
+      <!-- 환영 섹션 -->
+      <section
+        id="home"
+        class="welcome-section"
+        style="
+          padding: var(--spacing-xxl) var(--spacing-md);
+          background: linear-gradient(135deg, var(--bg-warm) 0%, var(--bg-secondary) 100%);
+        "
+      >
+        <div class="container" style="max-width: 1000px; margin: 0 auto; text-align: center">
+          <h1
+            data-voice="인생의 황금기, 새로운 만남을 시작해보세요"
+            style="color: var(--text-primary); margin-bottom: var(--spacing-lg)"
+          >
+            <span style="display: block; margin-bottom: var(--spacing-sm)">인생의 황금기,</span>
+            <span
+              style="
+                background: linear-gradient(
+                  135deg,
+                  var(--primary-color) 0%,
+                  var(--secondary-color) 100%
+                );
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+              "
+              >새로운 만남</span
+            >을 시작해보세요
+          </h1>
+          <p
+            style="
+              font-size: var(--font-size-large);
+              color: var(--text-secondary);
+              margin-bottom: var(--spacing-xl);
+              line-height: 1.8;
+            "
+          >
+            우연한 만남에서 시작되는 진정한 인연을 경험해보세요.<br />
+            세렌디피티가 만든 특별한 4060세대 가치관 매칭 플랫폼입니다.
+          </p>
+          <div
+            style="display: flex; gap: var(--spacing-md); justify-content: center; flex-wrap: wrap"
+          >
+            <button
+              class="btn btn-primary btn-large"
+              id="startJourneyBtn"
+              data-voice="회원가입 시작하기"
+            >
+              <span>시작하기</span>
+              <svg
+                class="btn-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path d="M5 12H19M12 5L19 12L12 19" />
+              </svg>
+            </button>
+            <button
+              class="btn btn-secondary btn-large"
+              id="learnMoreBtn"
+              data-voice="서비스 자세히 알아보기"
+            >
+              <svg
+                class="btn-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <polygon points="5,3 19,12 5,21" />
+              </svg>
+              <span>영상으로 보기</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 서비스 소개 -->
+      <section
+        id="about"
+        style="padding: var(--spacing-xxl) var(--spacing-md); background: var(--bg-primary)"
+      >
+        <div class="container" style="max-width: 1000px; margin: 0 auto">
+          <h2
+            style="text-align: center; margin-bottom: var(--spacing-xl)"
+            data-voice="우리가 특별한 이유"
+          >
+            왜 <span style="color: var(--primary-color)">CHARM_INYEON</span>일까요?
+          </h2>
+          <div
+            style="
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+              gap: var(--spacing-lg);
+            "
+          >
+            <div class="card">
+              <div class="card-header">
+                <div
+                  style="
+                    width: 60px;
+                    height: 60px;
+                    background: linear-gradient(
+                      135deg,
+                      var(--primary-color) 0%,
+                      var(--primary-light) 100%
+                    );
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin-bottom: var(--spacing-md);
+                    font-size: var(--font-size-xl);
+                  "
+                >
+                  🧠
+                </div>
+                <h3 class="card-title">AI 가치관 분석</h3>
+              </div>
+              <div class="card-content">
+                <p>
+                  오랜 인생 경험을 토대로 한 깊이 있는 가치관 분석을 통해 진정한 나를 발견하고,
+                  비슷한 가치관을 가진 분을 만날 수 있습니다.
                 </p>
-                <div style="display: flex; gap: var(--spacing-md); justify-content: center; flex-wrap: wrap;">
-                    <button class="btn btn-primary btn-large" id="startJourneyBtn" data-voice="회원가입 시작하기">
-                        <span>시작하기</span>
-                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-                            <path d="M5 12H19M12 5L19 12L12 19"/>
-                        </svg>
-                    </button>
-                    <button class="btn btn-secondary btn-large" id="learnMoreBtn" data-voice="서비스 자세히 알아보기">
-                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-                            <polygon points="5,3 19,12 5,21"/>
-                        </svg>
-                        <span>영상으로 보기</span>
-                    </button>
-                </div>
+              </div>
             </div>
-        </section>
 
-        <!-- 서비스 소개 -->
-        <section id="about" style="padding: var(--spacing-xxl) var(--spacing-md); background: var(--bg-primary);">
-            <div class="container" style="max-width: 1000px; margin: 0 auto;">
-                <h2 style="text-align: center; margin-bottom: var(--spacing-xl);" data-voice="우리가 특별한 이유">
-                    왜 <span style="color: var(--primary-color);">CHARM_INYEON</span>일까요?
-                </h2>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--spacing-lg);">
-                    <div class="card">
-                        <div class="card-header">
-                            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: var(--spacing-md); font-size: var(--font-size-xl);">
-                                🧠
-                            </div>
-                            <h3 class="card-title">AI 가치관 분석</h3>
-                        </div>
-                        <div class="card-content">
-                            <p>오랜 인생 경험을 토대로 한 깊이 있는 가치관 분석을 통해 진정한 나를 발견하고, 비슷한 가치관을 가진 분을 만날 수 있습니다.</p>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--secondary-color) 0%, var(--warning-color) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: var(--spacing-md); font-size: var(--font-size-xl);">
-                                🤝
-                            </div>
-                            <h3 class="card-title">안전한 만남</h3>
-                        </div>
-                        <div class="card-content">
-                            <p>철저한 본인 인증과 단계적 소개 시스템으로 안전하고 편안한 만남을 보장합니다. 서두르지 않고 천천히 알아가세요.</p>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--accent-color) 0%, var(--success-color) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: var(--spacing-md); font-size: var(--font-size-xl);">
-                                🎯
-                            </div>
-                            <h3 class="card-title">중장년층 특화</h3>
-                        </div>
-                        <div class="card-content">
-                            <p>4060세대의 특성과 니즈를 완벽히 이해한 서비스입니다. 재혼, 자녀, 직업 등 중장년층만의 고민을 세심하게 고려합니다.</p>
-                        </div>
-                    </div>
+            <div class="card">
+              <div class="card-header">
+                <div
+                  style="
+                    width: 60px;
+                    height: 60px;
+                    background: linear-gradient(
+                      135deg,
+                      var(--secondary-color) 0%,
+                      var(--warning-color) 100%
+                    );
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin-bottom: var(--spacing-md);
+                    font-size: var(--font-size-xl);
+                  "
+                >
+                  🤝
                 </div>
+                <h3 class="card-title">안전한 만남</h3>
+              </div>
+              <div class="card-content">
+                <p>
+                  철저한 본인 인증과 단계적 소개 시스템으로 안전하고 편안한 만남을 보장합니다.
+                  서두르지 않고 천천히 알아가세요.
+                </p>
+              </div>
             </div>
-        </section>
 
-        <!-- 회원가입 도우미 -->
-        <section id="signup-helper" style="padding: var(--spacing-xxl) var(--spacing-md); background: var(--bg-secondary);">
-            <div class="container" style="max-width: 800px; margin: 0 auto;">
-                <h2 style="text-align: center; margin-bottom: var(--spacing-xl);" data-voice="간단한 3단계로 시작하기">
-                    간단한 3단계로 시작하세요
-                </h2>
-                
-                <div class="signup-steps" style="display: flex; flex-direction: column; gap: var(--spacing-lg);">
-                    <div class="step-card card" style="display: flex; align-items: center; gap: var(--spacing-lg); padding: var(--spacing-xl);">
-                        <div class="step-number" style="width: 80px; height: 80px; background: var(--primary-color); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: var(--font-size-xxl); font-weight: 700; flex-shrink: 0;">
-                            1
-                        </div>
-                        <div class="step-content">
-                            <h3 style="margin-bottom: var(--spacing-sm); color: var(--primary-color);">기본 정보 입력</h3>
-                            <p style="margin-bottom: var(--spacing-sm);">이름, 연령대, 거주지 등 기본적인 정보를 입력해주세요. 개인정보는 안전하게 보호됩니다.</p>
-                            <div class="help-tooltip">
-                                <span class="help-icon">?</span>
-                                <div class="tooltip-content">개인정보는 매칭 목적으로만 사용되며 암호화되어 저장됩니다</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="step-card card" style="display: flex; align-items: center; gap: var(--spacing-lg); padding: var(--spacing-xl);">
-                        <div class="step-number" style="width: 80px; height: 80px; background: var(--secondary-color); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: var(--font-size-xxl); font-weight: 700; flex-shrink: 0;">
-                            2
-                        </div>
-                        <div class="step-content">
-                            <h3 style="margin-bottom: var(--spacing-sm); color: var(--secondary-color);">가치관 분석</h3>
-                            <p style="margin-bottom: var(--spacing-sm);">20개의 간단한 질문에 답하시면 AI가 당신의 가치관을 분석합니다. 정답은 없으니 편안하게 답해주세요.</p>
-                            <div class="help-tooltip">
-                                <span class="help-icon">?</span>
-                                <div class="tooltip-content">질문은 언제든 다시 답할 수 있고, 수정도 가능합니다</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="step-card card" style="display: flex; align-items: center; gap: var(--spacing-lg); padding: var(--spacing-xl);">
-                        <div class="step-number" style="width: 80px; height: 80px; background: var(--accent-color); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: var(--font-size-xxl); font-weight: 700; flex-shrink: 0;">
-                            3
-                        </div>
-                        <div class="step-content">
-                            <h3 style="margin-bottom: var(--spacing-sm); color: var(--accent-color);">매칭 시작</h3>
-                            <p style="margin-bottom: var(--spacing-sm);">AI가 당신과 잘 맞는 분들을 찾아드립니다. 마음에 드시는 분이 있으면 인사를 나눠보세요.</p>
-                            <div class="help-tooltip">
-                                <span class="help-icon">?</span>
-                                <div class="tooltip-content">매칭은 매일 새롭게 업데이트되며, 언제든 설정을 변경할 수 있습니다</div>
-                            </div>
-                        </div>
-                    </div>
+            <div class="card">
+              <div class="card-header">
+                <div
+                  style="
+                    width: 60px;
+                    height: 60px;
+                    background: linear-gradient(
+                      135deg,
+                      var(--accent-color) 0%,
+                      var(--success-color) 100%
+                    );
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin-bottom: var(--spacing-md);
+                    font-size: var(--font-size-xl);
+                  "
+                >
+                  🎯
                 </div>
-
-                <div style="text-align: center; margin-top: var(--spacing-xl);">
-                    <button class="btn btn-primary btn-large" id="startSignupBtn" data-voice="지금 바로 가입하기">
-                        <span>지금 바로 시작하기</span>
-                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-                            <path d="M16 21V19C16 17.9391 15.5786 16.9217 14.8284 16.1716C14.0783 15.4214 13.0609 15 12 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21"/>
-                            <circle cx="8.5" cy="7" r="4"/>
-                            <line x1="20" y1="8" x2="20" y2="14"/>
-                            <line x1="17" y1="11" x2="23" y2="11"/>
-                        </svg>
-                    </button>
-                </div>
+                <h3 class="card-title">중장년층 특화</h3>
+              </div>
+              <div class="card-content">
+                <p>
+                  4060세대의 특성과 니즈를 완벽히 이해한 서비스입니다. 재혼, 자녀, 직업 등
+                  중장년층만의 고민을 세심하게 고려합니다.
+                </p>
+              </div>
             </div>
-        </section>
+          </div>
+        </div>
+      </section>
 
-        <!-- 매칭 결과 미리보기 -->
-        <section id="matching" style="padding: var(--spacing-xxl) var(--spacing-md); background: var(--bg-primary);">
-            <div class="container" style="max-width: 1000px; margin: 0 auto;">
-                <h2 style="text-align: center; margin-bottom: var(--spacing-xl);" data-voice="매칭 결과 예시 보기">
-                    이런 분들을 만날 수 있어요
-                </h2>
-                
-                <div class="matching-preview" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--spacing-lg);">
-                    <!-- 매칭 카드 1 -->
-                    <div class="match-card card" style="text-align: center;">
-                        <div style="width: 100px; height: 100px; background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%); border-radius: 50%; margin: 0 auto var(--spacing-md); display: flex; align-items: center; justify-content: center; font-size: 3rem;">
-                            👨‍💼
-                        </div>
-                        <h3 style="margin-bottom: var(--spacing-sm);">김철수님 (52세)</h3>
-                        <div style="background: var(--bg-secondary); padding: var(--spacing-sm); border-radius: var(--border-radius-md); margin-bottom: var(--spacing-md);">
-                            <div style="font-size: var(--font-size-xl); font-weight: 700; color: var(--primary-color); margin-bottom: var(--spacing-xs);">92%</div>
-                            <div style="font-size: var(--font-size-small); color: var(--text-secondary);">가치관 일치도</div>
-                        </div>
-                        <div style="display: flex; flex-wrap: wrap; gap: var(--spacing-xs); justify-content: center; margin-bottom: var(--spacing-md);">
-                            <span style="background: var(--primary-light); color: white; padding: var(--spacing-xs) var(--spacing-sm); border-radius: var(--border-radius-sm); font-size: var(--font-size-small);">가족 중시</span>
-                            <span style="background: var(--accent-color); color: white; padding: var(--spacing-xs) var(--spacing-sm); border-radius: var(--border-radius-sm); font-size: var(--font-size-small);">운동 좋아함</span>
-                            <span style="background: var(--secondary-color); color: white; padding: var(--spacing-xs) var(--spacing-sm); border-radius: var(--border-radius-sm); font-size: var(--font-size-small);">안정 추구</span>
-                        </div>
-                        <p style="color: var(--text-secondary); margin-bottom: var(--spacing-md);">
-                            "가족과 함께하는 시간을 가장 소중히 여기며, 건강한 라이프스타일을 추구합니다."
-                        </p>
-                        <button class="btn btn-primary" style="width: 100%;" data-voice="김철수님과 대화 시작하기">
-                            <span>대화 시작하기</span>
-                        </button>
-                    </div>
+      <!-- 회원가입 도우미 -->
+      <section
+        id="signup-helper"
+        style="padding: var(--spacing-xxl) var(--spacing-md); background: var(--bg-secondary)"
+      >
+        <div class="container" style="max-width: 800px; margin: 0 auto">
+          <h2
+            style="text-align: center; margin-bottom: var(--spacing-xl)"
+            data-voice="간단한 3단계로 시작하기"
+          >
+            간단한 3단계로 시작하세요
+          </h2>
 
-                    <!-- 매칭 카드 2 -->
-                    <div class="match-card card" style="text-align: center;">
-                        <div style="width: 100px; height: 100px; background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%); border-radius: 50%; margin: 0 auto var(--spacing-md); display: flex; align-items: center; justify-content: center; font-size: 3rem;">
-                            👩‍🎨
-                        </div>
-                        <h3 style="margin-bottom: var(--spacing-sm);">이영희님 (48세)</h3>
-                        <div style="background: var(--bg-secondary); padding: var(--spacing-sm); border-radius: var(--border-radius-md); margin-bottom: var(--spacing-md);">
-                            <div style="font-size: var(--font-size-xl); font-weight: 700; color: var(--secondary-color); margin-bottom: var(--spacing-xs);">87%</div>
-                            <div style="font-size: var(--font-size-small); color: var(--text-secondary);">가치관 일치도</div>
-                        </div>
-                        <div style="display: flex; flex-wrap: wrap; gap: var(--spacing-xs); justify-content: center; margin-bottom: var(--spacing-md);">
-                            <span style="background: var(--secondary-color); color: white; padding: var(--spacing-xs) var(--spacing-sm); border-radius: var(--border-radius-sm); font-size: var(--font-size-small);">예술 애호가</span>
-                            <span style="background: var(--success-color); color: white; padding: var(--spacing-xs) var(--spacing-sm); border-radius: var(--border-radius-sm); font-size: var(--font-size-small);">성장 지향</span>
-                            <span style="background: var(--warning-color); color: white; padding: var(--spacing-xs) var(--spacing-sm); border-radius: var(--border-radius-sm); font-size: var(--font-size-small);">독서 좋아함</span>
-                        </div>
-                        <p style="color: var(--text-secondary); margin-bottom: var(--spacing-md);">
-                            "예술과 문화를 사랑하며, 끊임없이 배우고 성장하는 삶을 추구합니다."
-                        </p>
-                        <button class="btn btn-primary" style="width: 100%;" data-voice="이영희님과 대화 시작하기">
-                            <span>대화 시작하기</span>
-                        </button>
-                    </div>
-
-                    <!-- 매칭 카드 3 -->
-                    <div class="match-card card" style="text-align: center;">
-                        <div style="width: 100px; height: 100px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; margin: 0 auto var(--spacing-md); display: flex; align-items: center; justify-content: center; font-size: 3rem;">
-                            👨‍🏫
-                        </div>
-                        <h3 style="margin-bottom: var(--spacing-sm);">박민수님 (55세)</h3>
-                        <div style="background: var(--bg-secondary); padding: var(--spacing-sm); border-radius: var(--border-radius-md); margin-bottom: var(--spacing-md);">
-                            <div style="font-size: var(--font-size-xl); font-weight: 700; color: var(--accent-color); margin-bottom: var(--spacing-xs);">84%</div>
-                            <div style="font-size: var(--font-size-small); color: var(--text-secondary);">가치관 일치도</div>
-                        </div>
-                        <div style="display: flex; flex-wrap: wrap; gap: var(--spacing-xs); justify-content: center; margin-bottom: var(--spacing-md);">
-                            <span style="background: var(--primary-color); color: white; padding: var(--spacing-xs) var(--spacing-sm); border-radius: var(--border-radius-sm); font-size: var(--font-size-small);">지혜로운</span>
-                            <span style="background: var(--accent-color); color: white; padding: var(--spacing-xs) var(--spacing-sm); border-radius: var(--border-radius-sm); font-size: var(--font-size-small);">여행 좋아함</span>
-                            <span style="background: var(--warning-color); color: white; padding: var(--spacing-xs) var(--spacing-sm); border-radius: var(--border-radius-sm); font-size: var(--font-size-small);">소통 능력</span>
-                        </div>
-                        <p style="color: var(--text-secondary); margin-bottom: var(--spacing-md);">
-                            "새로운 경험과 진솔한 대화를 통해 서로 성장하는 관계를 원합니다."
-                        </p>
-                        <button class="btn btn-primary" style="width: 100%;" data-voice="박민수님과 대화 시작하기">
-                            <span>대화 시작하기</span>
-                        </button>
-                    </div>
+          <div
+            class="signup-steps"
+            style="display: flex; flex-direction: column; gap: var(--spacing-lg)"
+          >
+            <div
+              class="step-card card"
+              style="
+                display: flex;
+                align-items: center;
+                gap: var(--spacing-lg);
+                padding: var(--spacing-xl);
+              "
+            >
+              <div
+                class="step-number"
+                style="
+                  width: 80px;
+                  height: 80px;
+                  background: var(--primary-color);
+                  color: white;
+                  border-radius: 50%;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font-size: var(--font-size-xxl);
+                  font-weight: 700;
+                  flex-shrink: 0;
+                "
+              >
+                1
+              </div>
+              <div class="step-content">
+                <h3 style="margin-bottom: var(--spacing-sm); color: var(--primary-color)">
+                  기본 정보 입력
+                </h3>
+                <p style="margin-bottom: var(--spacing-sm)">
+                  이름, 연령대, 거주지 등 기본적인 정보를 입력해주세요. 개인정보는 안전하게
+                  보호됩니다.
+                </p>
+                <div class="help-tooltip">
+                  <span class="help-icon">?</span>
+                  <div class="tooltip-content">
+                    개인정보는 매칭 목적으로만 사용되며 암호화되어 저장됩니다
+                  </div>
                 </div>
-
-                <div style="text-align: center; margin-top: var(--spacing-xl);">
-                    <div class="alert alert-info" style="display: inline-block; text-align: left; max-width: 600px;">
-                        <svg style="width: 24px; height: 24px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-                            <circle cx="12" cy="12" r="10"/>
-                            <path d="M12 16V12"/>
-                            <path d="M12 8H12.01"/>
-                        </svg>
-                        <div>
-                            <strong>개인정보 보호</strong><br>
-                            프로필 사진과 개인정보는 상호 동의 후에만 공개되며, 언제든 차단하거나 신고할 수 있습니다.
-                        </div>
-                    </div>
-                </div>
+              </div>
             </div>
-        </section>
 
-        <!-- 도움말 섹션 -->
-        <section id="help" style="padding: var(--spacing-xxl) var(--spacing-md); background: var(--bg-warm);">
-            <div class="container" style="max-width: 800px; margin: 0 auto;">
-                <h2 style="text-align: center; margin-bottom: var(--spacing-xl);" data-voice="자주 묻는 질문들">
-                    자주 묻는 질문들
-                </h2>
-                
-                <div class="faq-list" style="display: flex; flex-direction: column; gap: var(--spacing-md);">
-                    <details class="faq-item card" style="cursor: pointer;">
-                        <summary style="padding: var(--spacing-lg); font-size: var(--font-size-large); font-weight: 600; color: var(--primary-color);">
-                            가입비용이 있나요?
-                        </summary>
-                        <div style="padding: 0 var(--spacing-lg) var(--spacing-lg);">
-                            <p>가입과 기본 매칭 서비스는 완전 무료입니다. 추가 기능 이용시에만 소정의 요금이 있으며, 언제든 해지할 수 있습니다.</p>
-                        </div>
-                    </details>
-
-                    <details class="faq-item card" style="cursor: pointer;">
-                        <summary style="padding: var(--spacing-lg); font-size: var(--font-size-large); font-weight: 600; color: var(--primary-color);">
-                            개인정보가 안전한가요?
-                        </summary>
-                        <div style="padding: 0 var(--spacing-lg) var(--spacing-lg);">
-                            <p>모든 개인정보는 국제 보안 표준에 따라 암호화되어 저장되며, 본인의 동의 없이는 절대 공개되지 않습니다. 언제든 계정을 삭제할 수 있습니다.</p>
-                        </div>
-                    </details>
-
-                    <details class="faq-item card" style="cursor: pointer;">
-                        <summary style="padding: var(--spacing-lg); font-size: var(--font-size-large); font-weight: 600; color: var(--primary-color);">
-                            어떻게 안전한 만남을 보장하나요?
-                        </summary>
-                        <div style="padding: 0 var(--spacing-lg) var(--spacing-lg);">
-                            <p>본인 인증, 단계적 소개 시스템, 24시간 모니터링, 신고 시스템 등을 통해 안전한 만남을 보장합니다. 공개된 장소에서의 첫 만남을 권장합니다.</p>
-                        </div>
-                    </details>
-
-                    <details class="faq-item card" style="cursor: pointer;">
-                        <summary style="padding: var(--spacing-lg); font-size: var(--font-size-large); font-weight: 600; color: var(--primary-color);">
-                            매칭이 마음에 들지 않으면 어떻게 하나요?
-                        </summary>
-                        <div style="padding: 0 var(--spacing-lg) var(--spacing-lg);">
-                            <p>언제든 매칭 설정을 변경하거나 특정 분을 차단할 수 있습니다. AI는 여러분의 피드백을 학습하여 더 나은 매칭을 제공합니다.</p>
-                        </div>
-                    </details>
+            <div
+              class="step-card card"
+              style="
+                display: flex;
+                align-items: center;
+                gap: var(--spacing-lg);
+                padding: var(--spacing-xl);
+              "
+            >
+              <div
+                class="step-number"
+                style="
+                  width: 80px;
+                  height: 80px;
+                  background: var(--secondary-color);
+                  color: white;
+                  border-radius: 50%;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font-size: var(--font-size-xxl);
+                  font-weight: 700;
+                  flex-shrink: 0;
+                "
+              >
+                2
+              </div>
+              <div class="step-content">
+                <h3 style="margin-bottom: var(--spacing-sm); color: var(--secondary-color)">
+                  가치관 분석
+                </h3>
+                <p style="margin-bottom: var(--spacing-sm)">
+                  20개의 간단한 질문에 답하시면 AI가 당신의 가치관을 분석합니다. 정답은 없으니
+                  편안하게 답해주세요.
+                </p>
+                <div class="help-tooltip">
+                  <span class="help-icon">?</span>
+                  <div class="tooltip-content">
+                    질문은 언제든 다시 답할 수 있고, 수정도 가능합니다
+                  </div>
                 </div>
-
-                <div style="text-align: center; margin-top: var(--spacing-xl);">
-                    <p style="margin-bottom: var(--spacing-md);">더 궁금한 점이 있으시면 언제든 문의해주세요.</p>
-                    <div style="display: flex; gap: var(--spacing-md); justify-content: center; flex-wrap: wrap;">
-                        <a href="tel:1588-0000" class="btn btn-secondary">
-                            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-                                <path d="M22 16.92V19.92C22 20.52 21.52 21 20.92 21C10.94 21 3 13.06 3 3.08C3 2.48 3.48 2 4.08 2H7.08C7.68 2 8.16 2.48 8.16 3.08"/>
-                            </svg>
-                            <span>전화 문의</span>
-                        </a>
-                        <a href="mailto:help@charminyeon.co.kr" class="btn btn-secondary">
-                            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-                                <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z"/>
-                                <polyline points="22,6 12,13 2,6"/>
-                            </svg>
-                            <span>이메일 문의</span>
-                        </a>
-                    </div>
-                </div>
+              </div>
             </div>
-        </section>
+
+            <div
+              class="step-card card"
+              style="
+                display: flex;
+                align-items: center;
+                gap: var(--spacing-lg);
+                padding: var(--spacing-xl);
+              "
+            >
+              <div
+                class="step-number"
+                style="
+                  width: 80px;
+                  height: 80px;
+                  background: var(--accent-color);
+                  color: white;
+                  border-radius: 50%;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font-size: var(--font-size-xxl);
+                  font-weight: 700;
+                  flex-shrink: 0;
+                "
+              >
+                3
+              </div>
+              <div class="step-content">
+                <h3 style="margin-bottom: var(--spacing-sm); color: var(--accent-color)">
+                  매칭 시작
+                </h3>
+                <p style="margin-bottom: var(--spacing-sm)">
+                  AI가 당신과 잘 맞는 분들을 찾아드립니다. 마음에 드시는 분이 있으면 인사를
+                  나눠보세요.
+                </p>
+                <div class="help-tooltip">
+                  <span class="help-icon">?</span>
+                  <div class="tooltip-content">
+                    매칭은 매일 새롭게 업데이트되며, 언제든 설정을 변경할 수 있습니다
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="text-align: center; margin-top: var(--spacing-xl)">
+            <button
+              class="btn btn-primary btn-large"
+              id="startSignupBtn"
+              data-voice="지금 바로 가입하기"
+            >
+              <span>지금 바로 시작하기</span>
+              <svg
+                class="btn-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  d="M16 21V19C16 17.9391 15.5786 16.9217 14.8284 16.1716C14.0783 15.4214 13.0609 15 12 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21"
+                />
+                <circle cx="8.5" cy="7" r="4" />
+                <line x1="20" y1="8" x2="20" y2="14" />
+                <line x1="17" y1="11" x2="23" y2="11" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 매칭 결과 미리보기 -->
+      <section
+        id="matching"
+        style="padding: var(--spacing-xxl) var(--spacing-md); background: var(--bg-primary)"
+      >
+        <div class="container" style="max-width: 1000px; margin: 0 auto">
+          <h2
+            style="text-align: center; margin-bottom: var(--spacing-xl)"
+            data-voice="매칭 결과 예시 보기"
+          >
+            이런 분들을 만날 수 있어요
+          </h2>
+
+          <div
+            class="matching-preview"
+            style="
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+              gap: var(--spacing-lg);
+            "
+          >
+            <!-- 매칭 카드 1 -->
+            <div class="match-card card" style="text-align: center">
+              <div
+                style="
+                  width: 100px;
+                  height: 100px;
+                  background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+                  border-radius: 50%;
+                  margin: 0 auto var(--spacing-md);
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font-size: 3rem;
+                "
+              >
+                👨‍💼
+              </div>
+              <h3 style="margin-bottom: var(--spacing-sm)">김철수님 (52세)</h3>
+              <div
+                style="
+                  background: var(--bg-secondary);
+                  padding: var(--spacing-sm);
+                  border-radius: var(--border-radius-md);
+                  margin-bottom: var(--spacing-md);
+                "
+              >
+                <div
+                  style="
+                    font-size: var(--font-size-xl);
+                    font-weight: 700;
+                    color: var(--primary-color);
+                    margin-bottom: var(--spacing-xs);
+                  "
+                >
+                  92%
+                </div>
+                <div style="font-size: var(--font-size-small); color: var(--text-secondary)">
+                  가치관 일치도
+                </div>
+              </div>
+              <div
+                style="
+                  display: flex;
+                  flex-wrap: wrap;
+                  gap: var(--spacing-xs);
+                  justify-content: center;
+                  margin-bottom: var(--spacing-md);
+                "
+              >
+                <span
+                  style="
+                    background: var(--primary-light);
+                    color: white;
+                    padding: var(--spacing-xs) var(--spacing-sm);
+                    border-radius: var(--border-radius-sm);
+                    font-size: var(--font-size-small);
+                  "
+                  >가족 중시</span
+                >
+                <span
+                  style="
+                    background: var(--accent-color);
+                    color: white;
+                    padding: var(--spacing-xs) var(--spacing-sm);
+                    border-radius: var(--border-radius-sm);
+                    font-size: var(--font-size-small);
+                  "
+                  >운동 좋아함</span
+                >
+                <span
+                  style="
+                    background: var(--secondary-color);
+                    color: white;
+                    padding: var(--spacing-xs) var(--spacing-sm);
+                    border-radius: var(--border-radius-sm);
+                    font-size: var(--font-size-small);
+                  "
+                  >안정 추구</span
+                >
+              </div>
+              <p style="color: var(--text-secondary); margin-bottom: var(--spacing-md)">
+                "가족과 함께하는 시간을 가장 소중히 여기며, 건강한 라이프스타일을 추구합니다."
+              </p>
+              <button
+                class="btn btn-primary"
+                style="width: 100%"
+                data-voice="김철수님과 대화 시작하기"
+              >
+                <span>대화 시작하기</span>
+              </button>
+            </div>
+
+            <!-- 매칭 카드 2 -->
+            <div class="match-card card" style="text-align: center">
+              <div
+                style="
+                  width: 100px;
+                  height: 100px;
+                  background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+                  border-radius: 50%;
+                  margin: 0 auto var(--spacing-md);
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font-size: 3rem;
+                "
+              >
+                👩‍🎨
+              </div>
+              <h3 style="margin-bottom: var(--spacing-sm)">이영희님 (48세)</h3>
+              <div
+                style="
+                  background: var(--bg-secondary);
+                  padding: var(--spacing-sm);
+                  border-radius: var(--border-radius-md);
+                  margin-bottom: var(--spacing-md);
+                "
+              >
+                <div
+                  style="
+                    font-size: var(--font-size-xl);
+                    font-weight: 700;
+                    color: var(--secondary-color);
+                    margin-bottom: var(--spacing-xs);
+                  "
+                >
+                  87%
+                </div>
+                <div style="font-size: var(--font-size-small); color: var(--text-secondary)">
+                  가치관 일치도
+                </div>
+              </div>
+              <div
+                style="
+                  display: flex;
+                  flex-wrap: wrap;
+                  gap: var(--spacing-xs);
+                  justify-content: center;
+                  margin-bottom: var(--spacing-md);
+                "
+              >
+                <span
+                  style="
+                    background: var(--secondary-color);
+                    color: white;
+                    padding: var(--spacing-xs) var(--spacing-sm);
+                    border-radius: var(--border-radius-sm);
+                    font-size: var(--font-size-small);
+                  "
+                  >예술 애호가</span
+                >
+                <span
+                  style="
+                    background: var(--success-color);
+                    color: white;
+                    padding: var(--spacing-xs) var(--spacing-sm);
+                    border-radius: var(--border-radius-sm);
+                    font-size: var(--font-size-small);
+                  "
+                  >성장 지향</span
+                >
+                <span
+                  style="
+                    background: var(--warning-color);
+                    color: white;
+                    padding: var(--spacing-xs) var(--spacing-sm);
+                    border-radius: var(--border-radius-sm);
+                    font-size: var(--font-size-small);
+                  "
+                  >독서 좋아함</span
+                >
+              </div>
+              <p style="color: var(--text-secondary); margin-bottom: var(--spacing-md)">
+                "예술과 문화를 사랑하며, 끊임없이 배우고 성장하는 삶을 추구합니다."
+              </p>
+              <button
+                class="btn btn-primary"
+                style="width: 100%"
+                data-voice="이영희님과 대화 시작하기"
+              >
+                <span>대화 시작하기</span>
+              </button>
+            </div>
+
+            <!-- 매칭 카드 3 -->
+            <div class="match-card card" style="text-align: center">
+              <div
+                style="
+                  width: 100px;
+                  height: 100px;
+                  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                  border-radius: 50%;
+                  margin: 0 auto var(--spacing-md);
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font-size: 3rem;
+                "
+              >
+                👨‍🏫
+              </div>
+              <h3 style="margin-bottom: var(--spacing-sm)">박민수님 (55세)</h3>
+              <div
+                style="
+                  background: var(--bg-secondary);
+                  padding: var(--spacing-sm);
+                  border-radius: var(--border-radius-md);
+                  margin-bottom: var(--spacing-md);
+                "
+              >
+                <div
+                  style="
+                    font-size: var(--font-size-xl);
+                    font-weight: 700;
+                    color: var(--accent-color);
+                    margin-bottom: var(--spacing-xs);
+                  "
+                >
+                  84%
+                </div>
+                <div style="font-size: var(--font-size-small); color: var(--text-secondary)">
+                  가치관 일치도
+                </div>
+              </div>
+              <div
+                style="
+                  display: flex;
+                  flex-wrap: wrap;
+                  gap: var(--spacing-xs);
+                  justify-content: center;
+                  margin-bottom: var(--spacing-md);
+                "
+              >
+                <span
+                  style="
+                    background: var(--primary-color);
+                    color: white;
+                    padding: var(--spacing-xs) var(--spacing-sm);
+                    border-radius: var(--border-radius-sm);
+                    font-size: var(--font-size-small);
+                  "
+                  >지혜로운</span
+                >
+                <span
+                  style="
+                    background: var(--accent-color);
+                    color: white;
+                    padding: var(--spacing-xs) var(--spacing-sm);
+                    border-radius: var(--border-radius-sm);
+                    font-size: var(--font-size-small);
+                  "
+                  >여행 좋아함</span
+                >
+                <span
+                  style="
+                    background: var(--warning-color);
+                    color: white;
+                    padding: var(--spacing-xs) var(--spacing-sm);
+                    border-radius: var(--border-radius-sm);
+                    font-size: var(--font-size-small);
+                  "
+                  >소통 능력</span
+                >
+              </div>
+              <p style="color: var(--text-secondary); margin-bottom: var(--spacing-md)">
+                "새로운 경험과 진솔한 대화를 통해 서로 성장하는 관계를 원합니다."
+              </p>
+              <button
+                class="btn btn-primary"
+                style="width: 100%"
+                data-voice="박민수님과 대화 시작하기"
+              >
+                <span>대화 시작하기</span>
+              </button>
+            </div>
+          </div>
+
+          <div style="text-align: center; margin-top: var(--spacing-xl)">
+            <div
+              class="alert alert-info"
+              style="display: inline-block; text-align: left; max-width: 600px"
+            >
+              <svg
+                style="width: 24px; height: 24px"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 16V12" />
+                <path d="M12 8H12.01" />
+              </svg>
+              <div>
+                <strong>개인정보 보호</strong><br />
+                프로필 사진과 개인정보는 상호 동의 후에만 공개되며, 언제든 차단하거나 신고할 수
+                있습니다.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 도움말 섹션 -->
+      <section
+        id="help"
+        style="padding: var(--spacing-xxl) var(--spacing-md); background: var(--bg-warm)"
+      >
+        <div class="container" style="max-width: 800px; margin: 0 auto">
+          <h2
+            style="text-align: center; margin-bottom: var(--spacing-xl)"
+            data-voice="자주 묻는 질문들"
+          >
+            자주 묻는 질문들
+          </h2>
+
+          <div
+            class="faq-list"
+            style="display: flex; flex-direction: column; gap: var(--spacing-md)"
+          >
+            <details class="faq-item card" style="cursor: pointer">
+              <summary
+                style="
+                  padding: var(--spacing-lg);
+                  font-size: var(--font-size-large);
+                  font-weight: 600;
+                  color: var(--primary-color);
+                "
+              >
+                가입비용이 있나요?
+              </summary>
+              <div style="padding: 0 var(--spacing-lg) var(--spacing-lg)">
+                <p>
+                  가입과 기본 매칭 서비스는 완전 무료입니다. 추가 기능 이용시에만 소정의 요금이
+                  있으며, 언제든 해지할 수 있습니다.
+                </p>
+              </div>
+            </details>
+
+            <details class="faq-item card" style="cursor: pointer">
+              <summary
+                style="
+                  padding: var(--spacing-lg);
+                  font-size: var(--font-size-large);
+                  font-weight: 600;
+                  color: var(--primary-color);
+                "
+              >
+                개인정보가 안전한가요?
+              </summary>
+              <div style="padding: 0 var(--spacing-lg) var(--spacing-lg)">
+                <p>
+                  모든 개인정보는 국제 보안 표준에 따라 암호화되어 저장되며, 본인의 동의 없이는 절대
+                  공개되지 않습니다. 언제든 계정을 삭제할 수 있습니다.
+                </p>
+              </div>
+            </details>
+
+            <details class="faq-item card" style="cursor: pointer">
+              <summary
+                style="
+                  padding: var(--spacing-lg);
+                  font-size: var(--font-size-large);
+                  font-weight: 600;
+                  color: var(--primary-color);
+                "
+              >
+                어떻게 안전한 만남을 보장하나요?
+              </summary>
+              <div style="padding: 0 var(--spacing-lg) var(--spacing-lg)">
+                <p>
+                  본인 인증, 단계적 소개 시스템, 24시간 모니터링, 신고 시스템 등을 통해 안전한
+                  만남을 보장합니다. 공개된 장소에서의 첫 만남을 권장합니다.
+                </p>
+              </div>
+            </details>
+
+            <details class="faq-item card" style="cursor: pointer">
+              <summary
+                style="
+                  padding: var(--spacing-lg);
+                  font-size: var(--font-size-large);
+                  font-weight: 600;
+                  color: var(--primary-color);
+                "
+              >
+                매칭이 마음에 들지 않으면 어떻게 하나요?
+              </summary>
+              <div style="padding: 0 var(--spacing-lg) var(--spacing-lg)">
+                <p>
+                  언제든 매칭 설정을 변경하거나 특정 분을 차단할 수 있습니다. AI는 여러분의 피드백을
+                  학습하여 더 나은 매칭을 제공합니다.
+                </p>
+              </div>
+            </details>
+          </div>
+
+          <div style="text-align: center; margin-top: var(--spacing-xl)">
+            <p style="margin-bottom: var(--spacing-md)">
+              더 궁금한 점이 있으시면 언제든 문의해주세요.
+            </p>
+            <div
+              style="
+                display: flex;
+                gap: var(--spacing-md);
+                justify-content: center;
+                flex-wrap: wrap;
+              "
+            >
+              <a href="tel:1588-0000" class="btn btn-secondary">
+                <svg
+                  class="btn-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M22 16.92V19.92C22 20.52 21.52 21 20.92 21C10.94 21 3 13.06 3 3.08C3 2.48 3.48 2 4.08 2H7.08C7.68 2 8.16 2.48 8.16 3.08"
+                  />
+                </svg>
+                <span>전화 문의</span>
+              </a>
+              <a href="mailto:help@charminyeon.co.kr" class="btn btn-secondary">
+                <svg
+                  class="btn-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z"
+                  />
+                  <polyline points="22,6 12,13 2,6" />
+                </svg>
+                <span>이메일 문의</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
 
     <!-- 회원가입 모달 -->
-    <div id="signupModal" class="modal-overlay" style="display: none;" role="dialog" aria-labelledby="signupTitle" aria-modal="true">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="signupTitle" class="modal-title">회원가입</h2>
-                <button class="modal-close" aria-label="모달 닫기" data-voice="회원가입 창 닫기">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="progress-container">
-                    <div class="progress-label">
-                        <span>진행 상황</span>
-                        <span id="signupProgress">1/3</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="signupProgressBar" style="width: 33%;"></div>
-                    </div>
-                </div>
-
-                <!-- 1단계: 기본 정보 -->
-                <form id="signupStep1" class="signup-step">
-                    <h3 style="margin-bottom: var(--spacing-lg); text-align: center; color: var(--primary-color);">기본 정보를 입력해주세요</h3>
-                    
-                    <div class="form-group">
-                        <label for="signup-name" class="form-label required">이름</label>
-                        <input type="text" id="signup-name" class="form-input" placeholder="실명을 입력해주세요" required>
-                        <div class="form-help">매칭 상대방에게는 가명으로 표시됩니다</div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="signup-age" class="form-label required">연령대</label>
-                        <select id="signup-age" class="form-input form-select" required>
-                            <option value="">선택해주세요</option>
-                            <option value="40-45">40-45세</option>
-                            <option value="46-50">46-50세</option>
-                            <option value="51-55">51-55세</option>
-                            <option value="56-60">56-60세</option>
-                            <option value="60+">60세 이상</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="signup-gender" class="form-label required">성별</label>
-                        <select id="signup-gender" class="form-input form-select" required>
-                            <option value="">선택해주세요</option>
-                            <option value="male">남성</option>
-                            <option value="female">여성</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="signup-location" class="form-label required">거주지역</label>
-                        <select id="signup-location" class="form-input form-select" required>
-                            <option value="">선택해주세요</option>
-                            <option value="seoul">서울특별시</option>
-                            <option value="busan">부산광역시</option>
-                            <option value="daegu">대구광역시</option>
-                            <option value="incheon">인천광역시</option>
-                            <option value="gwangju">광주광역시</option>
-                            <option value="daejeon">대전광역시</option>
-                            <option value="ulsan">울산광역시</option>
-                            <option value="gyeonggi">경기도</option>
-                            <option value="gangwon">강원도</option>
-                            <option value="chungbuk">충청북도</option>
-                            <option value="chungnam">충청남도</option>
-                            <option value="jeonbuk">전라북도</option>
-                            <option value="jeonnam">전라남도</option>
-                            <option value="gyeongbuk">경상북도</option>
-                            <option value="gyeongnam">경상남도</option>
-                            <option value="jeju">제주특별자치도</option>
-                        </select>
-                    </div>
-
-                    <button type="button" class="btn btn-primary" style="width: 100%; margin-top: var(--spacing-lg);" onclick="nextSignupStep()" data-voice="다음 단계로 이동">
-                        <span>다음 단계</span>
-                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-                            <path d="M5 12H19M12 5L19 12L12 19"/>
-                        </svg>
-                    </button>
-                </form>
-
-                <!-- 2단계: 연락처 및 인증 -->
-                <form id="signupStep2" class="signup-step" style="display: none;">
-                    <h3 style="margin-bottom: var(--spacing-lg); text-align: center; color: var(--primary-color);">연락처와 비밀번호를 설정해주세요</h3>
-                    
-                    <div class="form-group">
-                        <label for="signup-email" class="form-label required">이메일</label>
-                        <input type="email" id="signup-email" class="form-input" placeholder="example@email.com" required>
-                        <div class="form-help">로그인과 중요 알림에 사용됩니다</div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="signup-phone" class="form-label required">휴대폰 번호</label>
-                        <input type="tel" id="signup-phone" class="form-input" placeholder="010-1234-5678" required>
-                        <div class="form-help">본인 인증 후 안전하게 암호화됩니다</div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="signup-password" class="form-label required">비밀번호</label>
-                        <input type="password" id="signup-password" class="form-input" placeholder="8자 이상, 영문+숫자 조합" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="signup-password-confirm" class="form-label required">비밀번호 확인</label>
-                        <input type="password" id="signup-password-confirm" class="form-input" placeholder="비밀번호를 다시 입력해주세요" required>
-                    </div>
-
-                    <div style="display: flex; gap: var(--spacing-md); margin-top: var(--spacing-lg);">
-                        <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="prevSignupStep()" data-voice="이전 단계로 돌아가기">
-                            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-                                <path d="M19 12H5M12 5L5 12L12 19"/>
-                            </svg>
-                            <span>이전</span>
-                        </button>
-                        <button type="button" class="btn btn-primary" style="flex: 2;" onclick="nextSignupStep()" data-voice="다음 단계로 이동">
-                            <span>다음 단계</span>
-                            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-                                <path d="M5 12H19M12 5L19 12L12 19"/>
-                            </svg>
-                        </button>
-                    </div>
-                </form>
-
-                <!-- 3단계: 약관 동의 -->
-                <form id="signupStep3" class="signup-step" style="display: none;">
-                    <h3 style="margin-bottom: var(--spacing-lg); text-align: center; color: var(--primary-color);">약관에 동의해주세요</h3>
-                    
-                    <div class="form-group">
-                        <label class="form-checkbox">
-                            <input type="checkbox" id="agree-terms" required>
-                            <span style="margin-left: var(--spacing-sm);">
-                                <strong>이용약관</strong>에 동의합니다 (필수)
-                                <a href="#" style="color: var(--primary-color); margin-left: var(--spacing-xs);">내용 보기</a>
-                            </span>
-                        </label>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-checkbox">
-                            <input type="checkbox" id="agree-privacy" required>
-                            <span style="margin-left: var(--spacing-sm);">
-                                <strong>개인정보처리방침</strong>에 동의합니다 (필수)
-                                <a href="#" style="color: var(--primary-color); margin-left: var(--spacing-xs);">내용 보기</a>
-                            </span>
-                        </label>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-checkbox">
-                            <input type="checkbox" id="agree-marketing">
-                            <span style="margin-left: var(--spacing-sm);">
-                                매칭 추천 및 이벤트 정보 수신에 동의합니다 (선택)
-                            </span>
-                        </label>
-                    </div>
-
-                    <div class="alert alert-info" style="margin: var(--spacing-lg) 0;">
-                        <svg style="width: 20px; height: 20px; flex-shrink: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-                            <circle cx="12" cy="12" r="10"/>
-                            <path d="M12 16V12"/>
-                            <path d="M12 8H12.01"/>
-                        </svg>
-                        <span>가입 완료 후 가치관 분석을 진행하여 더 정확한 매칭을 받을 수 있습니다.</span>
-                    </div>
-
-                    <div style="display: flex; gap: var(--spacing-md); margin-top: var(--spacing-lg);">
-                        <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="prevSignupStep()" data-voice="이전 단계로 돌아가기">
-                            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-                                <path d="M19 12H5M12 5L5 12L12 19"/>
-                            </svg>
-                            <span>이전</span>
-                        </button>
-                        <button type="submit" class="btn btn-primary" style="flex: 2;" data-voice="회원가입 완료하기">
-                            <span>가입 완료</span>
-                            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-                                <path d="M20 6L9 17L4 12"/>
-                            </svg>
-                        </button>
-                    </div>
-                </form>
-            </div>
+    <div
+      id="signupModal"
+      class="modal-overlay"
+      style="display: none"
+      role="dialog"
+      aria-labelledby="signupTitle"
+      aria-modal="true"
+    >
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="signupTitle" class="modal-title">회원가입</h2>
+          <button class="modal-close" aria-label="모달 닫기" data-voice="회원가입 창 닫기">
+            &times;
+          </button>
         </div>
+        <div class="modal-body">
+          <div class="progress-container">
+            <div class="progress-label">
+              <span>진행 상황</span>
+              <span id="signupProgress">1/3</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="signupProgressBar" style="width: 33%"></div>
+            </div>
+          </div>
+
+          <!-- 1단계: 기본 정보 -->
+          <form id="signupStep1" class="signup-step">
+            <h3
+              style="
+                margin-bottom: var(--spacing-lg);
+                text-align: center;
+                color: var(--primary-color);
+              "
+            >
+              기본 정보를 입력해주세요
+            </h3>
+
+            <div class="form-group">
+              <label for="signup-name" class="form-label required">이름</label>
+              <input
+                type="text"
+                id="signup-name"
+                class="form-input"
+                placeholder="실명을 입력해주세요"
+                required
+              />
+              <div class="form-help">매칭 상대방에게는 가명으로 표시됩니다</div>
+            </div>
+
+            <div class="form-group">
+              <label for="signup-age" class="form-label required">연령대</label>
+              <select id="signup-age" class="form-input form-select" required>
+                <option value="">선택해주세요</option>
+                <option value="40-45">40-45세</option>
+                <option value="46-50">46-50세</option>
+                <option value="51-55">51-55세</option>
+                <option value="56-60">56-60세</option>
+                <option value="60+">60세 이상</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="signup-gender" class="form-label required">성별</label>
+              <select id="signup-gender" class="form-input form-select" required>
+                <option value="">선택해주세요</option>
+                <option value="male">남성</option>
+                <option value="female">여성</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="signup-location" class="form-label required">거주지역</label>
+              <select id="signup-location" class="form-input form-select" required>
+                <option value="">선택해주세요</option>
+                <option value="seoul">서울특별시</option>
+                <option value="busan">부산광역시</option>
+                <option value="daegu">대구광역시</option>
+                <option value="incheon">인천광역시</option>
+                <option value="gwangju">광주광역시</option>
+                <option value="daejeon">대전광역시</option>
+                <option value="ulsan">울산광역시</option>
+                <option value="gyeonggi">경기도</option>
+                <option value="gangwon">강원도</option>
+                <option value="chungbuk">충청북도</option>
+                <option value="chungnam">충청남도</option>
+                <option value="jeonbuk">전라북도</option>
+                <option value="jeonnam">전라남도</option>
+                <option value="gyeongbuk">경상북도</option>
+                <option value="gyeongnam">경상남도</option>
+                <option value="jeju">제주특별자치도</option>
+              </select>
+            </div>
+
+            <button
+              type="button"
+              class="btn btn-primary"
+              style="width: 100%; margin-top: var(--spacing-lg)"
+              onclick="nextSignupStep()"
+              data-voice="다음 단계로 이동"
+            >
+              <span>다음 단계</span>
+              <svg
+                class="btn-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path d="M5 12H19M12 5L19 12L12 19" />
+              </svg>
+            </button>
+          </form>
+
+          <!-- 2단계: 연락처 및 인증 -->
+          <form id="signupStep2" class="signup-step" style="display: none">
+            <h3
+              style="
+                margin-bottom: var(--spacing-lg);
+                text-align: center;
+                color: var(--primary-color);
+              "
+            >
+              연락처와 비밀번호를 설정해주세요
+            </h3>
+
+            <div class="form-group">
+              <label for="signup-email" class="form-label required">이메일</label>
+              <input
+                type="email"
+                id="signup-email"
+                class="form-input"
+                placeholder="example@email.com"
+                required
+              />
+              <div class="form-help">로그인과 중요 알림에 사용됩니다</div>
+            </div>
+
+            <div class="form-group">
+              <label for="signup-phone" class="form-label required">휴대폰 번호</label>
+              <input
+                type="tel"
+                id="signup-phone"
+                class="form-input"
+                placeholder="010-1234-5678"
+                required
+              />
+              <div class="form-help">본인 인증 후 안전하게 암호화됩니다</div>
+            </div>
+
+            <div class="form-group">
+              <label for="signup-password" class="form-label required">비밀번호</label>
+              <input
+                type="password"
+                id="signup-password"
+                class="form-input"
+                placeholder="8자 이상, 영문+숫자 조합"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="signup-password-confirm" class="form-label required">비밀번호 확인</label>
+              <input
+                type="password"
+                id="signup-password-confirm"
+                class="form-input"
+                placeholder="비밀번호를 다시 입력해주세요"
+                required
+              />
+            </div>
+
+            <div style="display: flex; gap: var(--spacing-md); margin-top: var(--spacing-lg)">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                style="flex: 1"
+                onclick="prevSignupStep()"
+                data-voice="이전 단계로 돌아가기"
+              >
+                <svg
+                  class="btn-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path d="M19 12H5M12 5L5 12L12 19" />
+                </svg>
+                <span>이전</span>
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                style="flex: 2"
+                onclick="nextSignupStep()"
+                data-voice="다음 단계로 이동"
+              >
+                <span>다음 단계</span>
+                <svg
+                  class="btn-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path d="M5 12H19M12 5L19 12L12 19" />
+                </svg>
+              </button>
+            </div>
+          </form>
+
+          <!-- 3단계: 약관 동의 -->
+          <form id="signupStep3" class="signup-step" style="display: none">
+            <h3
+              style="
+                margin-bottom: var(--spacing-lg);
+                text-align: center;
+                color: var(--primary-color);
+              "
+            >
+              약관에 동의해주세요
+            </h3>
+
+            <div class="form-group">
+              <label class="form-checkbox">
+                <input type="checkbox" id="agree-terms" required />
+                <span style="margin-left: var(--spacing-sm)">
+                  <strong>이용약관</strong>에 동의합니다 (필수)
+                  <a href="#" style="color: var(--primary-color); margin-left: var(--spacing-xs)"
+                    >내용 보기</a
+                  >
+                </span>
+              </label>
+            </div>
+
+            <div class="form-group">
+              <label class="form-checkbox">
+                <input type="checkbox" id="agree-privacy" required />
+                <span style="margin-left: var(--spacing-sm)">
+                  <strong>개인정보처리방침</strong>에 동의합니다 (필수)
+                  <a href="#" style="color: var(--primary-color); margin-left: var(--spacing-xs)"
+                    >내용 보기</a
+                  >
+                </span>
+              </label>
+            </div>
+
+            <div class="form-group">
+              <label class="form-checkbox">
+                <input type="checkbox" id="agree-marketing" />
+                <span style="margin-left: var(--spacing-sm)">
+                  매칭 추천 및 이벤트 정보 수신에 동의합니다 (선택)
+                </span>
+              </label>
+            </div>
+
+            <div class="alert alert-info" style="margin: var(--spacing-lg) 0">
+              <svg
+                style="width: 20px; height: 20px; flex-shrink: 0"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 16V12" />
+                <path d="M12 8H12.01" />
+              </svg>
+              <span>가입 완료 후 가치관 분석을 진행하여 더 정확한 매칭을 받을 수 있습니다.</span>
+            </div>
+
+            <div style="display: flex; gap: var(--spacing-md); margin-top: var(--spacing-lg)">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                style="flex: 1"
+                onclick="prevSignupStep()"
+                data-voice="이전 단계로 돌아가기"
+              >
+                <svg
+                  class="btn-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path d="M19 12H5M12 5L5 12L12 19" />
+                </svg>
+                <span>이전</span>
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary"
+                style="flex: 2"
+                data-voice="회원가입 완료하기"
+              >
+                <span>가입 완료</span>
+                <svg
+                  class="btn-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path d="M20 6L9 17L4 12" />
+                </svg>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
 
-    <footer style="background: var(--text-primary); color: white; padding: var(--spacing-xl) var(--spacing-md) var(--spacing-lg); text-align: center;">
-        <div class="container" style="max-width: 800px; margin: 0 auto;">
-            <div style="margin-bottom: var(--spacing-lg);">
-                <h3 style="color: white; margin-bottom: var(--spacing-sm);">CHARM_INYEON</h3>
-                <p style="color: rgba(255, 255, 255, 0.8); margin-bottom: var(--spacing-md);">
-                    세렌디피티가 만든 특별한 인연, 4060세대 가치관 매칭 플랫폼
-                </p>
-            </div>
-            
-            <div style="display: flex; justify-content: center; gap: var(--spacing-lg); flex-wrap: wrap; margin-bottom: var(--spacing-lg);">
-                <a href="#" style="color: rgba(255, 255, 255, 0.8); text-decoration: none;">이용약관</a>
-                <a href="#" style="color: rgba(255, 255, 255, 0.8); text-decoration: none;">개인정보처리방침</a>
-                <a href="#" style="color: rgba(255, 255, 255, 0.8); text-decoration: none;">고객센터</a>
-                <a href="#" style="color: rgba(255, 255, 255, 0.8); text-decoration: none;">운영정책</a>
-            </div>
-            
-            <div style="border-top: 1px solid rgba(255, 255, 255, 0.2); padding-top: var(--spacing-md); color: rgba(255, 255, 255, 0.6);">
-                <p>&copy; 2024 CHARM_INYEON. 모든 권리 보유.</p>
-                <p style="margin-top: var(--spacing-xs);">고객센터: 1588-0000 | 이메일: help@charminyeon.co.kr</p>
-            </div>
+    <footer
+      style="
+        background: var(--text-primary);
+        color: white;
+        padding: var(--spacing-xl) var(--spacing-md) var(--spacing-lg);
+        text-align: center;
+      "
+    >
+      <div class="container" style="max-width: 800px; margin: 0 auto">
+        <div style="margin-bottom: var(--spacing-lg)">
+          <h3 style="color: white; margin-bottom: var(--spacing-sm)">CHARM_INYEON</h3>
+          <p style="color: rgba(255, 255, 255, 0.8); margin-bottom: var(--spacing-md)">
+            세렌디피티가 만든 특별한 인연, 4060세대 가치관 매칭 플랫폼
+          </p>
         </div>
+
+        <div
+          style="
+            display: flex;
+            justify-content: center;
+            gap: var(--spacing-lg);
+            flex-wrap: wrap;
+            margin-bottom: var(--spacing-lg);
+          "
+        >
+          <a href="#" style="color: rgba(255, 255, 255, 0.8); text-decoration: none">이용약관</a>
+          <a href="#" style="color: rgba(255, 255, 255, 0.8); text-decoration: none"
+            >개인정보처리방침</a
+          >
+          <a href="#" style="color: rgba(255, 255, 255, 0.8); text-decoration: none">고객센터</a>
+          <a href="#" style="color: rgba(255, 255, 255, 0.8); text-decoration: none">운영정책</a>
+        </div>
+
+        <div
+          style="
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: var(--spacing-md);
+            color: rgba(255, 255, 255, 0.6);
+          "
+        >
+          <p>&copy; 2024 CHARM_INYEON. 모든 권리 보유.</p>
+          <p style="margin-top: var(--spacing-xs)">
+            고객센터: 1588-0000 | 이메일: help@charminyeon.co.kr
+          </p>
+        </div>
+      </div>
     </footer>
 
     <script src="senior-ui.js"></script>
-</body>
+  </body>
 </html>

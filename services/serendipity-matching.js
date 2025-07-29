@@ -1,6 +1,6 @@
 /**
  * 세렌디피티 기반 고급 매칭 알고리즘
- * 
+ *
  * 특징:
  * - 4060세대 특화 매칭 로직
  * - 우연적 요소와 과학적 분석의 조화
@@ -34,19 +34,19 @@ class SerendipityMatchingEngine {
 
       // 1단계: 기본 필터링 (나이, 지역, 선호도)
       const candidates = await this.getBasicCandidates(user, preferences);
-      
+
       // 2단계: 가치관 호환성 분석
       const compatibilityScores = await this.calculateCompatibilityScores(user, candidates);
-      
+
       // 3단계: 세렌디피티 요소 적용
       const serendipityEnhanced = await this.applySerendipityFactors(user, compatibilityScores);
-      
+
       // 4단계: 4060세대 특화 가중치
       const seniorOptimized = await this.applySeniorOptimization(user, serendipityEnhanced);
-      
+
       // 5단계: 최종 정렬 및 선별
       const finalMatches = await this.finalizeMatches(user, seniorOptimized);
-      
+
       return finalMatches;
     } catch (error) {
       console.error('세렌디피티 매칭 오류:', error);
@@ -62,7 +62,7 @@ class SerendipityMatchingEngine {
       _id: { $ne: user._id }, // 자기 자신 제외
       isActive: true,
       isVerified: true,
-      isProfileComplete: true
+      isProfileComplete: true,
     };
 
     // 나이 필터
@@ -85,10 +85,10 @@ class SerendipityMatchingEngine {
         $near: {
           $geometry: {
             type: 'Point',
-            coordinates: user.location.coordinates
+            coordinates: user.location.coordinates,
           },
-          $maxDistance: preferences.maxDistance * 1000 // km를 m로 변환
-        }
+          $maxDistance: preferences.maxDistance * 1000, // km를 m로 변환
+        },
       };
     }
 
@@ -107,23 +107,17 @@ class SerendipityMatchingEngine {
           query.hasChildren = false;
           break;
         case 'grown_children':
-          query.$and = [
-            { hasChildren: true },
-            { 'childrenInfo.ages': { $in: ['teen', 'adult'] } }
-          ];
+          query.$and = [{ hasChildren: true }, { 'childrenInfo.ages': { $in: ['teen', 'adult'] } }];
           break;
       }
     }
 
     // 이미 매칭된 사용자들 제외
     const existingMatches = await Match.find({
-      $or: [
-        { user1: user._id },
-        { user2: user._id }
-      ]
+      $or: [{ user1: user._id }, { user2: user._id }],
     }).select('user1 user2');
 
-    const excludeIds = existingMatches.map(match => 
+    const excludeIds = existingMatches.map(match =>
       match.user1.toString() === user._id.toString() ? match.user2 : match.user1
     );
 
@@ -143,22 +137,22 @@ class SerendipityMatchingEngine {
 
     for (const candidate of candidates) {
       const candidateAssessment = await ValuesAssessment.findOne({ userId: candidate._id });
-      
+
       if (!candidateAssessment) {
         continue; // 가치관 테스트 미완료 사용자 제외
       }
 
       const compatibility = await this.calculateDetailedCompatibility(
-        user, 
-        candidate, 
-        userAssessment, 
+        user,
+        candidate,
+        userAssessment,
         candidateAssessment
       );
 
       results.push({
         candidate,
         candidateAssessment,
-        compatibility
+        compatibility,
       });
     }
 
@@ -171,7 +165,7 @@ class SerendipityMatchingEngine {
   async calculateDetailedCompatibility(user, candidate, userAssessment, candidateAssessment) {
     const compatibility = {
       overall: 0,
-      breakdown: {}
+      breakdown: {},
     };
 
     // 1. 가치관 일치도 (35% 가중치)
@@ -187,10 +181,7 @@ class SerendipityMatchingEngine {
     );
 
     // 3. 라이프스타일 매칭 (20% 가중치)
-    compatibility.breakdown.lifestyleMatch = this.calculateLifestyleMatch(
-      user,
-      candidate
-    );
+    compatibility.breakdown.lifestyleMatch = this.calculateLifestyleMatch(user, candidate);
 
     // 4. 인생 경험 유사도 (4060세대 특화, 15% 가중치)
     compatibility.breakdown.lifeExperienceMatch = this.calculateLifeExperienceMatch(
@@ -205,13 +196,12 @@ class SerendipityMatchingEngine {
     );
 
     // 전체 점수 계산
-    compatibility.overall = (
+    compatibility.overall =
       compatibility.breakdown.valuesAlignment * 0.35 +
       compatibility.breakdown.personalityCompatibility * 0.25 +
-      compatibility.breakdown.lifestyleMatch * 0.20 +
+      compatibility.breakdown.lifestyleMatch * 0.2 +
       compatibility.breakdown.lifeExperienceMatch * 0.15 +
-      compatibility.breakdown.communicationStyle * 0.05
-    );
+      compatibility.breakdown.communicationStyle * 0.05;
 
     return compatibility;
   }
@@ -222,7 +212,7 @@ class SerendipityMatchingEngine {
   calculateValuesAlignment(userResults, candidateResults) {
     const userValues = userResults.scores || {};
     const candidateValues = candidateResults.scores || {};
-    
+
     const valueKeys = ['family', 'career', 'adventure', 'stability', 'creativity', 'social'];
     let totalDifference = 0;
     let validComparisons = 0;
@@ -237,7 +227,7 @@ class SerendipityMatchingEngine {
     if (validComparisons === 0) return 50; // 기본값
 
     const averageDifference = totalDifference / validComparisons;
-    return Math.max(0, 100 - (averageDifference * 2)); // 0-100 범위로 변환
+    return Math.max(0, 100 - averageDifference * 2); // 0-100 범위로 변환
   }
 
   /**
@@ -248,23 +238,25 @@ class SerendipityMatchingEngine {
 
     // 사회성 레벨 호환성 (너무 극단적인 차이는 감점)
     if (user.lifestyle?.socialLevel && candidate.lifestyle?.socialLevel) {
-      const socialLevels = { 'introvert': 1, 'ambivert': 2, 'extrovert': 3 };
+      const socialLevels = { introvert: 1, ambivert: 2, extrovert: 3 };
       const userLevel = socialLevels[user.lifestyle.socialLevel];
       const candidateLevel = socialLevels[candidate.lifestyle.socialLevel];
       const difference = Math.abs(userLevel - candidateLevel);
-      
-      if (difference === 0) score += 15; // 동일한 성향
-      else if (difference === 1) score += 20; // 상호 보완적
+
+      if (difference === 0)
+        score += 15; // 동일한 성향
+      else if (difference === 1)
+        score += 20; // 상호 보완적
       else score -= 10; // 너무 다름
     }
 
     // 활동성 레벨 매칭
     if (user.lifestyle?.fitnessLevel && candidate.lifestyle?.fitnessLevel) {
-      const fitnessLevels = { 'low': 1, 'moderate': 2, 'active': 3, 'very_active': 4 };
+      const fitnessLevels = { low: 1, moderate: 2, active: 3, very_active: 4 };
       const userFitness = fitnessLevels[user.lifestyle.fitnessLevel];
       const candidateFitness = fitnessLevels[candidate.lifestyle.fitnessLevel];
       const difference = Math.abs(userFitness - candidateFitness);
-      
+
       if (difference <= 1) score += 15;
       else if (difference === 2) score += 5;
       else score -= 5;
@@ -272,11 +264,11 @@ class SerendipityMatchingEngine {
 
     // 여행 성향 호환성
     if (user.lifestyle?.travelFrequency && candidate.lifestyle?.travelFrequency) {
-      const travelLevels = { 'rarely': 1, 'occasionally': 2, 'frequently': 3, 'very_frequently': 4 };
+      const travelLevels = { rarely: 1, occasionally: 2, frequently: 3, very_frequently: 4 };
       const userTravel = travelLevels[user.lifestyle.travelFrequency];
       const candidateTravel = travelLevels[candidate.lifestyle.travelFrequency];
       const difference = Math.abs(userTravel - candidateTravel);
-      
+
       if (difference <= 1) score += 10;
       else if (difference === 2) score += 5;
     }
@@ -328,13 +320,13 @@ class SerendipityMatchingEngine {
     // 결혼 경험 유사도
     if (user.maritalStatus && candidate.maritalStatus) {
       const experienceGroups = {
-        'never_married': ['single'],
-        'previously_married': ['divorced', 'widowed', 'separated']
+        never_married: ['single'],
+        previously_married: ['divorced', 'widowed', 'separated'],
       };
-      
+
       const userGroup = this.getExperienceGroup(user.maritalStatus, experienceGroups);
       const candidateGroup = this.getExperienceGroup(candidate.maritalStatus, experienceGroups);
-      
+
       if (userGroup === candidateGroup) {
         score += 25; // 유사한 결혼 경험
       }
@@ -343,12 +335,17 @@ class SerendipityMatchingEngine {
     // 직업 경험 레벨
     if (user.occupation?.position && candidate.occupation?.position) {
       const positionLevels = {
-        'entry': 1, 'mid': 2, 'senior': 3, 'executive': 4, 'owner': 5, 'retired': 3
+        entry: 1,
+        mid: 2,
+        senior: 3,
+        executive: 4,
+        owner: 5,
+        retired: 3,
       };
-      
+
       const userLevel = positionLevels[user.occupation.position];
       const candidateLevel = positionLevels[candidate.occupation.position];
-      
+
       if (userLevel && candidateLevel) {
         const difference = Math.abs(userLevel - candidateLevel);
         if (difference <= 1) score += 15;
@@ -360,9 +357,10 @@ class SerendipityMatchingEngine {
     const userAge = this.getAgeGroup(user.age);
     const candidateAge = this.getAgeGroup(candidate.age);
     const ageDifference = Math.abs(userAge - candidateAge);
-    
+
     if (ageDifference === 0) score += 10;
-    else if (ageDifference === 1) score += 15; // 약간의 나이 차이는 오히려 좋음
+    else if (ageDifference === 1)
+      score += 15; // 약간의 나이 차이는 오히려 좋음
     else score -= 5;
 
     return Math.max(0, Math.min(100, score));
@@ -376,10 +374,10 @@ class SerendipityMatchingEngine {
 
     // 기술 활용 능력 유사도
     if (user.ageGroupContext?.technicalComfort && candidate.ageGroupContext?.technicalComfort) {
-      const techLevels = { 'beginner': 1, 'intermediate': 2, 'advanced': 3 };
+      const techLevels = { beginner: 1, intermediate: 2, advanced: 3 };
       const userTech = techLevels[user.ageGroupContext.technicalComfort];
       const candidateTech = techLevels[candidate.ageGroupContext.technicalComfort];
-      
+
       if (userTech && candidateTech) {
         const difference = Math.abs(userTech - candidateTech);
         if (difference === 0) score += 20;
@@ -388,8 +386,14 @@ class SerendipityMatchingEngine {
     }
 
     // 선호 연락 방법 호환성
-    if (user.ageGroupContext?.preferredContactMethod && candidate.ageGroupContext?.preferredContactMethod) {
-      if (user.ageGroupContext.preferredContactMethod === candidate.ageGroupContext.preferredContactMethod) {
+    if (
+      user.ageGroupContext?.preferredContactMethod &&
+      candidate.ageGroupContext?.preferredContactMethod
+    ) {
+      if (
+        user.ageGroupContext.preferredContactMethod ===
+        candidate.ageGroupContext.preferredContactMethod
+      ) {
         score += 10;
       }
     }
@@ -405,14 +409,16 @@ class SerendipityMatchingEngine {
       let serendipityBoost = 0;
 
       // 1. 예상 밖의 호환성 발견 (가치관은 다르지만 성격이 잘 맞는 경우)
-      if (result.compatibility.breakdown.valuesAlignment < 70 && 
-          result.compatibility.breakdown.personalityCompatibility > 80) {
+      if (
+        result.compatibility.breakdown.valuesAlignment < 70 &&
+        result.compatibility.breakdown.personalityCompatibility > 80
+      ) {
         serendipityBoost += 10;
         result.serendipityFactors = result.serendipityFactors || [];
         result.serendipityFactors.push({
           type: 'unexpected_harmony',
           description: '가치관은 다르지만 성격적으로 완벽한 조화',
-          boost: 10
+          boost: 10,
         });
       }
 
@@ -423,7 +429,7 @@ class SerendipityMatchingEngine {
         result.serendipityFactors.push({
           type: 'diverse_background',
           description: '서로 다른 업계 경험으로 풍부한 대화 가능',
-          boost: 5
+          boost: 5,
         });
       }
 
@@ -439,13 +445,14 @@ class SerendipityMatchingEngine {
           user.location.coordinates,
           result.candidate.location.coordinates
         );
-        if (distance < 5) { // 5km 이내
+        if (distance < 5) {
+          // 5km 이내
           serendipityBoost += 8;
           result.serendipityFactors = result.serendipityFactors || [];
           result.serendipityFactors.push({
             type: 'geographic_proximity',
             description: '운명처럼 가까운 거리에서 만난 인연',
-            boost: 8
+            boost: 8,
           });
         }
       }
@@ -453,7 +460,7 @@ class SerendipityMatchingEngine {
       // 세렌디피티 적용
       result.compatibility.overall += serendipityBoost * this.serendipityBoostFactor;
       result.compatibility.serendipityScore = serendipityBoost;
-      
+
       return result;
     });
   }
@@ -467,17 +474,22 @@ class SerendipityMatchingEngine {
     // 같은 대학교 출신 (만약 정보가 있다면)
     // 같은 취미 (세부적인 취미들)
     // 같은 가치관 조합 (드문 조합일수록 높은 점수)
-    
+
     // 예시: 같은 직업 레벨의 은퇴자들
-    if (user.occupation?.workSchedule === 'retired' && 
-        candidate.occupation?.workSchedule === 'retired') {
+    if (
+      user.occupation?.workSchedule === 'retired' &&
+      candidate.occupation?.workSchedule === 'retired'
+    ) {
       boost += 7;
     }
 
     // 같은 자녀 수
-    if (user.childrenInfo?.number && candidate.childrenInfo?.number && 
-        user.childrenInfo.number === candidate.childrenInfo.number &&
-        user.childrenInfo.number > 0) {
+    if (
+      user.childrenInfo?.number &&
+      candidate.childrenInfo?.number &&
+      user.childrenInfo.number === candidate.childrenInfo.number &&
+      user.childrenInfo.number > 0
+    ) {
       boost += 5;
     }
 
@@ -494,7 +506,7 @@ class SerendipityMatchingEngine {
     // 특별한 날들에 약간의 세렌디피티 부스트
     const month = now.getMonth() + 1;
     const day = now.getDate();
-    
+
     // 봄(3-5월), 가을(9-11월) 시즌 부스트
     if ((month >= 3 && month <= 5) || (month >= 9 && month <= 11)) {
       boost += 2;
@@ -559,7 +571,7 @@ class SerendipityMatchingEngine {
     // 매치 이유 생성
     return topMatches.map(result => {
       const matchReasons = this.generateMatchReasons(result);
-      
+
       return {
         candidate: result.candidate,
         compatibilityScore: Math.round(result.compatibility.overall),
@@ -567,7 +579,7 @@ class SerendipityMatchingEngine {
         serendipityFactors: result.serendipityFactors || [],
         matchReasons: matchReasons,
         algorithmVersion: this.algorithmVersion,
-        confidenceLevel: this.calculateConfidenceLevel(result.compatibility.overall)
+        confidenceLevel: this.calculateConfidenceLevel(result.compatibility.overall),
       };
     });
   }
@@ -583,7 +595,7 @@ class SerendipityMatchingEngine {
       reasons.push({
         factor: 'shared_values',
         strength: breakdown.valuesAlignment,
-        description: '인생 가치관이 매우 유사하여 깊은 공감대를 형성할 수 있습니다'
+        description: '인생 가치관이 매우 유사하여 깊은 공감대를 형성할 수 있습니다',
       });
     }
 
@@ -591,7 +603,7 @@ class SerendipityMatchingEngine {
       reasons.push({
         factor: 'personality_complement',
         strength: breakdown.personalityCompatibility,
-        description: '성격적으로 서로를 완벽하게 보완할 수 있는 관계입니다'
+        description: '성격적으로 서로를 완벽하게 보완할 수 있는 관계입니다',
       });
     }
 
@@ -599,7 +611,7 @@ class SerendipityMatchingEngine {
       reasons.push({
         factor: 'life_experience_similarity',
         strength: breakdown.lifeExperienceMatch,
-        description: '비슷한 인생 경험을 통해 서로를 깊이 이해할 수 있습니다'
+        description: '비슷한 인생 경험을 통해 서로를 깊이 이해할 수 있습니다',
       });
     }
 
@@ -607,7 +619,7 @@ class SerendipityMatchingEngine {
       reasons.push({
         factor: 'serendipity_magic',
         strength: result.compatibility.serendipityScore,
-        description: '예상치 못한 특별한 인연의 징조가 발견되었습니다'
+        description: '예상치 못한 특별한 인연의 징조가 발견되었습니다',
       });
     }
 
@@ -622,16 +634,16 @@ class SerendipityMatchingEngine {
       '46-50': ['46-50'],
       '51-55': ['51-55'],
       '56-60': ['56-60'],
-      '60+': ['60+']
+      '60+': ['60+'],
     };
     return range.flatMap(r => ageMap[r] || []);
   }
 
   checkLivingArrangementCompatibility(arr1, arr2) {
     const compatible = {
-      'alone': ['alone', 'with_partner'],
-      'with_children': ['with_children', 'with_partner'],
-      'with_partner': ['alone', 'with_children', 'with_partner']
+      alone: ['alone', 'with_partner'],
+      with_children: ['with_children', 'with_partner'],
+      with_partner: ['alone', 'with_children', 'with_partner'],
     };
     return compatible[arr1]?.includes(arr2) || false;
   }
@@ -653,15 +665,18 @@ class SerendipityMatchingEngine {
     const [lon1, lat1] = coords1;
     const [lon2, lat2] = coords2;
     const R = 6371; // 지구 반지름 (km)
-    
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-    
-    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-      Math.sin(dLon/2) * Math.sin(dLon/2);
-    
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLon = ((lon2 - lon1) * Math.PI) / 180;
+
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
   }
 

@@ -1,6 +1,6 @@
 /**
  * 매칭 결과 시각화 서비스
- * 
+ *
  * 핵심 기능:
  * 1. 호환성 점수 시각화
  * 2. 공통점/보완점 차트 생성
@@ -12,33 +12,33 @@ class MatchingVisualizationService {
     // 시각화 테마 설정 (4060세대 친화적)
     this.visualTheme = {
       colors: {
-        primary: '#667eea',      // 차분한 보라
-        secondary: '#764ba2',    // 고급스러운 퍼플
-        success: '#10b981',      // 따뜻한 초록
-        warning: '#f59e0b',      // 부드러운 주황
-        danger: '#ef4444',       // 차분한 빨강
-        neutral: '#6b7280',      // 중성 회색
-        background: '#f8fafc',   // 밝은 배경
+        primary: '#667eea', // 차분한 보라
+        secondary: '#764ba2', // 고급스러운 퍼플
+        success: '#10b981', // 따뜻한 초록
+        warning: '#f59e0b', // 부드러운 주황
+        danger: '#ef4444', // 차분한 빨강
+        neutral: '#6b7280', // 중성 회색
+        background: '#f8fafc', // 밝은 배경
         text: {
-          primary: '#1f2937',    // 진한 텍스트
-          secondary: '#6b7280',  // 보조 텍스트
-          light: '#9ca3af'       // 연한 텍스트
-        }
+          primary: '#1f2937', // 진한 텍스트
+          secondary: '#6b7280', // 보조 텍스트
+          light: '#9ca3af', // 연한 텍스트
+        },
       },
       sizes: {
         fontSize: {
-          large: '18px',    // 큰 텍스트 (가독성)
-          medium: '16px',   // 기본 텍스트
-          small: '14px',    // 작은 텍스트
-          tiny: '12px'      // 보조 정보
+          large: '18px', // 큰 텍스트 (가독성)
+          medium: '16px', // 기본 텍스트
+          small: '14px', // 작은 텍스트
+          tiny: '12px', // 보조 정보
         },
         spacing: {
           large: '24px',
           medium: '16px',
           small: '12px',
-          tiny: '8px'
-        }
-      }
+          tiny: '8px',
+        },
+      },
     };
 
     // 호환성 레벨 정의
@@ -47,7 +47,7 @@ class MatchingVisualizationService {
       veryGood: { min: 75, label: '매우 좋은 궁합', color: '#22c55e', icon: '💚' },
       good: { min: 65, label: '좋은 궁합', color: '#84cc16', icon: '💛' },
       moderate: { min: 55, label: '괜찮은 궁합', color: '#f59e0b', icon: '🧡' },
-      challenging: { min: 0, label: '도전적인 관계', color: '#ef4444', icon: '💙' }
+      challenging: { min: 0, label: '도전적인 관계', color: '#ef4444', icon: '💙' },
     };
   }
 
@@ -61,32 +61,31 @@ class MatchingVisualizationService {
       const visualization = {
         // 1. 전체 호환성 요약
         overallCompatibility: this.createOverallCompatibilityViz(matchingResult),
-        
+
         // 2. 세부 영역별 분석
         detailedBreakdown: this.createDetailedBreakdownViz(matchingResult),
-        
+
         // 3. 가치관 비교 차트
         valuesComparison: this.createValuesComparisonViz(matchingResult),
-        
+
         // 4. 성격 궁합 분석
         personalityMatch: this.createPersonalityMatchViz(matchingResult),
-        
+
         // 5. 매칭 이유 시각화
         matchingReasons: this.createMatchingReasonsViz(matchingResult),
-        
+
         // 6. 관계 발전 로드맵
         relationshipRoadmap: this.createRelationshipRoadmapViz(matchingResult),
-        
+
         // 7. 대화 가이드 시각화
         conversationGuide: this.createConversationGuideViz(matchingResult),
-        
+
         // 8. 주의사항 및 팁
-        attentionPoints: this.createAttentionPointsViz(matchingResult)
+        attentionPoints: this.createAttentionPointsViz(matchingResult),
       };
 
       console.log('✅ 매칭 시각화 데이터 생성 완료');
       return visualization;
-
     } catch (error) {
       console.error('매칭 시각화 생성 오류:', error);
       throw new Error(`시각화 생성 실패: ${error.message}`);
@@ -99,7 +98,7 @@ class MatchingVisualizationService {
   createOverallCompatibilityViz(matchingResult) {
     const score = matchingResult.overallScore;
     const level = this.getCompatibilityLevel(score);
-    
+
     return {
       type: 'overall_compatibility',
       score: score,
@@ -113,36 +112,36 @@ class MatchingVisualizationService {
           size: 120,
           animation: {
             duration: 2000,
-            easing: 'ease-out'
-          }
+            easing: 'ease-out',
+          },
         },
-        
+
         // 점수 텍스트
         scoreText: {
           value: score,
           suffix: '점',
           fontSize: this.visualTheme.sizes.fontSize.large,
           fontWeight: 'bold',
-          color: level.color
+          color: level.color,
         },
-        
+
         // 레벨 라벨
         levelLabel: {
           text: level.label,
           icon: level.icon,
           fontSize: this.visualTheme.sizes.fontSize.medium,
-          color: this.visualTheme.colors.text.primary
+          color: this.visualTheme.colors.text.primary,
         },
-        
+
         // 설명 텍스트
         description: {
           text: this.generateOverallDescription(score, level),
           fontSize: this.visualTheme.sizes.fontSize.small,
           color: this.visualTheme.colors.text.secondary,
           textAlign: 'center',
-          maxWidth: '300px'
-        }
-      }
+          maxWidth: '300px',
+        },
+      },
     };
   }
 
@@ -151,19 +150,19 @@ class MatchingVisualizationService {
    */
   createDetailedBreakdownViz(matchingResult) {
     const breakdown = matchingResult.compatibility.breakdown;
-    
+
     const categories = [
       { key: 'coreValues', name: '핵심 가치관', icon: '💎', weight: 0.35 },
       { key: 'personalityFit', name: '성격 궁합', icon: '🤝', weight: 0.25 },
-      { key: 'lifestyleCompat', name: '생활 방식', icon: '🏡', weight: 0.20 },
+      { key: 'lifestyleCompat', name: '생활 방식', icon: '🏡', weight: 0.2 },
       { key: 'communicationSync', name: '소통 스타일', icon: '💬', weight: 0.12 },
-      { key: 'growthPotential', name: '성장 가능성', icon: '🌱', weight: 0.08 }
+      { key: 'growthPotential', name: '성장 가능성', icon: '🌱', weight: 0.08 },
     ];
 
     const visualData = categories.map(category => {
       const score = Math.round(breakdown[category.key] || 0);
       const color = this.getScoreColor(score);
-      
+
       return {
         category: category.key,
         name: category.name,
@@ -181,26 +180,26 @@ class MatchingVisualizationService {
             borderRadius: 10,
             animation: {
               duration: 1500,
-              delay: categories.indexOf(category) * 200
-            }
+              delay: categories.indexOf(category) * 200,
+            },
           },
-          
+
           // 점수 라벨
           scoreLabel: {
             text: `${score}점`,
             position: 'right',
             fontSize: this.visualTheme.sizes.fontSize.small,
             fontWeight: 'bold',
-            color: color
+            color: color,
           },
-          
+
           // 중요도 표시
           importanceIndicator: {
             text: `중요도 ${Math.round(category.weight * 100)}%`,
             fontSize: this.visualTheme.sizes.fontSize.tiny,
-            color: this.visualTheme.colors.text.light
-          }
-        }
+            color: this.visualTheme.colors.text.light,
+          },
+        },
       };
     });
 
@@ -209,7 +208,7 @@ class MatchingVisualizationService {
       categories: visualData,
       layout: 'vertical_bars',
       title: '영역별 호환성 분석',
-      subtitle: '각 영역에서의 궁합도를 확인해보세요'
+      subtitle: '각 영역에서의 궁합도를 확인해보세요',
     };
   }
 
@@ -219,12 +218,12 @@ class MatchingVisualizationService {
   createValuesComparisonViz(matchingResult) {
     // 가치관 데이터 추출 (실제 데이터가 있다고 가정)
     const valuesData = this.extractValuesData(matchingResult);
-    
+
     const radarChartData = {
       type: 'radar_chart',
       title: '가치관 비교 분석',
       subtitle: '두 분의 가치관을 비교해보세요',
-      
+
       data: {
         labels: valuesData.categories.map(cat => cat.name),
         datasets: [
@@ -235,7 +234,7 @@ class MatchingVisualizationService {
             backgroundColor: `${this.visualTheme.colors.primary}20`,
             pointBackgroundColor: this.visualTheme.colors.primary,
             pointBorderColor: '#fff',
-            pointBorderWidth: 2
+            pointBorderWidth: 2,
           },
           {
             label: '상대방',
@@ -244,11 +243,11 @@ class MatchingVisualizationService {
             backgroundColor: `${this.visualTheme.colors.secondary}20`,
             pointBackgroundColor: this.visualTheme.colors.secondary,
             pointBorderColor: '#fff',
-            pointBorderWidth: 2
-          }
-        ]
+            pointBorderWidth: 2,
+          },
+        ],
       },
-      
+
       options: {
         scales: {
           r: {
@@ -256,18 +255,18 @@ class MatchingVisualizationService {
             max: 100,
             beginAtZero: true,
             angleLines: {
-              color: this.visualTheme.colors.neutral + '30'
+              color: this.visualTheme.colors.neutral + '30',
             },
             grid: {
-              color: this.visualTheme.colors.neutral + '20'
+              color: this.visualTheme.colors.neutral + '20',
             },
             pointLabels: {
               font: {
-                size: parseInt(this.visualTheme.sizes.fontSize.small)
+                size: parseInt(this.visualTheme.sizes.fontSize.small),
               },
-              color: this.visualTheme.colors.text.primary
-            }
-          }
+              color: this.visualTheme.colors.text.primary,
+            },
+          },
         },
         plugins: {
           legend: {
@@ -275,15 +274,15 @@ class MatchingVisualizationService {
             labels: {
               padding: 20,
               font: {
-                size: parseInt(this.visualTheme.sizes.fontSize.medium)
-              }
-            }
-          }
-        }
+                size: parseInt(this.visualTheme.sizes.fontSize.medium),
+              },
+            },
+          },
+        },
       },
-      
+
       // 상세 분석
-      analysis: valuesData.analysis
+      analysis: valuesData.analysis,
     };
 
     return radarChartData;
@@ -294,12 +293,12 @@ class MatchingVisualizationService {
    */
   createPersonalityMatchViz(matchingResult) {
     const personalityData = this.extractPersonalityData(matchingResult);
-    
+
     return {
       type: 'personality_match',
       title: '성격 궁합 분석',
       subtitle: '성격적 특성의 조화를 확인해보세요',
-      
+
       // 성격 특성별 비교
       traits: personalityData.traits.map(trait => ({
         name: trait.name,
@@ -308,7 +307,7 @@ class MatchingVisualizationService {
         compatibility: trait.compatibility,
         type: trait.matchType, // 'similar', 'complement', 'balanced'
         description: trait.description,
-        
+
         display: {
           // 나비형 차트 (양쪽으로 뻗는 바)
           butterflyChart: {
@@ -317,17 +316,17 @@ class MatchingVisualizationService {
             leftColor: this.visualTheme.colors.primary,
             rightColor: this.visualTheme.colors.secondary,
             centerColor: this.getCompatibilityColor(trait.compatibility),
-            height: 24
-          }
-        }
+            height: 24,
+          },
+        },
       })),
-      
+
       // 전체 성격 궁합 요약
       summary: {
         overallScore: personalityData.overallScore,
         dominantType: personalityData.dominantMatchType,
-        description: personalityData.summaryDescription
-      }
+        description: personalityData.summaryDescription,
+      },
     };
   }
 
@@ -336,12 +335,12 @@ class MatchingVisualizationService {
    */
   createMatchingReasonsViz(matchingResult) {
     const reasons = matchingResult.matchingReasons || [];
-    
+
     return {
       type: 'matching_reasons',
       title: '왜 잘 맞을까요?',
       subtitle: '두 분의 궁합 포인트를 확인해보세요',
-      
+
       reasons: reasons.map((reason, index) => ({
         rank: reason.rank || index + 1,
         title: reason.title,
@@ -349,34 +348,34 @@ class MatchingVisualizationService {
         importance: reason.importance,
         evidence: reason.evidence,
         type: reason.type,
-        
+
         display: {
           // 중요도 표시기
           importanceBar: {
             percentage: reason.importance,
             color: this.getImportanceColor(reason.importance),
             height: 6,
-            borderRadius: 3
+            borderRadius: 3,
           },
-          
+
           // 타입별 아이콘
           typeIcon: this.getReasonTypeIcon(reason.type),
-          
+
           // 순위 배지
           rankBadge: {
             number: reason.rank,
             backgroundColor: this.getRankColor(reason.rank),
             textColor: '#fff',
-            size: 'small'
-          }
-        }
+            size: 'small',
+          },
+        },
       })),
-      
+
       layout: 'card_list',
       animation: {
         stagger: 300,
-        duration: 800
-      }
+        duration: 800,
+      },
     };
   }
 
@@ -385,12 +384,12 @@ class MatchingVisualizationService {
    */
   createRelationshipRoadmapViz(matchingResult) {
     const roadmap = matchingResult.relationshipRoadmap || this.generateDefaultRoadmap();
-    
+
     return {
       type: 'relationship_roadmap',
       title: '관계 발전 로드맵',
       subtitle: '단계별 관계 발전 가이드',
-      
+
       phases: [
         {
           phase: 1,
@@ -399,7 +398,7 @@ class MatchingVisualizationService {
           description: '서로를 알아가는 시간',
           activities: roadmap.phase1 || ['카페에서 대화', '공통 관심사 탐색'],
           color: this.visualTheme.colors.primary,
-          icon: '🤝'
+          icon: '🤝',
         },
         {
           phase: 2,
@@ -408,7 +407,7 @@ class MatchingVisualizationService {
           description: '신뢰 관계 구축',
           activities: roadmap.phase2 || ['정기적인 만남', '깊은 대화 나누기'],
           color: this.visualTheme.colors.secondary,
-          icon: '💗'
+          icon: '💗',
         },
         {
           phase: 3,
@@ -417,10 +416,10 @@ class MatchingVisualizationService {
           description: '진정한 동반자 관계',
           activities: roadmap.phase3 || ['함께 여행', '미래 계획 논의'],
           color: this.visualTheme.colors.success,
-          icon: '💖'
-        }
+          icon: '💖',
+        },
       ],
-      
+
       // 타임라인 시각화
       timeline: {
         orientation: 'horizontal',
@@ -428,9 +427,9 @@ class MatchingVisualizationService {
         currentPhase: 1,
         connectionLine: {
           color: this.visualTheme.colors.neutral,
-          style: 'dashed'
-        }
-      }
+          style: 'dashed',
+        },
+      },
     };
   }
 
@@ -439,34 +438,34 @@ class MatchingVisualizationService {
    */
   createConversationGuideViz(matchingResult) {
     const guide = matchingResult.meetingGuide?.conversationStarters || [];
-    
+
     return {
       type: 'conversation_guide',
       title: '대화 가이드',
       subtitle: '자연스러운 대화를 위한 주제들',
-      
+
       topics: guide.map((starter, index) => ({
         category: starter.type,
         topic: starter.topic,
         question: starter.question,
         context: starter.context,
-        
+
         display: {
           categoryIcon: this.getTopicIcon(starter.type),
           categoryColor: this.getTopicColor(starter.type),
-          priority: this.getTopicPriority(starter.type)
-        }
+          priority: this.getTopicPriority(starter.type),
+        },
       })),
-      
+
       // 카테고리별 그룹화
       groupedByCategory: true,
-      
+
       // 사용 팁
       usageTips: [
         '자연스럽게 대화 주제로 활용해보세요',
         '상대방의 반응을 보며 깊이를 조절하세요',
-        '무리하지 말고 편안한 분위기를 만들어가세요'
-      ]
+        '무리하지 말고 편안한 분위기를 만들어가세요',
+      ],
     };
   }
 
@@ -476,11 +475,11 @@ class MatchingVisualizationService {
   createAttentionPointsViz(matchingResult) {
     const points = matchingResult.challengesAndSolutions?.challenges || [];
     const tips = matchingResult.meetingGuide?.relationshipTips || [];
-    
+
     return {
       type: 'attention_points',
       title: '관계 발전을 위한 가이드',
-      
+
       sections: [
         {
           type: 'attention_points',
@@ -491,8 +490,8 @@ class MatchingVisualizationService {
             area: point.area,
             issue: point.issue,
             suggestion: point.suggestion,
-            severity: this.assessSeverity(point.issue)
-          }))
+            severity: this.assessSeverity(point.issue),
+          })),
         },
         {
           type: 'relationship_tips',
@@ -503,13 +502,13 @@ class MatchingVisualizationService {
             title: tip.title,
             tip: tip.tip,
             priority: tip.priority,
-            category: tip.type
-          }))
-        }
+            category: tip.type,
+          })),
+        },
       ],
-      
+
       layout: 'accordion',
-      defaultExpanded: 'relationship_tips'
+      defaultExpanded: 'relationship_tips',
     };
   }
 
@@ -564,7 +563,7 @@ class MatchingVisualizationService {
       '#c0c0c0', // 2위 - 은색
       '#cd7f32', // 3위 - 동색
       this.visualTheme.colors.primary,
-      this.visualTheme.colors.secondary
+      this.visualTheme.colors.secondary,
     ];
     return colors[rank - 1] || this.visualTheme.colors.neutral;
   }
@@ -580,7 +579,7 @@ class MatchingVisualizationService {
       lifestyle_harmony: '🏡',
       communication_sync: '💬',
       growth_potential: '🌱',
-      special_synergy: '✨'
+      special_synergy: '✨',
     };
     return icons[type] || '💫';
   }
@@ -595,7 +594,7 @@ class MatchingVisualizationService {
       current_interests: '🎨',
       future_oriented: '🚀',
       family_related: '👨‍👩‍👧‍👦',
-      hobby_based: '🎯'
+      hobby_based: '🎯',
     };
     return icons[type] || '💬';
   }
@@ -610,7 +609,7 @@ class MatchingVisualizationService {
       current_interests: this.visualTheme.colors.success,
       future_oriented: this.visualTheme.colors.warning,
       family_related: '#ec4899',
-      hobby_based: '#8b5cf6'
+      hobby_based: '#8b5cf6',
     };
     return colors[type] || this.visualTheme.colors.neutral;
   }
@@ -639,7 +638,7 @@ class MatchingVisualizationService {
     return {
       phase1: ['편안한 카페에서 만남', '기본적인 관심사 대화', '서로의 일상 이야기'],
       phase2: ['정기적인 식사 모임', '공통 취미 활동', '가족과 친구 이야기'],
-      phase3: ['짧은 여행이나 나들이', '미래에 대한 생각 공유', '진지한 관계 논의']
+      phase3: ['짧은 여행이나 나들이', '미래에 대한 생각 공유', '진지한 관계 논의'],
     };
   }
 
@@ -655,13 +654,13 @@ class MatchingVisualizationService {
         { name: '성장', user1Score: 68, user2Score: 73 },
         { name: '관계', user1Score: 79, user2Score: 85 },
         { name: '건강', user1Score: 81, user2Score: 76 },
-        { name: '영성', user1Score: 65, user2Score: 69 }
+        { name: '영성', user1Score: 65, user2Score: 69 },
       ],
       analysis: {
         strongMatches: ['가족관', '관계'],
         complementaryAreas: ['안정성', '성장'],
-        developmentAreas: ['영성']
-      }
+        developmentAreas: ['영성'],
+      },
     };
   }
 
@@ -671,14 +670,42 @@ class MatchingVisualizationService {
   extractPersonalityData(matchingResult) {
     return {
       traits: [
-        { name: '친화성', user1Score: 78, user2Score: 82, compatibility: 88, matchType: 'similar', description: '둘 다 따뜻하고 배려심이 많습니다' },
-        { name: '성실성', user1Score: 85, user2Score: 79, compatibility: 92, matchType: 'similar', description: '책임감 있고 신뢰할 수 있습니다' },
-        { name: '외향성', user1Score: 65, user2Score: 72, compatibility: 85, matchType: 'balanced', description: '적당한 사교성으로 균형이 좋습니다' },
-        { name: '개방성', user1Score: 71, user2Score: 68, compatibility: 89, matchType: 'similar', description: '새로운 경험에 열린 마음을 가졌습니다' }
+        {
+          name: '친화성',
+          user1Score: 78,
+          user2Score: 82,
+          compatibility: 88,
+          matchType: 'similar',
+          description: '둘 다 따뜻하고 배려심이 많습니다',
+        },
+        {
+          name: '성실성',
+          user1Score: 85,
+          user2Score: 79,
+          compatibility: 92,
+          matchType: 'similar',
+          description: '책임감 있고 신뢰할 수 있습니다',
+        },
+        {
+          name: '외향성',
+          user1Score: 65,
+          user2Score: 72,
+          compatibility: 85,
+          matchType: 'balanced',
+          description: '적당한 사교성으로 균형이 좋습니다',
+        },
+        {
+          name: '개방성',
+          user1Score: 71,
+          user2Score: 68,
+          compatibility: 89,
+          matchType: 'similar',
+          description: '새로운 경험에 열린 마음을 가졌습니다',
+        },
       ],
       overallScore: 88,
       dominantMatchType: 'similar',
-      summaryDescription: '성격적으로 매우 잘 맞는 조합입니다'
+      summaryDescription: '성격적으로 매우 잘 맞는 조합입니다',
     };
   }
 
@@ -689,9 +716,9 @@ class MatchingVisualizationService {
     // 키워드 기반 심각도 판단
     const highSeverityKeywords = ['갈등', '충돌', '문제', '어려움'];
     const mediumSeverityKeywords = ['차이', '다름', '조정'];
-    
+
     const issueText = issue.toLowerCase();
-    
+
     if (highSeverityKeywords.some(keyword => issueText.includes(keyword))) {
       return 'high';
     } else if (mediumSeverityKeywords.some(keyword => issueText.includes(keyword))) {
@@ -711,7 +738,7 @@ class MatchingVisualizationService {
       current_interests: 'medium',
       future_oriented: 'medium',
       family_related: 'low',
-      hobby_based: 'low'
+      hobby_based: 'low',
     };
     return priorities[type] || 'medium';
   }
