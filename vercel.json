@@ -13,6 +13,14 @@
       "dest": "/api/serverless.js"
     },
     {
+      "src": "/senior-ui.html",
+      "dest": "/senior-ui.html"
+    },
+    {
+      "src": "/senior-ui.js",
+      "dest": "/senior-ui.js"
+    },
+    {
       "src": "/(.*)",
       "dest": "/api/serverless.js"
     }
