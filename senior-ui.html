@@ -67,6 +67,14 @@
         --radius-lg: 16px;
         --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
         --transition-normal: 0.3s ease;
+        
+        /* 하트 나침반 전용 CSS 변수 */
+        --compass-gold: #8b7355;
+        --compass-gold-light: #a0886f;
+        --compass-bg: linear-gradient(135deg, #f8f4e6 0%, #e8dcc0 50%, #d4c4a0 100%);
+        --heart-red: #e74c3c;
+        --heart-red-dark: #c0392b;
+        --matching-angle: 0deg;
       }
       *,
       *::before,
@@ -322,6 +330,518 @@
           --bg-primary: #ffffff;
           --primary-color: #0066cc;
         }
+      }
+
+      /* 🧭💕 하트 나침반 (Heart Compass) 스타일 */
+      .heart-compass {
+        width: 280px;
+        height: 280px;
+        border-radius: 50%;
+        background: var(--compass-bg);
+        border: 8px solid var(--compass-gold);
+        box-shadow: 
+          inset 0 4px 8px rgba(139, 115, 85, 0.3),
+          0 8px 24px rgba(0, 0, 0, 0.15);
+        position: relative;
+        margin: 0 auto;
+      }
+
+      /* 나침반 외곽 장식 */
+      .compass-rim {
+        position: absolute;
+        top: -4px;
+        left: -4px;
+        right: -4px;
+        bottom: -4px;
+        border-radius: 50%;
+        border: 2px solid #6b5b47;
+        background: conic-gradient(
+          from 0deg, 
+          var(--compass-gold) 0deg 90deg,
+          var(--compass-gold-light) 90deg 180deg,
+          var(--compass-gold) 180deg 270deg,
+          var(--compass-gold-light) 270deg 360deg
+        );
+      }
+
+      /* 하트 바늘 */
+      .heart-needle {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 24px;
+        height: 20px;
+        transform-origin: center bottom;
+        transform: translate(-50%, -85%) rotate(var(--matching-angle));
+        transition: transform 2s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 10;
+      }
+
+      .heart-needle::before,
+      .heart-needle::after {
+        content: '';
+        position: absolute;
+        width: 12px;
+        height: 18px;
+        background: linear-gradient(45deg, var(--heart-red), var(--heart-red-dark));
+        border-radius: 12px 12px 0 0;
+        transform: rotate(-45deg);
+        transform-origin: 0 100%;
+      }
+
+      .heart-needle::after {
+        left: 6px;
+        transform: rotate(45deg);
+        transform-origin: 100% 100%;
+      }
+
+      /* 나침반 방향 표시 */
+      .compass-directions {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+      }
+
+      .direction-marker {
+        position: absolute;
+        font-weight: bold;
+        font-size: 18px;
+        color: #5d4e37;
+        text-shadow: 1px 1px 2px rgba(255,255,255,0.5);
+      }
+
+      .north { top: 12px; left: 50%; transform: translateX(-50%); }
+      .south { bottom: 12px; left: 50%; transform: translateX(-50%); }
+      .east { right: 12px; top: 50%; transform: translateY(-50%); }
+      .west { left: 12px; top: 50%; transform: translateY(-50%); }
+
+      /* 특별한 "True Love" 마크 */
+      .true-love-mark {
+        position: absolute;
+        top: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 14px;
+        color: var(--heart-red);
+        font-weight: bold;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+      }
+
+      /* 매칭 결과 표시 애니메이션 */
+      .matching-reveal {
+        animation: compassSpin 3s ease-in-out;
+      }
+
+      @keyframes compassSpin {
+        0% { transform: translate(-50%, -85%) rotate(180deg); }
+        70% { transform: translate(-50%, -85%) rotate(var(--matching-angle)); }
+        85% { transform: translate(-50%, -85%) rotate(calc(var(--matching-angle) - 10deg)); }
+        100% { transform: translate(-50%, -85%) rotate(var(--matching-angle)); }
+      }
+
+      /* 하트 바늘 펄스 효과 (높은 매칭도일 때) */
+      .high-compatibility .heart-needle {
+        animation: heartPulse 2s infinite;
+      }
+
+      @keyframes heartPulse {
+        0%, 100% { filter: drop-shadow(0 0 8px rgba(231, 76, 60, 0.6)); }
+        50% { filter: drop-shadow(0 0 16px rgba(231, 76, 60, 0.9)); }
+      }
+
+      /* 나침반 중앙 포인트 */
+      .compass-center {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 12px;
+        height: 12px;
+        background: var(--compass-gold);
+        border: 2px solid #6b5b47;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 15;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      }
+
+      /* 반응형 하트 나침반 */
+      @media (max-width: 768px) {
+        .heart-compass {
+          width: 240px;
+          height: 240px;
+        }
+        .heart-needle {
+          width: 20px;
+          height: 16px;
+        }
+        .direction-marker {
+          font-size: 16px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .heart-compass {
+          width: 200px;
+          height: 200px;
+        }
+        .heart-needle {
+          width: 16px;
+          height: 14px;
+        }
+        .direction-marker {
+          font-size: 14px;
+        }
+      }
+
+      /* 🧭💕 하트 나침반 v2.1 업그레이드 스타일 */
+      .compass-container:hover .compass-detail-btn {
+        opacity: 1;
+      }
+
+      .voice-narration-btn:hover {
+        background: var(--heart-red);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+      }
+
+      /* 상세 분석 모달 */
+      .detailed-analysis-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        backdrop-filter: blur(5px);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .detailed-analysis-modal.show {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .analysis-content {
+        background: white;
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-xxl);
+        max-width: 500px;
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        transform: scale(0.8);
+        transition: transform 0.3s ease;
+      }
+
+      .detailed-analysis-modal.show .analysis-content {
+        transform: scale(1);
+      }
+
+      .analysis-header {
+        text-align: center;
+        margin-bottom: var(--spacing-xl);
+        border-bottom: 2px solid var(--heart-red);
+        padding-bottom: var(--spacing-md);
+      }
+
+      .analysis-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--spacing-md);
+        padding: var(--spacing-md);
+        background: var(--bg-secondary);
+        border-radius: var(--radius-md);
+        border-left: 4px solid var(--heart-red);
+      }
+
+      .analysis-score {
+        font-weight: 700;
+        color: var(--heart-red);
+        font-size: var(--font-size-lg);
+      }
+
+      /* 음성 재생 중 애니메이션 */
+      .voice-narration-btn.playing {
+        animation: voicePulse 1.5s infinite;
+      }
+
+      @keyframes voicePulse {
+        0%, 100% { 
+          transform: scale(1); 
+          box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.4); 
+        }
+        50% { 
+          transform: scale(1.05); 
+          box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); 
+        }
+      }
+
+      /* 💎 프리미엄 프로필 카드 v1.0 (중장년층 품격 디자인) */
+      .premium-profile-card {
+        background: linear-gradient(145deg, 
+          rgba(255, 255, 255, 0.95) 0%, 
+          rgba(248, 246, 243, 0.98) 50%, 
+          rgba(245, 240, 235, 0.95) 100%);
+        border: 2px solid transparent;
+        background-clip: padding-box;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        border-radius: 20px;
+        box-shadow: 
+          0 8px 32px rgba(139, 115, 85, 0.15),
+          0 4px 16px rgba(0, 0, 0, 0.08),
+          inset 0 1px 0 rgba(255, 255, 255, 0.8);
+      }
+
+      /* 골드 테두리 효과 */
+      .premium-profile-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(145deg, 
+          #d4af37 0%, 
+          #f4e4a6 25%, 
+          #d4af37 50%, 
+          #b8941f 75%, 
+          #d4af37 100%);
+        border-radius: 20px;
+        padding: 2px;
+        z-index: -1;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .premium-profile-card:hover::before {
+        opacity: 1;
+      }
+
+      .premium-profile-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 
+          0 20px 60px rgba(139, 115, 85, 0.25),
+          0 8px 32px rgba(0, 0, 0, 0.12),
+          inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      }
+
+      /* 프리미엄 프로필 이미지 */
+      .premium-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #f8f4e6 0%, #e8dcc0 100%);
+        border: 3px solid transparent;
+        background-clip: content-box;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 
+          0 8px 24px rgba(139, 115, 85, 0.2),
+          inset 0 2px 4px rgba(255, 255, 255, 0.6);
+        transition: all 0.3s ease;
+      }
+
+      /* 아바타 골드 테두리 */
+      .premium-avatar::before {
+        content: '';
+        position: absolute;
+        inset: -3px;
+        background: linear-gradient(135deg, 
+          #d4af37 0%, 
+          #f4e4a6 50%, 
+          #d4af37 100%);
+        border-radius: 19px;
+        z-index: -1;
+        opacity: 0.7;
+      }
+
+      .premium-profile-card:hover .premium-avatar {
+        transform: scale(1.05);
+        box-shadow: 
+          0 12px 32px rgba(139, 115, 85, 0.3),
+          inset 0 2px 4px rgba(255, 255, 255, 0.8);
+      }
+
+      /* 프리미엄 타이포그래피 */
+      .premium-name {
+        font-size: 1.5rem;
+        font-weight: 600;
+        background: linear-gradient(135deg, #8b7355 0%, #6b5b47 100%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 0.5rem;
+        letter-spacing: 0.5px;
+      }
+
+      .premium-age {
+        color: #8b7355;
+        font-size: 1rem;
+        font-weight: 500;
+        opacity: 0.8;
+        margin-bottom: 1rem;
+      }
+
+      /* 인증 배지 */
+      .verification-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: linear-gradient(135deg, #d4af37 0%, #f4e4a6 100%);
+        color: #6b5b47;
+        border-radius: 12px;
+        padding: 4px 8px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+      }
+
+      /* 프리미엄 태그 시스템 */
+      .premium-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        justify-content: center;
+        margin-bottom: 1rem;
+      }
+
+      .premium-tag {
+        background: linear-gradient(135deg, 
+          rgba(139, 115, 85, 0.1) 0%, 
+          rgba(107, 91, 71, 0.15) 100%);
+        color: #6b5b47;
+        border: 1px solid rgba(139, 115, 85, 0.2);
+        border-radius: 16px;
+        padding: 6px 12px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .premium-tag::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, 
+          transparent, 
+          rgba(212, 175, 55, 0.3), 
+          transparent);
+        transition: left 0.5s ease;
+      }
+
+      .premium-profile-card:hover .premium-tag::before {
+        left: 100%;
+      }
+
+      .premium-tag:hover {
+        background: linear-gradient(135deg, 
+          rgba(212, 175, 55, 0.2) 0%, 
+          rgba(244, 228, 166, 0.25) 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(139, 115, 85, 0.2);
+      }
+
+      /* 매칭 점수 프리미엄 디자인 */
+      .premium-compatibility {
+        background: linear-gradient(135deg, 
+          rgba(231, 76, 60, 0.1) 0%, 
+          rgba(192, 57, 43, 0.15) 100%);
+        border: 2px solid rgba(231, 76, 60, 0.2);
+        border-radius: 16px;
+        padding: 1rem;
+        margin: 1rem 0;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        backdrop-filter: blur(10px);
+      }
+
+      .premium-compatibility::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, 
+          #e74c3c 0%, 
+          #f39c12 50%, 
+          #e74c3c 100%);
+        animation: compatibilityShine 3s ease-in-out infinite;
+      }
+
+      @keyframes compatibilityShine {
+        0%, 100% { opacity: 0.5; }
+        50% { opacity: 1; }
+      }
+
+      .premium-score {
+        font-size: 2rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.5rem;
+      }
+
+      /* 프리미엄 버튼 */
+      .premium-btn {
+        background: linear-gradient(135deg, #8b7355 0%, #6b5b47 100%);
+        border: none;
+        color: white;
+        border-radius: 12px;
+        padding: 12px 24px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 16px rgba(139, 115, 85, 0.3);
+      }
+
+      .premium-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, 
+          transparent, 
+          rgba(255, 255, 255, 0.2), 
+          transparent);
+        transition: left 0.5s ease;
+      }
+
+      .premium-btn:hover::before {
+        left: 100%;
+      }
+
+      .premium-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(139, 115, 85, 0.4);
+        background: linear-gradient(135deg, #a0886f 0%, #8b7355 100%);
       }
     </style>
 
@@ -862,26 +1382,89 @@
                 👨‍💼
               </div>
               <h3 style="margin-bottom: var(--spacing-sm)">김철수님 (52세)</h3>
-              <div
-                style="
-                  background: var(--bg-secondary);
-                  padding: var(--spacing-sm);
-                  border-radius: var(--border-radius-md);
-                  margin-bottom: var(--spacing-md);
-                "
-              >
-                <div
-                  style="
-                    font-size: var(--font-size-xl);
-                    font-weight: 700;
-                    color: var(--primary-color);
-                    margin-bottom: var(--spacing-xs);
-                  "
-                >
-                  92%
+              <!-- 🧭💕 하트 나침반으로 매칭도 표시 (v2.1 업그레이드) -->
+              <div class="compass-container" style="
+                margin-bottom: var(--spacing-md); 
+                padding: var(--spacing-xl);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                min-height: 320px;
+                background: linear-gradient(135deg, rgba(248, 244, 230, 0.3) 0%, rgba(232, 220, 192, 0.5) 100%);
+                border-radius: var(--radius-lg);
+                border: 1px solid rgba(139, 115, 85, 0.2);
+              ">
+                <!-- 하트 나침반 중앙 정렬 컨테이너 -->
+                <div style="
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  margin-bottom: var(--spacing-lg);
+                ">
+                  <div class="heart-compass high-compatibility" style="--matching-angle: 15deg;" data-matching-score="92">
+                    <!-- 나침반 외곽 장식 -->
+                    <div class="compass-rim"></div>
+                    
+                    <!-- 나침반 방향 표시 -->
+                    <div class="compass-directions">
+                      <div class="direction-marker north true-love-mark">True Love</div>
+                      <div class="direction-marker south">S</div>
+                      <div class="direction-marker east">E</div>
+                      <div class="direction-marker west">W</div>
+                    </div>
+                    
+                    <!-- 하트 바늘 -->
+                    <div class="heart-needle matching-reveal"></div>
+                    
+                    <!-- 나침반 중앙 포인트 -->
+                    <div class="compass-center"></div>
+
+                    <!-- 🧠 상세 분석 버튼 -->
+                    <div class="compass-detail-btn" style="
+                      position: absolute;
+                      bottom: -50px;
+                      left: 50%;
+                      transform: translateX(-50%);
+                      background: var(--heart-red);
+                      color: white;
+                      border: none;
+                      padding: 8px 16px;
+                      border-radius: 20px;
+                      font-size: 12px;
+                      cursor: pointer;
+                      opacity: 0;
+                      transition: opacity 0.3s ease;
+                      box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+                    " onclick="window.seniorUI?.showDetailedAnalysis(this.closest('.heart-compass'))">
+                      💡 왜 이렇게 잘 맞나요?
+                    </div>
+                  </div>
                 </div>
-                <div style="font-size: var(--font-size-small); color: var(--text-secondary)">
-                  가치관 일치도
+                
+                <!-- 매칭도 텍스트 -->
+                <div style="text-align: center;">
+                  <div style="font-size: var(--font-size-xl); font-weight: 700; color: var(--heart-red); margin-bottom: var(--spacing-xs);">
+                    <span class="compatibility-score">92</span>% 호환성
+                  </div>
+                  <div style="font-size: var(--font-size-small); color: var(--text-secondary); max-width: 280px;" data-message>
+                    🎉 운명적 인연을 발견했습니다!
+                  </div>
+                  
+                  <!-- 🎭 음성 재생 버튼 -->
+                  <button class="voice-narration-btn" style="
+                    margin-top: var(--spacing-sm);
+                    background: transparent;
+                    border: 2px solid var(--heart-red);
+                    color: var(--heart-red);
+                    border-radius: 25px;
+                    padding: 8px 16px;
+                    font-size: 12px;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                  " onclick="window.seniorUI?.playMatchingNarration(92)">
+                    🎵 감동 메시지 듣기
+                  </button>
                 </div>
               </div>
               <div
@@ -929,195 +1512,207 @@
               </p>
               <button
                 class="btn btn-primary"
-                style="width: 100%"
+                style="width: 100%; margin-bottom: var(--spacing-sm);"
                 data-voice="김철수님과 대화 시작하기"
               >
                 <span>대화 시작하기</span>
               </button>
+              <div style="display: flex; gap: var(--spacing-sm); width: 100%;">
+                <button
+                  class="btn btn-secondary"
+                  style="flex: 1;"
+                  onclick="window.seniorUI?.showMatchingResult(this.closest('.match-card').querySelector('.heart-compass'), 92)"
+                  data-voice="하트 나침반 v2.1 데모 실행"
+                >
+                  <span>🎪 v2.1 데모</span>
+                </button>
+                <button
+                  class="btn btn-secondary"
+                  style="flex: 1;"
+                  onclick="window.seniorUI?.updateCompassWithRealData(this.closest('.match-card').querySelector('.heart-compass'), 'user1', 'kim-chulsoo')"
+                  data-voice="실제 API 연동 테스트"
+                >
+                  <span>🔌 API 테스트</span>
+                </button>
+              </div>
             </div>
 
-            <!-- 매칭 카드 2 -->
-            <div class="match-card card" style="text-align: center">
-              <div
-                style="
-                  width: 100px;
-                  height: 100px;
+            <!-- 💎 프리미엄 매칭 카드 2 (이영희님) -->
+            <div class="match-card premium-profile-card" style="text-align: center; padding: 2rem; min-height: 500px;">
+              <!-- 인증 배지 -->
+              <div class="verification-badge">
+                ✓ 본인인증
+              </div>
+              
+              <!-- 프리미엄 프로필 이미지 -->
+              <div class="premium-avatar" style="margin: 0 auto 1.5rem;">
+                <div style="
+                  width: 100%;
+                  height: 100%;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font-size: 3.5rem;
                   background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
-                  border-radius: 50%;
-                  margin: 0 auto var(--spacing-md);
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  font-size: 3rem;
-                "
-              >
-                👩‍🎨
-              </div>
-              <h3 style="margin-bottom: var(--spacing-sm)">이영희님 (48세)</h3>
-              <div
-                style="
-                  background: var(--bg-secondary);
-                  padding: var(--spacing-sm);
-                  border-radius: var(--border-radius-md);
-                  margin-bottom: var(--spacing-md);
-                "
-              >
-                <div
-                  style="
-                    font-size: var(--font-size-xl);
-                    font-weight: 700;
-                    color: var(--secondary-color);
-                    margin-bottom: var(--spacing-xs);
-                  "
-                >
-                  87%
-                </div>
-                <div style="font-size: var(--font-size-small); color: var(--text-secondary)">
-                  가치관 일치도
+                  border-radius: 13px;
+                ">
+                  👩‍🎨
                 </div>
               </div>
-              <div
-                style="
-                  display: flex;
-                  flex-wrap: wrap;
-                  gap: var(--spacing-xs);
-                  justify-content: center;
-                  margin-bottom: var(--spacing-md);
-                "
-              >
-                <span
-                  style="
-                    background: var(--secondary-color);
-                    color: white;
-                    padding: var(--spacing-xs) var(--spacing-sm);
-                    border-radius: var(--border-radius-sm);
-                    font-size: var(--font-size-small);
-                  "
-                  >예술 애호가</span
-                >
-                <span
-                  style="
-                    background: var(--success-color);
-                    color: white;
-                    padding: var(--spacing-xs) var(--spacing-sm);
-                    border-radius: var(--border-radius-sm);
-                    font-size: var(--font-size-small);
-                  "
-                  >성장 지향</span
-                >
-                <span
-                  style="
-                    background: var(--warning-color);
-                    color: white;
-                    padding: var(--spacing-xs) var(--spacing-sm);
-                    border-radius: var(--border-radius-sm);
-                    font-size: var(--font-size-small);
-                  "
-                  >독서 좋아함</span
-                >
+              
+              <!-- 프리미엄 이름 & 나이 -->
+              <h3 class="premium-name">이영희님</h3>
+              <div class="premium-age">48세 • 서울 서초구</div>
+              
+              <!-- 프리미엄 매칭 점수 -->
+              <div class="premium-compatibility">
+                <div class="premium-score">87%</div>
+                <div style="color: #8b7355; font-weight: 500; font-size: 0.9rem; margin-bottom: 0.5rem;">매우 높은 호환성</div>
+                <div style="color: #6b5b47; font-size: 0.8rem; font-style: italic;">
+                  💕 설렘 가득한 만남이 기다립니다!
+                </div>
               </div>
-              <p style="color: var(--text-secondary); margin-bottom: var(--spacing-md)">
-                "예술과 문화를 사랑하며, 끊임없이 배우고 성장하는 삶을 추구합니다."
-              </p>
-              <button
-                class="btn btn-primary"
-                style="width: 100%"
-                data-voice="이영희님과 대화 시작하기"
-              >
-                <span>대화 시작하기</span>
-              </button>
+
+              <!-- 프리미엄 태그 시스템 -->
+              <div class="premium-tags">
+                <span class="premium-tag">🎨 예술 애호가</span>
+                <span class="premium-tag">📚 성장 지향</span>
+                <span class="premium-tag">📖 독서 좋아함</span>
+              </div>
+
+              <!-- 프리미엄 소개 메시지 -->
+              <div style="
+                background: linear-gradient(135deg, rgba(139, 115, 85, 0.08) 0%, rgba(107, 91, 71, 0.12) 100%);
+                border-left: 4px solid var(--compass-gold);
+                border-radius: 12px;
+                padding: 1rem;
+                margin: 1.5rem 0;
+                font-style: italic;
+                color: #6b5b47;
+                line-height: 1.5;
+              ">
+                "예술과 문화를 사랑하며, 끊임없이 배우고 성장하는 삶을 추구합니다. 함께 아름다운 것들을 나누고 싶어요."
+              </div>
+
+              <!-- 프리미엄 버튼 그룹 -->
+              <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <button
+                  class="premium-btn"
+                  style="width: 100%; font-size: 1.1rem;"
+                  data-voice="이영희님과 품격있는 대화 시작하기"
+                >
+                  💝 품격있는 대화 시작하기
+                </button>
+                
+                <div style="display: flex; gap: 0.5rem;">
+                  <button
+                    class="premium-btn"
+                    style="flex: 1; font-size: 0.9rem; opacity: 0.9;"
+                    onclick="window.seniorUI?.showDetailedAnalysis(this.closest('.premium-profile-card').querySelector('.heart-compass') || this.closest('.premium-profile-card'))"
+                  >
+                    🧠 상세 분석
+                  </button>
+                  <button
+                    class="premium-btn"
+                    style="flex: 1; font-size: 0.9rem; opacity: 0.9;"
+                    onclick="window.seniorUI?.playMatchingNarration(87)"
+                  >
+                    🎵 감동 메시지
+                  </button>
+                </div>
+              </div>
+
+              <!-- 숨겨진 하트 나침반 데이터 (분석용) -->
+              <div style="display: none;" data-matching-score="87"></div>
             </div>
 
-            <!-- 매칭 카드 3 -->
-            <div class="match-card card" style="text-align: center">
-              <div
-                style="
-                  width: 100px;
-                  height: 100px;
-                  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                  border-radius: 50%;
-                  margin: 0 auto var(--spacing-md);
+            <!-- 💎 프리미엄 매칭 카드 3 (박민수님) -->
+            <div class="match-card premium-profile-card" style="text-align: center; padding: 2rem; min-height: 500px;">
+              <!-- 인증 배지 -->
+              <div class="verification-badge">
+                ✓ 검증회원
+              </div>
+              
+              <!-- 프리미엄 프로필 이미지 -->
+              <div class="premium-avatar" style="margin: 0 auto 1.5rem;">
+                <div style="
+                  width: 100%;
+                  height: 100%;
                   display: flex;
                   align-items: center;
                   justify-content: center;
-                  font-size: 3rem;
-                "
-              >
-                👨‍🏫
-              </div>
-              <h3 style="margin-bottom: var(--spacing-sm)">박민수님 (55세)</h3>
-              <div
-                style="
-                  background: var(--bg-secondary);
-                  padding: var(--spacing-sm);
-                  border-radius: var(--border-radius-md);
-                  margin-bottom: var(--spacing-md);
-                "
-              >
-                <div
-                  style="
-                    font-size: var(--font-size-xl);
-                    font-weight: 700;
-                    color: var(--accent-color);
-                    margin-bottom: var(--spacing-xs);
-                  "
-                >
-                  84%
-                </div>
-                <div style="font-size: var(--font-size-small); color: var(--text-secondary)">
-                  가치관 일치도
+                  font-size: 3.5rem;
+                  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                  border-radius: 13px;
+                ">
+                  👨‍🏫
                 </div>
               </div>
-              <div
-                style="
-                  display: flex;
-                  flex-wrap: wrap;
-                  gap: var(--spacing-xs);
-                  justify-content: center;
-                  margin-bottom: var(--spacing-md);
-                "
-              >
-                <span
-                  style="
-                    background: var(--primary-color);
-                    color: white;
-                    padding: var(--spacing-xs) var(--spacing-sm);
-                    border-radius: var(--border-radius-sm);
-                    font-size: var(--font-size-small);
-                  "
-                  >지혜로운</span
-                >
-                <span
-                  style="
-                    background: var(--accent-color);
-                    color: white;
-                    padding: var(--spacing-xs) var(--spacing-sm);
-                    border-radius: var(--border-radius-sm);
-                    font-size: var(--font-size-small);
-                  "
-                  >여행 좋아함</span
-                >
-                <span
-                  style="
-                    background: var(--warning-color);
-                    color: white;
-                    padding: var(--spacing-xs) var(--spacing-sm);
-                    border-radius: var(--border-radius-sm);
-                    font-size: var(--font-size-small);
-                  "
-                  >소통 능력</span
-                >
+              
+              <!-- 프리미엄 이름 & 나이 -->
+              <h3 class="premium-name">박민수님</h3>
+              <div class="premium-age">55세 • 서울 강북구</div>
+              
+              <!-- 프리미엄 매칭 점수 -->
+              <div class="premium-compatibility">
+                <div class="premium-score">84%</div>
+                <div style="color: #8b7355; font-weight: 500; font-size: 0.9rem; margin-bottom: 0.5rem;">좋은 궁합</div>
+                <div style="color: #6b5b47; font-size: 0.8rem; font-style: italic;">
+                  ✨ 서로를 더 알아가 보세요!
+                </div>
               </div>
-              <p style="color: var(--text-secondary); margin-bottom: var(--spacing-md)">
-                "새로운 경험과 진솔한 대화를 통해 서로 성장하는 관계를 원합니다."
-              </p>
-              <button
-                class="btn btn-primary"
-                style="width: 100%"
-                data-voice="박민수님과 대화 시작하기"
-              >
-                <span>대화 시작하기</span>
-              </button>
+
+              <!-- 프리미엄 태그 시스템 -->
+              <div class="premium-tags">
+                <span class="premium-tag">🧠 지혜로운</span>
+                <span class="premium-tag">✈️ 여행 좋아함</span>
+                <span class="premium-tag">💬 소통 능력</span>
+              </div>
+
+              <!-- 프리미엄 소개 메시지 -->
+              <div style="
+                background: linear-gradient(135deg, rgba(139, 115, 85, 0.08) 0%, rgba(107, 91, 71, 0.12) 100%);
+                border-left: 4px solid var(--compass-gold);
+                border-radius: 12px;
+                padding: 1rem;
+                margin: 1.5rem 0;
+                font-style: italic;
+                color: #6b5b47;
+                line-height: 1.5;
+              ">
+                "새로운 경험과 진솔한 대화를 통해 서로 성장하는 관계를 원합니다. 인생의 지혜를 함께 나누고 싶어요."
+              </div>
+
+              <!-- 프리미엄 버튼 그룹 -->
+              <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <button
+                  class="premium-btn"
+                  style="width: 100%; font-size: 1.1rem;"
+                  data-voice="박민수님과 지혜로운 대화 시작하기"
+                >
+                  🌟 지혜로운 대화 시작하기
+                </button>
+                
+                <div style="display: flex; gap: 0.5rem;">
+                  <button
+                    class="premium-btn"
+                    style="flex: 1; font-size: 0.9rem; opacity: 0.9;"
+                    onclick="window.seniorUI?.showDetailedAnalysis(this.closest('.premium-profile-card').querySelector('.heart-compass') || this.closest('.premium-profile-card'))"
+                  >
+                    🧠 상세 분석
+                  </button>
+                  <button
+                    class="premium-btn"
+                    style="flex: 1; font-size: 0.9rem; opacity: 0.9;"
+                    onclick="window.seniorUI?.playMatchingNarration(84)"
+                  >
+                    🎵 감동 메시지
+                  </button>
+                </div>
+              </div>
+
+              <!-- 숨겨진 하트 나침반 데이터 (분석용) -->
+              <div style="display: none;" data-matching-score="84"></div>
             </div>
           </div>
 
