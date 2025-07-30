@@ -115,6 +115,154 @@ app.get('/api/matching/test', (req, res) => {
   });
 });
 
+// 지능형 호환성 분석 (하트 나침반용)
+app.get('/api/matching/intelligent-compatibility/:targetUserId', (req, res) => {
+  const { targetUserId } = req.params;
+  const targetUser = testUsers.find(u => u.id === targetUserId);
+  
+  if (!targetUser) {
+    return res.status(404).json({
+      success: false,
+      error: '사용자를 찾을 수 없습니다.',
+      code: 'USER_NOT_FOUND'
+    });
+  }
+
+  const compatibility = {
+    totalScore: 75,
+    breakdown: {
+      valuesAlignment: 85,
+      lifestyleMatch: 70,
+      personalityMatch: 80,
+      interestsMatch: 65,
+      locationCompatibility: 40
+    },
+    recommendation: '매우 높은 호환성을 보입니다. 진정한 인연이 될 가능성이 높아요!',
+    matchStrength: 'high'
+  };
+
+  res.json({
+    success: true,
+    data: {
+      targetUser: {
+        id: targetUser.id,
+        name: targetUser.name,
+        age: targetUser.age
+      },
+      compatibility,
+      analysisTimestamp: new Date().toISOString()
+    },
+    message: '호환성 분석이 완료되었습니다.'
+  });
+});
+
+// 사용자 프로필 조회
+app.get('/api/users/:userId', (req, res) => {
+  const { userId } = req.params;
+  const user = testUsers.find(u => u.id === userId);
+  
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      error: '사용자를 찾을 수 없습니다.',
+      code: 'USER_NOT_FOUND'
+    });
+  }
+
+  res.json({
+    success: true,
+    data: user,
+    message: '사용자 정보를 성공적으로 조회했습니다.'
+  });
+});
+
+// 매칭 결과 생성
+app.post('/api/matching/generate', (req, res) => {
+  const matches = testUsers.map(user => ({
+    userId: user.id,
+    name: user.name,
+    age: user.age,
+    gender: user.gender,
+    location: user.location,
+    bio: user.bio,
+    compatibilityScore: Math.floor(Math.random() * 30) + 70, // 70-100 랜덤
+    matchReason: '가치관과 생활 패턴이 잘 맞습니다.',
+    serendipityScore: Math.floor(Math.random() * 40) + 60 // 60-100 랜덤
+  }));
+
+  res.json({
+    success: true,
+    data: {
+      matches,
+      totalMatches: matches.length,
+      generatedAt: new Date().toISOString()
+    },
+    message: `${matches.length}개의 매칭 결과를 생성했습니다.`
+  });
+});
+
+// 가치관 평가 결과 조회
+app.get('/api/values/assessment/:userId', (req, res) => {
+  const { userId } = req.params;
+  const user = testUsers.find(u => u.id === userId);
+  
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      error: '사용자를 찾을 수 없습니다.',
+      code: 'USER_NOT_FOUND'
+    });
+  }
+
+  const assessment = {
+    userId: user.id,
+    completedAt: '2025-07-29T04:02:21.410Z',
+    results: {
+      familyValues: 85,
+      careerOrientation: 70,
+      socialConnection: 90,
+      personalGrowth: 80,
+      lifestyle: 75
+    },
+    personality: {
+      openness: 75,
+      conscientiousness: 85,
+      extraversion: 60,
+      agreeableness: 90,
+      neuroticism: 30
+    },
+    preferences: {
+      communicationStyle: 'direct_caring',
+      conflictResolution: 'collaborative',
+      leisureActivities: user.interests
+    }
+  };
+
+  res.json({
+    success: true,
+    data: assessment,
+    message: '가치관 평가 결과를 조회했습니다.'
+  });
+});
+
+// 매칭 시스템 Health check
+app.get('/api/matching/health', (req, res) => {
+  res.json({
+    status: 'OK',
+    timestamp: new Date().toISOString(),
+    matchingEngine: 'active',
+    database: 'in-memory',
+    totalUsers: testUsers.length,
+    availableEndpoints: [
+      '/api/matching/intelligent-compatibility/:userId',
+      '/api/matching/generate',
+      '/api/matching/test',
+      '/api/users/:userId',
+      '/api/values/assessment/:userId'
+    ]
+  });
+});
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({
