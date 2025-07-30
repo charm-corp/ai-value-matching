@@ -519,7 +519,8 @@
         align-items: center;
         justify-content: center;
         z-index: 1000;
-        backdrop-filter: blur(5px);
+        background: rgba(0, 0, 0, 0.7);
+        /* backdrop-filter: blur(5px); Safari/iOS 호환성 문제로 주석 처리 */
         opacity: 0;
         visibility: hidden;
         transition: all 0.3s ease;
@@ -730,7 +731,8 @@
         padding: 6px 12px;
         font-size: 0.85rem;
         font-weight: 500;
-        backdrop-filter: blur(10px);
+        background: rgba(0, 0, 0, 0.8);
+        /* backdrop-filter: blur(10px); Safari/iOS 호환성 문제로 주석 처리 */
         transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
@@ -774,7 +776,8 @@
         text-align: center;
         position: relative;
         overflow: hidden;
-        backdrop-filter: blur(10px);
+        background: rgba(0, 0, 0, 0.8);
+        /* backdrop-filter: blur(10px); Safari/iOS 호환성 문제로 주석 처리 */
       }
 
       .premium-compatibility::before {
@@ -843,6 +846,575 @@
         box-shadow: 0 8px 24px rgba(139, 115, 85, 0.4);
         background: linear-gradient(135deg, #a0886f 0%, #8b7355 100%);
       }
+
+      /* Utility Classes */
+      
+      /* Layout & Flexbox */
+      .flex { display: flex; }
+      .flex-center { display: flex; justify-content: center; align-items: center; }
+      .flex-center-col { display: flex; flex-direction: column; justify-content: center; align-items: center; }
+      .flex-between { display: flex; justify-content: space-between; align-items: center; }
+      .flex-start { display: flex; justify-content: flex-start; align-items: center; }
+      .flex-end { display: flex; justify-content: flex-end; align-items: center; }
+      .flex-col { display: flex; flex-direction: column; }
+      .flex-row { display: flex; flex-direction: row; }
+      .flex-col-center { display: flex; flex-direction: column; align-items: center; }
+      .flex-wrap-center { display: flex; justify-content: center; flex-wrap: wrap; }
+      .flex-wrap-gap { display: flex; flex-wrap: wrap; }
+      .flex-gap-sm { display: flex; gap: var(--spacing-sm); }
+      .flex-gap-md { display: flex; gap: var(--spacing-md); }
+      .flex-gap-lg { display: flex; gap: var(--spacing-lg); }
+      
+      /* Gap utilities */
+      .gap-xs { gap: var(--spacing-xs); }
+      .gap-sm { gap: var(--spacing-sm); }
+      .gap-md { gap: var(--spacing-md); }
+      .gap-lg { gap: var(--spacing-lg); }
+      .gap-xl { gap: var(--spacing-xl); }
+      
+      /* Flex properties */
+      .flex-1 { flex: 1; }
+      .flex-2 { flex: 2; }
+      .flex-auto { flex: auto; }
+      .flex-none { flex: none; }
+      .flex-shrink-0 { flex-shrink: 0; }
+      
+      /* Spacing */
+      .m-auto { margin: auto; }
+      .mx-auto { margin-left: auto; margin-right: auto; }
+      .my-auto { margin-top: auto; margin-bottom: auto; }
+      .mb-xs { margin-bottom: var(--spacing-xs); }
+      .mb-sm { margin-bottom: var(--spacing-sm); }
+      .mb-md { margin-bottom: var(--spacing-md); }
+      .mb-lg { margin-bottom: var(--spacing-lg); }
+      .mb-xl { margin-bottom: var(--spacing-xl); }
+      .mb-2xl { margin-bottom: var(--spacing-xxl); }
+      .mt-xs { margin-top: var(--spacing-xs); }
+      .mt-sm { margin-top: var(--spacing-sm); }
+      .mt-md { margin-top: var(--spacing-md); }
+      .mt-lg { margin-top: var(--spacing-lg); }
+      .mt-xl { margin-top: var(--spacing-xl); }
+      .mt-2xl { margin-top: var(--spacing-xxl); }
+      .p-xs { padding: var(--spacing-xs); }
+      .p-sm { padding: var(--spacing-sm); }
+      .p-md { padding: var(--spacing-md); }
+      .p-lg { padding: var(--spacing-lg); }
+      .p-xl { padding: var(--spacing-xl); }
+      .p-2xl { padding: var(--spacing-xxl); }
+      .px-xs { padding-left: var(--spacing-xs); padding-right: var(--spacing-xs); }
+      .px-sm { padding-left: var(--spacing-sm); padding-right: var(--spacing-sm); }
+      .px-md { padding-left: var(--spacing-md); padding-right: var(--spacing-md); }
+      .px-lg { padding-left: var(--spacing-lg); padding-right: var(--spacing-lg); }
+      .px-xl { padding-left: var(--spacing-xl); padding-right: var(--spacing-xl); }
+      .py-xs { padding-top: var(--spacing-xs); padding-bottom: var(--spacing-xs); }
+      .py-sm { padding-top: var(--spacing-sm); padding-bottom: var(--spacing-sm); }
+      .py-md { padding-top: var(--spacing-md); padding-bottom: var(--spacing-md); }
+      .py-lg { padding-top: var(--spacing-lg); padding-bottom: var(--spacing-lg); }
+      .py-xl { padding-top: var(--spacing-xl); padding-bottom: var(--spacing-xl); }
+      .py-2xl { padding-top: var(--spacing-xxl); padding-bottom: var(--spacing-xxl); }
+      
+      /* Typography */
+      .text-center { text-align: center; }
+      .text-left { text-align: left; }
+      .text-right { text-align: right; }
+      .font-normal { font-weight: 400; }
+      .font-medium { font-weight: 500; }
+      .font-semibold { font-weight: 600; }
+      .font-bold { font-weight: 700; }
+      .font-extrabold { font-weight: 800; }
+      .text-primary { color: var(--text-primary); }
+      .text-secondary { color: var(--text-secondary); }
+      .text-white { color: var(--text-white); }
+      .text-primary-color { color: var(--primary-color); }
+      .text-secondary-color { color: var(--secondary-color); }
+      .text-gold { color: var(--compass-gold); }
+      .text-gold-light { color: var(--compass-gold-light); }
+      .text-brown { color: #8b4513; }
+      .text-heart-red { color: var(--heart-red); }
+      .text-accent-color { color: var(--accent-color); }
+      .text-xs { font-size: var(--font-size-small); }
+      .text-sm { font-size: var(--font-size-small); }
+      .text-base { font-size: var(--font-size-normal); }
+      .text-lg { font-size: var(--font-size-large); }
+      .text-xl { font-size: var(--font-size-xl); }
+      .text-2xl { font-size: var(--font-size-xxl); }
+      .text-3xl { font-size: 2.5rem; }
+      .italic { font-style: italic; }
+      .not-italic { font-style: normal; }
+      .leading-none { line-height: 1; }
+      .leading-tight { line-height: 1.25; }
+      .leading-normal { line-height: 1.5; }
+      .leading-relaxed { line-height: 1.8; }
+      
+      /* Container & Sizing */
+      .w-auto { width: auto; }
+      .w-full { width: 100%; }
+      .w-fit { width: fit-content; }
+      .w-screen { width: 100vw; }
+      .w-20 { width: 5rem; }
+      .w-24 { width: 6rem; }
+      .w-85 { width: 85%; }
+      .h-auto { height: auto; }
+      .h-full { height: 100%; }
+      .h-screen { height: 100vh; }
+      .h-20 { height: 5rem; }
+      .h-24 { height: 6rem; }
+      .h-8 { height: 2rem; }
+      .max-w-xs { max-width: 20rem; }
+      .max-w-sm { max-width: 24rem; }
+      .max-w-md { max-width: 28rem; }
+      .max-w-lg { max-width: 32rem; }
+      .max-w-xl { max-width: 36rem; }
+      .max-w-none { max-width: none; }
+      .min-h-0 { min-height: 0; }
+      .min-h-full { min-height: 100%; }
+      .min-h-screen { min-height: 100vh; }
+      .min-h-500 { min-height: 500px; }
+      
+      /* Display & Visual */
+      .show { display: block; }
+      .hide { display: none; }
+      .invisible { visibility: hidden; }
+      .visible { visibility: visible; }
+      .block { display: block; }
+      .inline-block { display: inline-block; }
+      .bg-transparent { background-color: transparent; }
+      .bg-primary { background-color: var(--bg-primary); }
+      .bg-secondary { background-color: var(--bg-secondary); }
+      .bg-warm { background-color: var(--bg-warm); }
+      .bg-primary-color { background-color: var(--primary-color); }
+      .bg-secondary-color { background-color: var(--secondary-color); }
+      .rounded-none { border-radius: 0; }
+      .rounded-sm { border-radius: 0.125rem; }
+      .rounded { border-radius: 0.25rem; }
+      .rounded-md { border-radius: var(--radius-md); }
+      .rounded-lg { border-radius: var(--radius-lg); }
+      .rounded-xl { border-radius: 1rem; }
+      .rounded-full { border-radius: 9999px; }
+      .opacity-0 { opacity: 0; }
+      .opacity-50 { opacity: 0.5; }
+      .opacity-80 { opacity: 0.8; }
+      .opacity-90 { opacity: 0.9; }
+      .opacity-100 { opacity: 1; }
+      
+      /* Senior-UI Specific */
+      .section-padding { padding: var(--spacing-xxl) var(--spacing-md); }
+      .container-center { max-width: 1000px; margin: 0 auto; }
+      .container-center-sm { max-width: 800px; margin: 0 auto; }
+      .premium-container { text-align: center; padding: 2rem; min-height: 500px; }
+      .no-underline { text-decoration: none; }
+      .underline { text-decoration: underline; }
+      .section-margin { margin-bottom: var(--spacing-xxl); }
+      .title-margin { margin-bottom: var(--spacing-xl); }
+      
+      /* Gradient text utility */
+      .gradient-text {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      
+      /* Icon utilities */
+      .icon-circle {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: var(--spacing-md);
+        font-size: var(--font-size-xl);
+      }
+      
+      .icon-circle-primary {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+      }
+      
+      .icon-circle-secondary {
+        background: linear-gradient(135deg, var(--secondary-color) 0%, var(--warning-color) 100%);
+      }
+      
+      .icon-circle-accent {
+        background: linear-gradient(135deg, var(--accent-color) 0%, var(--success-color) 100%);
+      }
+      
+      /* Grid utilities */
+      .grid { display: grid; }
+      .grid-auto-fit { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+      .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+      .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      
+      /* Step utilities */
+      .step-number {
+        width: 80px;
+        height: 80px;
+        background: var(--primary-color);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: var(--font-size-xxl);
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+      
+      .step-card {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-lg);
+        padding: var(--spacing-xl);
+      }
+      
+      .step-number-secondary {
+        background: var(--secondary-color);
+      }
+      
+      .step-number-accent {
+        background: var(--accent-color);
+      }
+      
+      /* Status badge utilities */
+      .status-badge {
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+        color: white;
+        box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+        margin-bottom: 8px;
+      }
+      
+      .status-description {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        opacity: 0.8;
+      }
+      
+      /* Avatar utilities */
+      .avatar-large {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        margin: 0 auto var(--spacing-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+      }
+      
+      .avatar-gradient-1 {
+        background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+      }
+      
+      .avatar-gradient-2 {
+        background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+      }
+      
+      .avatar-gradient-3 {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+
+      /* Additional utility classes for inline style replacement */
+      .compass-container-bg {
+        background: linear-gradient(135deg, rgba(248, 244, 230, 0.3) 0%, rgba(232, 220, 192, 0.5) 100%);
+        border: 1px solid rgba(139, 115, 85, 0.2);
+        border-radius: var(--radius-lg);
+        min-height: 320px;
+      }
+
+      .compass-center-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .compass-detail-btn-positioned {
+        position: absolute;
+        bottom: -50px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--heart-red);
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 12px;
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+      }
+
+      .compatibility-score-text {
+        font-size: var(--font-size-xl);
+        font-weight: 700;
+        color: var(--heart-red);
+      }
+
+      .compatibility-message {
+        font-size: var(--font-size-small);
+        color: var(--text-secondary);
+        max-width: 280px;
+      }
+
+      .voice-narration-btn-styled {
+        background: rgba(255, 255, 255, 0.9);
+        border: 2px solid var(--heart-red);
+        color: var(--heart-red);
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        margin-top: var(--spacing-md);
+      }
+
+      .premium-profile-min-height {
+        min-height: 500px;
+      }
+
+      .premium-avatar-centered {
+        margin: 0 auto 1.5rem;
+      }
+
+      .premium-compatibility-rating {
+        color: #8b7355;
+        font-weight: 500;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .premium-compatibility-description {
+        color: #6b5b47;
+        font-size: 0.8rem;
+        font-style: italic;
+      }
+
+      .profile-buttons-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .profile-main-btn {
+        width: 100%;
+        font-size: 1.1rem;
+      }
+
+      .profile-secondary-buttons {
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      .profile-secondary-btn {
+        flex: 1;
+        font-size: 0.9rem;
+        opacity: 0.9;
+      }
+
+      .hidden-data {
+        display: none;
+      }
+
+      .info-with-icon {
+        display: inline-block;
+        text-align: left;
+        max-width: 600px;
+      }
+
+      .info-icon {
+        width: 24px;
+        height: 24px;
+      }
+
+      .faq-section-bg {
+        background: var(--bg-warm);
+      }
+
+      .faq-item-styled {
+        cursor: pointer;
+      }
+
+      .faq-summary-styled {
+        font-size: var(--font-size-normal);
+        font-weight: 600;
+        padding: var(--spacing-lg) var(--spacing-lg) var(--spacing-lg) var(--spacing-lg);
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .faq-content-padding {
+        padding: 0 var(--spacing-lg) var(--spacing-lg);
+      }
+
+      .signup-modal-bg {
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
+      }
+
+      .signup-form-container-bg {
+        background: var(--bg-primary);
+        backdrop-filter: blur(20px);
+        border-radius: var(--radius-lg);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      }
+
+      .signup-step {
+        margin-top: var(--spacing-lg);
+      }
+
+      .signup-terms-margin {
+        margin-left: var(--spacing-sm);
+      }
+
+      .signup-link-styled {
+        color: var(--primary-color);
+        margin-left: var(--spacing-xs);
+      }
+
+      .alert-info-margin {
+        margin: var(--spacing-lg) 0;
+      }
+
+      .footer-bg {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        color: var(--text-white);
+      }
+
+      .footer-link {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+      }
+
+      .footer-text {
+        color: rgba(255, 255, 255, 0.8);
+      }
+
+      .footer-social {
+        display: flex;
+        gap: var(--spacing-md);
+        justify-content: center;
+        margin-bottom: var(--spacing-lg);
+      }
+
+      .footer-links {
+        display: flex;
+        gap: var(--spacing-lg);
+        justify-content: center;
+        margin-bottom: var(--spacing-md);
+        flex-wrap: wrap;
+      }
+
+      .footer-copyright {
+        text-align: center;
+        padding-top: var(--spacing-lg);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.7);
+        font-size: var(--font-size-small);
+      }
+
+      /* Tag system utilities */
+      .tag-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--spacing-xs);
+        justify-content: center;
+        margin-bottom: var(--spacing-md);
+      }
+
+      .tag-primary {
+        background: var(--primary-color);
+        color: white;
+        padding: var(--spacing-xs) var(--spacing-sm);
+        border-radius: var(--radius-md);
+        font-size: var(--font-size-small);
+      }
+
+      .tag-accent {
+        background: var(--accent-color, #ff6b6b);
+        color: white;
+        padding: var(--spacing-xs) var(--spacing-sm);
+        border-radius: var(--radius-md);
+        font-size: var(--font-size-small);
+      }
+
+      .tag-secondary {
+        background: var(--secondary-color);
+        color: white;
+        padding: var(--spacing-xs) var(--spacing-sm);
+        border-radius: var(--radius-md);
+        font-size: var(--font-size-small);
+      }
+
+      .voice-narration-btn-simple {
+        margin-top: var(--spacing-sm);
+        background: transparent;
+        border: 2px solid var(--heart-red);
+        color: var(--heart-red);
+        border-radius: 25px;
+        padding: 8px 16px;
+        font-size: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .btn-full-width {
+        width: 100%;
+      }
+
+      .progress-bar-33 {
+        width: 33%;
+      }
+
+      .premium-intro-message {
+        background: linear-gradient(135deg, rgba(139, 115, 85, 0.08) 0%, rgba(107, 91, 71, 0.12) 100%);
+        border-left: 4px solid var(--compass-gold);
+        border-radius: 12px;
+        padding: 1rem;
+        margin: 1.5rem 0;
+        font-style: italic;
+        color: #6b5b47;
+        line-height: 1.5;
+      }
+
+      .premium-avatar-full {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3.5rem;
+        border-radius: 13px;
+      }
+
+      .premium-avatar-bg-1 {
+        background: linear-gradient(135deg, #e8dcc0 0%, #f8f4e6 100%);
+        color: #8b7355;
+        box-shadow: 0 4px 12px rgba(139, 115, 85, 0.2);
+        border: 2px solid #d4af37;
+      }
+
+      .premium-avatar-bg-2 {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+
+      .premium-avatar-bg-3 {
+        background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+      }
+
+      .alert-icon {
+        width: 20px;
+        height: 20px;
+      }
     </style>
 
     <!-- 폰트 로딩 최적화 -->
@@ -857,6 +1429,9 @@
       media="print"
       onload="this.media='all'"
     />
+    
+    <!-- CSS Utilities -->
+    <link rel="stylesheet" href="css/utilities.css" />
 
     <!-- 적응형 로딩 스크립트 (중장년층 특화) -->
     <script>
@@ -976,46 +1551,21 @@
       <!-- 환영 섹션 -->
       <section
         id="home"
-        class="welcome-section"
-        style="
-          padding: var(--spacing-xxl) var(--spacing-md);
-          background: linear-gradient(135deg, var(--bg-warm) 0%, var(--bg-secondary) 100%);
-        "
+        class="welcome-section section-padding"
       >
-        <div class="container" style="max-width: 1000px; margin: 0 auto; text-align: center">
+        <div class="container container-center text-center">
           <h1
             data-voice="인생의 황금기, 새로운 만남을 시작해보세요"
-            style="color: var(--text-primary); margin-bottom: var(--spacing-lg)"
+            class="text-primary mb-lg"
           >
-            <span style="display: block; margin-bottom: var(--spacing-sm)">인생의 황금기,</span>
-            <span
-              style="
-                background: linear-gradient(
-                  135deg,
-                  var(--primary-color) 0%,
-                  var(--secondary-color) 100%
-                );
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
-              "
-              >새로운 만남</span
-            >을 시작해보세요
+            <span class="block mb-sm">인생의 황금기,</span>
+            <span class="gradient-text">새로운 만남</span>을 시작해보세요
           </h1>
-          <p
-            style="
-              font-size: var(--font-size-large);
-              color: var(--text-secondary);
-              margin-bottom: var(--spacing-xl);
-              line-height: 1.8;
-            "
-          >
+          <p class="text-lg text-secondary mb-xl leading-relaxed">
             우연한 만남에서 시작되는 진정한 인연을 경험해보세요.<br />
             세렌디피티가 만든 특별한 4060세대 가치관 매칭 플랫폼입니다.
           </p>
-          <div
-            style="display: flex; gap: var(--spacing-md); justify-content: center; flex-wrap: wrap"
-          >
+          <div class="flex-wrap-center gap-md">
             <button
               class="btn btn-primary btn-large"
               id="startJourneyBtn"
@@ -1055,41 +1605,19 @@
       <!-- 서비스 소개 -->
       <section
         id="about"
-        style="padding: var(--spacing-xxl) var(--spacing-md); background: var(--bg-primary)"
+        class="section-padding bg-primary"
       >
-        <div class="container" style="max-width: 1000px; margin: 0 auto">
+        <div class="container container-center">
           <h2
-            style="text-align: center; margin-bottom: var(--spacing-xl)"
+            class="text-center mb-xl"
             data-voice="우리가 특별한 이유"
           >
-            왜 <span style="color: var(--primary-color)">CHARM_INYEON</span>일까요?
+            왜 <span class="text-primary-color">CHARM_INYEON</span>일까요?
           </h2>
-          <div
-            style="
-              display: grid;
-              grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-              gap: var(--spacing-lg);
-            "
-          >
+          <div class="grid grid-auto-fit gap-lg">
             <div class="card">
               <div class="card-header">
-                <div
-                  style="
-                    width: 60px;
-                    height: 60px;
-                    background: linear-gradient(
-                      135deg,
-                      var(--primary-color) 0%,
-                      var(--primary-light) 100%
-                    );
-                    border-radius: 50%;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    margin-bottom: var(--spacing-md);
-                    font-size: var(--font-size-xl);
-                  "
-                >
+                <div class="icon-circle icon-circle-primary">
                   🧠
                 </div>
                 <h3 class="card-title">AI 가치관 분석</h3>
@@ -1104,23 +1632,7 @@
 
             <div class="card">
               <div class="card-header">
-                <div
-                  style="
-                    width: 60px;
-                    height: 60px;
-                    background: linear-gradient(
-                      135deg,
-                      var(--secondary-color) 0%,
-                      var(--warning-color) 100%
-                    );
-                    border-radius: 50%;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    margin-bottom: var(--spacing-md);
-                    font-size: var(--font-size-xl);
-                  "
-                >
+                <div class="icon-circle icon-circle-secondary">
                   🤝
                 </div>
                 <h3 class="card-title">안전한 만남</h3>
@@ -1135,23 +1647,7 @@
 
             <div class="card">
               <div class="card-header">
-                <div
-                  style="
-                    width: 60px;
-                    height: 60px;
-                    background: linear-gradient(
-                      135deg,
-                      var(--accent-color) 0%,
-                      var(--success-color) 100%
-                    );
-                    border-radius: 50%;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    margin-bottom: var(--spacing-md);
-                    font-size: var(--font-size-xl);
-                  "
-                >
+                <div class="icon-circle icon-circle-accent">
                   🎯
                 </div>
                 <h3 class="card-title">중장년층 특화</h3>
@@ -1170,52 +1666,30 @@
       <!-- 회원가입 도우미 -->
       <section
         id="signup-helper"
-        style="padding: var(--spacing-xxl) var(--spacing-md); background: var(--bg-secondary)"
+        class="section-padding bg-secondary"
       >
-        <div class="container" style="max-width: 800px; margin: 0 auto">
+        <div class="container container-center-sm">
           <h2
-            style="text-align: center; margin-bottom: var(--spacing-xl)"
+            class="text-center mb-xl"
             data-voice="간단한 3단계로 시작하기"
           >
             간단한 3단계로 시작하세요
           </h2>
 
-          <div
-            class="signup-steps"
-            style="display: flex; flex-direction: column; gap: var(--spacing-lg)"
-          >
+          <div class="signup-steps flex-col gap-lg">
             <div
               class="step-card card"
-              style="
-                display: flex;
-                align-items: center;
-                gap: var(--spacing-lg);
-                padding: var(--spacing-xl);
-              "
             >
               <div
                 class="step-number"
-                style="
-                  width: 80px;
-                  height: 80px;
-                  background: var(--primary-color);
-                  color: white;
-                  border-radius: 50%;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  font-size: var(--font-size-xxl);
-                  font-weight: 700;
-                  flex-shrink: 0;
-                "
               >
                 1
               </div>
               <div class="step-content">
-                <h3 style="margin-bottom: var(--spacing-sm); color: var(--primary-color)">
+                <h3 class="mb-sm text-primary-color">
                   기본 정보 입력
                 </h3>
-                <p style="margin-bottom: var(--spacing-sm)">
+                <p class="mb-sm">
                   이름, 연령대, 거주지 등 기본적인 정보를 입력해주세요. 개인정보는 안전하게
                   보호됩니다.
                 </p>
@@ -1230,36 +1704,18 @@
 
             <div
               class="step-card card"
-              style="
-                display: flex;
-                align-items: center;
-                gap: var(--spacing-lg);
-                padding: var(--spacing-xl);
-              "
             >
               <div
                 class="step-number"
-                style="
-                  width: 80px;
-                  height: 80px;
-                  background: var(--secondary-color);
-                  color: white;
-                  border-radius: 50%;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  font-size: var(--font-size-xxl);
-                  font-weight: 700;
-                  flex-shrink: 0;
-                "
+class="step-number step-number-secondary"
               >
                 2
               </div>
               <div class="step-content">
-                <h3 style="margin-bottom: var(--spacing-sm); color: var(--secondary-color)">
+                <h3 class="mb-sm text-secondary-color">
                   가치관 분석
                 </h3>
-                <p style="margin-bottom: var(--spacing-sm)">
+                <p class="mb-sm">
                   20개의 간단한 질문에 답하시면 AI가 당신의 가치관을 분석합니다. 정답은 없으니
                   편안하게 답해주세요.
                 </p>
@@ -1274,36 +1730,18 @@
 
             <div
               class="step-card card"
-              style="
-                display: flex;
-                align-items: center;
-                gap: var(--spacing-lg);
-                padding: var(--spacing-xl);
-              "
             >
               <div
                 class="step-number"
-                style="
-                  width: 80px;
-                  height: 80px;
-                  background: var(--accent-color);
-                  color: white;
-                  border-radius: 50%;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  font-size: var(--font-size-xxl);
-                  font-weight: 700;
-                  flex-shrink: 0;
-                "
+class="step-number step-number-accent"
               >
                 3
               </div>
               <div class="step-content">
-                <h3 style="margin-bottom: var(--spacing-sm); color: var(--accent-color)">
+                <h3 class="mb-sm text-accent-color">
                   매칭 시작
                 </h3>
-                <p style="margin-bottom: var(--spacing-sm)">
+                <p class="mb-sm">
                   AI가 당신과 잘 맞는 분들을 찾아드립니다. 마음에 드시는 분이 있으면 인사를
                   나눠보세요.
                 </p>
@@ -1317,7 +1755,7 @@
             </div>
           </div>
 
-          <div style="text-align: center; margin-top: var(--spacing-xl)">
+          <div class="text-center mt-xl">
             <button
               class="btn btn-primary btn-large"
               id="startSignupBtn"
@@ -1346,82 +1784,37 @@
       <!-- 매칭 결과 미리보기 -->
       <section
         id="matching"
-        style="padding: var(--spacing-xxl) var(--spacing-md); background: var(--bg-primary)"
+        class="section-padding bg-primary"
       >
-        <div class="container" style="max-width: 1000px; margin: 0 auto">
+        <div class="container container-center">
           <h2
-            style="text-align: center; margin-bottom: var(--spacing-md)"
+            class="text-center mb-md"
             data-voice="매칭 결과 예시 보기"
           >
             이런 분들을 만날 수 있어요
           </h2>
 
           <!-- 🚨 모드 표시 배지 (창우님을 위한 긴급 추가) -->
-          <div style="text-align: center; margin-bottom: var(--spacing-xl);">
-            <div id="connection-status-badge" style="
-              display: inline-block;
-              padding: 8px 16px;
-              border-radius: 20px;
-              font-size: 0.9rem;
-              font-weight: 600;
-              background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
-              color: white;
-              box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
-              margin-bottom: 8px;
-            ">
+          <div class="text-center mb-xl">
+            <div id="connection-status-badge" class="status-badge">
               📊 데모 모드 - 백엔드 연결 확인 중...
             </div>
-            <div style="font-size: 0.8rem; color: var(--text-secondary); opacity: 0.8;">
+            <div class="status-description">
               <span id="status-description">시스템 연결 상태를 확인하고 있습니다</span>
             </div>
           </div>
 
-          <div
-            class="matching-preview"
-            style="
-              display: grid;
-              grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-              gap: var(--spacing-lg);
-            "
-          >
+          <div class="matching-preview grid grid-auto-fit gap-lg">
             <!-- 매칭 카드 1 -->
-            <div class="match-card card" style="text-align: center">
-              <div
-                style="
-                  width: 100px;
-                  height: 100px;
-                  background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
-                  border-radius: 50%;
-                  margin: 0 auto var(--spacing-md);
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  font-size: 3rem;
-                "
-              >
+            <div class="match-card card text-center">
+              <div class="avatar-large avatar-gradient-1 flex-center mb-md">
                 👨‍💼
               </div>
-              <h3 style="margin-bottom: var(--spacing-sm)">김철수님 (52세)</h3>
+              <h3 class="mb-sm">김철수님 (52세)</h3>
               <!-- 🧭💕 하트 나침반으로 매칭도 표시 (v2.1 업그레이드) -->
-              <div class="compass-container" style="
-                margin-bottom: var(--spacing-md); 
-                padding: var(--spacing-xl);
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                min-height: 320px;
-                background: linear-gradient(135deg, rgba(248, 244, 230, 0.3) 0%, rgba(232, 220, 192, 0.5) 100%);
-                border-radius: var(--radius-lg);
-                border: 1px solid rgba(139, 115, 85, 0.2);
-              ">
+              <div class="compass-container compass-container-bg mb-md p-xl flex-col-center">
                 <!-- 하트 나침반 중앙 정렬 컨테이너 -->
-                <div style="
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  margin-bottom: var(--spacing-lg);
-                ">
+                <div class="compass-center-wrapper mb-lg">
                   <div 
                     class="heart-compass high-compatibility" 
                     style="--matching-angle: 15deg; cursor: pointer;" 
@@ -1447,115 +1840,53 @@
                     <div class="compass-center"></div>
 
                     <!-- 🧠 상세 분석 버튼 -->
-                    <div class="compass-detail-btn" style="
-                      position: absolute;
-                      bottom: -50px;
-                      left: 50%;
-                      transform: translateX(-50%);
-                      background: var(--heart-red);
-                      color: white;
-                      border: none;
-                      padding: 8px 16px;
-                      border-radius: 20px;
-                      font-size: 12px;
-                      cursor: pointer;
-                      opacity: 0;
-                      transition: opacity 0.3s ease;
-                      box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
-                    " onclick="window.seniorUI?.showDetailedAnalysis(this.closest('.heart-compass'))">
+                    <div class="compass-detail-btn compass-detail-btn-positioned" onclick="window.seniorUI?.showDetailedAnalysis(this.closest('.heart-compass'))">
                       💡 왜 이렇게 잘 맞나요?
                     </div>
                   </div>
                 </div>
                 
                 <!-- 매칭도 텍스트 -->
-                <div style="text-align: center;">
-                  <div style="font-size: var(--font-size-xl); font-weight: 700; color: var(--heart-red); margin-bottom: var(--spacing-xs);">
+                <div class="text-center">
+                  <div class="compatibility-score-text mb-xs">
                     <span class="compatibility-score">92</span>% 호환성
                   </div>
-                  <div style="font-size: var(--font-size-small); color: var(--text-secondary); max-width: 280px;" data-message>
+                  <div class="compatibility-message" data-message>
                     🎉 운명적 인연을 발견했습니다!
                   </div>
                   
                   <!-- 🎭 음성 재생 버튼 -->
-                  <button class="voice-narration-btn" style="
-                    margin-top: var(--spacing-sm);
-                    background: transparent;
-                    border: 2px solid var(--heart-red);
-                    color: var(--heart-red);
-                    border-radius: 25px;
-                    padding: 8px 16px;
-                    font-size: 12px;
-                    cursor: pointer;
-                    transition: all 0.3s ease;
-                  " onclick="window.seniorUI?.playMatchingNarration(92)">
+                  <button class="voice-narration-btn voice-narration-btn-simple" onclick="window.seniorUI?.playMatchingNarration(92)">
                     🎵 감동 메시지 듣기
                   </button>
                 </div>
               </div>
-              <div
-                style="
-                  display: flex;
-                  flex-wrap: wrap;
-                  gap: var(--spacing-xs);
-                  justify-content: center;
-                  margin-bottom: var(--spacing-md);
-                "
-              >
-                <span
-                  style="
-                    background: var(--primary-light);
-                    color: white;
-                    padding: var(--spacing-xs) var(--spacing-sm);
-                    border-radius: var(--border-radius-sm);
-                    font-size: var(--font-size-small);
-                  "
-                  >가족 중시</span
-                >
-                <span
-                  style="
-                    background: var(--accent-color);
-                    color: white;
-                    padding: var(--spacing-xs) var(--spacing-sm);
-                    border-radius: var(--border-radius-sm);
-                    font-size: var(--font-size-small);
-                  "
-                  >운동 좋아함</span
-                >
-                <span
-                  style="
-                    background: var(--secondary-color);
-                    color: white;
-                    padding: var(--spacing-xs) var(--spacing-sm);
-                    border-radius: var(--border-radius-sm);
-                    font-size: var(--font-size-small);
-                  "
-                  >안정 추구</span
-                >
+              <div class="tag-container">
+                <span class="tag-primary">가족 중시</span>
+                <span class="tag-accent">운동 좋아함</span>
+                <span class="tag-secondary">안정 추구</span>
               </div>
-              <p style="color: var(--text-secondary); margin-bottom: var(--spacing-md)">
+              <p class="text-secondary mb-md">
                 "가족과 함께하는 시간을 가장 소중히 여기며, 건강한 라이프스타일을 추구합니다."
               </p>
               <button
                 class="btn btn-primary"
-                style="width: 100%; margin-bottom: var(--spacing-sm);"
+                class="btn-full-width mb-sm"
                 data-voice="김철수님과 대화 시작하기"
               >
                 <span>대화 시작하기</span>
               </button>
-              <div style="display: flex; gap: var(--spacing-sm); width: 100%;">
+              <div class="flex-gap-sm btn-full-width">
                 <button
-                  class="btn btn-secondary"
-                  style="flex: 1;"
+                  class="btn btn-secondary flex-1"
                   onclick="window.seniorUI?.showMatchingResult(this.closest('.match-card').querySelector('.heart-compass'), 92)"
                   data-voice="하트 나침반 v2.1 데모 실행"
                 >
                   <span>🎪 v2.1 데모</span>
                 </button>
                 <button
-                  class="btn btn-secondary"
-                  style="flex: 1;"
-                  onclick="if(window.seniorUI) { window.seniorUI.testAPIConnection('kim-chulsoo', this.closest('.match-card').querySelector('.heart-compass')); } else { alert('⚠️ 시스템 로딩 중입니다. 잠시 후 다시 시도해주세요.'); }"
+                  class="btn btn-secondary flex-1"
+                  onclick="if(window.seniorUI) { window.seniorUI.testAPIConnection('686bc424bdc898fe84317d51', this.closest('.match-card').querySelector('.heart-compass')); } else { alert('⚠️ 시스템 로딩 중입니다. 잠시 후 다시 시도해주세요.'); }"
                   data-voice="실제 API 연동 테스트"
                 >
                   <span>🔌 API 테스트</span>
@@ -1564,24 +1895,15 @@
             </div>
 
             <!-- 💎 프리미엄 매칭 카드 2 (이영희님) -->
-            <div class="match-card premium-profile-card" style="text-align: center; padding: 2rem; min-height: 500px;">
+            <div class="match-card premium-profile-card text-center p-2xl premium-profile-min-height">
               <!-- 인증 배지 -->
               <div class="verification-badge">
                 ✓ 본인인증
               </div>
               
               <!-- 프리미엄 프로필 이미지 -->
-              <div class="premium-avatar" style="margin: 0 auto 1.5rem;">
-                <div style="
-                  width: 100%;
-                  height: 100%;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  font-size: 3.5rem;
-                  background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
-                  border-radius: 13px;
-                ">
+              <div class="premium-avatar premium-avatar-centered">
+                <div class="premium-avatar-full premium-avatar-bg-3">
                   👩‍🎨
                 </div>
               </div>
@@ -1593,8 +1915,8 @@
               <!-- 프리미엄 매칭 점수 -->
               <div class="premium-compatibility">
                 <div class="premium-score">87%</div>
-                <div style="color: #8b7355; font-weight: 500; font-size: 0.9rem; margin-bottom: 0.5rem;">매우 높은 호환성</div>
-                <div style="color: #6b5b47; font-size: 0.8rem; font-style: italic;">
+                <div class="premium-compatibility-rating">매우 높은 호환성</div>
+                <div class="premium-compatibility-description">
                   💕 설렘 가득한 만남이 기다립니다!
                 </div>
               </div>
@@ -1607,40 +1929,31 @@
               </div>
 
               <!-- 프리미엄 소개 메시지 -->
-              <div style="
-                background: linear-gradient(135deg, rgba(139, 115, 85, 0.08) 0%, rgba(107, 91, 71, 0.12) 100%);
-                border-left: 4px solid var(--compass-gold);
-                border-radius: 12px;
-                padding: 1rem;
-                margin: 1.5rem 0;
-                font-style: italic;
-                color: #6b5b47;
-                line-height: 1.5;
-              ">
+              <div class="premium-intro-message">
                 "예술과 문화를 사랑하며, 끊임없이 배우고 성장하는 삶을 추구합니다. 함께 아름다운 것들을 나누고 싶어요."
               </div>
 
               <!-- 프리미엄 버튼 그룹 -->
-              <div style="display: flex; flex-direction: column; gap: 1rem;">
+              <div class="profile-buttons-container">
                 <button
                   class="premium-btn"
-                  style="width: 100%; font-size: 1.1rem;"
+                  class="profile-main-btn"
                   data-voice="이영희님과 품격있는 대화 시작하기"
                 >
                   💝 품격있는 대화 시작하기
                 </button>
                 
-                <div style="display: flex; gap: 0.5rem;">
+                <div class="profile-secondary-buttons">
                   <button
                     class="premium-btn"
-                    style="flex: 1; font-size: 0.9rem; opacity: 0.9;"
+                    class="profile-secondary-btn"
                     onclick="window.seniorUI?.showDetailedAnalysis(this.closest('.premium-profile-card').querySelector('.heart-compass') || this.closest('.premium-profile-card'))"
                   >
                     🧠 상세 분석
                   </button>
                   <button
                     class="premium-btn"
-                    style="flex: 1; font-size: 0.9rem; opacity: 0.9;"
+                    class="profile-secondary-btn"
                     onclick="window.seniorUI?.playMatchingNarration(87)"
                   >
                     🎵 감동 메시지
@@ -1649,28 +1962,19 @@
               </div>
 
               <!-- 숨겨진 하트 나침반 데이터 (분석용) -->
-              <div style="display: none;" data-matching-score="87"></div>
+              <div class="hidden-data" data-matching-score="87"></div>
             </div>
 
             <!-- 💎 프리미엄 매칭 카드 3 (박민수님) -->
-            <div class="match-card premium-profile-card" style="text-align: center; padding: 2rem; min-height: 500px;">
+            <div class="match-card premium-profile-card text-center p-2xl premium-profile-min-height">
               <!-- 인증 배지 -->
               <div class="verification-badge">
                 ✓ 검증회원
               </div>
               
               <!-- 프리미엄 프로필 이미지 -->
-              <div class="premium-avatar" style="margin: 0 auto 1.5rem;">
-                <div style="
-                  width: 100%;
-                  height: 100%;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  font-size: 3.5rem;
-                  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                  border-radius: 13px;
-                ">
+              <div class="premium-avatar premium-avatar-centered">
+                <div class="premium-avatar-full premium-avatar-bg-2">
                   👨‍🏫
                 </div>
               </div>
@@ -1682,8 +1986,8 @@
               <!-- 프리미엄 매칭 점수 -->
               <div class="premium-compatibility">
                 <div class="premium-score">84%</div>
-                <div style="color: #8b7355; font-weight: 500; font-size: 0.9rem; margin-bottom: 0.5rem;">좋은 궁합</div>
-                <div style="color: #6b5b47; font-size: 0.8rem; font-style: italic;">
+                <div class="premium-compatibility-rating">좋은 궁합</div>
+                <div class="premium-compatibility-description">
                   ✨ 서로를 더 알아가 보세요!
                 </div>
               </div>
@@ -1696,40 +2000,31 @@
               </div>
 
               <!-- 프리미엄 소개 메시지 -->
-              <div style="
-                background: linear-gradient(135deg, rgba(139, 115, 85, 0.08) 0%, rgba(107, 91, 71, 0.12) 100%);
-                border-left: 4px solid var(--compass-gold);
-                border-radius: 12px;
-                padding: 1rem;
-                margin: 1.5rem 0;
-                font-style: italic;
-                color: #6b5b47;
-                line-height: 1.5;
-              ">
+              <div class="premium-intro-message">
                 "새로운 경험과 진솔한 대화를 통해 서로 성장하는 관계를 원합니다. 인생의 지혜를 함께 나누고 싶어요."
               </div>
 
               <!-- 프리미엄 버튼 그룹 -->
-              <div style="display: flex; flex-direction: column; gap: 1rem;">
+              <div class="profile-buttons-container">
                 <button
                   class="premium-btn"
-                  style="width: 100%; font-size: 1.1rem;"
+                  class="profile-main-btn"
                   data-voice="박민수님과 지혜로운 대화 시작하기"
                 >
                   🌟 지혜로운 대화 시작하기
                 </button>
                 
-                <div style="display: flex; gap: 0.5rem;">
+                <div class="profile-secondary-buttons">
                   <button
                     class="premium-btn"
-                    style="flex: 1; font-size: 0.9rem; opacity: 0.9;"
+                    class="profile-secondary-btn"
                     onclick="window.seniorUI?.showDetailedAnalysis(this.closest('.premium-profile-card').querySelector('.heart-compass') || this.closest('.premium-profile-card'))"
                   >
                     🧠 상세 분석
                   </button>
                   <button
                     class="premium-btn"
-                    style="flex: 1; font-size: 0.9rem; opacity: 0.9;"
+                    class="profile-secondary-btn"
                     onclick="window.seniorUI?.playMatchingNarration(84)"
                   >
                     🎵 감동 메시지
@@ -1738,17 +2033,16 @@
               </div>
 
               <!-- 숨겨진 하트 나침반 데이터 (분석용) -->
-              <div style="display: none;" data-matching-score="84"></div>
+              <div class="hidden-data" data-matching-score="84"></div>
             </div>
           </div>
 
-          <div style="text-align: center; margin-top: var(--spacing-xl)">
+          <div class="text-center mt-xl">
             <div
-              class="alert alert-info"
-              style="display: inline-block; text-align: left; max-width: 600px"
+              class="alert alert-info info-with-icon"
             >
               <svg
-                style="width: 24px; height: 24px"
+                class="info-icon"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -1771,32 +2065,24 @@
       <!-- 도움말 섹션 -->
       <section
         id="help"
-        style="padding: var(--spacing-xxl) var(--spacing-md); background: var(--bg-warm)"
+        class="section-padding faq-section-bg"
       >
-        <div class="container" style="max-width: 800px; margin: 0 auto">
+        <div class="container container-center-sm">
           <h2
-            style="text-align: center; margin-bottom: var(--spacing-xl)"
+            class="text-center mb-xl"
             data-voice="자주 묻는 질문들"
           >
             자주 묻는 질문들
           </h2>
 
           <div
-            class="faq-list"
-            style="display: flex; flex-direction: column; gap: var(--spacing-md)"
+            class="faq-list flex-col gap-md"
           >
-            <details class="faq-item card" style="cursor: pointer">
-              <summary
-                style="
-                  padding: var(--spacing-lg);
-                  font-size: var(--font-size-large);
-                  font-weight: 600;
-                  color: var(--primary-color);
-                "
-              >
+            <details class="faq-item card faq-item-styled">
+              <summary class="faq-summary-styled text-primary-color">
                 가입비용이 있나요?
               </summary>
-              <div style="padding: 0 var(--spacing-lg) var(--spacing-lg)">
+              <div class="faq-content-padding">
                 <p>
                   가입과 기본 매칭 서비스는 완전 무료입니다. 추가 기능 이용시에만 소정의 요금이
                   있으며, 언제든 해지할 수 있습니다.
@@ -1804,18 +2090,11 @@
               </div>
             </details>
 
-            <details class="faq-item card" style="cursor: pointer">
-              <summary
-                style="
-                  padding: var(--spacing-lg);
-                  font-size: var(--font-size-large);
-                  font-weight: 600;
-                  color: var(--primary-color);
-                "
-              >
+            <details class="faq-item card faq-item-styled">
+              <summary class="faq-summary-styled text-primary-color">
                 개인정보가 안전한가요?
               </summary>
-              <div style="padding: 0 var(--spacing-lg) var(--spacing-lg)">
+              <div class="faq-content-padding">
                 <p>
                   모든 개인정보는 국제 보안 표준에 따라 암호화되어 저장되며, 본인의 동의 없이는 절대
                   공개되지 않습니다. 언제든 계정을 삭제할 수 있습니다.
@@ -1823,18 +2102,11 @@
               </div>
             </details>
 
-            <details class="faq-item card" style="cursor: pointer">
-              <summary
-                style="
-                  padding: var(--spacing-lg);
-                  font-size: var(--font-size-large);
-                  font-weight: 600;
-                  color: var(--primary-color);
-                "
-              >
+            <details class="faq-item card faq-item-styled">
+              <summary class="faq-summary-styled text-primary-color">
                 어떻게 안전한 만남을 보장하나요?
               </summary>
-              <div style="padding: 0 var(--spacing-lg) var(--spacing-lg)">
+              <div class="faq-content-padding">
                 <p>
                   본인 인증, 단계적 소개 시스템, 24시간 모니터링, 신고 시스템 등을 통해 안전한
                   만남을 보장합니다. 공개된 장소에서의 첫 만남을 권장합니다.
@@ -1842,18 +2114,11 @@
               </div>
             </details>
 
-            <details class="faq-item card" style="cursor: pointer">
-              <summary
-                style="
-                  padding: var(--spacing-lg);
-                  font-size: var(--font-size-large);
-                  font-weight: 600;
-                  color: var(--primary-color);
-                "
-              >
+            <details class="faq-item card faq-item-styled">
+              <summary class="faq-summary-styled text-primary-color">
                 매칭이 마음에 들지 않으면 어떻게 하나요?
               </summary>
-              <div style="padding: 0 var(--spacing-lg) var(--spacing-lg)">
+              <div class="faq-content-padding">
                 <p>
                   언제든 매칭 설정을 변경하거나 특정 분을 차단할 수 있습니다. AI는 여러분의 피드백을
                   학습하여 더 나은 매칭을 제공합니다.
@@ -1862,18 +2127,11 @@
             </details>
           </div>
 
-          <div style="text-align: center; margin-top: var(--spacing-xl)">
-            <p style="margin-bottom: var(--spacing-md)">
+          <div class="text-center mt-xl">
+            <p class="mb-md">
               더 궁금한 점이 있으시면 언제든 문의해주세요.
             </p>
-            <div
-              style="
-                display: flex;
-                gap: var(--spacing-md);
-                justify-content: center;
-                flex-wrap: wrap;
-              "
-            >
+            <div class="flex-wrap-center flex-gap-md">
               <a href="tel:1588-0000" class="btn btn-secondary">
                 <svg
                   class="btn-icon"
@@ -1913,7 +2171,7 @@
     <div
       id="signupModal"
       class="modal-overlay"
-      style="display: none"
+      class="hidden-data"
       role="dialog"
       aria-labelledby="signupTitle"
       aria-modal="true"
@@ -1932,19 +2190,13 @@
               <span id="signupProgress">1/3</span>
             </div>
             <div class="progress-bar">
-              <div class="progress-fill" id="signupProgressBar" style="width: 33%"></div>
+              <div class="progress-fill progress-bar-33" id="signupProgressBar"></div>
             </div>
           </div>
 
           <!-- 1단계: 기본 정보 -->
           <form id="signupStep1" class="signup-step">
-            <h3
-              style="
-                margin-bottom: var(--spacing-lg);
-                text-align: center;
-                color: var(--primary-color);
-              "
-            >
+            <h3 class="mb-lg text-center text-primary-color">
               기본 정보를 입력해주세요
             </h3>
 
@@ -2007,7 +2259,7 @@
             <button
               type="button"
               class="btn btn-primary"
-              style="width: 100%; margin-top: var(--spacing-lg)"
+              class="btn-full-width signup-step"
               onclick="nextSignupStep()"
               data-voice="다음 단계로 이동"
             >
@@ -2025,14 +2277,8 @@
           </form>
 
           <!-- 2단계: 연락처 및 인증 -->
-          <form id="signupStep2" class="signup-step" style="display: none">
-            <h3
-              style="
-                margin-bottom: var(--spacing-lg);
-                text-align: center;
-                color: var(--primary-color);
-              "
-            >
+          <form id="signupStep2" class="signup-step hidden-data">
+            <h3 class="mb-lg text-center text-primary-color">
               연락처와 비밀번호를 설정해주세요
             </h3>
 
@@ -2082,11 +2328,11 @@
               />
             </div>
 
-            <div style="display: flex; gap: var(--spacing-md); margin-top: var(--spacing-lg)">
+            <div class="flex-gap-md signup-step">
               <button
                 type="button"
                 class="btn btn-secondary"
-                style="flex: 1"
+                class="flex-1"
                 onclick="prevSignupStep()"
                 data-voice="이전 단계로 돌아가기"
               >
@@ -2103,8 +2349,7 @@
               </button>
               <button
                 type="button"
-                class="btn btn-primary"
-                style="flex: 2"
+                class="btn btn-primary flex-2"
                 onclick="nextSignupStep()"
                 data-voice="다음 단계로 이동"
               >
@@ -2123,23 +2368,17 @@
           </form>
 
           <!-- 3단계: 약관 동의 -->
-          <form id="signupStep3" class="signup-step" style="display: none">
-            <h3
-              style="
-                margin-bottom: var(--spacing-lg);
-                text-align: center;
-                color: var(--primary-color);
-              "
-            >
+          <form id="signupStep3" class="signup-step hidden-data">
+            <h3 class="mb-lg text-center text-primary-color">
               약관에 동의해주세요
             </h3>
 
             <div class="form-group">
               <label class="form-checkbox">
                 <input type="checkbox" id="agree-terms" required />
-                <span style="margin-left: var(--spacing-sm)">
+                <span class="signup-terms-margin">
                   <strong>이용약관</strong>에 동의합니다 (필수)
-                  <a href="#" style="color: var(--primary-color); margin-left: var(--spacing-xs)"
+                  <a href="#" class="signup-link-styled"
                     >내용 보기</a
                   >
                 </span>
@@ -2149,9 +2388,9 @@
             <div class="form-group">
               <label class="form-checkbox">
                 <input type="checkbox" id="agree-privacy" required />
-                <span style="margin-left: var(--spacing-sm)">
+                <span class="signup-terms-margin">
                   <strong>개인정보처리방침</strong>에 동의합니다 (필수)
-                  <a href="#" style="color: var(--primary-color); margin-left: var(--spacing-xs)"
+                  <a href="#" class="signup-link-styled"
                     >내용 보기</a
                   >
                 </span>
@@ -2161,15 +2400,15 @@
             <div class="form-group">
               <label class="form-checkbox">
                 <input type="checkbox" id="agree-marketing" />
-                <span style="margin-left: var(--spacing-sm)">
+                <span class="signup-terms-margin">
                   매칭 추천 및 이벤트 정보 수신에 동의합니다 (선택)
                 </span>
               </label>
             </div>
 
-            <div class="alert alert-info" style="margin: var(--spacing-lg) 0">
+            <div class="alert alert-info alert-info-margin">
               <svg
-                style="width: 20px; height: 20px; flex-shrink: 0"
+                class="flex-shrink-0 alert-icon"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -2182,11 +2421,11 @@
               <span>가입 완료 후 가치관 분석을 진행하여 더 정확한 매칭을 받을 수 있습니다.</span>
             </div>
 
-            <div style="display: flex; gap: var(--spacing-md); margin-top: var(--spacing-lg)">
+            <div class="flex-gap-md signup-step">
               <button
                 type="button"
                 class="btn btn-secondary"
-                style="flex: 1"
+                class="flex-1"
                 onclick="prevSignupStep()"
                 data-voice="이전 단계로 돌아가기"
               >
@@ -2204,7 +2443,7 @@
               <button
                 type="submit"
                 class="btn btn-primary"
-                style="flex: 2"
+                class="flex-2"
                 data-voice="회원가입 완료하기"
               >
                 <span>가입 완료</span>
@@ -2224,48 +2463,25 @@
       </div>
     </div>
 
-    <footer
-      style="
-        background: var(--text-primary);
-        color: white;
-        padding: var(--spacing-xl) var(--spacing-md) var(--spacing-lg);
-        text-align: center;
-      "
-    >
-      <div class="container" style="max-width: 800px; margin: 0 auto">
-        <div style="margin-bottom: var(--spacing-lg)">
-          <h3 style="color: white; margin-bottom: var(--spacing-sm)">CHARM_INYEON</h3>
-          <p style="color: rgba(255, 255, 255, 0.8); margin-bottom: var(--spacing-md)">
+    <footer class="footer-bg text-center p-xl">
+      <div class="container container-center-sm">
+        <div class="mb-lg">
+          <h3 class="text-white mb-sm">CHARM_INYEON</h3>
+          <p class="footer-text mb-md">
             세렌디피티가 만든 특별한 인연, 4060세대 가치관 매칭 플랫폼
           </p>
         </div>
 
-        <div
-          style="
-            display: flex;
-            justify-content: center;
-            gap: var(--spacing-lg);
-            flex-wrap: wrap;
-            margin-bottom: var(--spacing-lg);
-          "
-        >
-          <a href="#" style="color: rgba(255, 255, 255, 0.8); text-decoration: none">이용약관</a>
-          <a href="#" style="color: rgba(255, 255, 255, 0.8); text-decoration: none"
-            >개인정보처리방침</a
-          >
-          <a href="#" style="color: rgba(255, 255, 255, 0.8); text-decoration: none">고객센터</a>
-          <a href="#" style="color: rgba(255, 255, 255, 0.8); text-decoration: none">운영정책</a>
+        <div class="footer-links">
+          <a href="#" class="footer-link">이용약관</a>
+          <a href="#" class="footer-link">개인정보처리방침</a>
+          <a href="#" class="footer-link">고객센터</a>
+          <a href="#" class="footer-link">운영정책</a>
         </div>
 
-        <div
-          style="
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
-            padding-top: var(--spacing-md);
-            color: rgba(255, 255, 255, 0.6);
-          "
-        >
+        <div class="footer-copyright">
           <p>&copy; 2024 CHARM_INYEON. 모든 권리 보유.</p>
-          <p style="margin-top: var(--spacing-xs)">
+          <p class="mt-xs">
             고객센터: 1588-0000 | 이메일: help@charminyeon.co.kr
           </p>
         </div>
