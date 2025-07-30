@@ -65,7 +65,9 @@ class SeniorUI {
     this.currentSignupStep = 1;
     this.speechSynthesis = window.speechSynthesis;
     this.currentVoice = null;
+    this.currentUtterance = null; // 현재 재생 중인 음성
     this.currentFontSize = 'normal';
+    this.statusHideTimer = null; // 상태 배지 숨김 타이머
     
     // 🚀 실제 API 클라이언트 초기화
     this.apiClient = new MatchingAPIClient();
@@ -157,7 +159,8 @@ class SeniorUI {
       return;
     }
 
-    if (priority) {
+    // 기존 음성 중지 (무한 반복 방지)
+    if (priority || this.speechSynthesis.speaking) {
       this.speechSynthesis.cancel();
     }
 
@@ -166,8 +169,33 @@ class SeniorUI {
     utterance.rate = 0.8; // 조금 천천히
     utterance.pitch = 1;
     utterance.volume = 0.8;
-
+    
+    // 음성 종료 이벤트 바인딩 (무한 반복 방지)
+    utterance.onend = () => {
+      console.log('🎵 음성 재생 완료');
+      this.currentUtterance = null;
+    };
+    
+    utterance.onerror = (error) => {
+      console.error('🚨 음성 재생 에러:', error);
+      this.currentUtterance = null;
+    };
+    
+    this.currentUtterance = utterance;
     this.speechSynthesis.speak(utterance);
+    
+    console.log('🎵 음성 재생 시작:', text.substring(0, 30) + '...');
+  }
+  
+  // 음성 중지 함수 추가
+  stopSpeaking() {
+    if (this.speechSynthesis && this.speechSynthesis.speaking) {
+      this.speechSynthesis.cancel();
+      this.currentUtterance = null;
+      console.log('🔇 음성 재생 중지');
+      return true;
+    }
+    return false;
   }
 
   setupVoiceEvents() {
@@ -884,23 +912,76 @@ class SeniorUI {
     return messages[50];
   }
 
-  // 🎪 v2.1 하트 나침반 애니메이션 실행 (감동 극대화)
+  // 🎪 v2.1 하트 나침반 애니메이션 실행 (창우님을 위한 긴급 수정)
   showMatchingResult(compassElement, matchingPercentage) {
+    console.log('🚨 showMatchingResult 호출:', { compassElement, matchingPercentage });
+    
+    // 🚨 요소 존재 확인
+    if (!compassElement) {
+      console.error('❌ 나침반 요소를 찾을 수 없습니다!');
+      alert('⚠️ 나침반을 찾을 수 없습니다. 페이지를 새로고침해주세요.');
+      return;
+    }
+    
     const needle = compassElement.querySelector('.heart-needle');
+    if (!needle) {
+      console.error('❌ 하트 바늘 요소를 찾을 수 없습니다!');
+      console.log('🔍 나침반 내부 구조:', compassElement.innerHTML);
+      alert('⚠️ 하트 바늘을 찾을 수 없습니다.');
+      return;
+    }
+    
+    console.log('✅ 하트 바늘 요소 발견:', needle);
+    
     const angle = this.calculateHeartNeedleAngle(matchingPercentage);
+    console.log('🎯 계산된 각도:', angle, '도 (매칭도:', matchingPercentage, '%)');
     
     // 시작 전 나래이션 (v2.1 추가)
     if (this.isVoiceEnabled) {
       this.speak("나침반이 당신의 운명을 찾고 있습니다...");
     }
     
+    // 🚨 긴급 수정: 기존 애니메이션 완전 리셋
+    needle.classList.remove('matching-reveal');
+    compassElement.classList.remove('high-compatibility');
+    
+    // 바늘 위치 초기화 (180도에서 시작 - CSS와 일치)
+    needle.style.transform = 'translate(-50%, -85%) rotate(180deg)';
+    needle.style.transformOrigin = 'center bottom';
+    needle.style.transition = 'none';
+    
+    // 강제로 스타일 리플로우 발생 (중요!)
+    needle.offsetHeight;
+    
     // CSS 변수로 각도 설정
     compassElement.style.setProperty('--matching-angle', `${angle}deg`);
     compassElement.setAttribute('data-matching-score', matchingPercentage);
     
+    console.log('✅ CSS 변수 설정:', compassElement.style.getPropertyValue('--matching-angle'));
+    
+    // 바늘 애니메이션 시작
+    setTimeout(() => {
+      console.log('🎬 바늘 회전 애니메이션 시작:', angle + 'deg');
+      
+      // CSS 애니메이션을 사용하여 부드러운 회전 효과
+      needle.classList.add('matching-reveal');
+      
+      console.log('🎬 CSS 애니메이션 클래스 추가 완료');
+      
+      // 3초 후에 애니메이션 완료 후 최종 위치 고정
+      setTimeout(() => {
+        needle.classList.remove('matching-reveal');
+        needle.style.transform = `translate(-50%, -85%) rotate(${angle}deg)`;
+        needle.style.transition = 'transform 0.3s ease';
+        console.log('🎯 바늘 최종 위치 고정 완료');
+      }, 3000);
+    }, 100);
+    
     // 높은 호환성일 때 특별 효과
     if (matchingPercentage >= 90) {
       compassElement.classList.add('high-compatibility');
+      console.log('🌟 높은 호환성 효과 적용');
+      
       // True Love 메시지 강조
       const trueLoveMark = compassElement.querySelector('.true-love-mark');
       if (trueLoveMark) {
@@ -909,9 +990,6 @@ class SeniorUI {
         trueLoveMark.style.fontWeight = 'bold';
       }
     }
-
-    // 바늘 애니메이션 시작
-    needle.classList.add('matching-reveal');
     
     // 중간 진행 나래이션 (v2.1 추가)
     if (this.isVoiceEnabled) {
@@ -1063,12 +1141,18 @@ class SeniorUI {
     }
   }
 
-  // 🚨 연결 상태 배지 업데이트 (창우님을 위한 긴급 추가)
+  // 🚨 연결 상태 배지 업데이트 (창우님을 위한 긴급 추가 + 지속성 개선)
   updateConnectionStatus(status, message) {
     const badge = document.getElementById('connection-status-badge');
     const description = document.getElementById('status-description');
     
     if (!badge || !description) return;
+    
+    // 기존 타이머 제거 (지속성을 위해)
+    if (this.statusHideTimer) {
+      clearTimeout(this.statusHideTimer);
+      this.statusHideTimer = null;
+    }
     
     // 상태별 스타일 설정
     const statusStyles = {
@@ -1098,13 +1182,31 @@ class SeniorUI {
     // 설명 업데이트
     description.textContent = message;
     
+    // 배지 표시 (숨겨진 상태에서 보이게)
+    const statusContainer = badge.closest('.connection-status');
+    if (statusContainer) {
+      statusContainer.style.opacity = '1';
+      statusContainer.style.visibility = 'visible';
+      statusContainer.style.transform = 'translateY(0)';
+    }
+    
     // 부드러운 애니메이션 효과
     badge.style.transform = 'scale(1.05)';
     setTimeout(() => {
       badge.style.transform = 'scale(1)';
     }, 200);
     
-    console.log(`🔔 상태 업데이트: ${status} - ${message}`);
+    // 성공/연결 상태는 더 오래 유지 (30초), 데모는 15초
+    const hideDelay = status === 'connected' ? 30000 : (status === 'demo' ? 15000 : 5000);
+    
+    this.statusHideTimer = setTimeout(() => {
+      if (statusContainer) {
+        statusContainer.style.opacity = '0.7'; // 완전히 숨기지 않고 낮은 투명도로
+        statusContainer.style.transform = 'translateY(-5px)';
+      }
+    }, hideDelay);
+    
+    console.log(`🔔 상태 업데이트: ${status} - ${message} (지속: ${hideDelay/1000}초)`);
   }
 
   // 🎯 호환성 레벨 텍스트 반환
@@ -1271,10 +1373,27 @@ class SeniorUI {
     }
   }
 
-  // 🎭 v2.1 감동적인 음성 나래이션 시스템
+  // 🎭 v2.1 감동적인 음성 나래이션 시스템 (창우님을 위한 토글 기능 추가)
   playMatchingNarration(matchingScore) {
-    const btn = document.querySelector('.voice-narration-btn');
-    if (btn) btn.classList.add('playing');
+    console.log('🎵 음성 나래이션 호출:', matchingScore);
+    
+    const btn = event?.target || document.querySelector('.voice-narration-btn');
+    
+    // 🚨 음성 토글 기능 추가
+    if (this.speechSynthesis && this.speechSynthesis.speaking) {
+      console.log('🔇 음성 중지');
+      this.speechSynthesis.cancel();
+      if (btn) {
+        btn.classList.remove('playing');
+        btn.innerHTML = '🎵 감동 메시지 듣기';
+      }
+      return;
+    }
+    
+    if (btn) {
+      btn.classList.add('playing');
+      btn.innerHTML = '🔇 음성 중지하기';
+    }
 
     // 매칭도에 따른 감동적인 나래이션 스크립트
     const narrationScripts = {
@@ -1299,19 +1418,60 @@ class SeniorUI {
     let script = narrationScripts[90]; // 기본값
     if (matchingScore >= 90) script = narrationScripts[90];
     else if (matchingScore >= 80) script = narrationScripts[80];
-    else if (matchingScore >= 70) script = narrationScripts[70];
-
-    // 3단계 나래이션 실행
-    this.speak(script.start);
+    else script = narrationScripts[70];
+    
+    // 🎪 개선된 나래이션 시퀀스 실행 (중단 가능)
+    this.speak(script.start, true);
     
     setTimeout(() => {
-      this.speak(script.progress);
+      if (this.speechSynthesis.speaking || btn?.classList.contains('playing')) {
+        this.speak(script.progress, true);
+      }
     }, 3000);
-
+    
     setTimeout(() => {
-      this.speak(script.result);
-      if (btn) btn.classList.remove('playing');
+      if (this.speechSynthesis.speaking || btn?.classList.contains('playing')) {
+        this.speak(script.result, true);
+        
+        // 나래이션 완료 후 버튼 상태 리셋
+        setTimeout(() => {
+          if (btn) {
+            btn.classList.remove('playing');
+            btn.innerHTML = '🎵 감동 메시지 듣기';
+          }
+        }, 8000); // 마지막 메시지 재생 완료 후
+      }
     }, 6000);
+    
+    console.log('🎵 나래이션 시퀀스 시작:', script);
+  }
+
+  // 🚨 창우님을 위한 API 연결 테스트 함수 (긴급 수정)
+  async testAPIConnection(targetUserId, compassElement) {
+    console.log('🔌 API 연결 테스트 시작:', { targetUserId, compassElement });
+    
+    if (!compassElement) {
+      alert('⚠️ 나침반 요소를 찾을 수 없습니다.');
+      return;
+    }
+    
+    try {
+      // 실제 백엔드 API 연동으로 나침반 업데이트
+      await this.updateCompassWithRealData(compassElement, 'current-user', targetUserId);
+      
+      console.log('✅ API 테스트 완료');
+      
+      if (this.isVoiceEnabled) {
+        this.speak('API 연결 테스트가 성공적으로 완료되었습니다!', true);
+      }
+      
+    } catch (error) {
+      console.error('❌ API 테스트 실패:', error);
+      
+      if (this.isVoiceEnabled) {
+        this.speak('API 연결에 문제가 발생했습니다. 데모 모드로 진행합니다.', true);
+      }
+    }
   }
 
   // 🧠 상세 매칭 분석 모달창 표시 (v2.1 실제 백엔드 데이터)

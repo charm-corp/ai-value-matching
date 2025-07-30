@@ -1422,7 +1422,13 @@
                   justify-content: center;
                   margin-bottom: var(--spacing-lg);
                 ">
-                  <div class="heart-compass high-compatibility" style="--matching-angle: 15deg;" data-matching-score="92">
+                  <div 
+                    class="heart-compass high-compatibility" 
+                    style="--matching-angle: 15deg; cursor: pointer;" 
+                    data-matching-score="92"
+                    onclick="if(window.seniorUI) { window.seniorUI.showMatchingResult(this, 92); } else { console.error('seniorUI not loaded'); }"
+                    title="하트 나침반을 클릭해서 매칭 애니메이션을 시작하세요!"
+                  >
                     <!-- 나침반 외곽 장식 -->
                     <div class="compass-rim"></div>
                     
