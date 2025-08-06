@@ -318,10 +318,10 @@ class ValuesAnalysisEngine {
             answer.value === 'direct'
               ? 'direct'
               : answer.value === 'avoid'
-                ? 'avoidant'
-                : answer.value === 'mediate'
-                  ? 'collaborative'
-                  : 'diplomatic';
+              ? 'avoidant'
+              : answer.value === 'mediate'
+              ? 'collaborative'
+              : 'diplomatic';
           break;
 
         case 9: // 사회적 성향 (새로운 사람들과의 만남)
@@ -368,7 +368,9 @@ class ValuesAnalysisEngine {
       socialContribution: '사회에 기여하고 의미있는 가치를 남기고자 하는 분입니다.',
     };
 
-    return `${messages[primaryValue.dimension]} ${personalityType.description}을 통해 더욱 풍성한 인생을 만들어가고 계십니다.`;
+    return `${messages[primaryValue.dimension]} ${
+      personalityType.description
+    }을 통해 더욱 풍성한 인생을 만들어가고 계십니다.`;
   }
 
   /**
@@ -1184,7 +1186,9 @@ class ValuesAnalysisEngine {
         balanceAreas.push({
           area: this.coreValueDimensions[area.dimension]?.name || area.dimension,
           currentScore: Math.round(area.score),
-          suggestion: `${this.coreValueDimensions[area.dimension]?.name || area.dimension} 영역에 더 관심을 기울여 균형을 맞춰보세요`,
+          suggestion: `${
+            this.coreValueDimensions[area.dimension]?.name || area.dimension
+          } 영역에 더 관심을 기울여 균형을 맞춰보세요`,
           priority: maxScore - area.score > 50 ? 'high' : 'medium',
         });
       });

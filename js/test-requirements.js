@@ -139,7 +139,9 @@ class TestRequirementsCollection {
     }
 
     this.speak(
-      `글씨 크기를 ${size === 'small' ? '작게' : size === 'large' ? '크게' : '보통으로'} 변경했습니다`
+      `글씨 크기를 ${
+        size === 'small' ? '작게' : size === 'large' ? '크게' : '보통으로'
+      } 변경했습니다`
     );
   }
 

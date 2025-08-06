@@ -126,12 +126,9 @@ class DataBackupSystem {
 
   startAutoBackup() {
     // 5분마다 자동 백업
-    this.backupInterval = setInterval(
-      () => {
-        this.backupData();
-      },
-      5 * 60 * 1000
-    );
+    this.backupInterval = setInterval(() => {
+      this.backupData();
+    }, 5 * 60 * 1000);
 
     console.log('🔄 자동 백업 시작됨 (5분 간격)');
   }

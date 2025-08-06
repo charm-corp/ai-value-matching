@@ -243,10 +243,8 @@ class SerendipityMatchingEngine {
       const candidateLevel = socialLevels[candidate.lifestyle.socialLevel];
       const difference = Math.abs(userLevel - candidateLevel);
 
-      if (difference === 0)
-        score += 15; // 동일한 성향
-      else if (difference === 1)
-        score += 20; // 상호 보완적
+      if (difference === 0) score += 15; // 동일한 성향
+      else if (difference === 1) score += 20; // 상호 보완적
       else score -= 10; // 너무 다름
     }
 
@@ -359,8 +357,7 @@ class SerendipityMatchingEngine {
     const ageDifference = Math.abs(userAge - candidateAge);
 
     if (ageDifference === 0) score += 10;
-    else if (ageDifference === 1)
-      score += 15; // 약간의 나이 차이는 오히려 좋음
+    else if (ageDifference === 1) score += 15; // 약간의 나이 차이는 오히려 좋음
     else score -= 5;
 
     return Math.max(0, Math.min(100, score));

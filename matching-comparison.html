@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
@@ -1769,8 +1769,12 @@
                                 </div>
                                 <div class="match-summary">
                                     <h5>${bestMatch.user.name}님</h5>
-                                    <p class="compatibility-score">${bestMatch.compatibilityScore}% 호환성</p>
-                                    <p class="recommendation-reason">${generatePersonalizedReason(bestMatch)}</p>
+                                    <p class="compatibility-score">${
+                                      bestMatch.compatibilityScore
+                                    }% 호환성</p>
+                                    <p class="recommendation-reason">${generatePersonalizedReason(
+                                      bestMatch
+                                    )}</p>
                                 </div>
                             </div>
                         </div>
@@ -1784,7 +1788,9 @@
                             <div class="recommendation-card ${rec.priority}">
                                 <div class="card-header">
                                     <h4>${rec.title}</h4>
-                                    <span class="priority-badge ${rec.priority}">${rec.priorityLabel}</span>
+                                    <span class="priority-badge ${rec.priority}">${
+                              rec.priorityLabel
+                            }</span>
                                 </div>
                                 <div class="card-content">
                                     <p>${rec.content}</p>
@@ -1794,7 +1800,9 @@
                                         <div class="action-items">
                                             <h6>실행 가이드:</h6>
                                             <ul>
-                                                ${rec.actionItems.map(item => `<li>${item}</li>`).join('')}
+                                                ${rec.actionItems
+                                                  .map(item => `<li>${item}</li>`)
+                                                  .join('')}
                                             </ul>
                                         </div>
                                     `
@@ -2059,12 +2067,16 @@
                             <div class="summary-card best">
                                 <h5>🏆 최고 강점</h5>
                                 <p>${comparativeAnalysis.bestStrength.description}</p>
-                                <span class="match-name">${comparativeAnalysis.bestStrength.matchName}</span>
+                                <span class="match-name">${
+                                  comparativeAnalysis.bestStrength.matchName
+                                }</span>
                             </div>
                             <div class="summary-card concern">
                                 <h5>⚠️ 주의점</h5>
                                 <p>${comparativeAnalysis.mainConcern.description}</p>
-                                <span class="match-name">${comparativeAnalysis.mainConcern.matchName}</span>
+                                <span class="match-name">${
+                                  comparativeAnalysis.mainConcern.matchName
+                                }</span>
                             </div>
                             <div class="summary-card balanced">
                                 <h5>⚖️ 균형점</h5>
@@ -2087,7 +2099,9 @@
                                         </div>
                                         <div class="match-title">
                                             <h5>${analysis.name}</h5>
-                                            <span class="compatibility-badge">${analysis.score}% 호환</span>
+                                            <span class="compatibility-badge">${
+                                              analysis.score
+                                            }% 호환</span>
                                         </div>
                                     </div>
                                     
@@ -2095,14 +2109,18 @@
                                         <div class="pros-section">
                                             <h6>✅ 장점</h6>
                                             <ul class="pros-list">
-                                                ${analysis.pros.map(pro => `<li>${pro}</li>`).join('')}
+                                                ${analysis.pros
+                                                  .map(pro => `<li>${pro}</li>`)
+                                                  .join('')}
                                             </ul>
                                         </div>
                                         
                                         <div class="cons-section">
                                             <h6>❌ 단점</h6>
                                             <ul class="cons-list">
-                                                ${analysis.cons.map(con => `<li>${con}</li>`).join('')}
+                                                ${analysis.cons
+                                                  .map(con => `<li>${con}</li>`)
+                                                  .join('')}
                                             </ul>
                                         </div>
                                         
@@ -2171,7 +2189,9 @@
                     <div class="final-conclusion">
                         <h4>🎯 최종 결론</h4>
                         <div class="conclusion-content">
-                            <p class="conclusion-text">${generateFinalConclusion(analysisResults)}</p>
+                            <p class="conclusion-text">${generateFinalConclusion(
+                              analysisResults
+                            )}</p>
                             <div class="next-steps">
                                 <h5>다음 단계:</h5>
                                 <ol>

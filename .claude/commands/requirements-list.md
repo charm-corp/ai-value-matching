@@ -7,6 +7,7 @@ Display all requirements with their status and summaries.
 1. Check requirements/.current-requirement for active requirement
 2. List all folders in requirements/ directory
 3. For each requirement folder:
+
    - Read metadata.json
    - Extract key information
    - Format for display
@@ -50,11 +51,13 @@ Display all requirements with their status and summaries.
 ## Additional Features:
 
 1. Show linked artifacts:
+
    - Development sessions
    - Pull requests
    - Implementation status
 
 2. Highlight stale requirements:
+
    - Mark if incomplete > 7 days
    - Suggest resuming or ending
 

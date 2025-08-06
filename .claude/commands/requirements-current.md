@@ -6,6 +6,7 @@ Display detailed information about the active requirement.
 
 1. Read requirements/.current-requirement
 2. If no active requirement:
+
    - Show "No active requirement"
    - Display last 3 completed requirements
    - Exit

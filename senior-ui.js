@@ -25,11 +25,11 @@ class MatchingAPIClient {
     try {
       const response = await fetch(url, config);
       const data = await response.json();
-      
+
       if (!response.ok) {
         throw new Error(data.error || `HTTP ${response.status}`);
       }
-      
+
       return data;
     } catch (error) {
       console.error(`API 요청 실패 [${endpoint}]:`, error);
@@ -68,7 +68,7 @@ class SeniorUI {
     this.currentUtterance = null; // 현재 재생 중인 음성
     this.currentFontSize = 'normal';
     this.statusHideTimer = null; // 상태 배지 숨김 타이머
-    
+
     // 🚀 실제 API 클라이언트 초기화
     this.apiClient = new MatchingAPIClient();
 
@@ -86,7 +86,7 @@ class SeniorUI {
     this.initHeartCompass(); // 🧭💕 하트 나침반 초기화
     this.addLoadingAnimation(); // 로딩 애니메이션 스타일 추가
     this.announcePageLoad();
-    
+
     // 🚨 긴급 추가: 페이지 로드 시 연결 상태 자동 체크
     setTimeout(() => this.performInitialConnectionCheck(), 1000);
   }
@@ -94,16 +94,19 @@ class SeniorUI {
   // 🚨 긴급 추가: 초기 연결 상태 체크
   async performInitialConnectionCheck() {
     console.log('🔍 초기 연결 상태 체크 시작');
-    
+
     try {
       // 간단한 API 가용성 체크
-      const response = await fetch('/api/matching/health', { 
-        method: 'GET', 
-        timeout: 3000 
+      const response = await fetch('/api/matching/health', {
+        method: 'GET',
+        timeout: 3000,
       });
-      
+
       if (response.ok) {
-        this.updateConnectionStatus('connected', '백엔드 서버 연결 확인! 실제 매칭 데이터를 사용할 수 있습니다.');
+        this.updateConnectionStatus(
+          'connected',
+          '백엔드 서버 연결 확인! 실제 매칭 데이터를 사용할 수 있습니다.'
+        );
         if (this.isVoiceEnabled) {
           this.speak('백엔드 서버와 정상적으로 연결되었습니다.');
         }
@@ -112,8 +115,11 @@ class SeniorUI {
       }
     } catch (error) {
       console.log('🔄 백엔드 연결 불가 - 데모 모드 활성화');
-      this.updateConnectionStatus('demo', '백엔드 서버에 연결할 수 없습니다. 고품질 데모 모드로 모든 기능을 체험하세요!');
-      
+      this.updateConnectionStatus(
+        'demo',
+        '백엔드 서버에 연결할 수 없습니다. 고품질 데모 모드로 모든 기능을 체험하세요!'
+      );
+
       if (this.isVoiceEnabled) {
         setTimeout(() => {
           this.speak('현재 데모 모드입니다. 모든 기능을 완벽하게 체험하실 수 있습니다.');
@@ -169,24 +175,24 @@ class SeniorUI {
     utterance.rate = 0.8; // 조금 천천히
     utterance.pitch = 1;
     utterance.volume = 0.8;
-    
+
     // 음성 종료 이벤트 바인딩 (무한 반복 방지)
     utterance.onend = () => {
       console.log('🎵 음성 재생 완료');
       this.currentUtterance = null;
     };
-    
-    utterance.onerror = (error) => {
+
+    utterance.onerror = error => {
       console.error('🚨 음성 재생 에러:', error);
       this.currentUtterance = null;
     };
-    
+
     this.currentUtterance = utterance;
     this.speechSynthesis.speak(utterance);
-    
+
     console.log('🎵 음성 재생 시작:', text.substring(0, 30) + '...');
   }
-  
+
   // 음성 중지 함수 추가
   stopSpeaking() {
     if (this.speechSynthesis && this.speechSynthesis.speaking) {
@@ -259,7 +265,9 @@ class SeniorUI {
 
         if (this.isVoiceEnabled) {
           this.speak(
-            `글씨 크기를 ${size === 'small' ? '작게' : size === 'large' ? '크게' : '보통으로'} 변경했습니다.`
+            `글씨 크기를 ${
+              size === 'small' ? '작게' : size === 'large' ? '크게' : '보통으로'
+            } 변경했습니다.`
           );
         }
       });
@@ -880,16 +888,16 @@ class SeniorUI {
   calculateHeartNeedleAngle(matchingPercentage) {
     // 90% 이상: 완전히 북쪽(0도) - True Love
     if (matchingPercentage >= 90) return 0;
-    
+
     // 80-89%: 약간 비스듬히 (15도 이내)
     if (matchingPercentage >= 80) return (90 - matchingPercentage) * 1.5;
-    
-    // 70-79%: 탐색 중 (30도 이내)  
+
+    // 70-79%: 탐색 중 (30도 이내)
     if (matchingPercentage >= 70) return (90 - matchingPercentage) * 3;
-    
+
     // 60-69%: 더 기울어짐 (60도 이내)
     if (matchingPercentage >= 60) return (90 - matchingPercentage) * 6;
-    
+
     // 60% 미만: 많이 벗어남 (180도까지)
     return Math.min(180, (90 - matchingPercentage) * 4);
   }
@@ -897,11 +905,11 @@ class SeniorUI {
   // 매칭도별 메시지 반환
   getMatchingMessage(percentage) {
     const messages = {
-      90: "🎉 운명적 인연을 발견했습니다! True Love를 향해 나아가세요!",
-      80: "💕 매우 높은 호환성! 설렘 가득한 만남이 기다립니다!",
-      70: "✨ 좋은 궁합이에요! 서로를 더 알아가 보세요!",
-      60: "🌟 흥미로운 만남! 새로운 가능성을 탐험해보세요!",
-      50: "🧭 조금 더 탐색이 필요해요. 다른 인연도 살펴보세요!"
+      90: '🎉 운명적 인연을 발견했습니다! True Love를 향해 나아가세요!',
+      80: '💕 매우 높은 호환성! 설렘 가득한 만남이 기다립니다!',
+      70: '✨ 좋은 궁합이에요! 서로를 더 알아가 보세요!',
+      60: '🌟 흥미로운 만남! 새로운 가능성을 탐험해보세요!',
+      50: '🧭 조금 더 탐색이 필요해요. 다른 인연도 살펴보세요!',
     };
 
     for (const threshold of [90, 80, 70, 60, 50]) {
@@ -915,14 +923,14 @@ class SeniorUI {
   // 🎪 v2.1 하트 나침반 애니메이션 실행 (창우님을 위한 긴급 수정)
   showMatchingResult(compassElement, matchingPercentage) {
     console.log('🚨 showMatchingResult 호출:', { compassElement, matchingPercentage });
-    
+
     // 🚨 요소 존재 확인
     if (!compassElement) {
       console.error('❌ 나침반 요소를 찾을 수 없습니다!');
       alert('⚠️ 나침반을 찾을 수 없습니다. 페이지를 새로고침해주세요.');
       return;
     }
-    
+
     const needle = compassElement.querySelector('.heart-needle');
     if (!needle) {
       console.error('❌ 하트 바늘 요소를 찾을 수 없습니다!');
@@ -930,44 +938,44 @@ class SeniorUI {
       alert('⚠️ 하트 바늘을 찾을 수 없습니다.');
       return;
     }
-    
+
     console.log('✅ 하트 바늘 요소 발견:', needle);
-    
+
     const angle = this.calculateHeartNeedleAngle(matchingPercentage);
     console.log('🎯 계산된 각도:', angle, '도 (매칭도:', matchingPercentage, '%)');
-    
+
     // 시작 전 나래이션 (v2.1 추가)
     if (this.isVoiceEnabled) {
-      this.speak("나침반이 당신의 운명을 찾고 있습니다...");
+      this.speak('나침반이 당신의 운명을 찾고 있습니다...');
     }
-    
+
     // 🚨 긴급 수정: 기존 애니메이션 완전 리셋
     needle.classList.remove('matching-reveal');
     compassElement.classList.remove('high-compatibility');
-    
+
     // 바늘 위치 초기화 (180도에서 시작 - CSS와 일치)
     needle.style.transform = 'translate(-50%, -85%) rotate(180deg)';
     needle.style.transformOrigin = 'center bottom';
     needle.style.transition = 'none';
-    
+
     // 강제로 스타일 리플로우 발생 (중요!)
     needle.offsetHeight;
-    
+
     // CSS 변수로 각도 설정
     compassElement.style.setProperty('--matching-angle', `${angle}deg`);
     compassElement.setAttribute('data-matching-score', matchingPercentage);
-    
+
     console.log('✅ CSS 변수 설정:', compassElement.style.getPropertyValue('--matching-angle'));
-    
+
     // 바늘 애니메이션 시작
     setTimeout(() => {
       console.log('🎬 바늘 회전 애니메이션 시작:', angle + 'deg');
-      
+
       // CSS 애니메이션을 사용하여 부드러운 회전 효과
       needle.classList.add('matching-reveal');
-      
+
       console.log('🎬 CSS 애니메이션 클래스 추가 완료');
-      
+
       // 3초 후에 애니메이션 완료 후 최종 위치 고정
       setTimeout(() => {
         needle.classList.remove('matching-reveal');
@@ -976,12 +984,12 @@ class SeniorUI {
         console.log('🎯 바늘 최종 위치 고정 완료');
       }, 3000);
     }, 100);
-    
+
     // 높은 호환성일 때 특별 효과
     if (matchingPercentage >= 90) {
       compassElement.classList.add('high-compatibility');
       console.log('🌟 높은 호환성 효과 적용');
-      
+
       // True Love 메시지 강조
       const trueLoveMark = compassElement.querySelector('.true-love-mark');
       if (trueLoveMark) {
@@ -990,14 +998,14 @@ class SeniorUI {
         trueLoveMark.style.fontWeight = 'bold';
       }
     }
-    
+
     // 중간 진행 나래이션 (v2.1 추가)
     if (this.isVoiceEnabled) {
       setTimeout(() => {
-        this.speak("마음과 마음이 서로를 찾아가는 중이에요...");
+        this.speak('마음과 마음이 서로를 찾아가는 중이에요...');
       }, 1500);
     }
-    
+
     // 결과 발표 음성 안내 (타이밍 개선)
     if (this.isVoiceEnabled) {
       setTimeout(() => {
@@ -1009,20 +1017,21 @@ class SeniorUI {
     // 애니메이션 완료 후 상세 분석 버튼 나타내기
     setTimeout(() => {
       needle.classList.remove('matching-reveal');
-      
+
       // 상세 분석 버튼 서서히 나타내기
       const detailBtn = compassElement.querySelector('.compass-detail-btn');
       if (detailBtn) {
         detailBtn.style.opacity = '0.7';
         detailBtn.style.pointerEvents = 'auto';
       }
-      
+
       // 호환성 점수 업데이트
-      const scoreElement = compassElement.closest('.compass-container').querySelector('.compatibility-score');
+      const scoreElement = compassElement
+        .closest('.compass-container')
+        .querySelector('.compatibility-score');
       if (scoreElement) {
         scoreElement.textContent = matchingPercentage;
       }
-      
     }, 3500);
 
     // v2.1 추가: 감성적 마무리 효과
@@ -1044,10 +1053,10 @@ class SeniorUI {
     compass.addEventListener('click', () => {
       const currentAngle = compass.style.getPropertyValue('--matching-angle') || '0deg';
       const matchingPercent = this.angleToPercentage(parseFloat(currentAngle));
-      
+
       // 재애니메이션 실행
       this.showMatchingResult(compass, matchingPercent);
-      
+
       if (this.isVoiceEnabled) {
         this.speak('나침반을 다시 돌려보겠습니다');
       }
@@ -1056,7 +1065,9 @@ class SeniorUI {
     // 호버 시 설명
     compass.addEventListener('mouseenter', () => {
       if (this.isVoiceEnabled) {
-        this.speak('하트 나침반입니다. 매칭 호환성을 나침반으로 표현합니다. 클릭하면 애니메이션을 다시 볼 수 있습니다.');
+        this.speak(
+          '하트 나침반입니다. 매칭 호환성을 나침반으로 표현합니다. 클릭하면 애니메이션을 다시 볼 수 있습니다.'
+        );
       }
     });
   }
@@ -1086,45 +1097,44 @@ class SeniorUI {
   async fetchRealMatchingData(targetUserId) {
     // 🔧 상태 배지 업데이트
     this.updateConnectionStatus('checking', '백엔드 API 연결 시도 중...');
-    
+
     try {
       console.log(`🎯 실제 API 호출: /api/matching/intelligent-compatibility/${targetUserId}`);
-      
+
       // 🚨 targetUserId 검증 추가
       if (!targetUserId || targetUserId === 'undefined') {
         throw new Error('잘못된 사용자 ID');
       }
-      
+
       // 실제 IntelligentMatchingEngine 사용
       const result = await this.apiClient.getIntelligentCompatibility(targetUserId);
-      
+
       if (result.success && result.data) {
         const { overallScore, compatibility, matchingReasons } = result.data;
-        
+
         // ✅ API 연결 성공
         this.updateConnectionStatus('connected', '실제 백엔드 API 연결 성공!');
-        
+
         if (this.isVoiceEnabled) {
           this.speak('백엔드 API 연결에 성공했습니다! 실제 분석 결과를 보여드립니다.');
         }
-        
+
         return {
           compatibility: overallScore,
           breakdown: compatibility.breakdown,
           reasons: matchingReasons,
           message: this.getMatchingMessage(overallScore),
-          isRealData: true
+          isRealData: true,
         };
       }
-      
+
       throw new Error('API 응답 데이터 형식 오류');
-      
     } catch (error) {
       console.error('🚨 실제 매칭 데이터 로드 실패:', error);
-      
+
       // 🚨 상태 배지를 데모 모드로 업데이트
       this.updateConnectionStatus('demo', '백엔드 연결 실패 - 데모 모드로 진행');
-      
+
       // 사용자 친화적 안내
       if (this.isVoiceEnabled) {
         if (error.message.includes('401') || error.message.includes('토큰')) {
@@ -1135,7 +1145,7 @@ class SeniorUI {
           this.speak('일시적인 연결 문제가 발생했습니다. 데모 모드로 진행합니다.');
         }
       }
-      
+
       // 🎯 고품질 데모 데이터 반환
       return this.getDemoMatchingData(targetUserId);
     }
@@ -1145,43 +1155,43 @@ class SeniorUI {
   updateConnectionStatus(status, message) {
     const badge = document.getElementById('connection-status-badge');
     const description = document.getElementById('status-description');
-    
+
     if (!badge || !description) return;
-    
+
     // 기존 타이머 제거 (지속성을 위해)
     if (this.statusHideTimer) {
       clearTimeout(this.statusHideTimer);
       this.statusHideTimer = null;
     }
-    
+
     // 상태별 스타일 설정
     const statusStyles = {
       checking: {
         background: 'linear-gradient(135deg, #2196F3 0%, #1976D2 100%)',
         icon: '🔄',
-        text: '연결 확인 중'
+        text: '연결 확인 중',
       },
       connected: {
         background: 'linear-gradient(135deg, #4CAF50 0%, #388E3C 100%)',
         icon: '🎯',
-        text: '실제 API 연결'
+        text: '실제 API 연결',
       },
       demo: {
         background: 'linear-gradient(135deg, #FF9800 0%, #F57C00 100%)',
         icon: '📊',
-        text: '데모 모드'
-      }
+        text: '데모 모드',
+      },
     };
-    
+
     const style = statusStyles[status] || statusStyles.demo;
-    
+
     // 배지 업데이트
     badge.style.background = style.background;
     badge.innerHTML = `${style.icon} ${style.text}`;
-    
+
     // 설명 업데이트
     description.textContent = message;
-    
+
     // 배지 표시 (숨겨진 상태에서 보이게)
     const statusContainer = badge.closest('.connection-status');
     if (statusContainer) {
@@ -1189,33 +1199,33 @@ class SeniorUI {
       statusContainer.style.visibility = 'visible';
       statusContainer.style.transform = 'translateY(0)';
     }
-    
+
     // 부드러운 애니메이션 효과
     badge.style.transform = 'scale(1.05)';
     setTimeout(() => {
       badge.style.transform = 'scale(1)';
     }, 200);
-    
+
     // 성공/연결 상태는 더 오래 유지 (30초), 데모는 15초
-    const hideDelay = status === 'connected' ? 30000 : (status === 'demo' ? 15000 : 5000);
-    
+    const hideDelay = status === 'connected' ? 30000 : status === 'demo' ? 15000 : 5000;
+
     this.statusHideTimer = setTimeout(() => {
       if (statusContainer) {
         statusContainer.style.opacity = '0.7'; // 완전히 숨기지 않고 낮은 투명도로
         statusContainer.style.transform = 'translateY(-5px)';
       }
     }, hideDelay);
-    
-    console.log(`🔔 상태 업데이트: ${status} - ${message} (지속: ${hideDelay/1000}초)`);
+
+    console.log(`🔔 상태 업데이트: ${status} - ${message} (지속: ${hideDelay / 1000}초)`);
   }
 
   // 🎯 호환성 레벨 텍스트 반환
   getCompatibilityLevel(score) {
-    if (score >= 90) return "완벽한 궁합!";
-    if (score >= 80) return "매우 좋은 호환성!";
-    if (score >= 70) return "좋은 궁합!";
-    if (score >= 60) return "흥미로운 만남!";
-    return "탐색이 필요한 인연";
+    if (score >= 90) return '완벽한 궁합!';
+    if (score >= 80) return '매우 좋은 호환성!';
+    if (score >= 70) return '좋은 궁합!';
+    if (score >= 60) return '흥미로운 만남!';
+    return '탐색이 필요한 인연';
   }
 
   // 📊 데모 매칭 데이터 (백엔드 없을 때 사용)
@@ -1223,11 +1233,11 @@ class SeniorUI {
     const demoProfiles = {
       'kim-chulsoo': { compatibility: 92, name: '김철수님' },
       'lee-younghee': { compatibility: 87, name: '이영희님' },
-      'park-minsu': { compatibility: 84, name: '박민수님' }
+      'park-minsu': { compatibility: 84, name: '박민수님' },
     };
-    
+
     const profile = demoProfiles[targetUserId] || { compatibility: 75, name: '새로운 인연' };
-    
+
     return {
       compatibility: profile.compatibility,
       breakdown: {
@@ -1235,41 +1245,41 @@ class SeniorUI {
         personalityFit: profile.compatibility - 3,
         lifestyleCompat: profile.compatibility + 2,
         communicationSync: profile.compatibility - 8,
-        growthPotential: profile.compatibility - 10
+        growthPotential: profile.compatibility - 10,
       },
       reasons: [
         `${profile.name}과(와) 가치관이 잘 맞습니다`,
         '소통 스타일이 조화롭습니다',
-        '인생 목표가 비슷합니다'
+        '인생 목표가 비슷합니다',
       ],
       message: this.getMatchingMessage(profile.compatibility),
-      isRealData: false
+      isRealData: false,
     };
   }
 
   // 🚨 긴급 추가: API 연결 테스트 전용 함수 (창우님용)
   async testAPIConnection(targetId, compassElement) {
     console.log('🔌 API 연결 테스트 시작:', { targetId, compassElement });
-    
+
     // 버튼 상태 변경
     const button = event?.target?.closest('button');
     if (button) {
       const originalText = button.innerHTML;
       button.innerHTML = '<span>🔄 테스트 중...</span>';
       button.disabled = true;
-      
+
       // 3초 후 원복
       setTimeout(() => {
         button.innerHTML = originalText;
         button.disabled = false;
       }, 3000);
     }
-    
+
     // 음성 안내
     if (this.isVoiceEnabled) {
       this.speak('API 연결 테스트를 시작합니다. 백엔드 서버와의 연결을 확인하고 있습니다.');
     }
-    
+
     // 실제 API 연결 시도
     await this.updateCompassWithRealData(compassElement, 'demo-user', targetId);
   }
@@ -1277,13 +1287,13 @@ class SeniorUI {
   // 🚀 실제 API 데이터로 나침반 업데이트 (v2.1 백엔드 연동)
   async updateCompassWithRealData(compassElement, userId, targetId) {
     console.log(`🧭 하트 나침반 실제 API 연동 시작: ${userId} → ${targetId}`);
-    
+
     // 로딩 상태 표시
     const needle = compassElement.querySelector('.heart-needle');
     if (needle) {
       needle.style.animation = 'spin 2s linear infinite';
     }
-    
+
     // 음성 안내 (v2.1)
     if (this.isVoiceEnabled) {
       this.speak('지능형 매칭 엔진이 분석 중입니다. 잠시만 기다려주세요.');
@@ -1292,17 +1302,17 @@ class SeniorUI {
     try {
       // 🎯 실제 IntelligentMatchingEngine API 호출
       const matchingData = await this.fetchRealMatchingData(targetId);
-      
+
       console.log('🎉 실제 매칭 데이터 수신:', matchingData);
-      
+
       // 로딩 애니메이션 중지
       if (needle) {
         needle.style.animation = '';
       }
-      
+
       // 🧭 실제 데이터로 하트 나침반 업데이트
       this.showMatchingResult(compassElement, matchingData.compatibility);
-      
+
       // 💬 상세 메시지 업데이트
       const messageElement = compassElement.parentElement.querySelector('[data-message]');
       if (messageElement) {
@@ -1319,10 +1329,10 @@ class SeniorUI {
 
       // 🎵 성공 음성 피드백 (v2.1)
       if (this.isVoiceEnabled) {
-        const feedback = matchingData.isRealData 
+        const feedback = matchingData.isRealData
           ? `실제 분석 완료! ${matchingData.compatibility}퍼센트 호환성입니다.`
           : `데모 모드 결과: ${matchingData.compatibility}퍼센트 호환성입니다.`;
-        
+
         setTimeout(() => this.speak(feedback), 1500);
       }
 
@@ -1331,18 +1341,17 @@ class SeniorUI {
       if (detailBtn && matchingData.breakdown) {
         detailBtn.onclick = () => this.showDetailedAnalysis(compassElement, matchingData);
       }
-
     } catch (error) {
       console.error('🚨 매칭 데이터 업데이트 실패:', error);
-      
+
       // 에러 시 기본 데모 표시
       if (needle) {
         needle.style.animation = '';
       }
-      
+
       const fallbackData = this.getDemoMatchingData(targetId);
       this.showMatchingResult(compassElement, fallbackData.compatibility);
-      
+
       // 에러 메시지 표시
       const messageElement = compassElement.parentElement.querySelector('[data-message]');
       if (messageElement) {
@@ -1351,7 +1360,7 @@ class SeniorUI {
           <div style="font-size: 0.8em; opacity: 0.8;">${fallbackData.message}</div>
         `;
       }
-      
+
       if (this.isVoiceEnabled) {
         this.speak('연결에 문제가 발생했습니다. 데모 모드로 진행합니다.');
       }
@@ -1376,9 +1385,9 @@ class SeniorUI {
   // 🎭 v2.1 감동적인 음성 나래이션 시스템 (창우님을 위한 토글 기능 추가)
   playMatchingNarration(matchingScore) {
     console.log('🎵 음성 나래이션 호출:', matchingScore);
-    
+
     const btn = event?.target || document.querySelector('.voice-narration-btn');
-    
+
     // 🚨 음성 토글 기능 추가
     if (this.speechSynthesis && this.speechSynthesis.speaking) {
       console.log('🔇 음성 중지');
@@ -1389,7 +1398,7 @@ class SeniorUI {
       }
       return;
     }
-    
+
     if (btn) {
       btn.classList.add('playing');
       btn.innerHTML = '🔇 음성 중지하기';
@@ -1398,20 +1407,21 @@ class SeniorUI {
     // 매칭도에 따른 감동적인 나래이션 스크립트
     const narrationScripts = {
       90: {
-        start: "나침반이 당신의 운명을 찾고 있습니다...",
-        progress: "두 마음이 하나의 방향으로 모이고 있어요...",
-        result: "92퍼센트 호환성! 정말 특별한 인연을 발견했습니다! 이분과 함께하는 시간들이 얼마나 소중할지 상상해보세요."
+        start: '나침반이 당신의 운명을 찾고 있습니다...',
+        progress: '두 마음이 하나의 방향으로 모이고 있어요...',
+        result:
+          '92퍼센트 호환성! 정말 특별한 인연을 발견했습니다! 이분과 함께하는 시간들이 얼마나 소중할지 상상해보세요.',
       },
       80: {
-        start: "하트 나침반이 두 분의 마음을 탐색 중입니다...",
-        progress: "공통된 가치관들이 하나씩 발견되고 있어요...",
-        result: "87퍼센트 호환성! 매우 높은 호환성으로 설렘 가득한 만남이 기다립니다!"
+        start: '하트 나침반이 두 분의 마음을 탐색 중입니다...',
+        progress: '공통된 가치관들이 하나씩 발견되고 있어요...',
+        result: '87퍼센트 호환성! 매우 높은 호환성으로 설렘 가득한 만남이 기다립니다!',
       },
       70: {
-        start: "나침반이 당신들의 연결고리를 찾고 있습니다...",
-        progress: "서로를 이해할 수 있는 부분들을 찾아가고 있어요...",
-        result: "84퍼센트 호환성! 좋은 궁합이에요. 서로를 더 알아가 보세요!"
-      }
+        start: '나침반이 당신들의 연결고리를 찾고 있습니다...',
+        progress: '서로를 이해할 수 있는 부분들을 찾아가고 있어요...',
+        result: '84퍼센트 호환성! 좋은 궁합이에요. 서로를 더 알아가 보세요!',
+      },
     };
 
     // 점수 구간별 스크립트 선택
@@ -1419,20 +1429,20 @@ class SeniorUI {
     if (matchingScore >= 90) script = narrationScripts[90];
     else if (matchingScore >= 80) script = narrationScripts[80];
     else script = narrationScripts[70];
-    
+
     // 🎪 개선된 나래이션 시퀀스 실행 (중단 가능)
     this.speak(script.start, true);
-    
+
     setTimeout(() => {
       if (this.speechSynthesis.speaking || btn?.classList.contains('playing')) {
         this.speak(script.progress, true);
       }
     }, 3000);
-    
+
     setTimeout(() => {
       if (this.speechSynthesis.speaking || btn?.classList.contains('playing')) {
         this.speak(script.result, true);
-        
+
         // 나래이션 완료 후 버튼 상태 리셋
         setTimeout(() => {
           if (btn) {
@@ -1442,32 +1452,31 @@ class SeniorUI {
         }, 8000); // 마지막 메시지 재생 완료 후
       }
     }, 6000);
-    
+
     console.log('🎵 나래이션 시퀀스 시작:', script);
   }
 
   // 🚨 창우님을 위한 API 연결 테스트 함수 (긴급 수정)
   async testAPIConnection(targetUserId, compassElement) {
     console.log('🔌 API 연결 테스트 시작:', { targetUserId, compassElement });
-    
+
     if (!compassElement) {
       alert('⚠️ 나침반 요소를 찾을 수 없습니다.');
       return;
     }
-    
+
     try {
       // 실제 백엔드 API 연동으로 나침반 업데이트
       await this.updateCompassWithRealData(compassElement, 'current-user', targetUserId);
-      
+
       console.log('✅ API 테스트 완료');
-      
+
       if (this.isVoiceEnabled) {
         this.speak('API 연결 테스트가 성공적으로 완료되었습니다!', true);
       }
-      
     } catch (error) {
       console.error('❌ API 테스트 실패:', error);
-      
+
       if (this.isVoiceEnabled) {
         this.speak('API 연결에 문제가 발생했습니다. 데모 모드로 진행합니다.', true);
       }
@@ -1477,105 +1486,141 @@ class SeniorUI {
   // 🧠 상세 매칭 분석 모달창 표시 (v2.1 실제 백엔드 데이터)
   showDetailedAnalysis(compassElement, realMatchingData = null) {
     const matchingScore = parseInt(compassElement.getAttribute('data-matching-score')) || 92;
-    
+
     console.log('📊 상세 분석 모달 열기:', { matchingScore, realMatchingData });
-    
+
     // 매칭도별 상세 분석 데이터 (프리미엄 v1.0 업그레이드)
     const analysisData = {
       92: {
-        title: "92% 완벽한 궁합! 🎉",
-        subtitle: "이런 부분에서 특히 잘 맞아요!",
+        title: '92% 완벽한 궁합! 🎉',
+        subtitle: '이런 부분에서 특히 잘 맞아요!',
         details: [
-          { category: "가족 가치관", score: 98, description: "가족을 중시하는 마음이 완전히 일치해요" },
-          { category: "여행 취향", score: 89, description: "새로운 경험을 함께 즐길 수 있어요" },
-          { category: "인생 철학", score: 95, description: "삶을 바라보는 관점이 매우 비슷해요" },
-          { category: "소통 방식", score: 88, description: "서로를 이해하고 배려하는 방식이 잘 맞아요" },
-          { category: "미래 계획", score: 91, description: "앞으로의 꿈과 목표가 조화롭게 어우러져요" }
+          {
+            category: '가족 가치관',
+            score: 98,
+            description: '가족을 중시하는 마음이 완전히 일치해요',
+          },
+          { category: '여행 취향', score: 89, description: '새로운 경험을 함께 즐길 수 있어요' },
+          { category: '인생 철학', score: 95, description: '삶을 바라보는 관점이 매우 비슷해요' },
+          {
+            category: '소통 방식',
+            score: 88,
+            description: '서로를 이해하고 배려하는 방식이 잘 맞아요',
+          },
+          {
+            category: '미래 계획',
+            score: 91,
+            description: '앞으로의 꿈과 목표가 조화롭게 어우러져요',
+          },
         ],
-        conclusion: "정말 드문 인연입니다! 두 분이 함께하면 서로를 더욱 성장시킬 수 있는 관계가 될 것 같아요. 💕"
+        conclusion:
+          '정말 드문 인연입니다! 두 분이 함께하면 서로를 더욱 성장시킬 수 있는 관계가 될 것 같아요. 💕',
       },
       87: {
-        title: "87% 매우 좋은 호환성! 💕",
-        subtitle: "이런 면에서 서로 잘 통해요!",
+        title: '87% 매우 좋은 호환성! 💕',
+        subtitle: '이런 면에서 서로 잘 통해요!',
         details: [
-          { category: "예술 감성", score: 94, description: "문화와 예술에 대한 깊은 공감대가 있어요" },
-          { category: "성장 마인드", score: 89, description: "배움과 발전을 추구하는 마음이 통해요" },
-          { category: "독서 취향", score: 85, description: "지적 대화를 나눌 수 있어요" },
-          { category: "소통 스타일", score: 88, description: "예술적 감성으로 대화가 풍부해져요" },
-          { category: "생활 철학", score: 82, description: "아름다운 것을 추구하는 마음이 비슷해요" }
+          {
+            category: '예술 감성',
+            score: 94,
+            description: '문화와 예술에 대한 깊은 공감대가 있어요',
+          },
+          {
+            category: '성장 마인드',
+            score: 89,
+            description: '배움과 발전을 추구하는 마음이 통해요',
+          },
+          { category: '독서 취향', score: 85, description: '지적 대화를 나눌 수 있어요' },
+          { category: '소통 스타일', score: 88, description: '예술적 감성으로 대화가 풍부해져요' },
+          {
+            category: '생활 철학',
+            score: 82,
+            description: '아름다운 것을 추구하는 마음이 비슷해요',
+          },
         ],
-        conclusion: "예술적 감성을 공유할 수 있는 아름다운 만남이 될 것 같아요! 함께 문화생활을 즐기며 더욱 깊어질 관계예요. ✨"
+        conclusion:
+          '예술적 감성을 공유할 수 있는 아름다운 만남이 될 것 같아요! 함께 문화생활을 즐기며 더욱 깊어질 관계예요. ✨',
       },
       84: {
-        title: "84% 좋은 궁합! 🌟",
-        subtitle: "이런 면에서 서로 어울려요!",
+        title: '84% 좋은 궁합! 🌟',
+        subtitle: '이런 면에서 서로 어울려요!',
         details: [
-          { category: "인생 지혜", score: 92, description: "경험에서 우러나온 깊은 통찰력을 공유해요" },
-          { category: "여행 철학", score: 88, description: "새로운 세상을 탐험하는 열정이 같아요" },
-          { category: "소통 능력", score: 85, description: "진솔하고 깊이 있는 대화가 가능해요" },
-          { category: "성장 의지", score: 79, description: "나이와 상관없이 계속 발전하려는 마음" },
-          { category: "포용력", score: 86, description: "상대방을 이해하고 받아들이는 마음이 넓어요" }
+          {
+            category: '인생 지혜',
+            score: 92,
+            description: '경험에서 우러나온 깊은 통찰력을 공유해요',
+          },
+          { category: '여행 철학', score: 88, description: '새로운 세상을 탐험하는 열정이 같아요' },
+          { category: '소통 능력', score: 85, description: '진솔하고 깊이 있는 대화가 가능해요' },
+          { category: '성장 의지', score: 79, description: '나이와 상관없이 계속 발전하려는 마음' },
+          {
+            category: '포용력',
+            score: 86,
+            description: '상대방을 이해하고 받아들이는 마음이 넓어요',
+          },
         ],
-        conclusion: "지혜롭고 성숙한 관계를 만들어갈 수 있는 좋은 인연이에요! 서로의 경험을 나누며 더욱 풍요로운 삶을 만들어가실 수 있을 거예요. 🌟"
-      }
+        conclusion:
+          '지혜롭고 성숙한 관계를 만들어갈 수 있는 좋은 인연이에요! 서로의 경험을 나누며 더욱 풍요로운 삶을 만들어가실 수 있을 거예요. 🌟',
+      },
     };
 
     // 🚀 실제 백엔드 데이터 사용 또는 기본 데이터 (v2.1)
     let data;
-    
+
     if (realMatchingData && realMatchingData.breakdown && realMatchingData.isRealData) {
       console.log('📊 실제 백엔드 데이터로 상세 분석 생성');
-      
+
       // 실제 IntelligentMatchingEngine 결과를 사용
       const breakdown = realMatchingData.breakdown;
       const reasons = realMatchingData.reasons || [];
-      
+
       data = {
         title: `${matchingScore}% ${this.getCompatibilityLevel(matchingScore)} 🎯`,
-        subtitle: "IntelligentMatchingEngine 실제 분석 결과",
+        subtitle: 'IntelligentMatchingEngine 실제 분석 결과',
         details: [
-          { 
-            category: "핵심 가치관", 
-            score: Math.round(breakdown.coreValues || matchingScore - 5), 
-            description: "인생에서 중요하게 생각하는 가치관이 얼마나 일치하는지" 
+          {
+            category: '핵심 가치관',
+            score: Math.round(breakdown.coreValues || matchingScore - 5),
+            description: '인생에서 중요하게 생각하는 가치관이 얼마나 일치하는지',
           },
-          { 
-            category: "성격 호환성", 
-            score: Math.round(breakdown.personalityFit || matchingScore - 3), 
-            description: "성격적 특성이 서로 얼마나 잘 맞는지" 
+          {
+            category: '성격 호환성',
+            score: Math.round(breakdown.personalityFit || matchingScore - 3),
+            description: '성격적 특성이 서로 얼마나 잘 맞는지',
           },
-          { 
-            category: "라이프스타일", 
-            score: Math.round(breakdown.lifestyleCompat || matchingScore + 2), 
-            description: "생활 방식과 일상 패턴의 조화 정도" 
+          {
+            category: '라이프스타일',
+            score: Math.round(breakdown.lifestyleCompat || matchingScore + 2),
+            description: '생활 방식과 일상 패턴의 조화 정도',
           },
-          { 
-            category: "소통 방식", 
-            score: Math.round(breakdown.communicationSync || matchingScore - 8), 
-            description: "의사소통 스타일과 대화 방식의 궁합" 
+          {
+            category: '소통 방식',
+            score: Math.round(breakdown.communicationSync || matchingScore - 8),
+            description: '의사소통 스타일과 대화 방식의 궁합',
           },
-          { 
-            category: "성장 가능성", 
-            score: Math.round(breakdown.growthPotential || matchingScore - 10), 
-            description: "함께 발전하고 성장할 수 있는 잠재력" 
-          }
+          {
+            category: '성장 가능성',
+            score: Math.round(breakdown.growthPotential || matchingScore - 10),
+            description: '함께 발전하고 성장할 수 있는 잠재력',
+          },
         ],
-        conclusion: reasons.length > 0 
-          ? `💡 매칭 이유: ${reasons.slice(0, 2).join(', ')}. 실제 분석 결과입니다!`
-          : `${matchingScore}% 호환성으로 좋은 인연이 될 것 같습니다! (실제 분석 완료)`,
-        isRealData: true
+        conclusion:
+          reasons.length > 0
+            ? `💡 매칭 이유: ${reasons.slice(0, 2).join(', ')}. 실제 분석 결과입니다!`
+            : `${matchingScore}% 호환성으로 좋은 인연이 될 것 같습니다! (실제 분석 완료)`,
+        isRealData: true,
       };
     } else {
       console.log('📊 데모 데이터로 상세 분석 생성');
       data = analysisData[matchingScore] || analysisData[92];
       data.isRealData = false;
     }
-    
+
     // 호환성 레벨 표시 추가
-    const dataSourceIndicator = data.isRealData 
+    const dataSourceIndicator = data.isRealData
       ? '<span style="color: #4CAF50; font-size: 0.9em;">🎯 실제 분석</span>'
       : '<span style="color: #FF9800; font-size: 0.9em;">📊 데모 모드</span>';
-    
+
     // 기존 모달 제거
     const existingModal = document.querySelector('.detailed-analysis-modal');
     if (existingModal) existingModal.remove();
@@ -1593,7 +1638,9 @@ class SeniorUI {
           </div>
           
           <div class="analysis-details">
-            ${data.details.map(item => `
+            ${data.details
+              .map(
+                item => `
               <div class="analysis-item">
                 <div>
                   <div style="font-weight: 600; margin-bottom: 4px;">${item.category}</div>
@@ -1601,7 +1648,9 @@ class SeniorUI {
                 </div>
                 <div class="analysis-score">${item.score}점</div>
               </div>
-            `).join('')}
+            `
+              )
+              .join('')}
           </div>
           
           <div style="
@@ -1636,7 +1685,7 @@ class SeniorUI {
 
     // 모달을 body에 추가
     document.body.insertAdjacentHTML('beforeend', modalHTML);
-    
+
     // 애니메이션을 위해 약간의 지연 후 show 클래스 추가
     setTimeout(() => {
       const modal = document.querySelector('.detailed-analysis-modal');
@@ -1649,7 +1698,7 @@ class SeniorUI {
     }
 
     // 모달 외부 클릭 시 닫기
-    document.querySelector('.detailed-analysis-modal').addEventListener('click', (e) => {
+    document.querySelector('.detailed-analysis-modal').addEventListener('click', e => {
       if (e.target === e.currentTarget) {
         e.target.remove();
       }
@@ -1660,7 +1709,7 @@ class SeniorUI {
 // DOM 로드 완료 후 초기화
 document.addEventListener('DOMContentLoaded', () => {
   const seniorUI = new SeniorUI();
-  
+
   // 전역 접근을 위해 window 객체에 할당
   window.seniorUI = seniorUI;
 

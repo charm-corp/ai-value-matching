@@ -319,7 +319,9 @@ class IntegrationReporter {
     if (report.codeReduction) {
       console.log('\n📈 코드 중복 제거 효과:');
       console.log(
-        `  라인 수 감소: ${Math.abs(report.codeReduction.lineCount.reduction.lines)}줄 (${Math.abs(report.codeReduction.lineCount.reduction.percentage)}%)`
+        `  라인 수 감소: ${Math.abs(report.codeReduction.lineCount.reduction.lines)}줄 (${Math.abs(
+          report.codeReduction.lineCount.reduction.percentage
+        )}%)`
       );
       console.log(
         `  파일 크기: ${report.codeReduction.fileSize.before.totalKB}KB → ${report.codeReduction.fileSize.after.totalKB}KB`

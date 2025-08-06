@@ -1,7 +1,11 @@
 {
   "version": 2,
-  "name": "ai-matching-charm",
+  "name": "ai-matching-charm-rls",
   "builds": [
+    {
+      "src": "api/serverless-rls.js",
+      "use": "@vercel/node"
+    },
     {
       "src": "api/serverless.js",
       "use": "@vercel/node"
@@ -11,14 +15,34 @@
       "use": "@vercel/static"
     },
     {
-      "src": "senior-ui.js", 
+      "src": "senior-ui.js",
       "use": "@vercel/static"
     }
   ],
   "routes": [
     {
+      "src": "/api/rls/(.*)",
+      "dest": "/api/serverless-rls.js"
+    },
+    {
+      "src": "/api/health/enhanced",
+      "dest": "/api/serverless-rls.js"
+    },
+    {
+      "src": "/api/users/rls",
+      "dest": "/api/serverless-rls.js"
+    },
+    {
+      "src": "/api/matching/enhanced-test",
+      "dest": "/api/serverless-rls.js"
+    },
+    {
+      "src": "/api/cache/test",
+      "dest": "/api/serverless-rls.js"
+    },
+    {
       "src": "/api/(.*)",
-      "dest": "/api/serverless.js"
+      "dest": "/api/serverless-rls.js"
     },
     {
       "src": "/senior-ui.html",
@@ -30,10 +54,16 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/api/serverless.js"
+      "dest": "/api/serverless-rls.js"
     }
   ],
   "env": {
-    "NODE_ENV": "production"
+    "NODE_ENV": "production",
+    "FEATURE_AI_INSIGHTS": "true",
+    "FEATURE_REAL_TIME_CHAT": "false",
+    "FEATURE_ENHANCED_AUTH": "false",
+    "CACHE_TTL": "300",
+    "MEMORY_THRESHOLD": "256",
+    "RESPONSE_TIME_THRESHOLD": "5000"
   }
 }

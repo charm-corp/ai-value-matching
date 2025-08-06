@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
@@ -565,7 +565,11 @@
 
         let html = `<strong>${success ? '✅ Success' : '❌ Error'}:</strong> ${message}`;
         if (data) {
-          html += `<br><br><strong>Response Data:</strong><br><pre style="white-space: pre-wrap; font-size: 0.8rem;">${JSON.stringify(data, null, 2)}</pre>`;
+          html += `<br><br><strong>Response Data:</strong><br><pre style="white-space: pre-wrap; font-size: 0.8rem;">${JSON.stringify(
+            data,
+            null,
+            2
+          )}</pre>`;
         }
         element.innerHTML = html;
       }

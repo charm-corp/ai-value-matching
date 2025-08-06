@@ -1,9 +1,13 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>버튼 테스트</title>
+
+    <!-- CSS Utilities -->
+    <link rel="stylesheet" href="css/utilities.css" />
+
     <style>
       body {
         font-family: 'Noto Sans KR', sans-serif;
@@ -113,52 +117,23 @@
 
       <div class="test-section">
         <h3>5. 우측 사이드바 위젯 테스트</h3>
-        <div style="display: flex; gap: 15px; flex-wrap: wrap">
-          <div
-            class="floating-card card-1"
-            id="test-values-widget"
-            style="position: relative; top: 0; left: 0; min-width: 180px"
-          >
+        <div class="flex gap-md flex-wrap">
+          <div class="floating-card card-1" id="test-values-widget" class="relative top-0 left-0">
             <div class="card-header">가치관 분석</div>
             <div class="card-content">
-              <div
-                class="progress-bar"
-                style="
-                  width: 100%;
-                  height: 8px;
-                  background: #e5e5e5;
-                  border-radius: 4px;
-                  margin: 8px 0;
-                "
-              >
-                <div
-                  class="progress-fill"
-                  style="width: 85%; height: 100%; background: #667eea; border-radius: 4px"
-                ></div>
+              <div class="progress-bar" class="w-full h-8 bg-gray-200 rounded-sm my-2">
+                <div class="progress-fill w-85 h-full bg-primary-color rounded-sm"></div>
               </div>
               <span>85% 일치</span>
             </div>
           </div>
-          <div
-            class="floating-card card-2"
-            id="test-matching-widget"
-            style="position: relative; top: 0; left: 0; min-width: 180px"
-          >
+          <div class="floating-card card-2" id="test-matching-widget" class="relative top-0 left-0">
             <div class="card-header">AI 매칭</div>
             <div class="card-content">
-              <div class="matching-dots" style="display: flex; gap: 5px; margin: 8px 0">
-                <div
-                  class="dot active"
-                  style="width: 8px; height: 8px; border-radius: 50%; background: #667eea"
-                ></div>
-                <div
-                  class="dot active"
-                  style="width: 8px; height: 8px; border-radius: 50%; background: #667eea"
-                ></div>
-                <div
-                  class="dot"
-                  style="width: 8px; height: 8px; border-radius: 50%; background: #e5e5e5"
-                ></div>
+              <div class="matching-dots" class="flex gap-xs my-2">
+                <div class="dot active" class="w-8 h-8 rounded-full bg-primary-color"></div>
+                <div class="dot active" class="w-8 h-8 rounded-full bg-primary-color"></div>
+                <div class="dot" class="w-8 h-8 rounded-full bg-gray-200"></div>
               </div>
               <span>매칭 중...</span>
             </div>
@@ -166,19 +141,13 @@
           <div
             class="floating-card card-3"
             id="test-connections-widget"
-            style="position: relative; top: 0; left: 0; min-width: 180px"
+            class="relative top-0 left-0"
           >
             <div class="card-header">새로운 연결</div>
             <div class="card-content">
-              <div class="profile-pics" style="display: flex; gap: 5px; margin: 8px 0">
-                <div
-                  class="profile-pic pic-1"
-                  style="width: 20px; height: 20px; border-radius: 50%; background: #f0f0f0"
-                ></div>
-                <div
-                  class="profile-pic pic-2"
-                  style="width: 20px; height: 20px; border-radius: 50%; background: #f0f0f0"
-                ></div>
+              <div class="profile-pics" class="flex gap-xs my-2">
+                <div class="profile-pic pic-1" class="w-20 h-20 rounded-full bg-gray-100"></div>
+                <div class="profile-pic pic-2" class="w-20 h-20 rounded-full bg-gray-100"></div>
               </div>
               <span>3명의 새로운 매치</span>
             </div>

@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
@@ -67,7 +67,7 @@
         --radius-lg: 16px;
         --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
         --transition-normal: 0.3s ease;
-        
+
         /* 하트 나침반 전용 CSS 변수 */
         --compass-gold: #8b7355;
         --compass-gold-light: #a0886f;
@@ -89,11 +89,7 @@
         scroll-behavior: smooth;
       }
       body {
-        font-family:
-          'Noto Sans KR',
-          -apple-system,
-          BlinkMacSystemFont,
-          sans-serif;
+        font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
         color: var(--text-primary);
         background: var(--bg-warm);
         min-height: 100vh;
@@ -339,9 +335,7 @@
         border-radius: 50%;
         background: var(--compass-bg);
         border: 8px solid var(--compass-gold);
-        box-shadow: 
-          inset 0 4px 8px rgba(139, 115, 85, 0.3),
-          0 8px 24px rgba(0, 0, 0, 0.15);
+        box-shadow: inset 0 4px 8px rgba(139, 115, 85, 0.3), 0 8px 24px rgba(0, 0, 0, 0.15);
         position: relative;
         margin: 0 auto;
       }
@@ -356,7 +350,7 @@
         border-radius: 50%;
         border: 2px solid #6b5b47;
         background: conic-gradient(
-          from 0deg, 
+          from 0deg,
           var(--compass-gold) 0deg 90deg,
           var(--compass-gold-light) 90deg 180deg,
           var(--compass-gold) 180deg 270deg,
@@ -409,13 +403,29 @@
         font-weight: bold;
         font-size: 18px;
         color: #5d4e37;
-        text-shadow: 1px 1px 2px rgba(255,255,255,0.5);
+        text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
       }
 
-      .north { top: 12px; left: 50%; transform: translateX(-50%); }
-      .south { bottom: 12px; left: 50%; transform: translateX(-50%); }
-      .east { right: 12px; top: 50%; transform: translateY(-50%); }
-      .west { left: 12px; top: 50%; transform: translateY(-50%); }
+      .north {
+        top: 12px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      .south {
+        bottom: 12px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      .east {
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+      .west {
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+      }
 
       /* 특별한 "True Love" 마크 */
       .true-love-mark {
@@ -426,7 +436,7 @@
         font-size: 14px;
         color: var(--heart-red);
         font-weight: bold;
-        text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
       }
 
       /* 매칭 결과 표시 애니메이션 */
@@ -435,10 +445,18 @@
       }
 
       @keyframes compassSpin {
-        0% { transform: translate(-50%, -85%) rotate(180deg); }
-        70% { transform: translate(-50%, -85%) rotate(var(--matching-angle)); }
-        85% { transform: translate(-50%, -85%) rotate(calc(var(--matching-angle) - 10deg)); }
-        100% { transform: translate(-50%, -85%) rotate(var(--matching-angle)); }
+        0% {
+          transform: translate(-50%, -85%) rotate(180deg);
+        }
+        70% {
+          transform: translate(-50%, -85%) rotate(var(--matching-angle));
+        }
+        85% {
+          transform: translate(-50%, -85%) rotate(calc(var(--matching-angle) - 10deg));
+        }
+        100% {
+          transform: translate(-50%, -85%) rotate(var(--matching-angle));
+        }
       }
 
       /* 하트 바늘 펄스 효과 (높은 매칭도일 때) */
@@ -447,8 +465,13 @@
       }
 
       @keyframes heartPulse {
-        0%, 100% { filter: drop-shadow(0 0 8px rgba(231, 76, 60, 0.6)); }
-        50% { filter: drop-shadow(0 0 16px rgba(231, 76, 60, 0.9)); }
+        0%,
+        100% {
+          filter: drop-shadow(0 0 8px rgba(231, 76, 60, 0.6));
+        }
+        50% {
+          filter: drop-shadow(0 0 16px rgba(231, 76, 60, 0.9));
+        }
       }
 
       /* 나침반 중앙 포인트 */
@@ -463,7 +486,7 @@
         border-radius: 50%;
         transform: translate(-50%, -50%);
         z-index: 15;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
       }
 
       /* 반응형 하트 나침반 */
@@ -578,31 +601,32 @@
       }
 
       @keyframes voicePulse {
-        0%, 100% { 
-          transform: scale(1); 
-          box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.4); 
+        0%,
+        100% {
+          transform: scale(1);
+          box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.4);
         }
-        50% { 
-          transform: scale(1.05); 
-          box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); 
+        50% {
+          transform: scale(1.05);
+          box-shadow: 0 0 0 10px rgba(231, 76, 60, 0);
         }
       }
 
       /* 💎 프리미엄 프로필 카드 v1.0 (중장년층 품격 디자인) */
       .premium-profile-card {
-        background: linear-gradient(145deg, 
-          rgba(255, 255, 255, 0.95) 0%, 
-          rgba(248, 246, 243, 0.98) 50%, 
-          rgba(245, 240, 235, 0.95) 100%);
+        background: linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.95) 0%,
+          rgba(248, 246, 243, 0.98) 50%,
+          rgba(245, 240, 235, 0.95) 100%
+        );
         border: 2px solid transparent;
         background-clip: padding-box;
         position: relative;
         overflow: hidden;
         transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         border-radius: 20px;
-        box-shadow: 
-          0 8px 32px rgba(139, 115, 85, 0.15),
-          0 4px 16px rgba(0, 0, 0, 0.08),
+        box-shadow: 0 8px 32px rgba(139, 115, 85, 0.15), 0 4px 16px rgba(0, 0, 0, 0.08),
           inset 0 1px 0 rgba(255, 255, 255, 0.8);
       }
 
@@ -614,12 +638,14 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: linear-gradient(145deg, 
-          #d4af37 0%, 
-          #f4e4a6 25%, 
-          #d4af37 50%, 
-          #b8941f 75%, 
-          #d4af37 100%);
+        background: linear-gradient(
+          145deg,
+          #d4af37 0%,
+          #f4e4a6 25%,
+          #d4af37 50%,
+          #b8941f 75%,
+          #d4af37 100%
+        );
         border-radius: 20px;
         padding: 2px;
         z-index: -1;
@@ -633,9 +659,7 @@
 
       .premium-profile-card:hover {
         transform: translateY(-8px);
-        box-shadow: 
-          0 20px 60px rgba(139, 115, 85, 0.25),
-          0 8px 32px rgba(0, 0, 0, 0.12),
+        box-shadow: 0 20px 60px rgba(139, 115, 85, 0.25), 0 8px 32px rgba(0, 0, 0, 0.12),
           inset 0 1px 0 rgba(255, 255, 255, 0.9);
       }
 
@@ -649,9 +673,7 @@
         background-clip: content-box;
         position: relative;
         overflow: hidden;
-        box-shadow: 
-          0 8px 24px rgba(139, 115, 85, 0.2),
-          inset 0 2px 4px rgba(255, 255, 255, 0.6);
+        box-shadow: 0 8px 24px rgba(139, 115, 85, 0.2), inset 0 2px 4px rgba(255, 255, 255, 0.6);
         transition: all 0.3s ease;
       }
 
@@ -660,10 +682,7 @@
         content: '';
         position: absolute;
         inset: -3px;
-        background: linear-gradient(135deg, 
-          #d4af37 0%, 
-          #f4e4a6 50%, 
-          #d4af37 100%);
+        background: linear-gradient(135deg, #d4af37 0%, #f4e4a6 50%, #d4af37 100%);
         border-radius: 19px;
         z-index: -1;
         opacity: 0.7;
@@ -671,9 +690,7 @@
 
       .premium-profile-card:hover .premium-avatar {
         transform: scale(1.05);
-        box-shadow: 
-          0 12px 32px rgba(139, 115, 85, 0.3),
-          inset 0 2px 4px rgba(255, 255, 255, 0.8);
+        box-shadow: 0 12px 32px rgba(139, 115, 85, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.8);
       }
 
       /* 프리미엄 타이포그래피 */
@@ -722,9 +739,11 @@
       }
 
       .premium-tag {
-        background: linear-gradient(135deg, 
-          rgba(139, 115, 85, 0.1) 0%, 
-          rgba(107, 91, 71, 0.15) 100%);
+        background: linear-gradient(
+          135deg,
+          rgba(139, 115, 85, 0.1) 0%,
+          rgba(107, 91, 71, 0.15) 100%
+        );
         color: #6b5b47;
         border: 1px solid rgba(139, 115, 85, 0.2);
         border-radius: 16px;
@@ -745,10 +764,7 @@
         left: -100%;
         width: 100%;
         height: 100%;
-        background: linear-gradient(90deg, 
-          transparent, 
-          rgba(212, 175, 55, 0.3), 
-          transparent);
+        background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.3), transparent);
         transition: left 0.5s ease;
       }
 
@@ -757,18 +773,22 @@
       }
 
       .premium-tag:hover {
-        background: linear-gradient(135deg, 
-          rgba(212, 175, 55, 0.2) 0%, 
-          rgba(244, 228, 166, 0.25) 100%);
+        background: linear-gradient(
+          135deg,
+          rgba(212, 175, 55, 0.2) 0%,
+          rgba(244, 228, 166, 0.25) 100%
+        );
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(139, 115, 85, 0.2);
       }
 
       /* 매칭 점수 프리미엄 디자인 */
       .premium-compatibility {
-        background: linear-gradient(135deg, 
-          rgba(231, 76, 60, 0.1) 0%, 
-          rgba(192, 57, 43, 0.15) 100%);
+        background: linear-gradient(
+          135deg,
+          rgba(231, 76, 60, 0.1) 0%,
+          rgba(192, 57, 43, 0.15) 100%
+        );
         border: 2px solid rgba(231, 76, 60, 0.2);
         border-radius: 16px;
         padding: 1rem;
@@ -787,16 +807,18 @@
         left: 0;
         right: 0;
         height: 2px;
-        background: linear-gradient(90deg, 
-          #e74c3c 0%, 
-          #f39c12 50%, 
-          #e74c3c 100%);
+        background: linear-gradient(90deg, #e74c3c 0%, #f39c12 50%, #e74c3c 100%);
         animation: compatibilityShine 3s ease-in-out infinite;
       }
 
       @keyframes compatibilityShine {
-        0%, 100% { opacity: 0.5; }
-        50% { opacity: 1; }
+        0%,
+        100% {
+          opacity: 0.5;
+        }
+        50% {
+          opacity: 1;
+        }
       }
 
       .premium-score {
@@ -830,10 +852,7 @@
         left: -100%;
         width: 100%;
         height: 100%;
-        background: linear-gradient(90deg, 
-          transparent, 
-          rgba(255, 255, 255, 0.2), 
-          transparent);
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
         transition: left 0.5s ease;
       }
 
@@ -848,165 +867,487 @@
       }
 
       /* Utility Classes */
-      
+
       /* Layout & Flexbox */
-      .flex { display: flex; }
-      .flex-center { display: flex; justify-content: center; align-items: center; }
-      .flex-center-col { display: flex; flex-direction: column; justify-content: center; align-items: center; }
-      .flex-between { display: flex; justify-content: space-between; align-items: center; }
-      .flex-start { display: flex; justify-content: flex-start; align-items: center; }
-      .flex-end { display: flex; justify-content: flex-end; align-items: center; }
-      .flex-col { display: flex; flex-direction: column; }
-      .flex-row { display: flex; flex-direction: row; }
-      .flex-col-center { display: flex; flex-direction: column; align-items: center; }
-      .flex-wrap-center { display: flex; justify-content: center; flex-wrap: wrap; }
-      .flex-wrap-gap { display: flex; flex-wrap: wrap; }
-      .flex-gap-sm { display: flex; gap: var(--spacing-sm); }
-      .flex-gap-md { display: flex; gap: var(--spacing-md); }
-      .flex-gap-lg { display: flex; gap: var(--spacing-lg); }
-      
+      .flex {
+        display: flex;
+      }
+      .flex-center {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .flex-center-col {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      .flex-between {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .flex-start {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+      }
+      .flex-end {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+      }
+      .flex-col {
+        display: flex;
+        flex-direction: column;
+      }
+      .flex-row {
+        display: flex;
+        flex-direction: row;
+      }
+      .flex-col-center {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .flex-wrap-center {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .flex-wrap-gap {
+        display: flex;
+        flex-wrap: wrap;
+      }
+      .flex-gap-sm {
+        display: flex;
+        gap: var(--spacing-sm);
+      }
+      .flex-gap-md {
+        display: flex;
+        gap: var(--spacing-md);
+      }
+      .flex-gap-lg {
+        display: flex;
+        gap: var(--spacing-lg);
+      }
+
       /* Gap utilities */
-      .gap-xs { gap: var(--spacing-xs); }
-      .gap-sm { gap: var(--spacing-sm); }
-      .gap-md { gap: var(--spacing-md); }
-      .gap-lg { gap: var(--spacing-lg); }
-      .gap-xl { gap: var(--spacing-xl); }
-      
+      .gap-xs {
+        gap: var(--spacing-xs);
+      }
+      .gap-sm {
+        gap: var(--spacing-sm);
+      }
+      .gap-md {
+        gap: var(--spacing-md);
+      }
+      .gap-lg {
+        gap: var(--spacing-lg);
+      }
+      .gap-xl {
+        gap: var(--spacing-xl);
+      }
+
       /* Flex properties */
-      .flex-1 { flex: 1; }
-      .flex-2 { flex: 2; }
-      .flex-auto { flex: auto; }
-      .flex-none { flex: none; }
-      .flex-shrink-0 { flex-shrink: 0; }
-      
+      .flex-1 {
+        flex: 1;
+      }
+      .flex-2 {
+        flex: 2;
+      }
+      .flex-auto {
+        flex: auto;
+      }
+      .flex-none {
+        flex: none;
+      }
+      .flex-shrink-0 {
+        flex-shrink: 0;
+      }
+
       /* Spacing */
-      .m-auto { margin: auto; }
-      .mx-auto { margin-left: auto; margin-right: auto; }
-      .my-auto { margin-top: auto; margin-bottom: auto; }
-      .mb-xs { margin-bottom: var(--spacing-xs); }
-      .mb-sm { margin-bottom: var(--spacing-sm); }
-      .mb-md { margin-bottom: var(--spacing-md); }
-      .mb-lg { margin-bottom: var(--spacing-lg); }
-      .mb-xl { margin-bottom: var(--spacing-xl); }
-      .mb-2xl { margin-bottom: var(--spacing-xxl); }
-      .mt-xs { margin-top: var(--spacing-xs); }
-      .mt-sm { margin-top: var(--spacing-sm); }
-      .mt-md { margin-top: var(--spacing-md); }
-      .mt-lg { margin-top: var(--spacing-lg); }
-      .mt-xl { margin-top: var(--spacing-xl); }
-      .mt-2xl { margin-top: var(--spacing-xxl); }
-      .p-xs { padding: var(--spacing-xs); }
-      .p-sm { padding: var(--spacing-sm); }
-      .p-md { padding: var(--spacing-md); }
-      .p-lg { padding: var(--spacing-lg); }
-      .p-xl { padding: var(--spacing-xl); }
-      .p-2xl { padding: var(--spacing-xxl); }
-      .px-xs { padding-left: var(--spacing-xs); padding-right: var(--spacing-xs); }
-      .px-sm { padding-left: var(--spacing-sm); padding-right: var(--spacing-sm); }
-      .px-md { padding-left: var(--spacing-md); padding-right: var(--spacing-md); }
-      .px-lg { padding-left: var(--spacing-lg); padding-right: var(--spacing-lg); }
-      .px-xl { padding-left: var(--spacing-xl); padding-right: var(--spacing-xl); }
-      .py-xs { padding-top: var(--spacing-xs); padding-bottom: var(--spacing-xs); }
-      .py-sm { padding-top: var(--spacing-sm); padding-bottom: var(--spacing-sm); }
-      .py-md { padding-top: var(--spacing-md); padding-bottom: var(--spacing-md); }
-      .py-lg { padding-top: var(--spacing-lg); padding-bottom: var(--spacing-lg); }
-      .py-xl { padding-top: var(--spacing-xl); padding-bottom: var(--spacing-xl); }
-      .py-2xl { padding-top: var(--spacing-xxl); padding-bottom: var(--spacing-xxl); }
-      
+      .m-auto {
+        margin: auto;
+      }
+      .mx-auto {
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .my-auto {
+        margin-top: auto;
+        margin-bottom: auto;
+      }
+      .mb-xs {
+        margin-bottom: var(--spacing-xs);
+      }
+      .mb-sm {
+        margin-bottom: var(--spacing-sm);
+      }
+      .mb-md {
+        margin-bottom: var(--spacing-md);
+      }
+      .mb-lg {
+        margin-bottom: var(--spacing-lg);
+      }
+      .mb-xl {
+        margin-bottom: var(--spacing-xl);
+      }
+      .mb-2xl {
+        margin-bottom: var(--spacing-xxl);
+      }
+      .mt-xs {
+        margin-top: var(--spacing-xs);
+      }
+      .mt-sm {
+        margin-top: var(--spacing-sm);
+      }
+      .mt-md {
+        margin-top: var(--spacing-md);
+      }
+      .mt-lg {
+        margin-top: var(--spacing-lg);
+      }
+      .mt-xl {
+        margin-top: var(--spacing-xl);
+      }
+      .mt-2xl {
+        margin-top: var(--spacing-xxl);
+      }
+      .p-xs {
+        padding: var(--spacing-xs);
+      }
+      .p-sm {
+        padding: var(--spacing-sm);
+      }
+      .p-md {
+        padding: var(--spacing-md);
+      }
+      .p-lg {
+        padding: var(--spacing-lg);
+      }
+      .p-xl {
+        padding: var(--spacing-xl);
+      }
+      .p-2xl {
+        padding: var(--spacing-xxl);
+      }
+      .px-xs {
+        padding-left: var(--spacing-xs);
+        padding-right: var(--spacing-xs);
+      }
+      .px-sm {
+        padding-left: var(--spacing-sm);
+        padding-right: var(--spacing-sm);
+      }
+      .px-md {
+        padding-left: var(--spacing-md);
+        padding-right: var(--spacing-md);
+      }
+      .px-lg {
+        padding-left: var(--spacing-lg);
+        padding-right: var(--spacing-lg);
+      }
+      .px-xl {
+        padding-left: var(--spacing-xl);
+        padding-right: var(--spacing-xl);
+      }
+      .py-xs {
+        padding-top: var(--spacing-xs);
+        padding-bottom: var(--spacing-xs);
+      }
+      .py-sm {
+        padding-top: var(--spacing-sm);
+        padding-bottom: var(--spacing-sm);
+      }
+      .py-md {
+        padding-top: var(--spacing-md);
+        padding-bottom: var(--spacing-md);
+      }
+      .py-lg {
+        padding-top: var(--spacing-lg);
+        padding-bottom: var(--spacing-lg);
+      }
+      .py-xl {
+        padding-top: var(--spacing-xl);
+        padding-bottom: var(--spacing-xl);
+      }
+      .py-2xl {
+        padding-top: var(--spacing-xxl);
+        padding-bottom: var(--spacing-xxl);
+      }
+
       /* Typography */
-      .text-center { text-align: center; }
-      .text-left { text-align: left; }
-      .text-right { text-align: right; }
-      .font-normal { font-weight: 400; }
-      .font-medium { font-weight: 500; }
-      .font-semibold { font-weight: 600; }
-      .font-bold { font-weight: 700; }
-      .font-extrabold { font-weight: 800; }
-      .text-primary { color: var(--text-primary); }
-      .text-secondary { color: var(--text-secondary); }
-      .text-white { color: var(--text-white); }
-      .text-primary-color { color: var(--primary-color); }
-      .text-secondary-color { color: var(--secondary-color); }
-      .text-gold { color: var(--compass-gold); }
-      .text-gold-light { color: var(--compass-gold-light); }
-      .text-brown { color: #8b4513; }
-      .text-heart-red { color: var(--heart-red); }
-      .text-accent-color { color: var(--accent-color); }
-      .text-xs { font-size: var(--font-size-small); }
-      .text-sm { font-size: var(--font-size-small); }
-      .text-base { font-size: var(--font-size-normal); }
-      .text-lg { font-size: var(--font-size-large); }
-      .text-xl { font-size: var(--font-size-xl); }
-      .text-2xl { font-size: var(--font-size-xxl); }
-      .text-3xl { font-size: 2.5rem; }
-      .italic { font-style: italic; }
-      .not-italic { font-style: normal; }
-      .leading-none { line-height: 1; }
-      .leading-tight { line-height: 1.25; }
-      .leading-normal { line-height: 1.5; }
-      .leading-relaxed { line-height: 1.8; }
-      
+      .text-center {
+        text-align: center;
+      }
+      .text-left {
+        text-align: left;
+      }
+      .text-right {
+        text-align: right;
+      }
+      .font-normal {
+        font-weight: 400;
+      }
+      .font-medium {
+        font-weight: 500;
+      }
+      .font-semibold {
+        font-weight: 600;
+      }
+      .font-bold {
+        font-weight: 700;
+      }
+      .font-extrabold {
+        font-weight: 800;
+      }
+      .text-primary {
+        color: var(--text-primary);
+      }
+      .text-secondary {
+        color: var(--text-secondary);
+      }
+      .text-white {
+        color: var(--text-white);
+      }
+      .text-primary-color {
+        color: var(--primary-color);
+      }
+      .text-secondary-color {
+        color: var(--secondary-color);
+      }
+      .text-gold {
+        color: var(--compass-gold);
+      }
+      .text-gold-light {
+        color: var(--compass-gold-light);
+      }
+      .text-brown {
+        color: #8b4513;
+      }
+      .text-heart-red {
+        color: var(--heart-red);
+      }
+      .text-accent-color {
+        color: var(--accent-color);
+      }
+      .text-xs {
+        font-size: var(--font-size-small);
+      }
+      .text-sm {
+        font-size: var(--font-size-small);
+      }
+      .text-base {
+        font-size: var(--font-size-normal);
+      }
+      .text-lg {
+        font-size: var(--font-size-large);
+      }
+      .text-xl {
+        font-size: var(--font-size-xl);
+      }
+      .text-2xl {
+        font-size: var(--font-size-xxl);
+      }
+      .text-3xl {
+        font-size: 2.5rem;
+      }
+      .italic {
+        font-style: italic;
+      }
+      .not-italic {
+        font-style: normal;
+      }
+      .leading-none {
+        line-height: 1;
+      }
+      .leading-tight {
+        line-height: 1.25;
+      }
+      .leading-normal {
+        line-height: 1.5;
+      }
+      .leading-relaxed {
+        line-height: 1.8;
+      }
+
       /* Container & Sizing */
-      .w-auto { width: auto; }
-      .w-full { width: 100%; }
-      .w-fit { width: fit-content; }
-      .w-screen { width: 100vw; }
-      .w-20 { width: 5rem; }
-      .w-24 { width: 6rem; }
-      .w-85 { width: 85%; }
-      .h-auto { height: auto; }
-      .h-full { height: 100%; }
-      .h-screen { height: 100vh; }
-      .h-20 { height: 5rem; }
-      .h-24 { height: 6rem; }
-      .h-8 { height: 2rem; }
-      .max-w-xs { max-width: 20rem; }
-      .max-w-sm { max-width: 24rem; }
-      .max-w-md { max-width: 28rem; }
-      .max-w-lg { max-width: 32rem; }
-      .max-w-xl { max-width: 36rem; }
-      .max-w-none { max-width: none; }
-      .min-h-0 { min-height: 0; }
-      .min-h-full { min-height: 100%; }
-      .min-h-screen { min-height: 100vh; }
-      .min-h-500 { min-height: 500px; }
-      
+      .w-auto {
+        width: auto;
+      }
+      .w-full {
+        width: 100%;
+      }
+      .w-fit {
+        width: fit-content;
+      }
+      .w-screen {
+        width: 100vw;
+      }
+      .w-20 {
+        width: 5rem;
+      }
+      .w-24 {
+        width: 6rem;
+      }
+      .w-85 {
+        width: 85%;
+      }
+      .h-auto {
+        height: auto;
+      }
+      .h-full {
+        height: 100%;
+      }
+      .h-screen {
+        height: 100vh;
+      }
+      .h-20 {
+        height: 5rem;
+      }
+      .h-24 {
+        height: 6rem;
+      }
+      .h-8 {
+        height: 2rem;
+      }
+      .max-w-xs {
+        max-width: 20rem;
+      }
+      .max-w-sm {
+        max-width: 24rem;
+      }
+      .max-w-md {
+        max-width: 28rem;
+      }
+      .max-w-lg {
+        max-width: 32rem;
+      }
+      .max-w-xl {
+        max-width: 36rem;
+      }
+      .max-w-none {
+        max-width: none;
+      }
+      .min-h-0 {
+        min-height: 0;
+      }
+      .min-h-full {
+        min-height: 100%;
+      }
+      .min-h-screen {
+        min-height: 100vh;
+      }
+      .min-h-500 {
+        min-height: 500px;
+      }
+
       /* Display & Visual */
-      .show { display: block; }
-      .hide { display: none; }
-      .invisible { visibility: hidden; }
-      .visible { visibility: visible; }
-      .block { display: block; }
-      .inline-block { display: inline-block; }
-      .bg-transparent { background-color: transparent; }
-      .bg-primary { background-color: var(--bg-primary); }
-      .bg-secondary { background-color: var(--bg-secondary); }
-      .bg-warm { background-color: var(--bg-warm); }
-      .bg-primary-color { background-color: var(--primary-color); }
-      .bg-secondary-color { background-color: var(--secondary-color); }
-      .rounded-none { border-radius: 0; }
-      .rounded-sm { border-radius: 0.125rem; }
-      .rounded { border-radius: 0.25rem; }
-      .rounded-md { border-radius: var(--radius-md); }
-      .rounded-lg { border-radius: var(--radius-lg); }
-      .rounded-xl { border-radius: 1rem; }
-      .rounded-full { border-radius: 9999px; }
-      .opacity-0 { opacity: 0; }
-      .opacity-50 { opacity: 0.5; }
-      .opacity-80 { opacity: 0.8; }
-      .opacity-90 { opacity: 0.9; }
-      .opacity-100 { opacity: 1; }
-      
+      .show {
+        display: block;
+      }
+      .hide {
+        display: none;
+      }
+      .invisible {
+        visibility: hidden;
+      }
+      .visible {
+        visibility: visible;
+      }
+      .block {
+        display: block;
+      }
+      .inline-block {
+        display: inline-block;
+      }
+      .bg-transparent {
+        background-color: transparent;
+      }
+      .bg-primary {
+        background-color: var(--bg-primary);
+      }
+      .bg-secondary {
+        background-color: var(--bg-secondary);
+      }
+      .bg-warm {
+        background-color: var(--bg-warm);
+      }
+      .bg-primary-color {
+        background-color: var(--primary-color);
+      }
+      .bg-secondary-color {
+        background-color: var(--secondary-color);
+      }
+      .rounded-none {
+        border-radius: 0;
+      }
+      .rounded-sm {
+        border-radius: 0.125rem;
+      }
+      .rounded {
+        border-radius: 0.25rem;
+      }
+      .rounded-md {
+        border-radius: var(--radius-md);
+      }
+      .rounded-lg {
+        border-radius: var(--radius-lg);
+      }
+      .rounded-xl {
+        border-radius: 1rem;
+      }
+      .rounded-full {
+        border-radius: 9999px;
+      }
+      .opacity-0 {
+        opacity: 0;
+      }
+      .opacity-50 {
+        opacity: 0.5;
+      }
+      .opacity-80 {
+        opacity: 0.8;
+      }
+      .opacity-90 {
+        opacity: 0.9;
+      }
+      .opacity-100 {
+        opacity: 1;
+      }
+
       /* Senior-UI Specific */
-      .section-padding { padding: var(--spacing-xxl) var(--spacing-md); }
-      .container-center { max-width: 1000px; margin: 0 auto; }
-      .container-center-sm { max-width: 800px; margin: 0 auto; }
-      .premium-container { text-align: center; padding: 2rem; min-height: 500px; }
-      .no-underline { text-decoration: none; }
-      .underline { text-decoration: underline; }
-      .section-margin { margin-bottom: var(--spacing-xxl); }
-      .title-margin { margin-bottom: var(--spacing-xl); }
-      
+      .section-padding {
+        padding: var(--spacing-xxl) var(--spacing-md);
+      }
+      .container-center {
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+      .container-center-sm {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      .premium-container {
+        text-align: center;
+        padding: 2rem;
+        min-height: 500px;
+      }
+      .no-underline {
+        text-decoration: none;
+      }
+      .underline {
+        text-decoration: underline;
+      }
+      .section-margin {
+        margin-bottom: var(--spacing-xxl);
+      }
+      .title-margin {
+        margin-bottom: var(--spacing-xl);
+      }
+
       /* Gradient text utility */
       .gradient-text {
         background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
@@ -1014,7 +1355,7 @@
         -webkit-text-fill-color: transparent;
         background-clip: text;
       }
-      
+
       /* Icon utilities */
       .icon-circle {
         width: 60px;
@@ -1026,26 +1367,36 @@
         margin-bottom: var(--spacing-md);
         font-size: var(--font-size-xl);
       }
-      
+
       .icon-circle-primary {
         background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
       }
-      
+
       .icon-circle-secondary {
         background: linear-gradient(135deg, var(--secondary-color) 0%, var(--warning-color) 100%);
       }
-      
+
       .icon-circle-accent {
         background: linear-gradient(135deg, var(--accent-color) 0%, var(--success-color) 100%);
       }
-      
+
       /* Grid utilities */
-      .grid { display: grid; }
-      .grid-auto-fit { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
-      .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
-      .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-      
+      .grid {
+        display: grid;
+      }
+      .grid-auto-fit {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      }
+      .grid-cols-1 {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+      }
+      .grid-cols-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .grid-cols-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
       /* Step utilities */
       .step-number {
         width: 80px;
@@ -1060,22 +1411,22 @@
         font-weight: 700;
         flex-shrink: 0;
       }
-      
+
       .step-card {
         display: flex;
         align-items: center;
         gap: var(--spacing-lg);
         padding: var(--spacing-xl);
       }
-      
+
       .step-number-secondary {
         background: var(--secondary-color);
       }
-      
+
       .step-number-accent {
         background: var(--accent-color);
       }
-      
+
       /* Status badge utilities */
       .status-badge {
         display: inline-block;
@@ -1083,18 +1434,18 @@
         border-radius: 20px;
         font-size: 0.9rem;
         font-weight: 600;
-        background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+        background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
         color: white;
         box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
         margin-bottom: 8px;
       }
-      
+
       .status-description {
         font-size: 0.8rem;
         color: var(--text-secondary);
         opacity: 0.8;
       }
-      
+
       /* Avatar utilities */
       .avatar-large {
         width: 100px;
@@ -1106,22 +1457,26 @@
         justify-content: center;
         font-size: 3rem;
       }
-      
+
       .avatar-gradient-1 {
         background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
       }
-      
+
       .avatar-gradient-2 {
         background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
       }
-      
+
       .avatar-gradient-3 {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       }
 
       /* Additional utility classes for inline style replacement */
       .compass-container-bg {
-        background: linear-gradient(135deg, rgba(248, 244, 230, 0.3) 0%, rgba(232, 220, 192, 0.5) 100%);
+        background: linear-gradient(
+          135deg,
+          rgba(248, 244, 230, 0.3) 0%,
+          rgba(232, 220, 192, 0.5) 100%
+        );
         border: 1px solid rgba(139, 115, 85, 0.2);
         border-radius: var(--radius-lg);
         min-height: 320px;
@@ -1376,7 +1731,11 @@
       }
 
       .premium-intro-message {
-        background: linear-gradient(135deg, rgba(139, 115, 85, 0.08) 0%, rgba(107, 91, 71, 0.12) 100%);
+        background: linear-gradient(
+          135deg,
+          rgba(139, 115, 85, 0.08) 0%,
+          rgba(107, 91, 71, 0.12) 100%
+        );
         border-left: 4px solid var(--compass-gold);
         border-radius: 12px;
         padding: 1rem;
@@ -1429,7 +1788,7 @@
       media="print"
       onload="this.media='all'"
     />
-    
+
     <!-- CSS Utilities -->
     <link rel="stylesheet" href="css/utilities.css" />
 
@@ -1549,15 +1908,9 @@
 
     <main role="main">
       <!-- 환영 섹션 -->
-      <section
-        id="home"
-        class="welcome-section section-padding"
-      >
+      <section id="home" class="welcome-section section-padding">
         <div class="container container-center text-center">
-          <h1
-            data-voice="인생의 황금기, 새로운 만남을 시작해보세요"
-            class="text-primary mb-lg"
-          >
+          <h1 data-voice="인생의 황금기, 새로운 만남을 시작해보세요" class="text-primary mb-lg">
             <span class="block mb-sm">인생의 황금기,</span>
             <span class="gradient-text">새로운 만남</span>을 시작해보세요
           </h1>
@@ -1603,23 +1956,15 @@
       </section>
 
       <!-- 서비스 소개 -->
-      <section
-        id="about"
-        class="section-padding bg-primary"
-      >
+      <section id="about" class="section-padding bg-primary">
         <div class="container container-center">
-          <h2
-            class="text-center mb-xl"
-            data-voice="우리가 특별한 이유"
-          >
+          <h2 class="text-center mb-xl" data-voice="우리가 특별한 이유">
             왜 <span class="text-primary-color">CHARM_INYEON</span>일까요?
           </h2>
           <div class="grid grid-auto-fit gap-lg">
             <div class="card">
               <div class="card-header">
-                <div class="icon-circle icon-circle-primary">
-                  🧠
-                </div>
+                <div class="icon-circle icon-circle-primary">🧠</div>
                 <h3 class="card-title">AI 가치관 분석</h3>
               </div>
               <div class="card-content">
@@ -1632,9 +1977,7 @@
 
             <div class="card">
               <div class="card-header">
-                <div class="icon-circle icon-circle-secondary">
-                  🤝
-                </div>
+                <div class="icon-circle icon-circle-secondary">🤝</div>
                 <h3 class="card-title">안전한 만남</h3>
               </div>
               <div class="card-content">
@@ -1647,9 +1990,7 @@
 
             <div class="card">
               <div class="card-header">
-                <div class="icon-circle icon-circle-accent">
-                  🎯
-                </div>
+                <div class="icon-circle icon-circle-accent">🎯</div>
                 <h3 class="card-title">중장년층 특화</h3>
               </div>
               <div class="card-content">
@@ -1664,31 +2005,17 @@
       </section>
 
       <!-- 회원가입 도우미 -->
-      <section
-        id="signup-helper"
-        class="section-padding bg-secondary"
-      >
+      <section id="signup-helper" class="section-padding bg-secondary">
         <div class="container container-center-sm">
-          <h2
-            class="text-center mb-xl"
-            data-voice="간단한 3단계로 시작하기"
-          >
+          <h2 class="text-center mb-xl" data-voice="간단한 3단계로 시작하기">
             간단한 3단계로 시작하세요
           </h2>
 
           <div class="signup-steps flex-col gap-lg">
-            <div
-              class="step-card card"
-            >
-              <div
-                class="step-number"
-              >
-                1
-              </div>
+            <div class="step-card card">
+              <div class="step-number">1</div>
               <div class="step-content">
-                <h3 class="mb-sm text-primary-color">
-                  기본 정보 입력
-                </h3>
+                <h3 class="mb-sm text-primary-color">기본 정보 입력</h3>
                 <p class="mb-sm">
                   이름, 연령대, 거주지 등 기본적인 정보를 입력해주세요. 개인정보는 안전하게
                   보호됩니다.
@@ -1702,19 +2029,10 @@
               </div>
             </div>
 
-            <div
-              class="step-card card"
-            >
-              <div
-                class="step-number"
-class="step-number step-number-secondary"
-              >
-                2
-              </div>
+            <div class="step-card card">
+              <div class="step-number" class="step-number step-number-secondary">2</div>
               <div class="step-content">
-                <h3 class="mb-sm text-secondary-color">
-                  가치관 분석
-                </h3>
+                <h3 class="mb-sm text-secondary-color">가치관 분석</h3>
                 <p class="mb-sm">
                   20개의 간단한 질문에 답하시면 AI가 당신의 가치관을 분석합니다. 정답은 없으니
                   편안하게 답해주세요.
@@ -1728,19 +2046,10 @@ class="step-number step-number-secondary"
               </div>
             </div>
 
-            <div
-              class="step-card card"
-            >
-              <div
-                class="step-number"
-class="step-number step-number-accent"
-              >
-                3
-              </div>
+            <div class="step-card card">
+              <div class="step-number" class="step-number step-number-accent">3</div>
               <div class="step-content">
-                <h3 class="mb-sm text-accent-color">
-                  매칭 시작
-                </h3>
+                <h3 class="mb-sm text-accent-color">매칭 시작</h3>
                 <p class="mb-sm">
                   AI가 당신과 잘 맞는 분들을 찾아드립니다. 마음에 드시는 분이 있으면 인사를
                   나눠보세요.
@@ -1782,15 +2091,9 @@ class="step-number step-number-accent"
       </section>
 
       <!-- 매칭 결과 미리보기 -->
-      <section
-        id="matching"
-        class="section-padding bg-primary"
-      >
+      <section id="matching" class="section-padding bg-primary">
         <div class="container container-center">
-          <h2
-            class="text-center mb-md"
-            data-voice="매칭 결과 예시 보기"
-          >
+          <h2 class="text-center mb-md" data-voice="매칭 결과 예시 보기">
             이런 분들을 만날 수 있어요
           </h2>
 
@@ -1807,24 +2110,22 @@ class="step-number step-number-accent"
           <div class="matching-preview grid grid-auto-fit gap-lg">
             <!-- 매칭 카드 1 -->
             <div class="match-card card text-center">
-              <div class="avatar-large avatar-gradient-1 flex-center mb-md">
-                👨‍💼
-              </div>
+              <div class="avatar-large avatar-gradient-1 flex-center mb-md">👨‍💼</div>
               <h3 class="mb-sm">김철수님 (52세)</h3>
               <!-- 🧭💕 하트 나침반으로 매칭도 표시 (v2.1 업그레이드) -->
               <div class="compass-container compass-container-bg mb-md p-xl flex-col-center">
                 <!-- 하트 나침반 중앙 정렬 컨테이너 -->
                 <div class="compass-center-wrapper mb-lg">
-                  <div 
-                    class="heart-compass high-compatibility" 
-                    style="--matching-angle: 15deg; cursor: pointer;" 
+                  <div
+                    class="heart-compass high-compatibility"
+                    style="--matching-angle: 15deg; cursor: pointer"
                     data-matching-score="92"
                     onclick="if(window.seniorUI) { window.seniorUI.showMatchingResult(this, 92); } else { console.error('seniorUI not loaded'); }"
                     title="하트 나침반을 클릭해서 매칭 애니메이션을 시작하세요!"
                   >
                     <!-- 나침반 외곽 장식 -->
                     <div class="compass-rim"></div>
-                    
+
                     <!-- 나침반 방향 표시 -->
                     <div class="compass-directions">
                       <div class="direction-marker north true-love-mark">True Love</div>
@@ -1832,20 +2133,23 @@ class="step-number step-number-accent"
                       <div class="direction-marker east">E</div>
                       <div class="direction-marker west">W</div>
                     </div>
-                    
+
                     <!-- 하트 바늘 -->
                     <div class="heart-needle matching-reveal"></div>
-                    
+
                     <!-- 나침반 중앙 포인트 -->
                     <div class="compass-center"></div>
 
                     <!-- 🧠 상세 분석 버튼 -->
-                    <div class="compass-detail-btn compass-detail-btn-positioned" onclick="window.seniorUI?.showDetailedAnalysis(this.closest('.heart-compass'))">
+                    <div
+                      class="compass-detail-btn compass-detail-btn-positioned"
+                      onclick="window.seniorUI?.showDetailedAnalysis(this.closest('.heart-compass'))"
+                    >
                       💡 왜 이렇게 잘 맞나요?
                     </div>
                   </div>
                 </div>
-                
+
                 <!-- 매칭도 텍스트 -->
                 <div class="text-center">
                   <div class="compatibility-score-text mb-xs">
@@ -1854,9 +2158,12 @@ class="step-number step-number-accent"
                   <div class="compatibility-message" data-message>
                     🎉 운명적 인연을 발견했습니다!
                   </div>
-                  
+
                   <!-- 🎭 음성 재생 버튼 -->
-                  <button class="voice-narration-btn voice-narration-btn-simple" onclick="window.seniorUI?.playMatchingNarration(92)">
+                  <button
+                    class="voice-narration-btn voice-narration-btn-simple"
+                    onclick="window.seniorUI?.playMatchingNarration(92)"
+                  >
                     🎵 감동 메시지 듣기
                   </button>
                 </div>
@@ -1895,23 +2202,21 @@ class="step-number step-number-accent"
             </div>
 
             <!-- 💎 프리미엄 매칭 카드 2 (이영희님) -->
-            <div class="match-card premium-profile-card text-center p-2xl premium-profile-min-height">
+            <div
+              class="match-card premium-profile-card text-center p-2xl premium-profile-min-height"
+            >
               <!-- 인증 배지 -->
-              <div class="verification-badge">
-                ✓ 본인인증
-              </div>
-              
+              <div class="verification-badge">✓ 본인인증</div>
+
               <!-- 프리미엄 프로필 이미지 -->
               <div class="premium-avatar premium-avatar-centered">
-                <div class="premium-avatar-full premium-avatar-bg-3">
-                  👩‍🎨
-                </div>
+                <div class="premium-avatar-full premium-avatar-bg-3">👩‍🎨</div>
               </div>
-              
+
               <!-- 프리미엄 이름 & 나이 -->
               <h3 class="premium-name">이영희님</h3>
               <div class="premium-age">48세 • 서울 서초구</div>
-              
+
               <!-- 프리미엄 매칭 점수 -->
               <div class="premium-compatibility">
                 <div class="premium-score">87%</div>
@@ -1930,7 +2235,8 @@ class="step-number step-number-accent"
 
               <!-- 프리미엄 소개 메시지 -->
               <div class="premium-intro-message">
-                "예술과 문화를 사랑하며, 끊임없이 배우고 성장하는 삶을 추구합니다. 함께 아름다운 것들을 나누고 싶어요."
+                "예술과 문화를 사랑하며, 끊임없이 배우고 성장하는 삶을 추구합니다. 함께 아름다운
+                것들을 나누고 싶어요."
               </div>
 
               <!-- 프리미엄 버튼 그룹 -->
@@ -1942,7 +2248,7 @@ class="step-number step-number-accent"
                 >
                   💝 품격있는 대화 시작하기
                 </button>
-                
+
                 <div class="profile-secondary-buttons">
                   <button
                     class="premium-btn"
@@ -1966,30 +2272,26 @@ class="step-number step-number-accent"
             </div>
 
             <!-- 💎 프리미엄 매칭 카드 3 (박민수님) -->
-            <div class="match-card premium-profile-card text-center p-2xl premium-profile-min-height">
+            <div
+              class="match-card premium-profile-card text-center p-2xl premium-profile-min-height"
+            >
               <!-- 인증 배지 -->
-              <div class="verification-badge">
-                ✓ 검증회원
-              </div>
-              
+              <div class="verification-badge">✓ 검증회원</div>
+
               <!-- 프리미엄 프로필 이미지 -->
               <div class="premium-avatar premium-avatar-centered">
-                <div class="premium-avatar-full premium-avatar-bg-2">
-                  👨‍🏫
-                </div>
+                <div class="premium-avatar-full premium-avatar-bg-2">👨‍🏫</div>
               </div>
-              
+
               <!-- 프리미엄 이름 & 나이 -->
               <h3 class="premium-name">박민수님</h3>
               <div class="premium-age">55세 • 서울 강북구</div>
-              
+
               <!-- 프리미엄 매칭 점수 -->
               <div class="premium-compatibility">
                 <div class="premium-score">84%</div>
                 <div class="premium-compatibility-rating">좋은 궁합</div>
-                <div class="premium-compatibility-description">
-                  ✨ 서로를 더 알아가 보세요!
-                </div>
+                <div class="premium-compatibility-description">✨ 서로를 더 알아가 보세요!</div>
               </div>
 
               <!-- 프리미엄 태그 시스템 -->
@@ -2001,7 +2303,8 @@ class="step-number step-number-accent"
 
               <!-- 프리미엄 소개 메시지 -->
               <div class="premium-intro-message">
-                "새로운 경험과 진솔한 대화를 통해 서로 성장하는 관계를 원합니다. 인생의 지혜를 함께 나누고 싶어요."
+                "새로운 경험과 진솔한 대화를 통해 서로 성장하는 관계를 원합니다. 인생의 지혜를 함께
+                나누고 싶어요."
               </div>
 
               <!-- 프리미엄 버튼 그룹 -->
@@ -2013,7 +2316,7 @@ class="step-number step-number-accent"
                 >
                   🌟 지혜로운 대화 시작하기
                 </button>
-                
+
                 <div class="profile-secondary-buttons">
                   <button
                     class="premium-btn"
@@ -2038,9 +2341,7 @@ class="step-number step-number-accent"
           </div>
 
           <div class="text-center mt-xl">
-            <div
-              class="alert alert-info info-with-icon"
-            >
+            <div class="alert alert-info info-with-icon">
               <svg
                 class="info-icon"
                 viewBox="0 0 24 24"
@@ -2063,25 +2364,13 @@ class="step-number step-number-accent"
       </section>
 
       <!-- 도움말 섹션 -->
-      <section
-        id="help"
-        class="section-padding faq-section-bg"
-      >
+      <section id="help" class="section-padding faq-section-bg">
         <div class="container container-center-sm">
-          <h2
-            class="text-center mb-xl"
-            data-voice="자주 묻는 질문들"
-          >
-            자주 묻는 질문들
-          </h2>
+          <h2 class="text-center mb-xl" data-voice="자주 묻는 질문들">자주 묻는 질문들</h2>
 
-          <div
-            class="faq-list flex-col gap-md"
-          >
+          <div class="faq-list flex-col gap-md">
             <details class="faq-item card faq-item-styled">
-              <summary class="faq-summary-styled text-primary-color">
-                가입비용이 있나요?
-              </summary>
+              <summary class="faq-summary-styled text-primary-color">가입비용이 있나요?</summary>
               <div class="faq-content-padding">
                 <p>
                   가입과 기본 매칭 서비스는 완전 무료입니다. 추가 기능 이용시에만 소정의 요금이
@@ -2128,9 +2417,7 @@ class="step-number step-number-accent"
           </div>
 
           <div class="text-center mt-xl">
-            <p class="mb-md">
-              더 궁금한 점이 있으시면 언제든 문의해주세요.
-            </p>
+            <p class="mb-md">더 궁금한 점이 있으시면 언제든 문의해주세요.</p>
             <div class="flex-wrap-center flex-gap-md">
               <a href="tel:1588-0000" class="btn btn-secondary">
                 <svg
@@ -2196,9 +2483,7 @@ class="step-number step-number-accent"
 
           <!-- 1단계: 기본 정보 -->
           <form id="signupStep1" class="signup-step">
-            <h3 class="mb-lg text-center text-primary-color">
-              기본 정보를 입력해주세요
-            </h3>
+            <h3 class="mb-lg text-center text-primary-color">기본 정보를 입력해주세요</h3>
 
             <div class="form-group">
               <label for="signup-name" class="form-label required">이름</label>
@@ -2278,9 +2563,7 @@ class="step-number step-number-accent"
 
           <!-- 2단계: 연락처 및 인증 -->
           <form id="signupStep2" class="signup-step hidden-data">
-            <h3 class="mb-lg text-center text-primary-color">
-              연락처와 비밀번호를 설정해주세요
-            </h3>
+            <h3 class="mb-lg text-center text-primary-color">연락처와 비밀번호를 설정해주세요</h3>
 
             <div class="form-group">
               <label for="signup-email" class="form-label required">이메일</label>
@@ -2369,18 +2652,14 @@ class="step-number step-number-accent"
 
           <!-- 3단계: 약관 동의 -->
           <form id="signupStep3" class="signup-step hidden-data">
-            <h3 class="mb-lg text-center text-primary-color">
-              약관에 동의해주세요
-            </h3>
+            <h3 class="mb-lg text-center text-primary-color">약관에 동의해주세요</h3>
 
             <div class="form-group">
               <label class="form-checkbox">
                 <input type="checkbox" id="agree-terms" required />
                 <span class="signup-terms-margin">
                   <strong>이용약관</strong>에 동의합니다 (필수)
-                  <a href="#" class="signup-link-styled"
-                    >내용 보기</a
-                  >
+                  <a href="#" class="signup-link-styled">내용 보기</a>
                 </span>
               </label>
             </div>
@@ -2390,9 +2669,7 @@ class="step-number step-number-accent"
                 <input type="checkbox" id="agree-privacy" required />
                 <span class="signup-terms-margin">
                   <strong>개인정보처리방침</strong>에 동의합니다 (필수)
-                  <a href="#" class="signup-link-styled"
-                    >내용 보기</a
-                  >
+                  <a href="#" class="signup-link-styled">내용 보기</a>
                 </span>
               </label>
             </div>
@@ -2481,9 +2758,7 @@ class="step-number step-number-accent"
 
         <div class="footer-copyright">
           <p>&copy; 2024 CHARM_INYEON. 모든 권리 보유.</p>
-          <p class="mt-xs">
-            고객센터: 1588-0000 | 이메일: help@charminyeon.co.kr
-          </p>
+          <p class="mt-xs">고객센터: 1588-0000 | 이메일: help@charminyeon.co.kr</p>
         </div>
       </div>
     </footer>

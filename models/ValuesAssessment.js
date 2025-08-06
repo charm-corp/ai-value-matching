@@ -71,17 +71,17 @@ const valuesAssessmentSchema = new mongoose.Schema(
         if (!value) {
           return value;
         }
-        
+
         // 이미 복호화된 객체인 경우 그대로 반환
         if (typeof value === 'object' && value.constructor === Object) {
           return value;
         }
-        
+
         // 문자열이 아닌 경우 (암호화되지 않은 데이터) 그대로 반환
         if (typeof value !== 'string') {
           return value;
         }
-        
+
         // 암호화된 형식인지 확인 (iv:authTag:encrypted)
         if (typeof value === 'string' && value.includes(':') && value.split(':').length === 3) {
           try {
@@ -93,7 +93,7 @@ const valuesAssessmentSchema = new mongoose.Schema(
             return value;
           }
         }
-        
+
         // 일반 JSON 문자열인 경우
         try {
           return JSON.parse(value);
@@ -106,12 +106,12 @@ const valuesAssessmentSchema = new mongoose.Schema(
         if (!value) {
           return value;
         }
-        
+
         // 이미 암호화된 문자열인 경우 그대로 저장
         if (typeof value === 'string' && value.includes(':') && value.split(':').length === 3) {
           return value;
         }
-        
+
         try {
           const jsonString = JSON.stringify(value);
           return encryptionService.encryptAssessment(jsonString);

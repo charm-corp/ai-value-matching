@@ -2213,11 +2213,11 @@ function determineBestMatchForAgeGroup(matches, comparisonResult) {
 router.get('/test', async (req, res) => {
   try {
     console.log('매칭 테스트 엔드포인트 호출됨');
-    
+
     // 모든 사용자 조회
     const users = await User.find({}).limit(10);
     const assessments = await ValuesAssessment.find({}).limit(10);
-    
+
     if (users.length < 2) {
       return res.json({
         success: false,
@@ -2225,15 +2225,15 @@ router.get('/test', async (req, res) => {
         data: {
           userCount: users.length,
           assessmentCount: assessments.length,
-          users: users.map(u => ({ name: u.name, email: u.email }))
-        }
+          users: users.map(u => ({ name: u.name, email: u.email })),
+        },
       });
     }
 
     // 첫 번째와 두 번째 사용자로 매칭 테스트
     const user1 = users[0];
     const user2 = users[1];
-    
+
     console.log(`매칭 테스트: ${user1.name} ↔ ${user2.name}`);
 
     // 호환성 점수 계산
@@ -2250,7 +2250,7 @@ router.get('/test', async (req, res) => {
     try {
       const assessment1 = await ValuesAssessment.findOne({ userId: user1._id });
       const assessment2 = await ValuesAssessment.findOne({ userId: user2._id });
-      
+
       if (assessment1 && assessment2) {
         valuesCompatibility = assessment1.calculateCompatibilityWith(assessment2);
         console.log('가치관 호환성 점수:', valuesCompatibility);
@@ -2275,8 +2275,8 @@ router.get('/test', async (req, res) => {
           timestamp: new Date().toISOString(),
           testUsers: {
             user1: { name: user1.name, age: user1.age, gender: user1.gender },
-            user2: { name: user2.name, age: user2.age, gender: user2.gender }
-          }
+            user2: { name: user2.name, age: user2.age, gender: user2.gender },
+          },
         },
         results: {
           advancedCompatibility: compatibilityResult,
@@ -2284,8 +2284,8 @@ router.get('/test', async (req, res) => {
           potentialMatchesCount: potentialMatches.length,
           potentialMatches: potentialMatches.map(match => ({
             name: match.user?.name || 'Unknown',
-            score: match.compatibilityScore?.totalScore || 0
-          }))
+            score: match.compatibilityScore?.totalScore || 0,
+          })),
         },
         database: {
           totalUsers: users.length,
@@ -2293,19 +2293,18 @@ router.get('/test', async (req, res) => {
           users: users.map(u => ({
             name: u.name,
             age: u.age,
-            hasAssessment: assessments.some(a => a.userId.toString() === u._id.toString())
-          }))
-        }
+            hasAssessment: assessments.some(a => a.userId.toString() === u._id.toString()),
+          })),
+        },
       },
-      message: '매칭 시스템 테스트가 완료되었습니다.'
+      message: '매칭 시스템 테스트가 완료되었습니다.',
     });
-
   } catch (error) {
     console.error('매칭 테스트 오류:', error);
     res.status(500).json({
       success: false,
       error: '매칭 테스트 중 오류가 발생했습니다.',
-      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined,
     });
   }
 });

@@ -297,7 +297,9 @@ class EmailService {
     }
 
     try {
-      const verificationLink = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/verify-email?token=${verificationToken}&code=${verificationCode}`;
+      const verificationLink = `${
+        process.env.FRONTEND_URL || 'http://localhost:3000'
+      }/verify-email?token=${verificationToken}&code=${verificationCode}`;
       const emailTemplate = this.getVerificationEmailTemplate(
         userName,
         verificationCode,
@@ -332,7 +334,9 @@ class EmailService {
     }
 
     try {
-      const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}&code=${resetCode}`;
+      const resetLink = `${
+        process.env.FRONTEND_URL || 'http://localhost:3000'
+      }/reset-password?token=${resetToken}&code=${resetCode}`;
       const emailTemplate = this.getPasswordResetTemplate(userName, resetCode, resetLink);
 
       const mailOptions = {

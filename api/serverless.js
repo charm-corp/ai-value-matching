@@ -6,11 +6,13 @@ const path = require('path');
 const app = express();
 
 // CORS 설정 - 모든 오리진 허용 (개발용)
-app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+app.use(
+  cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+);
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
@@ -31,21 +33,21 @@ const testUsers = [
     hasAssessment: true,
     isActive: true,
     profileCompleteness: 85,
-    createdAt: '2025-07-29T04:02:21.410Z'
+    createdAt: '2025-07-29T04:02:21.410Z',
   },
   {
     id: '686bc47cdbe9a3ad7e138f970',
     name: '이매력',
     age: '46-50',
-    gender: 'female', 
+    gender: 'female',
     location: { city: '서울', district: '서초구' },
     bio: '진정한 인연을 찾고 있습니다. 함께 웃고 울 수 있는 따뜻한 사람을 만나고 싶어요.',
     interests: ['요리', '영화감상', '산책', '카페투어'],
     hasAssessment: true,
     isActive: true,
     profileCompleteness: 92,
-    createdAt: '2025-07-29T04:02:27.234Z'
-  }
+    createdAt: '2025-07-29T04:02:27.234Z',
+  },
 ];
 
 // API 라우트들
@@ -55,27 +57,27 @@ app.get('/api/users', (req, res) => {
     data: {
       users: testUsers,
       totalCount: testUsers.length,
-      currentCount: testUsers.length
+      currentCount: testUsers.length,
     },
-    message: '총 2명의 사용자를 조회했습니다.'
+    message: '총 2명의 사용자를 조회했습니다.',
   });
 });
 
 app.get('/api/matching/test', (req, res) => {
   const user1 = testUsers[0]; // 김세렌
   const user2 = testUsers[1]; // 이매력
-  
+
   const compatibility = {
     totalScore: 70,
     breakdown: {
-      valuesAlignment: 100,      // 가치관 일치도 100%
-      lifestyleMatch: 50,        // 라이프스타일 50%
+      valuesAlignment: 100, // 가치관 일치도 100%
+      lifestyleMatch: 50, // 라이프스타일 50%
       maritalStatusCompatibility: 50,
       childrenCompatibility: 50,
       occupationCompatibility: 50,
-      ageCompatibility: 90,      // 연령 호환성 90%
-      locationCompatibility: 30   // 지역 호환성 30%
-    }
+      ageCompatibility: 90, // 연령 호환성 90%
+      locationCompatibility: 30, // 지역 호환성 30%
+    },
   };
 
   res.json({
@@ -85,8 +87,8 @@ app.get('/api/matching/test', (req, res) => {
         timestamp: new Date().toISOString(),
         testUsers: {
           user1: { name: user1.name, age: user1.age },
-          user2: { name: user2.name, age: user2.age }
-        }
+          user2: { name: user2.name, age: user2.age },
+        },
       },
       results: {
         advancedCompatibility: compatibility,
@@ -97,21 +99,21 @@ app.get('/api/matching/test', (req, res) => {
             age: user2.age,
             compatibilityScore: 70,
             serendipityScore: 64,
-            matchReason: '가치관 일치도가 높고 생활 패턴이 조화롭습니다.'
-          }
+            matchReason: '가치관 일치도가 높고 생활 패턴이 조화롭습니다.',
+          },
         ],
         database: {
           totalUsers: testUsers.length,
           totalAssessments: testUsers.length,
-          users: testUsers.map(u => ({ 
-            name: u.name, 
-            age: u.age, 
-            hasAssessment: u.hasAssessment 
-          }))
-        }
-      }
+          users: testUsers.map(u => ({
+            name: u.name,
+            age: u.age,
+            hasAssessment: u.hasAssessment,
+          })),
+        },
+      },
     },
-    message: '매칭 시스템 테스트가 완료되었습니다.'
+    message: '매칭 시스템 테스트가 완료되었습니다.',
   });
 });
 
@@ -119,12 +121,12 @@ app.get('/api/matching/test', (req, res) => {
 app.get('/api/matching/intelligent-compatibility/:targetUserId', (req, res) => {
   const { targetUserId } = req.params;
   const targetUser = testUsers.find(u => u.id === targetUserId);
-  
+
   if (!targetUser) {
     return res.status(404).json({
       success: false,
       error: '사용자를 찾을 수 없습니다.',
-      code: 'USER_NOT_FOUND'
+      code: 'USER_NOT_FOUND',
     });
   }
 
@@ -135,10 +137,10 @@ app.get('/api/matching/intelligent-compatibility/:targetUserId', (req, res) => {
       lifestyleMatch: 70,
       personalityMatch: 80,
       interestsMatch: 65,
-      locationCompatibility: 40
+      locationCompatibility: 40,
     },
     recommendation: '매우 높은 호환성을 보입니다. 진정한 인연이 될 가능성이 높아요!',
-    matchStrength: 'high'
+    matchStrength: 'high',
   };
 
   res.json({
@@ -147,12 +149,12 @@ app.get('/api/matching/intelligent-compatibility/:targetUserId', (req, res) => {
       targetUser: {
         id: targetUser.id,
         name: targetUser.name,
-        age: targetUser.age
+        age: targetUser.age,
       },
       compatibility,
-      analysisTimestamp: new Date().toISOString()
+      analysisTimestamp: new Date().toISOString(),
     },
-    message: '호환성 분석이 완료되었습니다.'
+    message: '호환성 분석이 완료되었습니다.',
   });
 });
 
@@ -160,19 +162,19 @@ app.get('/api/matching/intelligent-compatibility/:targetUserId', (req, res) => {
 app.get('/api/users/:userId', (req, res) => {
   const { userId } = req.params;
   const user = testUsers.find(u => u.id === userId);
-  
+
   if (!user) {
     return res.status(404).json({
       success: false,
       error: '사용자를 찾을 수 없습니다.',
-      code: 'USER_NOT_FOUND'
+      code: 'USER_NOT_FOUND',
     });
   }
 
   res.json({
     success: true,
     data: user,
-    message: '사용자 정보를 성공적으로 조회했습니다.'
+    message: '사용자 정보를 성공적으로 조회했습니다.',
   });
 });
 
@@ -187,7 +189,7 @@ app.post('/api/matching/generate', (req, res) => {
     bio: user.bio,
     compatibilityScore: Math.floor(Math.random() * 30) + 70, // 70-100 랜덤
     matchReason: '가치관과 생활 패턴이 잘 맞습니다.',
-    serendipityScore: Math.floor(Math.random() * 40) + 60 // 60-100 랜덤
+    serendipityScore: Math.floor(Math.random() * 40) + 60, // 60-100 랜덤
   }));
 
   res.json({
@@ -195,9 +197,9 @@ app.post('/api/matching/generate', (req, res) => {
     data: {
       matches,
       totalMatches: matches.length,
-      generatedAt: new Date().toISOString()
+      generatedAt: new Date().toISOString(),
     },
-    message: `${matches.length}개의 매칭 결과를 생성했습니다.`
+    message: `${matches.length}개의 매칭 결과를 생성했습니다.`,
   });
 });
 
@@ -205,12 +207,12 @@ app.post('/api/matching/generate', (req, res) => {
 app.get('/api/values/assessment/:userId', (req, res) => {
   const { userId } = req.params;
   const user = testUsers.find(u => u.id === userId);
-  
+
   if (!user) {
     return res.status(404).json({
       success: false,
       error: '사용자를 찾을 수 없습니다.',
-      code: 'USER_NOT_FOUND'
+      code: 'USER_NOT_FOUND',
     });
   }
 
@@ -222,26 +224,26 @@ app.get('/api/values/assessment/:userId', (req, res) => {
       careerOrientation: 70,
       socialConnection: 90,
       personalGrowth: 80,
-      lifestyle: 75
+      lifestyle: 75,
     },
     personality: {
       openness: 75,
       conscientiousness: 85,
       extraversion: 60,
       agreeableness: 90,
-      neuroticism: 30
+      neuroticism: 30,
     },
     preferences: {
       communicationStyle: 'direct_caring',
       conflictResolution: 'collaborative',
-      leisureActivities: user.interests
-    }
+      leisureActivities: user.interests,
+    },
   };
 
   res.json({
     success: true,
     data: assessment,
-    message: '가치관 평가 결과를 조회했습니다.'
+    message: '가치관 평가 결과를 조회했습니다.',
   });
 });
 
@@ -258,8 +260,8 @@ app.get('/api/matching/health', (req, res) => {
       '/api/matching/generate',
       '/api/matching/test',
       '/api/users/:userId',
-      '/api/values/assessment/:userId'
-    ]
+      '/api/values/assessment/:userId',
+    ],
   });
 });
 
@@ -271,16 +273,16 @@ app.get('/api/health', (req, res) => {
     version: '2.0.0-serverless',
     environment: 'production',
     database: 'in-memory',
-    users: testUsers.length
+    users: testUsers.length,
   });
 });
 
 // Ping 엔드포인트
 app.get('/ping', (req, res) => {
-  res.json({ 
+  res.json({
     message: 'pong',
     timestamp: new Date().toISOString(),
-    server: 'CHARM_INYEON Serverless'
+    server: 'CHARM_INYEON Serverless',
   });
 });
 
@@ -355,8 +357,8 @@ app.get('*', (req, res) => {
         'GET /api/users',
         'GET /api/matching/test',
         'GET /api/health',
-        'GET /ping'
-      ]
+        'GET /ping',
+      ],
     });
   }
 });
@@ -367,7 +369,7 @@ app.use((err, req, res, next) => {
   res.status(500).json({
     error: 'Internal Server Error',
     message: err.message,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 

@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
@@ -9,12 +9,7 @@
     <title>🎯 Phase 3 매칭 시스템 실제 테스트 v2.3 - 글자색 개선 (2025-07-10 19:15)</title>
     <style>
       body {
-        font-family:
-          'Noto Sans KR',
-          -apple-system,
-          BlinkMacSystemFont,
-          'Segoe UI',
-          sans-serif;
+        font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         max-width: 1200px;
         margin: 0 auto;
         padding: 2rem;
@@ -1238,9 +1233,15 @@
             stepElement.innerHTML = `
                         <div class="step-icon pending" id="icon-${index}">${index + 1}</div>
                         <div class="step-text">
-                            <div class="step-title" style="color: #000000 !important; font-weight: 800 !important; font-size: 1rem !important;">${step.title}</div>
-                            <div class="step-description" style="color: #dc2626 !important; font-weight: 700 !important; font-size: 0.95rem !important;">${step.description}</div>
-                            <div class="step-detail" id="detail-${index}" style="display: none; color: #7c3aed !important; font-size: 0.9rem; margin-top: 0.3rem; font-style: italic; font-weight: 600 !important;">${step.detail || ''}</div>
+                            <div class="step-title" style="color: #000000 !important; font-weight: 800 !important; font-size: 1rem !important;">${
+                              step.title
+                            }</div>
+                            <div class="step-description" style="color: #dc2626 !important; font-weight: 700 !important; font-size: 0.95rem !important;">${
+                              step.description
+                            }</div>
+                            <div class="step-detail" id="detail-${index}" style="display: none; color: #7c3aed !important; font-size: 0.9rem; margin-top: 0.3rem; font-style: italic; font-weight: 600 !important;">${
+              step.detail || ''
+            }</div>
                         </div>
                         <div class="step-time" id="time-${index}" style="color: #059669 !important; font-weight: 700 !important; font-size: 0.85rem !important;">대기 중</div>
                     `;
@@ -1358,7 +1359,9 @@
 
             // 현재 단계 색상 변경
             const currentStage = document.getElementById('currentStage');
-            currentStage.style.background = `linear-gradient(135deg, ${stage.color}, ${this.adjustColor(stage.color, -20)})`;
+            currentStage.style.background = `linear-gradient(135deg, ${
+              stage.color
+            }, ${this.adjustColor(stage.color, -20)})`;
           }
 
           // 단계 도트 업데이트
@@ -1589,31 +1592,45 @@
           const resultHTML = `
                     <div class="score-display">${matchingResult.overallScore}점</div>
                     <div class="performance-stats">
-                        <div class="performance-item">⚡ 처리 시간: ${processingTime.toFixed(2)}ms</div>
-                        <div class="performance-item">🎯 신뢰도: ${matchingResult.confidenceLevel}%</div>
+                        <div class="performance-item">⚡ 처리 시간: ${processingTime.toFixed(
+                          2
+                        )}ms</div>
+                        <div class="performance-item">🎯 신뢰도: ${
+                          matchingResult.confidenceLevel
+                        }%</div>
                         <div class="performance-item">📊 버전: ${matchingResult.version}</div>
                     </div>
                     
                     <h4>📊 5개 영역 세부 점수</h4>
                     <div class="score-details">
                         <div class="score-item">
-                            <div class="score-value">${Math.round(matchingResult.compatibility.breakdown.coreValues || 0)}</div>
+                            <div class="score-value">${Math.round(
+                              matchingResult.compatibility.breakdown.coreValues || 0
+                            )}</div>
                             <div class="score-label">핵심 가치관 (35%)</div>
                         </div>
                         <div class="score-item">
-                            <div class="score-value">${Math.round(matchingResult.compatibility.breakdown.personalityFit || 0)}</div>
+                            <div class="score-value">${Math.round(
+                              matchingResult.compatibility.breakdown.personalityFit || 0
+                            )}</div>
                             <div class="score-label">성격 궁합 (25%)</div>
                         </div>
                         <div class="score-item">
-                            <div class="score-value">${Math.round(matchingResult.compatibility.breakdown.lifestyleCompat || 0)}</div>
+                            <div class="score-value">${Math.round(
+                              matchingResult.compatibility.breakdown.lifestyleCompat || 0
+                            )}</div>
                             <div class="score-label">라이프스타일 (20%)</div>
                         </div>
                         <div class="score-item">
-                            <div class="score-value">${Math.round(matchingResult.compatibility.breakdown.communicationSync || 0)}</div>
+                            <div class="score-value">${Math.round(
+                              matchingResult.compatibility.breakdown.communicationSync || 0
+                            )}</div>
                             <div class="score-label">소통 스타일 (12%)</div>
                         </div>
                         <div class="score-item">
-                            <div class="score-value">${Math.round(matchingResult.compatibility.breakdown.growthPotential || 0)}</div>
+                            <div class="score-value">${Math.round(
+                              matchingResult.compatibility.breakdown.growthPotential || 0
+                            )}</div>
                             <div class="score-label">성장 가능성 (8%)</div>
                         </div>
                     </div>
@@ -1626,7 +1643,9 @@
                             <div class="reason-item">
                                 <div class="reason-title">
                                     ${index + 1}. ${reason.title}
-                                    <span class="importance-badge">${Math.round(reason.importance)}점</span>
+                                    <span class="importance-badge">${Math.round(
+                                      reason.importance
+                                    )}점</span>
                                 </div>
                                 <div class="reason-description">${reason.description}</div>
                             </div>
@@ -1638,7 +1657,9 @@
 
           showResult('matchingResult', resultHTML, true);
           updateStatus(
-            `✅ Phase 3 매칭 완료! ${matchingResult.overallScore}점 (${processingTime.toFixed(2)}ms)`
+            `✅ Phase 3 매칭 완료! ${matchingResult.overallScore}점 (${processingTime.toFixed(
+              2
+            )}ms)`
           );
         } catch (error) {
           loadingManager.setError(`매칭 분석 실패: ${error.message}`);
@@ -1972,7 +1993,9 @@
                     <div class="performance-item">🔄 일관성: ${consistency}</div>
                 </div>
                 <p><strong>모든 테스트 결과:</strong> ${results.join(', ')}점</p>
-                <p><strong>성능 목표 달성:</strong> ${avgTime < 1 ? '✅ 0.5ms 목표 달성!' : '⚠️ 목표 시간 초과'}</p>
+                <p><strong>성능 목표 달성:</strong> ${
+                  avgTime < 1 ? '✅ 0.5ms 목표 달성!' : '⚠️ 목표 시간 초과'
+                }</p>
             `;
 
         await new Promise(resolve => setTimeout(resolve, 300));
@@ -2009,7 +2032,9 @@
 
           const resultHTML = `
                     <h4>🧭 5차원 가치관 분석 완료</h4>
-                    <p><strong>핵심 메시지:</strong> ${analysisResult.analysisResult.coreMessage}</p>
+                    <p><strong>핵심 메시지:</strong> ${
+                      analysisResult.analysisResult.coreMessage
+                    }</p>
                     
                     <h5>📊 주요 가치관 TOP 3</h5>
                     <div class="score-details">
@@ -2026,9 +2051,15 @@
                     </div>
                     
                     <h5>🤝 성격 프로필</h5>
-                    <p><strong>소통 스타일:</strong> ${analysisResult.valueProfile.personalityProfile.communicationStyle}</p>
-                    <p><strong>의사결정:</strong> ${analysisResult.valueProfile.personalityProfile.decisionMaking}</p>
-                    <p><strong>갈등 해결:</strong> ${analysisResult.valueProfile.personalityProfile.conflictResolution}</p>
+                    <p><strong>소통 스타일:</strong> ${
+                      analysisResult.valueProfile.personalityProfile.communicationStyle
+                    }</p>
+                    <p><strong>의사결정:</strong> ${
+                      analysisResult.valueProfile.personalityProfile.decisionMaking
+                    }</p>
+                    <p><strong>갈등 해결:</strong> ${
+                      analysisResult.valueProfile.personalityProfile.conflictResolution
+                    }</p>
                     
                     <p><strong>분석 신뢰도:</strong> ${analysisResult.confidence}%</p>
                 `;
@@ -2100,7 +2131,9 @@
                     <h4>🎨 시각화 데이터 생성 완료</h4>
                     <p><strong>전체 호환성:</strong> ${visualData.overallCompatibility.score}점</p>
                     <p><strong>호환성 레벨:</strong> ${visualData.overallCompatibility.level}</p>
-                    <p><strong>색상 코드:</strong> <span style="color: ${visualData.overallCompatibility.color};">${visualData.overallCompatibility.color}</span></p>
+                    <p><strong>색상 코드:</strong> <span style="color: ${
+                      visualData.overallCompatibility.color
+                    };">${visualData.overallCompatibility.color}</span></p>
                     
                     <h5>📊 생성된 시각화 요소</h5>
                     <ul>
@@ -2195,9 +2228,13 @@
         const resultHTML = `
                 <h4>🚀 Phase 3 시스템 성능 측정 완료</h4>
                 <div class="performance-stats">
-                    <div class="performance-item">📊 평균 시간: ${avgMatchingTime.toFixed(2)}ms</div>
+                    <div class="performance-item">📊 평균 시간: ${avgMatchingTime.toFixed(
+                      2
+                    )}ms</div>
                     <div class="performance-item">⚡ TPS: ${tps}회/초</div>
-                    <div class="performance-item">🎯 목표 달성: ${avgMatchingTime < 1 ? '✅' : '❌'}</div>
+                    <div class="performance-item">🎯 목표 달성: ${
+                      avgMatchingTime < 1 ? '✅' : '❌'
+                    }</div>
                 </div>
                 
                 <h5>📈 상세 성능 지표</h5>
@@ -2207,8 +2244,16 @@
                 <p><strong>분당 처리량:</strong> ${(parseInt(tps) * 60).toLocaleString()}매칭/분</p>
                 
                 <h5>🎯 성능 평가</h5>
-                <p><strong>목표 0.5ms:</strong> ${avgMatchingTime < 0.5 ? '✅ 달성' : avgMatchingTime < 1 ? '⚡ 우수' : '⚠️ 개선 필요'}</p>
-                <p><strong>안정성:</strong> ${maxMatchingTime - minMatchingTime < 1 ? '✅ 매우 안정' : '⚠️ 변동 있음'}</p>
+                <p><strong>목표 0.5ms:</strong> ${
+                  avgMatchingTime < 0.5
+                    ? '✅ 달성'
+                    : avgMatchingTime < 1
+                    ? '⚡ 우수'
+                    : '⚠️ 개선 필요'
+                }</p>
+                <p><strong>안정성:</strong> ${
+                  maxMatchingTime - minMatchingTime < 1 ? '✅ 매우 안정' : '⚠️ 변동 있음'
+                }</p>
             `;
 
         showResult('performanceResult', resultHTML, true);
@@ -2871,50 +2916,87 @@
                     <div class="score-comparison">
                         <div class="score-item">
                             <span class="score-label" style="color: #000000 !important; font-weight: 700 !important;">기본 매칭 점수:</span>
-                            <span class="score-value" style="color: #dc2626 !important; font-weight: 800 !important;">${personalizedResult.baseScore.toFixed(1)}점</span>
+                            <span class="score-value" style="color: #dc2626 !important; font-weight: 800 !important;">${personalizedResult.baseScore.toFixed(
+                              1
+                            )}점</span>
                         </div>
                         <div class="score-item highlight">
                             <span class="score-label" style="color: #000000 !important; font-weight: 700 !important;">개인화 매칭 점수:</span>
-                            <span class="score-value" style="color: #dc2626 !important; font-weight: 800 !important;">${personalizedResult.personalizedScore.toFixed(1)}점</span>
+                            <span class="score-value" style="color: #dc2626 !important; font-weight: 800 !important;">${personalizedResult.personalizedScore.toFixed(
+                              1
+                            )}점</span>
                         </div>
                         <div class="score-item">
                             <span class="score-label" style="color: #000000 !important; font-weight: 700 !important;">히스토리 보정:</span>
-                            <span class="score-value" style="color: #059669 !important; font-weight: 800 !important;">${personalizedResult.historyAdjustment > 0 ? '+' : ''}${personalizedResult.historyAdjustment.toFixed(1)}점</span>
+                            <span class="score-value" style="color: #059669 !important; font-weight: 800 !important;">${
+                              personalizedResult.historyAdjustment > 0 ? '+' : ''
+                            }${personalizedResult.historyAdjustment.toFixed(1)}점</span>
                         </div>
                         <div class="score-item final">
                             <span class="score-label" style="color: #000000 !important; font-weight: 700 !important;">최종 점수:</span>
-                            <span class="score-value" style="color: #7c3aed !important; font-weight: 800 !important; font-size: 1.2rem !important;">${personalizedResult.finalScore.toFixed(1)}점</span>
+                            <span class="score-value" style="color: #7c3aed !important; font-weight: 800 !important; font-size: 1.2rem !important;">${personalizedResult.finalScore.toFixed(
+                              1
+                            )}점</span>
                         </div>
                     </div>
                     
                     <div class="personalization-info">
-                        <p style="color: #000000 !important; font-weight: 700 !important;"><strong>개인화 수준:</strong> ${insights.level === 'learning' ? '학습 중' : insights.level === 'adaptive' ? '적응형' : '기본'}</p>
-                        <p style="color: #000000 !important; font-weight: 700 !important;"><strong>분석 신뢰도:</strong> ${(personalizedResult.confidence * 100).toFixed(0)}%</p>
-                        <p style="color: #000000 !important; font-weight: 700 !important;"><strong>매칭 히스토리:</strong> ${insights.totalMatches}회</p>
-                        <p style="color: #000000 !important; font-weight: 700 !important;"><strong>성공률:</strong> ${insights.successRate}%</p>
+                        <p style="color: #000000 !important; font-weight: 700 !important;"><strong>개인화 수준:</strong> ${
+                          insights.level === 'learning'
+                            ? '학습 중'
+                            : insights.level === 'adaptive'
+                            ? '적응형'
+                            : '기본'
+                        }</p>
+                        <p style="color: #000000 !important; font-weight: 700 !important;"><strong>분석 신뢰도:</strong> ${(
+                          personalizedResult.confidence * 100
+                        ).toFixed(0)}%</p>
+                        <p style="color: #000000 !important; font-weight: 700 !important;"><strong>매칭 히스토리:</strong> ${
+                          insights.totalMatches
+                        }회</p>
+                        <p style="color: #000000 !important; font-weight: 700 !important;"><strong>성공률:</strong> ${
+                          insights.successRate
+                        }%</p>
                     </div>
                     
                     <h5 style="color: #000000 !important; font-weight: 800 !important;">🎯 나만의 선호 패턴</h5>
                     <div class="preference-patterns">
                         <div class="pattern-section">
                             <h6 style="color: #000000 !important; font-weight: 800 !important; font-size: 1rem !important;">중요 가치관 TOP 3</h6>
-                            ${insights.topValues.map(v => `<div class="pattern-item" style="color: #dc2626 !important; font-weight: 700 !important; font-size: 0.9rem !important;">${v.category}: ${v.weight}%</div>`).join('')}
+                            ${insights.topValues
+                              .map(
+                                v =>
+                                  `<div class="pattern-item" style="color: #dc2626 !important; font-weight: 700 !important; font-size: 0.9rem !important;">${v.category}: ${v.weight}%</div>`
+                              )
+                              .join('')}
                         </div>
                         <div class="pattern-section">
                             <h6 style="color: #000000 !important; font-weight: 800 !important; font-size: 1rem !important;">선호 성격 TOP 3</h6>
-                            ${insights.topPersonality.map(p => `<div class="pattern-item" style="color: #dc2626 !important; font-weight: 700 !important; font-size: 0.9rem !important;">${p.trait}: ${p.weight}%</div>`).join('')}
+                            ${insights.topPersonality
+                              .map(
+                                p =>
+                                  `<div class="pattern-item" style="color: #dc2626 !important; font-weight: 700 !important; font-size: 0.9rem !important;">${p.trait}: ${p.weight}%</div>`
+                              )
+                              .join('')}
                         </div>
                     </div>
                     
                     <h5 style="color: #000000 !important; font-weight: 800 !important; font-size: 1.1rem !important;">💡 개인 맞춤 추천</h5>
                     <div class="recommendations">
-                        ${insights.recommendations.map(rec => `<div class="recommendation-item" style="color: #059669 !important; font-weight: 700 !important; font-size: 0.9rem !important;">• ${rec}</div>`).join('')}
+                        ${insights.recommendations
+                          .map(
+                            rec =>
+                              `<div class="recommendation-item" style="color: #059669 !important; font-weight: 700 !important; font-size: 0.9rem !important;">• ${rec}</div>`
+                          )
+                          .join('')}
                     </div>
                 </div>
                 
                 <div class="improvement-highlight">
                     <h6>🚀 개인화 시스템 효과</h6>
-                    <p><strong>정확도 향상:</strong> ${(personalizedResult.personalizedScore - personalizedResult.baseScore).toFixed(1)}점 개선</p>
+                    <p><strong>정확도 향상:</strong> ${(
+                      personalizedResult.personalizedScore - personalizedResult.baseScore
+                    ).toFixed(1)}점 개선</p>
                     <p><strong>4060세대 특화:</strong> 안정성과 신뢰성 중심 매칭</p>
                     <p><strong>지속적 학습:</strong> 매칭할 때마다 더욱 정확해집니다</p>
                 </div>
@@ -2927,7 +3009,9 @@
         setTimeout(() => {
           showResult('personalizedResult', resultHTML, true);
           updateStatus(
-            `✅ 개인화 매칭 완료! 최종 점수: ${personalizedResult.finalScore.toFixed(1)}점 (신뢰도: ${(personalizedResult.confidence * 100).toFixed(0)}%)`
+            `✅ 개인화 매칭 완료! 최종 점수: ${personalizedResult.finalScore.toFixed(
+              1
+            )}점 (신뢰도: ${(personalizedResult.confidence * 100).toFixed(0)}%)`
           );
         }, 500);
       }

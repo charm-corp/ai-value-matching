@@ -34,13 +34,13 @@ const limiter = rateLimit({
 // Microsoft Edge 브라우저 완전 최적화 - content.js:79 오류 완전 해결
 if (process.env.NODE_ENV === 'development') {
   console.log('🛡️  개발 환경: Microsoft Edge 완전 최적화 (CSP/보안 헤더 모두 비활성화)');
-  
+
   // helmet 자체를 아예 사용하지 않음 (Edge 확장과 충돌 방지)
   app.use((req, res, next) => {
     // 모든 보안 관련 헤더 완전 제거 - Edge 확장 프로그램과 충돌 방지
     const headersToRemove = [
       'Content-Security-Policy',
-      'Content-Security-Policy-Report-Only', 
+      'Content-Security-Policy-Report-Only',
       'X-Content-Security-Policy',
       'X-WebKit-CSP',
       'X-Frame-Options',
@@ -49,13 +49,13 @@ if (process.env.NODE_ENV === 'development') {
       'Permissions-Policy',
       'Cross-Origin-Embedder-Policy',
       'Cross-Origin-Opener-Policy',
-      'Cross-Origin-Resource-Policy'
+      'Cross-Origin-Resource-Policy',
     ];
-    
+
     headersToRemove.forEach(header => {
       res.removeHeader(header);
     });
-    
+
     // Edge 브라우저 전용 최적화 헤더 설정
     res.set({
       'X-Powered-By': 'CHARM_INYEON/1.0',
@@ -65,7 +65,7 @@ if (process.env.NODE_ENV === 'development') {
       'X-Content-Type-Options': 'nosniff', // 필수 보안만 유지
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type,Authorization'
+      'Access-Control-Allow-Headers': 'Content-Type,Authorization',
     });
     next();
   });
@@ -79,15 +79,15 @@ if (process.env.NODE_ENV === 'development') {
           defaultSrc: ["'self'"],
           scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
           styleSrc: ["'self'", "'unsafe-inline'"],
-          imgSrc: ["'self'", "data:", "https:", "http:"],
-          connectSrc: ["'self'", "wss:", "ws:", "https:", "http:"],
-          fontSrc: ["'self'", "data:", "https:"],
+          imgSrc: ["'self'", 'data:', 'https:', 'http:'],
+          connectSrc: ["'self'", 'wss:', 'ws:', 'https:', 'http:'],
+          fontSrc: ["'self'", 'data:', 'https:'],
           objectSrc: ["'none'"],
-          mediaSrc: ["'self'", "blob:", "data:"],
-          frameSrc: ["'self'"]
-        }
+          mediaSrc: ["'self'", 'blob:', 'data:'],
+          frameSrc: ["'self'"],
+        },
       },
-      crossOriginEmbedderPolicy: false
+      crossOriginEmbedderPolicy: false,
     })
   );
 }
@@ -100,24 +100,24 @@ app.use((req, res, next) => {
     // Edge 브라우저 완전 최적화: 캐시 + 확장 충돌 방지
     res.set({
       'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
-      'Pragma': 'no-cache',
-      'Expires': '0',
+      Pragma: 'no-cache',
+      Expires: '0',
       'Surrogate-Control': 'no-store',
       'Last-Modified': new Date().toUTCString(),
-      'ETag': `"${Date.now()}"`, // 매번 다른 ETag로 강제 갱신
-      
+      ETag: `"${Date.now()}"`, // 매번 다른 ETag로 강제 갱신
+
       // Edge 확장 프로그램 호환성 헤더
       'X-CSP-Disabled': 'true',
       'X-Edge-Extension-Safe': 'true',
       'X-Content-Security-Policy': undefined, // 명시적 undefined
-      'Content-Security-Policy': undefined,   // 명시적 undefined
-      
+      'Content-Security-Policy': undefined, // 명시적 undefined
+
       // Edge WebView2 엔진 최적화
       'X-Edge-Compatible': 'development-mode',
       'X-Frame-Options': 'ALLOWALL', // Edge 내부 iframe 허용
-      'X-Permitted-Cross-Domain-Policies': 'all'
+      'X-Permitted-Cross-Domain-Policies': 'all',
     });
-    
+
     // Edge 확장과 충돌하는 헤더들 강제 삭제
     res.removeHeader('Content-Security-Policy');
     res.removeHeader('X-Content-Security-Policy');
@@ -171,26 +171,31 @@ app.use(
 );
 
 // Microsoft Edge 브라우저 호환성을 위한 content.js 정적 파일 서빙
-app.use('/content.js', express.static('content.js', {
-  setHeaders: (res) => {
-    res.setHeader('Content-Type', 'application/javascript');
-    res.setHeader('X-Content-Type-Options', 'nosniff');
-    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-    res.setHeader('X-Edge-Compatible', 'content-script-provided');
-  }
-}));
+app.use(
+  '/content.js',
+  express.static('content.js', {
+    setHeaders: res => {
+      res.setHeader('Content-Type', 'application/javascript');
+      res.setHeader('X-Content-Type-Options', 'nosniff');
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('X-Edge-Compatible', 'content-script-provided');
+    },
+  })
+);
 
 // 기본 정적 파일 서빙 (CSS, JS 등)
-app.use(express.static('.', {
-  setHeaders: (res, path) => {
-    if (path.endsWith('.js')) {
-      res.setHeader('Content-Type', 'application/javascript');
-    } else if (path.endsWith('.css')) {
-      res.setHeader('Content-Type', 'text/css');
-    }
-    res.setHeader('X-Content-Type-Options', 'nosniff');
-  }
-}));
+app.use(
+  express.static('.', {
+    setHeaders: (res, path) => {
+      if (path.endsWith('.js')) {
+        res.setHeader('Content-Type', 'application/javascript');
+      } else if (path.endsWith('.css')) {
+        res.setHeader('Content-Type', 'text/css');
+      }
+      res.setHeader('X-Content-Type-Options', 'nosniff');
+    },
+  })
+);
 
 // Database connection with In-Memory fallback
 const { MongoMemoryServer } = require('mongodb-memory-server');
@@ -263,7 +268,7 @@ const bcrypt = require('bcryptjs');
 const initializeTestData = async () => {
   try {
     const userCount = await User.countDocuments();
-    
+
     console.log(`📊 현재 사용자 수: ${userCount}`);
 
     if (userCount === 0) {
@@ -428,7 +433,7 @@ const initializeTestData = async () => {
           interestsAlignment: 68,
           locationCompatibility: 90,
           ageCompatibility: 85,
-          communicationStyle: 80
+          communicationStyle: 80,
         },
         status: 'pending',
         matchAlgorithm: 'advanced_ai_v2',
@@ -440,10 +445,10 @@ const initializeTestData = async () => {
           compatibilityFactors: [
             { factor: '가치관 일치', score: 82, importance: 'high' },
             { factor: '성격 호환성', score: 77, importance: 'high' },
-            { factor: '생활 패턴', score: 74, importance: 'medium' }
-          ]
+            { factor: '생활 패턴', score: 74, importance: 'medium' },
+          ],
         },
-        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7일 후 만료
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7일 후 만료
       });
 
       await testMatch.save();
@@ -456,16 +461,7 @@ const initializeTestData = async () => {
   }
 };
 
-// Import routes
-const authRoutes = require('./routes/auth');
-const userRoutes = require('./routes/users');
-const valuesRoutes = require('./routes/values');
-const matchingRoutes = require('./routes/matching');
-const advancedMatchingRoutes = require('./routes/advancedMatching');
-const privacyRoutes = require('./routes/privacy');
-const chatRoutes = require('./routes/chat');
-const profileRoutes = require('./routes/profile');
-const demoRoutes = require('./routes/demo');
+// === RLS + Backend System Integration ===\nconst { integrateRLSSystem, createCompatibilityMiddleware } = require('./middleware/rlsIntegration');\n\n// 호환성 미들웨어 추가 (기존 인증과 RLS가 공존)\napp.use(createCompatibilityMiddleware());\n\n// RLS 시스템 점진적 초기화 (비동기 처리)\nsetImmediate(async () => {\n  try {\n    const success = await integrateRLSSystem(app);\n    if (success) {\n      console.log('✅ RLS + Backend System successfully integrated');\n    } else {\n      console.warn('⚠️ RLS system integration had issues, but server continues');\n    }\n  } catch (error) {\n    console.error('❌ RLS system integration failed, but server continues:', error.message);\n  }\n});\n\n// Import routes\nconst authRoutes = require('./routes/auth');\nconst userRoutes = require('./routes/users');\nconst valuesRoutes = require('./routes/values');\nconst matchingRoutes = require('./routes/matching');\nconst advancedMatchingRoutes = require('./routes/advancedMatching');\nconst privacyRoutes = require('./routes/privacy');\nconst chatRoutes = require('./routes/chat');\nconst profileRoutes = require('./routes/profile');\nconst demoRoutes = require('./routes/demo');
 
 // API routes
 // 창우님 체험용 Demo 라우트 (인증 불필요) - 다른 라우트보다 먼저 등록
@@ -622,11 +618,11 @@ const startServer = async () => {
     });
 
     // Handle server errors
-    server.on('error', (error) => {
+    server.on('error', error => {
       if (error.code === 'EADDRINUSE') {
         console.error(`❌ 포트 ${PORT}이(가) 이미 사용 중입니다.`);
         console.log('🔄 다른 포트로 재시도 중...');
-        
+
         // Try alternative ports
         const altPorts = [3001, 3002, 8000, 8080];
         for (const altPort of altPorts) {
@@ -644,7 +640,6 @@ const startServer = async () => {
         console.error('❌ 서버 오류:', error);
       }
     });
-
   } catch (error) {
     console.error('❌ 서버 시작 실패:', error);
     if (error.code === 'EADDRINUSE') {
@@ -656,44 +651,47 @@ const startServer = async () => {
 };
 
 // Enhanced graceful shutdown
-const gracefulShutdown = (signal) => {
+const gracefulShutdown = signal => {
   console.log(`\n📴 ${signal} received. Shutting down gracefully...`);
-  
+
   // Set a timeout to force exit if graceful shutdown takes too long
   const forceExitTimer = setTimeout(() => {
     console.error('❌ 강제 종료: graceful shutdown이 너무 오래 걸립니다');
     process.exit(1);
   }, 30000); // 30초 타임아웃
 
-  server.close((err) => {
+  server.close(err => {
     if (err) {
       console.error('❌ 서버 종료 중 오류:', err);
       process.exit(1);
     }
-    
+
     console.log('✅ HTTP Server closed');
-    
+
     // Close MongoDB connection
-    mongoose.connection.close(false, (err) => {
+    mongoose.connection.close(false, err => {
       if (err) {
         console.error('❌ MongoDB 연결 종료 중 오류:', err);
         process.exit(1);
       }
-      
+
       console.log('✅ MongoDB connection closed');
-      
+
       // Close in-memory MongoDB if it exists
       if (mongoServer) {
-        mongoServer.stop().then(() => {
-          console.log('✅ In-Memory MongoDB stopped');
-          clearTimeout(forceExitTimer);
-          console.log('🎉 Graceful shutdown completed');
-          process.exit(0);
-        }).catch((err) => {
-          console.error('❌ In-Memory MongoDB 종료 오류:', err);
-          clearTimeout(forceExitTimer);
-          process.exit(1);
-        });
+        mongoServer
+          .stop()
+          .then(() => {
+            console.log('✅ In-Memory MongoDB stopped');
+            clearTimeout(forceExitTimer);
+            console.log('🎉 Graceful shutdown completed');
+            process.exit(0);
+          })
+          .catch(err => {
+            console.error('❌ In-Memory MongoDB 종료 오류:', err);
+            clearTimeout(forceExitTimer);
+            process.exit(1);
+          });
       } else {
         clearTimeout(forceExitTimer);
         console.log('🎉 Graceful shutdown completed');
@@ -708,7 +706,7 @@ process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 
 // Handle uncaught exceptions
-process.on('uncaughtException', (error) => {
+process.on('uncaughtException', error => {
   console.error('❌ Uncaught Exception:', error);
   gracefulShutdown('UNCAUGHT_EXCEPTION');
 });

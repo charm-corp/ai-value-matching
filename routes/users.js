@@ -30,13 +30,18 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   try {
     const limit = parseInt(req.query.limit) || 10;
-    
-    const users = await User.find({}, {
-      password: 0,
-      verificationToken: 0,
-      resetPasswordToken: 0,
-      __v: 0
-    }).limit(limit).sort({ createdAt: -1 });
+
+    const users = await User.find(
+      {},
+      {
+        password: 0,
+        verificationToken: 0,
+        resetPasswordToken: 0,
+        __v: 0,
+      }
+    )
+      .limit(limit)
+      .sort({ createdAt: -1 });
 
     const userCount = await User.countDocuments();
 
@@ -56,19 +61,19 @@ router.get('/', async (req, res) => {
           wantsChildren: user.wantsChildren,
           isVerified: user.isVerified,
           isActive: user.isActive,
-          createdAt: user.createdAt
+          createdAt: user.createdAt,
         })),
         totalCount: userCount,
-        currentCount: users.length
+        currentCount: users.length,
       },
-      message: `총 ${userCount}명의 사용자 중 ${users.length}명을 조회했습니다.`
+      message: `총 ${userCount}명의 사용자 중 ${users.length}명을 조회했습니다.`,
     });
   } catch (error) {
     console.error('사용자 목록 조회 오류:', error);
     res.status(500).json({
       success: false,
       error: '사용자 목록을 불러오는 중 오류가 발생했습니다.',
-      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined,
     });
   }
 });

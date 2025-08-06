@@ -10,16 +10,16 @@ function makeRequest(path, timeout = 5000) {
       port: PORT,
       path: path,
       method: 'GET',
-      timeout: timeout
+      timeout: timeout,
     };
 
-    const req = http.request(options, (res) => {
+    const req = http.request(options, res => {
       let data = '';
-      
-      res.on('data', (chunk) => {
+
+      res.on('data', chunk => {
         data += chunk;
       });
-      
+
       res.on('end', () => {
         try {
           const parsed = JSON.parse(data);
@@ -30,7 +30,7 @@ function makeRequest(path, timeout = 5000) {
       });
     });
 
-    req.on('error', (error) => {
+    req.on('error', error => {
       reject(error);
     });
 
@@ -45,30 +45,30 @@ function makeRequest(path, timeout = 5000) {
 
 async function runStabilityTest() {
   console.log('🧪 CHARM_INYEON 서버 안정성 최종 테스트\n');
-  
+
   const tests = [
     {
       name: '메인 페이지 로딩',
       path: '/',
-      expectedStatus: 200
+      expectedStatus: 200,
     },
     {
       name: '사용자 목록 조회 API',
       path: '/api/users',
       expectedStatus: 200,
-      checkData: (data) => data.success && data.data && data.data.users
+      checkData: data => data.success && data.data && data.data.users,
     },
     {
-      name: '매칭 테스트 API', 
+      name: '매칭 테스트 API',
       path: '/api/matching/test',
       expectedStatus: 200,
-      checkData: (data) => data.success && data.data && data.data.results
+      checkData: data => data.success && data.data && data.data.results,
     },
     {
       name: 'API 문서 페이지',
       path: '/api-docs',
-      expectedStatus: 200
-    }
+      expectedStatus: 200,
+    },
   ];
 
   let passedTests = 0;
@@ -77,18 +77,18 @@ async function runStabilityTest() {
   for (const test of tests) {
     try {
       console.log(`🔍 ${test.name} 테스트 중...`);
-      
+
       const result = await makeRequest(test.path);
-      
+
       let testPassed = result.status === test.expectedStatus;
-      
+
       if (testPassed && test.checkData && !result.raw) {
         testPassed = test.checkData(result.data);
       }
-      
+
       if (testPassed) {
         console.log(`✅ ${test.name}: PASS (HTTP ${result.status})`);
-        
+
         if (result.data && !result.raw) {
           if (result.data.data && result.data.data.users) {
             console.log(`   👥 사용자 수: ${result.data.data.users.length}명`);
@@ -103,7 +103,7 @@ async function runStabilityTest() {
             console.log(`   💬 "${result.data.message}"`);
           }
         }
-        
+
         passedTests++;
       } else {
         console.log(`❌ ${test.name}: FAIL (HTTP ${result.status})`);
@@ -111,9 +111,8 @@ async function runStabilityTest() {
           console.log(`   🚨 Error: ${result.data.error}`);
         }
       }
-      
+
       console.log('');
-      
     } catch (error) {
       console.log(`❌ ${test.name}: FAIL - ${error.message}\n`);
     }
@@ -121,8 +120,10 @@ async function runStabilityTest() {
 
   // 종합 결과
   console.log('📊 테스트 결과 요약');
-  console.log(`성공: ${passedTests}/${totalTests} (${Math.round(passedTests/totalTests*100)}%)`);
-  
+  console.log(
+    `성공: ${passedTests}/${totalTests} (${Math.round((passedTests / totalTests) * 100)}%)`
+  );
+
   if (passedTests === totalTests) {
     console.log('\n🎉 모든 테스트 통과! 서버가 안정적으로 작동합니다.');
     console.log('✨ CHARM_INYEON 백엔드 시스템이 완벽하게 준비되었습니다!');

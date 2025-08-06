@@ -312,15 +312,23 @@ async function testPhase3MatchingSystem() {
     console.log(`⏱️ 10회 매칭 분석 시간: ${endTime - startTime}ms`);
     console.log(`📊 평균 처리 시간: ${(endTime - startTime) / 10}ms`);
     console.log(
-      `🔄 일관성 체크: ${results.every(r => r.overallScore === results[0].overallScore) ? '✅ 일관성 유지' : '❌ 일관성 문제'}`
+      `🔄 일관성 체크: ${
+        results.every(r => r.overallScore === results[0].overallScore)
+          ? '✅ 일관성 유지'
+          : '❌ 일관성 문제'
+      }`
     );
 
     console.log('\n⚡ 성능 세부 분석:');
     console.log(
-      `   🚀 처리 속도: ${(endTime - startTime) / 10 < 1 ? '초고속' : (endTime - startTime) / 10 < 5 ? '고속' : '보통'} (${(endTime - startTime) / 10}ms)`
+      `   🚀 처리 속도: ${
+        (endTime - startTime) / 10 < 1 ? '초고속' : (endTime - startTime) / 10 < 5 ? '고속' : '보통'
+      } (${(endTime - startTime) / 10}ms)`
     );
     console.log(
-      `   🎯 정확도: ${results.every(r => r.overallScore === results[0].overallScore) ? '100%' : '불안정'}`
+      `   🎯 정확도: ${
+        results.every(r => r.overallScore === results[0].overallScore) ? '100%' : '불안정'
+      }`
     );
     console.log(`   💾 메모리 효율성: 우수 (MongoDB 미사용)`);
     console.log(`   🔄 반복 안정성: ${results.length}회 연속 성공`);

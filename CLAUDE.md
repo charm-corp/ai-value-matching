@@ -24,14 +24,12 @@ AI 기반 가치관 매칭 플랫폼 (CHARM_INYEON) - Node.js/Express 백엔드
 
 ## Project Structure
 
-```
-├── models/          # MongoDB 스키마 정의
-├── routes/          # API 라우트 핸들러
-├── middleware/      # 인증, 보안, 검증 미들웨어
-├── services/        # 비즈니스 로직 서비스
-├── utils/           # 유틸리티 함수
-└── uploads/         # 파일 업로드 저장소
-```
+├── models/ # MongoDB 스키마 정의
+├── routes/ # API 라우트 핸들러
+├── middleware/ # 인증, 보안, 검증 미들웨어
+├── services/ # 비즈니스 로직 서비스
+├── utils/ # 유틸리티 함수
+└── uploads/ # 파일 업로드 저장소
 
 ## Code Quality Tools
 
@@ -327,4 +325,4 @@ businessMetrics: {
 - ✅중장년층 사용자 특성 고려
 - ✅1인 개발자 현실적 제약 반영
 
-### 함께 훌륭한 중장년층 매칭 플랫폼을 만들어 봅시다.
+### 함께 훌륭한 중장년층 매칭 플랫폼을 만들어 봅시다

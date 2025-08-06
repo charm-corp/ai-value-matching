@@ -153,7 +153,10 @@ class AvatarService {
         <path d="M70 120 Q100 110 130 120 L140 180 L60 180 Z" class="avatar-clothing"/>
         
         <!-- 스타일 표시 -->
-        <text x="100" y="190" text-anchor="middle" class="avatar-text">${this.getAvatarDescription(gender, style)}</text>
+        <text x="100" y="190" text-anchor="middle" class="avatar-text">${this.getAvatarDescription(
+          gender,
+          style
+        )}</text>
       </svg>
     `;
 

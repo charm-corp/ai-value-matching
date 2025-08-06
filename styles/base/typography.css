@@ -5,12 +5,7 @@
 
 /* 기본 타이포그래피 */
 body {
-  font-family:
-    'Noto Sans KR',
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    sans-serif;
+  font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: var(--font-base);
   line-height: var(--leading-normal);
   color: var(--text-primary);

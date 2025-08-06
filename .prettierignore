@@ -44,3 +44,11 @@ uploads/
 
 # Development history
 dev-history/
+
+# Problematic files with syntax errors
+script-backup.js
+script-old-backup.js
+test-backend-connection.html
+
+# Data backups
+data-backups/

@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
@@ -357,7 +357,9 @@
               this.addTestResult(
                 container,
                 `${tagName}.${className}`,
-                `크기: ${Math.round(rect.width)}×${Math.round(rect.height)}px (최소: ${minSize}×${minSize}px)`,
+                `크기: ${Math.round(rect.width)}×${Math.round(
+                  rect.height
+                )}px (최소: ${minSize}×${minSize}px)`,
                 isValidSize ? 'pass' : 'fail'
               );
             }

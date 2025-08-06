@@ -373,7 +373,9 @@ class IntelligentMatchingEngine {
             title: this.getValueCategoryName(category),
             description: this.generateValueAlignmentDescription(category, score1, score2),
             importance: similarity,
-            evidence: `두 분 모두 ${this.getValueCategoryName(category)}을 매우 중시하십니다. (${Math.round(score1)}점, ${Math.round(score2)}점)`,
+            evidence: `두 분 모두 ${this.getValueCategoryName(
+              category
+            )}을 매우 중시하십니다. (${Math.round(score1)}점, ${Math.round(score2)}점)`,
           });
         }
       }
@@ -1099,7 +1101,9 @@ class IntelligentMatchingEngine {
       reasons.push({
         type: 'lifestyle_harmony',
         title: '공통 관심사',
-        description: `${lifestyleDetails.commonInterests.map(i => i.category).join(', ')} 등 공통된 관심사로 즐거운 시간을 보낼 수 있습니다`,
+        description: `${lifestyleDetails.commonInterests
+          .map(i => i.category)
+          .join(', ')} 등 공통된 관심사로 즐거운 시간을 보낼 수 있습니다`,
         importance: 75 + lifestyleDetails.commonInterests.length * 5,
       });
     }
@@ -1152,7 +1156,9 @@ class IntelligentMatchingEngine {
       synergyReasons.push({
         type: 'special_synergy',
         title: '상호 보완적 강점',
-        description: `${complementaryStrengths.join(', ')} 영역에서 서로를 보완하며 성장할 수 있습니다`,
+        description: `${complementaryStrengths.join(
+          ', '
+        )} 영역에서 서로를 보완하며 성장할 수 있습니다`,
         importance: 80,
       });
     }
@@ -1537,13 +1543,15 @@ class IntelligentMatchingEngine {
       const scoreInfo = intensityLevels.high
         ? ` (두 분 모두 이 영역에서 매우 높은 점수를 보이십니다: ${score1}점, ${score2}점)`
         : intensityLevels.medium
-          ? ` (두 분 모두 이 영역을 중요하게 생각하십니다: ${score1}점, ${score2}점)`
-          : ` (이 영역에서 공통된 관심을 보이십니다: ${score1}점, ${score2}점)`;
+        ? ` (두 분 모두 이 영역을 중요하게 생각하십니다: ${score1}점, ${score2}점)`
+        : ` (이 영역에서 공통된 관심을 보이십니다: ${score1}점, ${score2}점)`;
 
       return description + scoreInfo;
     }
 
-    return `${categoryName} 영역에서 높은 호환성(${similarity.toFixed(0)}%)을 보이며, 서로의 가치관을 이해하고 공감할 수 있습니다`;
+    return `${categoryName} 영역에서 높은 호환성(${similarity.toFixed(
+      0
+    )}%)을 보이며, 서로의 가치관을 이해하고 공감할 수 있습니다`;
   }
 
   /**
@@ -1653,12 +1661,16 @@ class IntelligentMatchingEngine {
       traitDescriptions[similarityLevel][scoreLevel]
     ) {
       const description = traitDescriptions[similarityLevel][scoreLevel];
-      const detailInfo = ` (${traitName}: 나-${score1}점, 상대방-${score2}점, 유사도 ${similarity.toFixed(0)}%)`;
+      const detailInfo = ` (${traitName}: 나-${score1}점, 상대방-${score2}점, 유사도 ${similarity.toFixed(
+        0
+      )}%)`;
       return description + detailInfo;
     }
 
     // fallback
-    return `${traitName} 특성이 비슷하여(유사도 ${similarity.toFixed(0)}%) 서로를 잘 이해할 수 있습니다`;
+    return `${traitName} 특성이 비슷하여(유사도 ${similarity.toFixed(
+      0
+    )}%) 서로를 잘 이해할 수 있습니다`;
   }
 
   /**
@@ -1808,7 +1820,9 @@ class IntelligentMatchingEngine {
         balanceAreas.push({
           area: this.coreValueDimensions[area.dimension]?.name || area.dimension,
           currentScore: Math.round(area.score),
-          suggestion: `${this.coreValueDimensions[area.dimension]?.name || area.dimension} 영역에 더 관심을 기울여 균형을 맞춰보세요`,
+          suggestion: `${
+            this.coreValueDimensions[area.dimension]?.name || area.dimension
+          } 영역에 더 관심을 기울여 균형을 맞춰보세요`,
           priority: maxScore - area.score > 50 ? 'high' : 'medium',
         });
       });
