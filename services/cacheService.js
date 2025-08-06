@@ -1,5 +1,5 @@
 const Redis = require('redis');
-const LRU = require('lru-cache');
+const { LRUCache } = require('lru-cache');
 
 /**
  * Advanced Cache Service
@@ -11,8 +11,8 @@ class CacheService {
     this.isRedisAvailable = false;
     this.redisClient = null;
     
-    // L1 캐시: 메모리 LRU 캐시
-    this.memoryCache = new LRU({
+    // L1 캐시: 메모리 LRU 캐시 (v10 호환)
+    this.memoryCache = new LRUCache({
       max: 1000, // 최대 1000개 항목
       ttl: 5 * 60 * 1000, // 5분 TTL
       updateAgeOnGet: true

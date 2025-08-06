@@ -461,7 +461,36 @@ const initializeTestData = async () => {
   }
 };
 
-// === RLS + Backend System Integration ===\nconst { integrateRLSSystem, createCompatibilityMiddleware } = require('./middleware/rlsIntegration');\n\n// 호환성 미들웨어 추가 (기존 인증과 RLS가 공존)\napp.use(createCompatibilityMiddleware());\n\n// RLS 시스템 점진적 초기화 (비동기 처리)\nsetImmediate(async () => {\n  try {\n    const success = await integrateRLSSystem(app);\n    if (success) {\n      console.log('✅ RLS + Backend System successfully integrated');\n    } else {\n      console.warn('⚠️ RLS system integration had issues, but server continues');\n    }\n  } catch (error) {\n    console.error('❌ RLS system integration failed, but server continues:', error.message);\n  }\n});\n\n// Import routes\nconst authRoutes = require('./routes/auth');\nconst userRoutes = require('./routes/users');\nconst valuesRoutes = require('./routes/values');\nconst matchingRoutes = require('./routes/matching');\nconst advancedMatchingRoutes = require('./routes/advancedMatching');\nconst privacyRoutes = require('./routes/privacy');\nconst chatRoutes = require('./routes/chat');\nconst profileRoutes = require('./routes/profile');\nconst demoRoutes = require('./routes/demo');
+// === RLS + Backend System Integration ===
+const { integrateRLSSystem, createCompatibilityMiddleware } = require('./middleware/rlsIntegration');
+
+// 호환성 미들웨어 추가 (기존 인증과 RLS가 공존)
+app.use(createCompatibilityMiddleware());
+
+// RLS 시스템 점진적 초기화 (비동기 처리)
+setImmediate(async () => {
+  try {
+    const success = await integrateRLSSystem(app);
+    if (success) {
+      console.log('✅ RLS + Backend System successfully integrated');
+    } else {
+      console.warn('⚠️ RLS system integration had issues, but server continues');
+    }
+  } catch (error) {
+    console.error('❌ RLS system integration failed, but server continues:', error.message);
+  }
+});
+
+// Import routes
+const authRoutes = require('./routes/auth');
+const userRoutes = require('./routes/users');
+const valuesRoutes = require('./routes/values');
+const matchingRoutes = require('./routes/matching');
+const advancedMatchingRoutes = require('./routes/advancedMatching');
+const privacyRoutes = require('./routes/privacy');
+const chatRoutes = require('./routes/chat');
+const profileRoutes = require('./routes/profile');
+const demoRoutes = require('./routes/demo');
 
 // API routes
 // 창우님 체험용 Demo 라우트 (인증 불필요) - 다른 라우트보다 먼저 등록
